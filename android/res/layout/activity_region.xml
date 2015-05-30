@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${packageName}.${activityClass}" >
+
+    <com.egov.android.view.component.Header
+        style="@style/Header"
+        android:layout_width="match_parent"
+        app:actionButton="nav_back"
+        app:title="Select Location" />
+
+    <com.egov.android.view.component.Body
+        style="@style/Body"
+        android:padding="@dimen/viewMargin" >
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/viewMargin"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:padding="15dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <LinearLayout style="@style/FormRow" >
+
+                        <AutoCompleteTextView
+                            style="@style/FormRow.AutoCompleteTextView"
+                            android:hint="City" >
+                        </AutoCompleteTextView>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/search_icon" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/region_submit"
+                    style="@style/ButtonStyle"
+                    android:layout_marginTop="20dp"
+                    android:text="Submit" />
+            </LinearLayout>
+        </ScrollView>
+    </com.egov.android.view.component.Body>
+
+</LinearLayout>

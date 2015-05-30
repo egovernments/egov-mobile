@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="linkColor">#0790F9</color>
+    <color name="text">#4D4D4D</color>
+    <color name="background">#F0E9E3</color>
+    <color name="typehint">#CCCCCC</color>
+    <color name="orange">#F7822E</color>
+
+</resources>

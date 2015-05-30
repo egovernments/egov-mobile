@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.egov.android.view.activity.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    style="@style/SlidingDrawerLayout"
+    tools:context="${packageName}.${activityClass}" >
+
+    <LinearLayout style="@style/MainContainer" >
+
+        <com.egov.android.view.component.Header
+            style="@style/Header"
+            android:layout_width="match_parent"
+            app:actionButton="nav_back|setting"
+            app:title="Edit Profile" />
+
+        <com.egov.android.view.component.Body
+            style="@style/Body"
+            android:padding="@dimen/viewMargin" >
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/viewMargin"
+                    android:background="#ffffff"
+                    android:orientation="vertical"
+                    android:padding="15dp" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/profile" />
+
+                    <com.egov.android.view.component.EGovButton
+                        android:id="@+id/changepicture"
+                        style="@style/ButtonStyle"
+                        android:layout_width="150dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:text="Change Picture" />
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/edittext_border" >
+
+                        <com.egov.android.view.component.EGovEditText
+                            android:id="@+id/complaint_landmark"
+                            style="@style/FormRow.EditText"
+                            android:hint="john" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Gender"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal" >
+
+                        <RadioButton
+                            android:id="@+id/male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Male" />
+
+                        <RadioButton
+                            android:id="@+id/female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Female" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mobile"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/edittext_border" >
+
+                        <com.egov.android.view.component.EGovEditText
+                            android:id="@+id/mobile"
+                            style="@style/FormRow.EditText"
+                            android:hint="96522568952" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/edittext_border" >
+
+                        <com.egov.android.view.component.EGovEditText
+                            android:id="@+id/email"
+                            style="@style/FormRow.EditText"
+                            android:hint="john@gmail.com" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Alternate Contact Number"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/edittext_border" >
+
+                        <com.egov.android.view.component.EGovEditText
+                            android:id="@+id/alt_contact"
+                            style="@style/FormRow.EditText"
+                            android:hint="952356841" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Date of Birth"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/edittext_border" >
+
+                        <com.egov.android.view.component.EGovEditText
+                            android:id="@+id/dob"
+                            style="@style/FormRow.EditText"
+                            android:hint="12-05-1985" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Preferred Language"
+                        android:textColor="@color/text" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal" >
+
+                        <CheckBox
+                            android:id="@+id/english"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="English" />
+
+                        <CheckBox
+                            android:id="@+id/hindi"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="14dp"
+                            android:text="Hindi" />
+                    </LinearLayout>
+
+                    <com.egov.android.view.component.EGovButton
+                        android:id="@+id/editprofile_doEditprofile"
+                        style="@style/ButtonStyle"
+                        android:layout_marginTop="20dp"
+                        android:text="Save Changes" />
+                </LinearLayout>
+            </ScrollView>
+        </com.egov.android.view.component.Body>
+    </LinearLayout>
+
+</com.egov.android.view.activity.slider.SlidingDrawerLayout>

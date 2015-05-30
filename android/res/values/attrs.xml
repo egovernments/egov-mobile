@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <attr name="fontName" format="string" />
+
+    <declare-styleable name="EGovTextView">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="EGovEditText">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="EGovButton">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="SearchListView">
+        <attr name="textStyle" format="string" />
+        <attr name="listStyle" format="string" />
+        <attr name="typeHint" format="string" />
+        <attr name="useSearchFeature" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="Header">
+        <attr name="title" format="string" />
+        <attr name="actionButton">
+            <flag name="nav_back" value="1" />
+            <flag name="setting" value="2" />
+            <flag name="search" value="4" />
+            <flag name="add_complaint" value="8" />
+        </attr>
+    </declare-styleable>
+    
+    <declare-styleable name="SlidingDrawerLayout">
+        <attr name="contentLayoutId" format="reference" />
+        <attr name="slideDirection">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="duration" format="integer" />
+        <attr name="drawerSize" format="dimension" />
+    </declare-styleable>
+
+</resources>

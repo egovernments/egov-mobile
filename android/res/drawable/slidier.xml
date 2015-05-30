@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape>
+            <solid android:color="#3D4E56" />
+
+            <size android:height="50dp" />
+        </shape>
+    </item>
+    <item android:right="190dp">
+        <shape>
+            <size android:height="50dp" />
+
+            <gradient
+                android:angle="0"
+                android:endColor="#3D4E56"
+                android:startColor="#202020"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item
+        android:right="190dp"
+        android:top="50dp">
+        <shape>
+            <gradient
+                android:angle="0"
+                android:endColor="#35353C"
+                android:startColor="#202020"
+                android:type="linear" />
+        </shape>
+    </item>
+    <item
+        android:left="10dp"
+        android:top="50dp">
+        <bitmap
+            android:src="@drawable/slide_bg"
+            android:tileMode="repeat" />
+    </item>
+
+</layer-list>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="icon">25dp</dimen>
+    <dimen name="action_icon">40dp</dimen>
+    <dimen name="default_icon">70dp</dimen>
+    <dimen name="text_view">25dp</dimen>
+    <dimen name="edit_text">30dp</dimen>
+    <dimen name="fontSizeXLarge">20dp</dimen>
+    <dimen name="fontSizeLarge">18dp</dimen>
+    <dimen name="fontSizeMedium">16dp</dimen>
+    <dimen name="fontSizeSmall">12dp</dimen>
+    <dimen name="fontSizeTiny">10dp</dimen>
+
+    <!-- Spacing -->
+    
+    <dimen name="viewMargin">8dp</dimen>
+
+</resources>

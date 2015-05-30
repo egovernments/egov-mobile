@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="${packageName}.${activityClass}" >
+
+    <com.egov.android.view.component.Header
+        style="@style/Header"
+        android:layout_width="match_parent"
+        app:actionButton="nav_back"
+        app:title="Email" />
+
+    <com.egov.android.view.component.Body
+        style="@style/Body"
+        android:padding="@dimen/viewMargin" >
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/viewMargin"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:padding="15dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bottom_border" />
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Login with"
+                        android:textColor="#c0c0c0" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bottom_border" />
+                </LinearLayout>
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/Facebook_login"
+                    style="@style/FacebookButtonStyle"
+                    android:layout_marginTop="10dp"
+                    android:text="facebook" />
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/Twitter_Login"
+                    style="@style/TwitterButtonStyle"
+                    android:layout_marginTop="20dp"
+                    android:text="twitter" />
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/Google_Login"
+                    style="@style/GoogleButtonStyle"
+                    android:layout_marginTop="20dp"
+                    android:text="google" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal" >
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bottom_border" />
+
+                    <com.egov.android.view.component.EGovTextView
+                        android:layout_width="30dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="or"
+                        android:textColor="#c0c0c0" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/edittext_bottom_border" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/FormRow" >
+
+                    <com.egov.android.view.component.EGovEditText
+                        android:id="@+id/login_email"
+                        style="@style/FormRow.EditText"
+                        android:hint="Email" />
+
+                    <ImageView
+                        android:id="@+id/login_email_status"
+                        style="@style/FormRow.Status"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/FormRow" >
+
+                    <com.egov.android.view.component.EGovEditText
+                        android:id="@+id/login_password"
+                        style="@style/FormRow.EditText"
+                        android:hint="Password" />
+
+                    <ImageView
+                        android:id="@+id/login_password_status"
+                        style="@style/FormRow.Status"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/login_doLogin"
+                    style="@style/ButtonStyle"
+                    android:layout_marginTop="20dp"
+                    android:text="Login" />
+
+                <com.egov.android.view.component.EGovTextView
+                    android:id="@+id/forgot_pwd_link"
+                    style="@style/TextView"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/forgotPassword"
+                    android:textColor="@color/linkColor" />
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/login_register"
+                    style="@style/ButtonStyle"
+                    android:layout_marginTop="30dp"
+                    android:text="Register" />
+            </LinearLayout>
+        </ScrollView>
+    </com.egov.android.view.component.Body>
+
+</LinearLayout>
