@@ -13,7 +13,7 @@
         <com.egov.android.view.component.EGovTextView
             android:id="@+id/hdr_title"
             style="@style/Header.Text"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout

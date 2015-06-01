@@ -51,6 +51,26 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    public void getComplaintByType(IApiListener listener) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.COMPLAINT_BY_TYPE);
+        _createApiClient(apiMethod, listener, false).call();
+    }
+
+    public void getComplaintType(IApiListener listener) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.COMPLAINT_TYPE);
+        _createApiClient(apiMethod, listener, false).call();
+    }
+
+    public void addComplaint(IApiListener listener) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.ADD_COMPLAINT);
+        _createApiClient(apiMethod, listener, false).call();
+    }
+
+    public void updateProfile(IApiListener listener) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.UPDATE_PROFILE);
+        _createApiClient(apiMethod, listener, false).call();
+    }
+
     private IApiClient _createApiClient(ApiMethod apiMethod, IApiListener listener, boolean useCache) {
 
         IApiClient client = null;
@@ -61,7 +81,6 @@ public class ApiController {
             Cache cache = null;
             if (useCache) {
                 cache = new Cache();
-                //cache.setUrl(apiMethod.getUrl().toString());
                 cache.setDuration(AndroidLibrary.getInstance().getConfig().getCacheDuration());
             }
             client = new ApiClient(apiMethod);

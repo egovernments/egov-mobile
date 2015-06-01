@@ -54,13 +54,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/edittext_border" >
+                        android:layout_marginTop="5dp" >
 
-                        <com.egov.android.view.component.EGovEditText
-                            android:id="@+id/complaint_landmark"
-                            style="@style/FormRow.EditText"
-                            android:hint="john" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edittext_border" >
+
+                            <com.egov.android.view.component.EGovEditText
+                                android:id="@+id/edit_profile_name"
+                                style="@style/FormRow.EditText"
+                                android:text="john" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/edit_profile_name_status"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView
@@ -76,18 +89,25 @@
                         android:layout_marginTop="5dp"
                         android:orientation="horizontal" >
 
-                        <RadioButton
-                            android:id="@+id/male"
-                            android:layout_width="wrap_content"
+                        <RadioGroup
+                            android:id="@+id/gender"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="Male" />
+                            android:orientation="horizontal" >
 
-                        <RadioButton
-                            android:id="@+id/female"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Female" />
+                            <RadioButton
+                                android:id="@+id/male"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="Male" />
+
+                            <RadioButton
+                                android:id="@+id/female"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Female" />
+                        </RadioGroup>
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView
@@ -100,13 +120,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/edittext_border" >
+                        android:layout_marginTop="5dp" >
 
-                        <com.egov.android.view.component.EGovEditText
-                            android:id="@+id/mobile"
-                            style="@style/FormRow.EditText"
-                            android:hint="96522568952" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edittext_border" >
+
+                            <com.egov.android.view.component.EGovEditText
+                                android:id="@+id/edit_profile_mobile"
+                                style="@style/FormRow.EditText"
+                                android:text="96522568952" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/edit_profile_mobile_status"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView
@@ -119,13 +152,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/edittext_border" >
+                        android:layout_marginTop="5dp" >
 
-                        <com.egov.android.view.component.EGovEditText
-                            android:id="@+id/email"
-                            style="@style/FormRow.EditText"
-                            android:hint="john@gmail.com" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edittext_border" >
+
+                            <com.egov.android.view.component.EGovEditText
+                                android:id="@+id/edit_profile_email"
+                                style="@style/FormRow.EditText"
+                                android:text="john@gmail.com" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/edit_profile_email_status"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView
@@ -138,13 +184,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/edittext_border" >
+                        android:layout_marginTop="5dp" >
 
-                        <com.egov.android.view.component.EGovEditText
-                            android:id="@+id/alt_contact"
-                            style="@style/FormRow.EditText"
-                            android:hint="952356841" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edittext_border" >
+
+                            <com.egov.android.view.component.EGovEditText
+                                android:id="@+id/edit_profile_alt_contact"
+                                style="@style/FormRow.EditText"
+                                android:text="952356841" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/edit_profile_alt_contact_status"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView
@@ -157,13 +216,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/edittext_border" >
+                        android:layout_marginTop="5dp" >
 
-                        <com.egov.android.view.component.EGovEditText
-                            android:id="@+id/dob"
-                            style="@style/FormRow.EditText"
-                            android:hint="12-05-1985" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/edittext_border" >
+
+                            <com.egov.android.view.component.EGovEditText
+                                android:id="@+id/edit_profile_dob"
+                                style="@style/FormRow.EditText"
+                                android:text="12-05-1985" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/edit_profile_dob_status"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <com.egov.android.view.component.EGovTextView

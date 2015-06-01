@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.egov.android.R;
 import com.egov.android.controller.ApiController;
 import com.egov.android.view.activity.ComplaintActivity;
+import com.egov.android.view.activity.LoginActivity;
 import com.egov.android.view.activity.ProfileActivity;
 import com.egov.android.view.activity.slider.ISlidingDrawerListener;
 import com.egov.android.view.activity.slider.SlidingDrawerLayout;
@@ -69,6 +70,9 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
             case R.id.setting_profile:
                 this.activity.startActivity(new Intent(this.activity, ProfileActivity.class));
                 break;
+            case R.id.setting_logout:
+                this.activity.startActivity(new Intent(this.activity, LoginActivity.class));
+                break;
         }
     }
 
@@ -99,8 +103,8 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
 
     @Override
     public void onOpen() {
-        TextView tv = (TextView) this.activity.findViewById(R.id.setting_profile);
-        tv.setOnClickListener(this);
+        ((TextView) this.activity.findViewById(R.id.setting_profile)).setOnClickListener(this);
+        ((TextView) this.activity.findViewById(R.id.setting_logout)).setOnClickListener(this);
     }
 
     @Override

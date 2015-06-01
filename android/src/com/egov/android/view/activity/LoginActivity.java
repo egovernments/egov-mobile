@@ -104,7 +104,7 @@ public class LoginActivity extends BaseActivity {
         String msg = event.getData().getApiStatus().getMessage();
         showMsg(msg);
         if (status.equalsIgnoreCase("success")) {
-            startActivity(new Intent(this, ComplaintListActivity.class));
+            startActivity(new Intent(this, ComplaintTypeListActivity.class));
         }
     }
 }

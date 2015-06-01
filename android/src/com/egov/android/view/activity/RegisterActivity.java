@@ -41,14 +41,13 @@ public class RegisterActivity extends BaseActivity {
 
         _clearStatus(new int[] { R.id.register_name_status, R.id.register_phone_status,
                 R.id.register_email_status, R.id.register_password_status,
-                R.id.register_cfrm_password_status, R.id.register_address_status });
+                R.id.register_cfrm_password_status });
 
         EditText name = (EditText) findViewById(R.id.register_name);
         EditText phone = (EditText) findViewById(R.id.register_phone);
         EditText email = (EditText) findViewById(R.id.register_email);
         EditText password = (EditText) findViewById(R.id.register_password);
         EditText confirm_password = (EditText) findViewById(R.id.register_confirm_password);
-        EditText address = (EditText) findViewById(R.id.register_address);
 
         if (isEmpty(name.getText().toString())) {
             _changeStatus("error", R.id.register_name_status, "Please enter name");
@@ -66,14 +65,10 @@ public class RegisterActivity extends BaseActivity {
             _changeStatus("error", R.id.register_cfrm_password_status,
                     "Please enter confirm password");
         }
-        if (isEmpty(address.getText().toString())) {
-            _changeStatus("error", R.id.register_address_status, "Please enter address");
-        }
 
         if (!isEmpty(name.getText().toString()) && !isEmpty(phone.getText().toString())
                 && !isEmpty(email.getText().toString()) && !isEmpty(password.getText().toString())
-                && !isEmpty(confirm_password.getText().toString())
-                && !isEmpty(address.getText().toString())) {
+                && !isEmpty(confirm_password.getText().toString())) {
             ApiController.getInstance().register(this);
         }
 

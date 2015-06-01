@@ -56,8 +56,9 @@
 
                     <ImageView
                         android:id="@+id/otp_code_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="visible" />
                 </LinearLayout>
 
                 <com.egov.android.view.component.EGovButton

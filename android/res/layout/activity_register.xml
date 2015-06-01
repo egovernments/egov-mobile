@@ -39,8 +39,9 @@
 
                     <ImageView
                         android:id="@+id/register_name_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -52,8 +53,9 @@
 
                     <ImageView
                         android:id="@+id/register_phone_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -65,8 +67,9 @@
 
                     <ImageView
                         android:id="@+id/register_email_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -79,8 +82,9 @@
 
                     <ImageView
                         android:id="@+id/register_password_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -93,21 +97,9 @@
 
                     <ImageView
                         android:id="@+id/register_cfrm_password_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
-                </LinearLayout>
-
-                <LinearLayout style="@style/FormRow" >
-
-                    <com.egov.android.view.component.EGovEditText
-                        android:id="@+id/register_address"
-                        style="@style/FormRow.EditText"
-                        android:hint="Address" />
-
-                    <ImageView
-                        android:id="@+id/register_address_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <com.egov.android.view.component.EGovButton

@@ -11,7 +11,7 @@
         style="@style/Header"
         android:layout_width="match_parent"
         app:actionButton="nav_back"
-        app:title="Email" />
+        app:title="Login" />
 
     <com.egov.android.view.component.Body
         style="@style/Body"
@@ -30,79 +30,6 @@
                 android:orientation="vertical"
                 android:padding="15dp" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/edittext_bottom_border" />
-
-                    <com.egov.android.view.component.EGovTextView
-                        android:layout_width="85dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Login with"
-                        android:textColor="#c0c0c0" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/edittext_bottom_border" />
-                </LinearLayout>
-
-                <com.egov.android.view.component.EGovButton
-                    android:id="@+id/Facebook_login"
-                    style="@style/FacebookButtonStyle"
-                    android:layout_marginTop="10dp"
-                    android:text="facebook" />
-
-                <com.egov.android.view.component.EGovButton
-                    android:id="@+id/Twitter_Login"
-                    style="@style/TwitterButtonStyle"
-                    android:layout_marginTop="20dp"
-                    android:text="twitter" />
-
-                <com.egov.android.view.component.EGovButton
-                    android:id="@+id/Google_Login"
-                    style="@style/GoogleButtonStyle"
-                    android:layout_marginTop="20dp"
-                    android:text="google" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal" >
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/edittext_bottom_border" />
-
-                    <com.egov.android.view.component.EGovTextView
-                        android:layout_width="30dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="or"
-                        android:textColor="#c0c0c0" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="0.5"
-                        android:background="@drawable/edittext_bottom_border" />
-                </LinearLayout>
-
                 <LinearLayout style="@style/FormRow" >
 
                     <com.egov.android.view.component.EGovEditText
@@ -112,8 +39,9 @@
 
                     <ImageView
                         android:id="@+id/login_email_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -125,8 +53,9 @@
 
                     <ImageView
                         android:id="@+id/login_password_status"
-                        style="@style/FormRow.Status"
-                        android:visibility="gone" />
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <com.egov.android.view.component.EGovButton

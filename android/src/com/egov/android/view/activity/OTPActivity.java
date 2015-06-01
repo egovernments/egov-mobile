@@ -42,7 +42,7 @@ public class OTPActivity extends BaseActivity {
         EditText code = (EditText) findViewById(R.id.otp_code);
 
         if (isEmpty(code.getText().toString())) {
-            _changeStatus("error", R.id.otp_code_status, "Please enter the verifiction code");
+            _changeStatus("error", R.id.otp_code_status, "Please enter the verification code");
         }
 
         if (!isEmpty(code.getText().toString())) {

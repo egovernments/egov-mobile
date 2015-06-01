@@ -36,6 +36,7 @@
                 style="@style/SettingMenuItem"
                 android:text="Profile" />
             <com.egov.android.view.component.EGovTextView
+                android:id="@+id/setting_logout"
                 style="@style/SettingMenuItem"
                 android:text="Logout" />
         </LinearLayout>
