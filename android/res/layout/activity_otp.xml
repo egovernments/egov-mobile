@@ -52,7 +52,8 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/otp_code"
                         style="@style/FormRow.EditText"
-                        android:hint="Verification Code" />
+                        android:hint="Verification Code"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/otp_code_status"

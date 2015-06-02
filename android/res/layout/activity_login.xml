@@ -35,7 +35,8 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/login_email"
                         style="@style/FormRow.EditText"
-                        android:hint="Email" />
+                        android:hint="Email/Phone"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/login_email_status"
@@ -49,7 +50,9 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/login_password"
                         style="@style/FormRow.EditText"
-                        android:hint="Password" />
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/login_password_status"

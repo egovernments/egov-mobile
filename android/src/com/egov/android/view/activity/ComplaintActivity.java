@@ -7,16 +7,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.egov.android.R;
@@ -24,13 +33,17 @@ import com.egov.android.api.ApiUrl;
 import com.egov.android.controller.ApiController;
 import com.egov.android.library.api.ApiResponse;
 import com.egov.android.library.api.IApiUrl;
+import com.egov.android.library.http.IHttpClientListener;
+import com.egov.android.library.http.Uploader;
 import com.egov.android.library.listener.Event;
 
-public class ComplaintActivity extends BaseActivity {
+public class ComplaintActivity extends BaseActivity implements IHttpClientListener{
 
     List<String> list = null;
-    AutoCompleteTextView autocomplete = null;
+    private Dialog dialog = null;
     private boolean toastShown = false;
+    AutoCompleteTextView autocomplete = null;
+    private static final int RESULT_LOAD_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +51,10 @@ public class ComplaintActivity extends BaseActivity {
         setContentView(R.layout.activity_complaint);
 
         ((ImageView) findViewById(R.id.complaint_location_icon)).setOnClickListener(this);
+        ((ImageView) findViewById(R.id.add_photo)).setOnClickListener(this);
         ((Button) findViewById(R.id.complaint_doComplaint)).setOnClickListener(this);
 
         ApiController.getInstance().getComplaintType(this);
-
         autocomplete = (AutoCompleteTextView) findViewById(R.id.complaint_type);
     }
 
@@ -55,7 +68,88 @@ public class ComplaintActivity extends BaseActivity {
             case R.id.complaint_location_icon:
                 startActivity(new Intent(this, MapActivity.class));
                 break;
+            case R.id.add_photo:
+                openDialog();
+                break;
+            case R.id.from_gallery:
+                uploadImageFromSDCard();
+                dialog.cancel();
+                break;
+            case R.id.from_camera:
+                captureImage();
+                dialog.cancel();
+                break;
         }
+    }
+
+    private void openDialog() {
+        dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.show();
+
+        ((TextView) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
+        ((TextView) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
+    }
+
+    private void uploadImageFromSDCard() {
+        Intent photo_picker = new Intent(Intent.ACTION_PICK);
+        photo_picker.setType("image/*,video/*");
+        startActivityForResult(photo_picker, RESULT_LOAD_IMAGE);
+    }
+
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, RESULT_LOAD_IMAGE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null,
+                    null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imagePath = cursor.getString(columnIndex);
+            cursor.close();
+            _setImageResource(imagePath);
+        }
+    }
+
+    private void _setImageResource(String imagePath) {
+        LinearLayout linear = (LinearLayout) findViewById(R.id.innerLayout);
+
+        LinearLayout innerLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams linear_params = new LinearLayout.LayoutParams(dpToPix(120),
+                dpToPix(120));
+        linear_params.setMargins(10, 0, 0, 0);
+        innerLayout.setLayoutParams(linear_params);
+        innerLayout.setBackgroundResource(R.drawable.edittext_border);
+
+        ImageView image = new ImageView(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dpToPix(120), dpToPix(120));
+        params.gravity = Gravity.CENTER;
+        image.setLayoutParams(params);
+
+        Uploader upload = new Uploader();
+        upload.setUrl("http://192.168.1.91/charles/egovernance/upload.php");
+        upload.setInputFile(imagePath);
+        upload.setListener(this);
+        upload.upload();
+        
+        image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+        innerLayout.addView(image);
+        linear.addView(innerLayout);
+    }
+
+    private int dpToPix(float value) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, getResources()
+                .getDisplayMetrics());
     }
 
     private void setSpinnerData() {
@@ -163,6 +257,27 @@ public class ComplaintActivity extends BaseActivity {
         int image = (type == "success") ? R.drawable.success_icon : R.drawable.error_icon;
         ((ImageView) findViewById(id)).setVisibility(View.VISIBLE);
         ((ImageView) findViewById(id)).setBackgroundResource(image);
+    }
+
+    @Override
+    public void onProgress(int percent) {
+       Log.d(TAG, "---------------------------> " + String.valueOf(percent));
+        
+    }
+
+    @Override
+    public void onComplete(byte[] data) {
+        // enable / disable
+        
+        String res = new String(data);
+        Log.d(TAG, "result " + res);
+        
+    }
+
+    @Override
+    public void onError(byte[] data) {
+        // enable / disable
+        
     }
 
 }

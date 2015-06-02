@@ -1,24 +1,35 @@
 package com.egov.android.view.activity;
 
-import com.egov.android.R;
-import com.egov.android.controller.ApiController;
-import com.egov.android.library.api.ApiResponse;
-import com.egov.android.library.listener.Event;
-
+import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditProfileActivity extends BaseActivity {
+import com.egov.android.R;
+import com.egov.android.controller.ApiController;
+import com.egov.android.library.api.ApiResponse;
+import com.egov.android.library.http.IHttpClientListener;
+import com.egov.android.library.http.Uploader;
+import com.egov.android.library.listener.Event;
 
+public class EditProfileActivity extends BaseActivity implements IHttpClientListener {
+
+    private Dialog dialog;
     private boolean toastShown = false;
+    private static final int RESULT_LOAD_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +37,7 @@ public class EditProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_profile);
 
         ((Button) findViewById(R.id.editprofile_doEditprofile)).setOnClickListener(this);
+        ((Button) findViewById(R.id.changepicture)).setOnClickListener(this);
     }
 
     @Override
@@ -35,7 +47,69 @@ public class EditProfileActivity extends BaseActivity {
             case R.id.editprofile_doEditprofile:
                 editProfile();
                 break;
+            case R.id.changepicture:
+                openDialog();
+                break;
+            case R.id.from_gallery:
+                uploadImageFromSDCard();
+                dialog.cancel();
+                break;
+            case R.id.from_camera:
+                captureImage();
+                dialog.cancel();
+                break;
         }
+    }
+
+    private void openDialog() {
+        dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.custom_dialog);
+        dialog.show();
+
+        ((TextView) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
+        ((TextView) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
+    }
+
+    private void uploadImageFromSDCard() {
+        Intent photo_picker = new Intent(Intent.ACTION_PICK);
+        photo_picker.setType("image/*,video/*");
+        startActivityForResult(photo_picker, RESULT_LOAD_IMAGE);
+    }
+
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, RESULT_LOAD_IMAGE);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null,
+                    null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String imagePath = cursor.getString(columnIndex);
+            cursor.close();
+            _setImageResource(imagePath);
+        }
+    }
+
+    private void _setImageResource(String imagePath) {
+
+        ImageView image = (ImageView) findViewById(R.id.profile_image);
+        image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
+
+        Uploader upload = new Uploader();
+        upload.setUrl("http://192.168.1.91/charles/egovernance/upload.php");
+        upload.setInputFile(imagePath);
+        upload.setListener(this);
+        upload.upload();
     }
 
     private void editProfile() {
@@ -120,6 +194,21 @@ public class EditProfileActivity extends BaseActivity {
         if (status.equalsIgnoreCase("success")) {
             startActivity(new Intent(this, ProfileActivity.class));
         }
+    }
+
+    @Override
+    public void onProgress(int percent) {
+
+    }
+
+    @Override
+    public void onComplete(byte[] data) {
+
+    }
+
+    @Override
+    public void onError(byte[] data) {
+
     }
 
 }

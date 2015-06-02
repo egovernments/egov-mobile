@@ -15,7 +15,8 @@
 
     <com.egov.android.view.component.Body
         style="@style/Body"
-        android:padding="@dimen/viewMargin" >
+        android:padding="@dimen/viewMargin"
+        android:background="@drawable/map" >
 
         <ScrollView
             android:layout_width="fill_parent"

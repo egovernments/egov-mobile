@@ -35,7 +35,7 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_name"
                         style="@style/FormRow.EditText"
-                        android:hint="Name" />
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/register_name_status"
@@ -49,7 +49,7 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_phone"
                         style="@style/FormRow.EditText"
-                        android:hint="Mobile Number" />
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/register_phone_status"
@@ -62,8 +62,7 @@
 
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_email"
-                        style="@style/FormRow.EditText"
-                        android:hint="Email" />
+                        style="@style/FormRow.EditText" />
 
                     <ImageView
                         android:id="@+id/register_email_status"
@@ -77,8 +76,8 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_password"
                         style="@style/FormRow.EditText"
-                        android:hint="Password"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/register_password_status"
@@ -92,8 +91,8 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_confirm_password"
                         style="@style/FormRow.EditText"
-                        android:hint="Confirm Password"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:singleLine="true" />
 
                     <ImageView
                         android:id="@+id/register_cfrm_password_status"

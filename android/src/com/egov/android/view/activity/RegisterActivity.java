@@ -17,6 +17,7 @@ import com.egov.android.library.listener.Event;
 public class RegisterActivity extends BaseActivity {
 
     private boolean toastShown = false;
+    EditText name, phone, email, password, confirm_password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +44,11 @@ public class RegisterActivity extends BaseActivity {
                 R.id.register_email_status, R.id.register_password_status,
                 R.id.register_cfrm_password_status });
 
-        EditText name = (EditText) findViewById(R.id.register_name);
-        EditText phone = (EditText) findViewById(R.id.register_phone);
-        EditText email = (EditText) findViewById(R.id.register_email);
-        EditText password = (EditText) findViewById(R.id.register_password);
-        EditText confirm_password = (EditText) findViewById(R.id.register_confirm_password);
+        name = (EditText) findViewById(R.id.register_name);
+        phone = (EditText) findViewById(R.id.register_phone);
+        email = (EditText) findViewById(R.id.register_email);
+        password = (EditText) findViewById(R.id.register_password);
+        confirm_password = (EditText) findViewById(R.id.register_confirm_password);
 
         if (isEmpty(name.getText().toString())) {
             _changeStatus("error", R.id.register_name_status, "Please enter name");
