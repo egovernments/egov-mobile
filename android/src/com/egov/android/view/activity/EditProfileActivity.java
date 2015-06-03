@@ -13,9 +13,9 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.egov.android.R;
@@ -67,8 +67,8 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         dialog.setContentView(R.layout.custom_dialog);
         dialog.show();
 
-        ((TextView) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
-        ((TextView) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
+        ((LinearLayout) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
+        ((LinearLayout) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
     }
 
     private void uploadImageFromSDCard() {

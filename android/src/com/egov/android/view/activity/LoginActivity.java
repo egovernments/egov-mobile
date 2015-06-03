@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.egov.android.R;
-import com.egov.android.controller.ApiController;
 import com.egov.android.library.api.ApiResponse;
 import com.egov.android.library.listener.Event;
 
@@ -62,7 +61,8 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (!isEmpty(email.getText().toString()) && !isEmpty(password.getText().toString())) {
-            ApiController.getInstance().login(this);
+            // ApiController.getInstance().login(this);
+            startActivity(new Intent(this, ComplaintTypeListActivity.class));
         }
     }
 

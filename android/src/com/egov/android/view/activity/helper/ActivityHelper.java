@@ -1,6 +1,8 @@
 package com.egov.android.view.activity.helper;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -71,7 +73,7 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
                 this.activity.startActivity(new Intent(this.activity, ProfileActivity.class));
                 break;
             case R.id.setting_logout:
-                this.activity.startActivity(new Intent(this.activity, LoginActivity.class));
+                _logoutPopup();
                 break;
         }
     }
@@ -118,6 +120,26 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
         } else {
             return false;
         }
+    }
+
+    private void _logoutPopup() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this.activity);
+        dialog.setMessage("Are you sure want to logout.");
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                activity.startActivity(new Intent(activity, LoginActivity.class));
+                dialog.cancel();
+            }
+        });
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert = dialog.create();
+        alert.show();
     }
 
 }

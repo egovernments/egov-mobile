@@ -17,7 +17,7 @@ public class SplashActivity extends BaseActivity implements Runnable {
 
     @Override
     public void run() {
-        startActivity(new Intent(this, RegionActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 }

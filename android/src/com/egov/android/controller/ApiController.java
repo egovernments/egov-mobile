@@ -2,9 +2,9 @@ package com.egov.android.controller;
 
 import android.content.Context;
 
-import com.egov.android.api.ApiClient;
 import com.egov.android.api.ApiUrl;
 import com.egov.android.library.AndroidLibrary;
+import com.egov.android.library.api.ApiClient;
 import com.egov.android.library.api.ApiMethod;
 import com.egov.android.library.api.ApiMockup;
 import com.egov.android.library.api.IApiClient;

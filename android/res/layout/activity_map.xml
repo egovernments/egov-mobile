@@ -1,12 +1,41 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<com.egov.android.view.activity.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    style="@style/SlidingDrawerLayout"
+    tools:context="${packageName}.${activityClass}" >
 
-    <fragment
-        android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        class="com.google.android.gms.maps.SupportMapFragment" />
+    <LinearLayout style="@style/MainContainer" >
 
-</RelativeLayout>
+        <com.egov.android.view.component.Header
+            style="@style/Header"
+            android:layout_width="match_parent"
+            app:actionButton="nav_back"
+            app:title="Map" />
+
+        <com.egov.android.view.component.Body style="@style/Body" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <fragment
+                    android:id="@+id/map"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginBottom="40dp"
+                    class="com.google.android.gms.maps.SupportMapFragment" />
+
+                <com.egov.android.view.component.EGovButton
+                    android:id="@+id/get_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/orange"
+                    android:text="Get Location"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+        </com.egov.android.view.component.Body>
+    </LinearLayout>
+
+</com.egov.android.view.activity.slider.SlidingDrawerLayout>

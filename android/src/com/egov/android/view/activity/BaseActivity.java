@@ -11,6 +11,7 @@ import com.egov.android.library.view.activity.AndroidActivity;
 public class BaseActivity extends AndroidActivity implements OnClickListener {
 
     private ActivityHelper helper = null;
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

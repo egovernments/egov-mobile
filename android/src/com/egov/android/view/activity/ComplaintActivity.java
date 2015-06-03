@@ -1,7 +1,10 @@
 package com.egov.android.view.activity;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +28,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.egov.android.R;
@@ -37,7 +39,7 @@ import com.egov.android.library.http.IHttpClientListener;
 import com.egov.android.library.http.Uploader;
 import com.egov.android.library.listener.Event;
 
-public class ComplaintActivity extends BaseActivity implements IHttpClientListener{
+public class ComplaintActivity extends BaseActivity implements IHttpClientListener {
 
     List<String> list = null;
     private Dialog dialog = null;
@@ -88,8 +90,8 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
         dialog.setContentView(R.layout.custom_dialog);
         dialog.show();
 
-        ((TextView) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
-        ((TextView) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
+        ((LinearLayout) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
+        ((LinearLayout) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
     }
 
     private void uploadImageFromSDCard() {
@@ -105,8 +107,9 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        toastShown = false;
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -117,8 +120,32 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String imagePath = cursor.getString(columnIndex);
             cursor.close();
-            _setImageResource(imagePath);
+
+            if (!checkFileExtension(imagePath)) {
+                showMsg("File type must be jpg or png or bmp");
+                return;
+            }
+
+            File file = new File(imagePath);
+            long bytes = file.length();
+            long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
+
+            if (bytes > Long.valueOf(fileSize)) {
+                showMsg("File size must be less than 1MB");
+            } else {
+                _setImageResource(imagePath);
+            }
         }
+    }
+
+    private boolean checkFileExtension(String filePath) {
+        String fileType = (String) getConfig().get("upload.file.type", "");
+        Pattern fileExtnPtrn = Pattern.compile("([^\\s]+(\\.(?i)(" + fileType + "))$)");
+        Matcher mtch = fileExtnPtrn.matcher(filePath);
+        if (mtch.matches()) {
+            return true;
+        }
+        return false;
     }
 
     private void _setImageResource(String imagePath) {
@@ -141,7 +168,7 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
         upload.setInputFile(imagePath);
         upload.setListener(this);
         upload.upload();
-        
+
         image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
         innerLayout.addView(image);
         linear.addView(innerLayout);
@@ -202,7 +229,7 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
 
         if (isEmpty(location.getText().toString())) {
             _changeStatus("error", R.id.complaint_location_status,
-                    "Please select a location from the map");
+                    "Please select location");
         }
         if (isEmpty(phone.getText().toString())) {
             _changeStatus("error", R.id.complaint_phone_status, "Please enter phone number");
@@ -261,23 +288,23 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
 
     @Override
     public void onProgress(int percent) {
-       Log.d(TAG, "---------------------------> " + String.valueOf(percent));
-        
+        Log.d(TAG, "---------------------------> " + String.valueOf(percent));
+
     }
 
     @Override
     public void onComplete(byte[] data) {
         // enable / disable
-        
+
         String res = new String(data);
         Log.d(TAG, "result " + res);
-        
+
     }
 
     @Override
     public void onError(byte[] data) {
         // enable / disable
-        
+
     }
 
 }
