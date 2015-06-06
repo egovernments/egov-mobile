@@ -1,72 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.egov.android.view.activity.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
     <LinearLayout style="@style/MainContainer" >
 
-        <com.egov.android.view.component.Header
+        <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back|setting"
             app:title="Edit Profile" />
 
-        <com.egov.android.view.component.Body
+        <org.egov.android.view.component.Body
             style="@style/Body"
-            android:padding="@dimen/viewMargin" >
+            android:layout_margin="@dimen/viewMargin" >
 
             <ScrollView
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent" >
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/viewMargin"
                     android:background="#ffffff"
                     android:orientation="vertical"
-                    android:padding="15dp" >
-
-                    <ImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/profile" />
-
-                    <com.egov.android.view.component.EGovButton
-                        android:id="@+id/changepicture"
-                        style="@style/ButtonStyle"
-                        android:layout_width="150dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="15dp"
-                        android:text="Change Picture" />
-
-                    <com.egov.android.view.component.EGovTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Name"
-                        android:textColor="@color/text" />
+                    android:padding="@dimen/viewMargin" >
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp" >
+                        android:orientation="vertical" >
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/edittext_border" >
+                        <org.egov.android.view.component.EGovRoundedImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/profile"
+                            app:border_color="#FFFFFF"
+                            app:border_width="5dp"
+                            app:shadow="true" />
 
-                            <com.egov.android.view.component.EGovEditText
-                                android:id="@+id/edit_profile_name"
-                                style="@style/FormRow.EditText"
-                                android:text="john" />
-                        </LinearLayout>
+                        <org.egov.android.view.component.EGovButton
+                            android:id="@+id/changepicture"
+                            style="@style/ButtonStyle"
+                            android:layout_width="150dp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="15dp"
+                            android:text="Change Picture" />
+                    </LinearLayout>
+
+                    <org.egov.android.view.component.EGovTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textColor="@color/dark_gray" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border" >
+
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/edit_profile_name"
+                            style="@style/FormRow.EditText"
+                            android:singleLine="true"
+                            android:text="john" />
 
                         <ImageView
                             android:id="@+id/edit_profile_name_status"
@@ -76,17 +79,17 @@
                             android:visibility="invisible" />
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Gender"
-                        android:textColor="@color/text" />
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border"
                         android:orientation="horizontal" >
 
                         <RadioGroup
@@ -99,40 +102,39 @@
                                 android:id="@+id/male"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:button="@drawable/radiobutton_selector"
                                 android:checked="true"
-                                android:text="Male" />
+                                android:text="Male"
+                                android:textColor="@color/dark_gray" />
 
                             <RadioButton
                                 android:id="@+id/female"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Female" />
+                                android:layout_marginLeft="5dp"
+                                android:button="@drawable/radiobutton_selector"
+                                android:text="Female"
+                                android:textColor="@color/text" />
                         </RadioGroup>
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Mobile"
-                        android:textColor="@color/text" />
+                        android:text="Phone"
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp" >
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border" >
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/edittext_border" >
-
-                            <com.egov.android.view.component.EGovEditText
-                                android:id="@+id/edit_profile_mobile"
-                                style="@style/FormRow.EditText"
-                                android:text="96522568952" />
-                        </LinearLayout>
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/edit_profile_mobile"
+                            style="@style/FormRow.EditText"
+                            android:singleLine="true"
+                            android:text="96522568952" />
 
                         <ImageView
                             android:id="@+id/edit_profile_mobile_status"
@@ -142,29 +144,23 @@
                             android:visibility="invisible" />
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Email"
-                        android:textColor="@color/text" />
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp" >
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border" >
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/edittext_border" >
-
-                            <com.egov.android.view.component.EGovEditText
-                                android:id="@+id/edit_profile_email"
-                                style="@style/FormRow.EditText"
-                                android:text="john@gmail.com" />
-                        </LinearLayout>
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/edit_profile_email"
+                            style="@style/FormRow.EditText"
+                            android:singleLine="true"
+                            android:text="john@gmail.com" />
 
                         <ImageView
                             android:id="@+id/edit_profile_email_status"
@@ -174,29 +170,23 @@
                             android:visibility="invisible" />
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Alternate Contact Number"
-                        android:textColor="@color/text" />
+                        android:text="Alternate Phone"
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp" >
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border" >
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/edittext_border" >
-
-                            <com.egov.android.view.component.EGovEditText
-                                android:id="@+id/edit_profile_alt_contact"
-                                style="@style/FormRow.EditText"
-                                android:text="952356841" />
-                        </LinearLayout>
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/edit_profile_alt_contact"
+                            style="@style/FormRow.EditText"
+                            android:singleLine="true"
+                            android:text="952356841" />
 
                         <ImageView
                             android:id="@+id/edit_profile_alt_contact_status"
@@ -206,29 +196,23 @@
                             android:visibility="invisible" />
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Date of Birth"
-                        android:textColor="@color/text" />
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp" >
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border" >
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/edittext_border" >
-
-                            <com.egov.android.view.component.EGovEditText
-                                android:id="@+id/edit_profile_dob"
-                                style="@style/FormRow.EditText"
-                                android:text="12-05-1985" />
-                        </LinearLayout>
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/edit_profile_dob"
+                            style="@style/FormRow.EditText"
+                            android:singleLine="true"
+                            android:text="1985-05-12" />
 
                         <ImageView
                             android:id="@+id/edit_profile_dob_status"
@@ -236,44 +220,63 @@
                             android:layout_height="22dp"
                             android:layout_gravity="center_vertical"
                             android:visibility="invisible" />
+
+                        <ImageView
+                            android:id="@+id/edit_profile_calendar"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="8dp"
+                            android:background="@drawable/calendar" />
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovTextView
+                    <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Preferred Language"
-                        android:textColor="@color/text" />
+                        android:textColor="@color/dark_gray" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="@dimen/viewMargin"
+                        android:background="@drawable/edittext_border"
                         android:orientation="horizontal" >
 
-                        <CheckBox
-                            android:id="@+id/english"
-                            android:layout_width="wrap_content"
+                        <RadioGroup
+                            android:id="@+id/language"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="English" />
+                            android:orientation="horizontal" >
 
-                        <CheckBox
-                            android:id="@+id/hindi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="14dp"
-                            android:text="Hindi" />
+                            <RadioButton
+                                android:id="@+id/english"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:button="@drawable/radiobutton_selector"
+                                android:checked="true"
+                                android:text="English"
+                                android:textColor="@color/text" />
+
+                            <RadioButton
+                                android:id="@+id/hindi"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:button="@drawable/radiobutton_selector"
+                                android:text="Hindi"
+                                android:textColor="@color/text" />
+                        </RadioGroup>
                     </LinearLayout>
 
-                    <com.egov.android.view.component.EGovButton
+                    <org.egov.android.view.component.EGovButton
                         android:id="@+id/editprofile_doEditprofile"
                         style="@style/ButtonStyle"
                         android:layout_marginTop="20dp"
                         android:text="Save Changes" />
                 </LinearLayout>
             </ScrollView>
-        </com.egov.android.view.component.Body>
+        </org.egov.android.view.component.Body>
     </LinearLayout>
 
-</com.egov.android.view.activity.slider.SlidingDrawerLayout>
+</org.egov.android.library.view.component.slider.SlidingDrawerLayout>

@@ -2,23 +2,30 @@
 <resources>
 
     <string name="app_name">eGovernments</string>
-
-    <string-array name="daytypearray">
-        <item>day</item>
-        <item>week</item>
-        <item>month</item>
-        <item>select date</item>
-    </string-array>
-
+    <string name="appFont">HelveticaNeue-Roman.otf</string>
     <string name="forgotPassword">Forgot Password?</string>
     <string name="accountDeleteInfo">Registration will get automatically deleted if you do not activate account within next 48 hours.
 Powered by eGovernments Foundation </string>
     <string name="otpMessage">Registration Successful. Enter your 5 digit activation code sent to your registered email or mobile to activate your account here. </string>
-    <string name="login">Login</string>
-    <string name="signup">Signup</string>
-
-    <string name="appFont">HelveticaNeue-Roman.otf</string>
-
-
+    <string name="email_phone_empty">Please enter email or phone number</string>
+    <string name="email_empty">Please enter email</string>
+    <string name="invalid_email">Please enter a valid email</string>
+    <string name="password_empty">Please enter password</string>
+    <string name="name_empty">Please enter name</string>
+    <string name="phone_empty">Please enter phone number</string>
+    <string name="confirm_password_empty">Please enter confirm password</string>
+    <string name="code_empty">Please enter verification code</string>
+    <string name="location_empty">Please select a location</string>
+    <string name="complaint_type_empty">Please select complaint type</string>
+    <string name="detail_empty">Please enter detail</string>
+    <string name="landmark_empty">Please enter landmark</string>
+    <string name="alt_phone_empty">Please enter alternative contact number</string>
+    <string name="birth_empty">Please select date of birth</string>
+    <string name="map_load_failure">Sorry! unable to create maps</string>
+    <string name="unknown_location">Please select a valid location</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="file_type">File type must be jpg or png or bmp</string>
+    <string name="file_size">File size must be less than 1MB</string>
+    <string name="file_upload_count">Maximum number of file upload is five</string>
 
 </resources>

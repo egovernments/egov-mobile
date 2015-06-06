@@ -14,6 +14,6 @@
 
     <!-- Spacing -->
     
-    <dimen name="viewMargin">8dp</dimen>
+    <dimen name="viewMargin">10dp</dimen>
 
 </resources>

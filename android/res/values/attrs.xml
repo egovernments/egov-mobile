@@ -27,17 +27,12 @@
             <flag name="add_complaint" value="8" />
         </attr>
     </declare-styleable>
-    
-    <declare-styleable name="SlidingDrawerLayout">
-        <attr name="contentLayoutId" format="reference" />
-        <attr name="slideDirection">
-            <enum name="left" value="0" />
-            <enum name="top" value="1" />
-            <enum name="right" value="2" />
-            <enum name="bottom" value="3" />
-        </attr>
-        <attr name="duration" format="integer" />
-        <attr name="drawerSize" format="dimension" />
+    <declare-styleable name="EGovRoundedImageView">
+        <attr name="border" format="boolean"></attr>
+        <attr name="border_width" format="dimension"></attr>
+        <attr name="border_color" format="color"></attr>
+        <attr name="shadow" format="boolean"></attr>
+        <attr name="circularImageViewStyle" format="reference"></attr>
     </declare-styleable>
 
 </resources>

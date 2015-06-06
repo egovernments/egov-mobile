@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/com.egov.android">
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/org.egov.android">
 
     <style name="AppBaseTheme" parent="android:Theme.Light"></style>
 
@@ -94,33 +94,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="TwitterButtonStyle" parent="TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:capitalize">characters</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:background">@drawable/twitter_button_bg</item>
-    </style>
-
-    <style name="FacebookButtonStyle" parent="TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:capitalize">characters</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:background">@drawable/facebook_button_bg</item>
-    </style>
-
-    <style name="GoogleButtonStyle" parent="TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:capitalize">characters</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:background">@drawable/google_button_bg</item>
     </style>
 
 </resources>

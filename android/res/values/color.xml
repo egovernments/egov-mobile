@@ -6,5 +6,10 @@
     <color name="background">#F0E9E3</color>
     <color name="typehint">#CCCCCC</color>
     <color name="orange">#F67B00</color>
+    <color name="dark_gray">#7F7E7E</color>
+    <color name="gray">#CCCCCC</color>
+    <color name="red">#FF0000</color>
+    <color name="black">#000000</color>
+    <color name="list_item_selected">#FCB853</color>
 
 </resources>
