@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
     <LinearLayout style="@style/MainContainer" >
 
-        <org.egov.android.view.component.Header
+        <com.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back|setting"
             app:title="Create Complaint" />
 
-        <org.egov.android.view.component.Body
+        <com.egov.android.view.component.Body
             style="@style/Body"
             android:layout_margin="@dimen/viewMargin" >
 
@@ -36,7 +36,7 @@
 
                         <LinearLayout style="@style/FormRow" >
 
-                            <org.egov.android.view.component.EGovEditText
+                            <com.egov.android.view.component.EGovEditText
                                 android:id="@+id/complaint_location"
                                 style="@style/FormRow.EditText"
                                 android:hint="Location" />
@@ -58,7 +58,7 @@
 
                     <LinearLayout style="@style/FormRow" >
 
-                        <org.egov.android.view.component.EGovEditText
+                        <com.egov.android.view.component.EGovEditText
                             android:id="@+id/complaint_phone"
                             style="@style/FormRow.EditText"
                             android:hint="Phone Number" />
@@ -72,7 +72,7 @@
 
                     <LinearLayout style="@style/FormRow" >
 
-                        <org.egov.android.view.component.EGovEditText
+                        <com.egov.android.view.component.EGovEditText
                             android:id="@+id/complaint_email"
                             style="@style/FormRow.EditText"
                             android:hint="Email" />
@@ -103,7 +103,7 @@
 
                     <LinearLayout style="@style/FormRow" >
 
-                        <org.egov.android.view.component.EGovEditText
+                        <com.egov.android.view.component.EGovEditText
                             android:id="@+id/complaint_details"
                             style="@style/FormRow.EditText"
                             android:hint="Details" />
@@ -117,7 +117,7 @@
 
                     <LinearLayout style="@style/FormRow" >
 
-                        <org.egov.android.view.component.EGovEditText
+                        <com.egov.android.view.component.EGovEditText
                             android:id="@+id/complaint_landmark"
                             style="@style/FormRow.EditText"
                             android:hint="Landmark" />
@@ -148,7 +148,7 @@
                                 android:layout_height="120dp"
                                 android:background="@drawable/edittext_border" >
 
-                                <org.egov.android.view.component.EGovTextView
+                                <com.egov.android.view.component.EGovTextView
                                     android:id="@+id/percentage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -165,14 +165,14 @@
                         </LinearLayout>
                     </HorizontalScrollView>
 
-                    <org.egov.android.view.component.EGovButton
+                    <com.egov.android.view.component.EGovButton
                         android:id="@+id/complaint_doComplaint"
                         style="@style/ButtonStyle"
                         android:layout_marginTop="20dp"
                         android:text="Submit" />
                 </LinearLayout>
             </ScrollView>
-        </org.egov.android.view.component.Body>
+        </com.egov.android.view.component.Body>
     </LinearLayout>
 
-</org.egov.android.library.view.component.slider.SlidingDrawerLayout>
+</com.egov.android.library.view.component.slider.SlidingDrawerLayout>

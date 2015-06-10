@@ -1,5 +1,6 @@
 package com.egov.android.view.component;
 
+import com.egov.android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -14,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.egov.android.R;
 
 public class Header extends RelativeLayout implements OnClickListener {
 

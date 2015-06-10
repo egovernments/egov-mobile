@@ -1,5 +1,6 @@
 package com.egov.android.view.component;
 
+import com.egov.android.R;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -14,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.egov.android.R;
 import com.egov.android.library.listener.Event;
 import com.egov.android.library.listener.IEventDispatcher;
 

@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import com.egov.android.R;
 import com.egov.android.controller.ApiController;
+import com.egov.android.library.view.component.slider.ISlidingDrawerListener;
+import com.egov.android.library.view.component.slider.SlidingDrawerLayout;
 import com.egov.android.view.activity.ComplaintActivity;
 import com.egov.android.view.activity.LoginActivity;
 import com.egov.android.view.activity.ProfileActivity;
-import com.egov.android.view.activity.slider.ISlidingDrawerListener;
-import com.egov.android.view.activity.slider.SlidingDrawerLayout;
 import com.egov.android.view.component.Header;
 
 public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
@@ -124,7 +124,7 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
 
     private void _logoutPopup() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this.activity);
-        dialog.setMessage("Are you sure want to logout.");
+        dialog.setMessage(R.string.logout_message);
         dialog.setCancelable(true);
         dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {

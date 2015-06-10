@@ -1,5 +1,6 @@
 package com.egov.android.view.component;
 
+import com.egov.android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
@@ -9,8 +10,6 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
-
-import com.egov.android.R;
 
 public class EGovButton extends Button implements OnTouchListener {
 

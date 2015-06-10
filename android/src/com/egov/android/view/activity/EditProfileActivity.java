@@ -1,5 +1,15 @@
 package com.egov.android.view.activity;
 
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +21,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +35,7 @@ import com.egov.android.library.api.ApiResponse;
 import com.egov.android.library.http.IHttpClientListener;
 import com.egov.android.library.http.Uploader;
 import com.egov.android.library.listener.Event;
+import com.egov.android.view.component.EGovRoundedImageView;
 
 public class EditProfileActivity extends BaseActivity implements IHttpClientListener {
 
@@ -38,6 +50,7 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
 
         ((Button) findViewById(R.id.editprofile_doEditprofile)).setOnClickListener(this);
         ((Button) findViewById(R.id.changepicture)).setOnClickListener(this);
+        ((ImageView) findViewById(R.id.edit_profile_calendar)).setOnClickListener(this);
     }
 
     @Override
@@ -45,7 +58,7 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         super.onClick(v);
         switch (v.getId()) {
             case R.id.editprofile_doEditprofile:
-                editProfile();
+                // editProfile();
                 break;
             case R.id.changepicture:
                 openDialog();
@@ -58,13 +71,16 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
                 captureImage();
                 dialog.cancel();
                 break;
+            case R.id.edit_profile_calendar:
+                showDatePicker();
+                break;
         }
     }
 
     private void openDialog() {
         dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.custom_dialog);
+        dialog.setContentView(R.layout.custom_upload_dialog);
         dialog.show();
 
         ((LinearLayout) dialog.findViewById(R.id.from_gallery)).setOnClickListener(this);
@@ -77,6 +93,14 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         startActivityForResult(photo_picker, RESULT_LOAD_IMAGE);
     }
 
+    private void showDatePicker() {
+        Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int date = c.get(Calendar.DAY_OF_MONTH);
+        new DatePickerDialog(this, datepicker, year, month, date).show();
+    }
+
     private void captureImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, RESULT_LOAD_IMAGE);
@@ -85,7 +109,7 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == RESULT_LOAD_IMAGE && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -96,13 +120,37 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String imagePath = cursor.getString(columnIndex);
             cursor.close();
-            _setImageResource(imagePath);
+
+            if (!checkFileExtension(imagePath)) {
+                showMsg(_setMessage(R.string.file_type));
+                return;
+            }
+            File file = new File(imagePath);
+            long bytes = file.length();
+            long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
+
+            if (bytes > Long.valueOf(fileSize)) {
+                showMsg(_setMessage(R.string.file_size));
+            } else {
+                _setImageResource(imagePath);
+            }
         }
+    }
+
+    private boolean checkFileExtension(String filePath) {
+        String fileType = (String) getConfig().get("upload.file.type", "");
+        Pattern fileExtnPtrn = Pattern.compile("([^\\s]+(\\.(?i)(" + fileType + "))$)");
+        Matcher mtch = fileExtnPtrn.matcher(filePath);
+        if (mtch.matches()) {
+            return true;
+        }
+        return false;
     }
 
     private void _setImageResource(String imagePath) {
 
-        ImageView image = (ImageView) findViewById(R.id.profile_image);
+        EGovRoundedImageView image = (EGovRoundedImageView) findViewById(R.id.profile_image);
+
         image.setImageBitmap(BitmapFactory.decodeFile(imagePath));
 
         Uploader upload = new Uploader();
@@ -130,21 +178,22 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         b.getText();
 
         if (isEmpty(name.getText().toString())) {
-            _changeStatus("error", R.id.edit_profile_name_status, "Please enter name");
+            _changeStatus("error", R.id.edit_profile_name_status, _setMessage(R.string.name_empty));
         }
         if (isEmpty(phone.getText().toString())) {
-            _changeStatus("error", R.id.edit_profile_mobile_status, "Please enter mobile number");
+            _changeStatus("error", R.id.edit_profile_mobile_status,
+                    _setMessage(R.string.phone_empty));
         }
         if (isEmpty(email.getText().toString())) {
-            _changeStatus("error", R.id.edit_profile_email_status, "Please enter email");
+            _changeStatus("error", R.id.edit_profile_email_status,
+                    _setMessage(R.string.email_empty));
         }
         if (isEmpty(alt_conatct_no.getText().toString())) {
             _changeStatus("error", R.id.edit_profile_alt_contact_status,
-                    "Please enter alternative contact number");
+                    _setMessage(R.string.alt_phone_empty));
         }
         if (isEmpty(date_of_birth.getText().toString())) {
-            _changeStatus("error", R.id.edit_profile_dob_status,
-                    "Please enter alternative contact number");
+            _changeStatus("error", R.id.edit_profile_dob_status, _setMessage(R.string.birth_empty));
         }
         if (!isEmpty(name.getText().toString()) && !isEmpty(phone.getText().toString())
                 && !isEmpty(email.getText().toString())
@@ -166,6 +215,10 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         showMsg(message);
     }
 
+    private String _setMessage(int id) {
+        return getResources().getString(id);
+    }
+
     private void showMsg(String message) {
         if (toastShown == false && message != null && !message.equals("")) {
             Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
@@ -184,6 +237,21 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         ((ImageView) findViewById(id)).setVisibility(View.VISIBLE);
         ((ImageView) findViewById(id)).setBackgroundResource(image);
     }
+
+    private DatePickerDialog.OnDateSetListener datepicker = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int date) {
+
+            try {
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                Date d = dateFormatter.parse(String.valueOf(year + "-" + (month + 1) + "-" + date));
+                String formatedDate = dateFormatter.format(d);
+                ((EditText) findViewById(R.id.edit_profile_dob)).setText(formatedDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     public void onResponse(Event<ApiResponse> event) {

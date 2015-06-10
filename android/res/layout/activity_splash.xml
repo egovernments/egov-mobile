@@ -23,7 +23,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
-    <org.egov.android.view.component.EGovImageView
+    <com.egov.android.view.component.EGovImageView
         android:id="@+id/img"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

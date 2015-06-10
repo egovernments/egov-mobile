@@ -1,12 +1,11 @@
 package com.egov.android.view.component;
 
+import com.egov.android.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
-
-import com.egov.android.R;
 
 public class EGovTextView extends TextView {
 

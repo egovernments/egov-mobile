@@ -1,5 +1,8 @@
 package com.egov.android.view.activity;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -33,7 +36,8 @@ public class RegisterActivity extends BaseActivity {
         switch (v.getId()) {
 
             case R.id.register_doRegister:
-                register();
+                //register();
+                startActivity(new Intent(this, OTPActivity.class));
                 break;
         }
     }
@@ -51,28 +55,41 @@ public class RegisterActivity extends BaseActivity {
         confirm_password = (EditText) findViewById(R.id.register_confirm_password);
 
         if (isEmpty(name.getText().toString())) {
-            _changeStatus("error", R.id.register_name_status, "Please enter name");
+            _changeStatus("error", R.id.register_name_status, _setMessage(R.string.name_empty));
         }
         if (isEmpty(phone.getText().toString())) {
-            _changeStatus("error", R.id.register_phone_status, "Please enter phone number");
+            _changeStatus("error", R.id.register_phone_status, _setMessage(R.string.phone_empty));
         }
         if (isEmpty(email.getText().toString())) {
-            _changeStatus("error", R.id.register_email_status, "Please enter email");
+            _changeStatus("error", R.id.register_email_status, _setMessage(R.string.email_empty));
+        }
+
+        if (!isValidEmail(email.getText().toString())) {
+            _changeStatus("error", R.id.register_email_status, _setMessage(R.string.invalid_email));
         }
         if (isEmpty(password.getText().toString())) {
-            _changeStatus("error", R.id.register_password_status, "Please enter password");
+            _changeStatus("error", R.id.register_password_status,
+                    _setMessage(R.string.password_empty));
         }
         if (isEmpty(confirm_password.getText().toString())) {
             _changeStatus("error", R.id.register_cfrm_password_status,
-                    "Please enter confirm password");
+                    _setMessage(R.string.confirm_password_empty));
         }
 
         if (!isEmpty(name.getText().toString()) && !isEmpty(phone.getText().toString())
-                && !isEmpty(email.getText().toString()) && !isEmpty(password.getText().toString())
+                && !isEmpty(email.getText().toString()) && isValidEmail(email.getText().toString())
+                && !isEmpty(password.getText().toString())
                 && !isEmpty(confirm_password.getText().toString())) {
             ApiController.getInstance().register(this);
         }
 
+    }
+
+    private boolean isValidEmail(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches() ? true : false;
     }
 
     private void _clearStatus(int[] ids) {
@@ -85,6 +102,10 @@ public class RegisterActivity extends BaseActivity {
     private void _changeStatus(String type, int id, String message) {
         setImageBackground(id, type);
         showMsg(message);
+    }
+
+    private String _setMessage(int id) {
+        return getResources().getString(id);
     }
 
     private void showMsg(String message) {

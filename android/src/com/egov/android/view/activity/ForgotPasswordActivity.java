@@ -1,5 +1,6 @@
 package com.egov.android.view.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -28,7 +29,8 @@ public class ForgotPasswordActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.forgot_pwd_send:
-                forrgotPassword();
+                startActivity(new Intent(this, LoginActivity.class));
+                //forrgotPassword();
                 break;
         }
     }
@@ -40,7 +42,8 @@ public class ForgotPasswordActivity extends BaseActivity {
         EditText email = (EditText) findViewById(R.id.forgot_pwd_email);
 
         if (isEmpty(email.getText().toString())) {
-            _changeStatus("error", R.id.forgot_pwd_email_status, "Please enter email");
+            _changeStatus("error", R.id.forgot_pwd_email_status,
+                    _setMessage(R.string.email_phone_empty));
         }
 
         if (!isEmpty(email.getText().toString())) {
@@ -57,6 +60,10 @@ public class ForgotPasswordActivity extends BaseActivity {
     private void _changeStatus(String type, int id, String message) {
         setImageBackground(id, type);
         showMsg(message);
+    }
+
+    private String _setMessage(int id) {
+        return getResources().getString(id);
     }
 
     private void showMsg(String message) {

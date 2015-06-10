@@ -1,11 +1,11 @@
 package com.egov.android.view.activity;
 
+
+import com.egov.android.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-
-import com.egov.android.R;
 
 public class ProfileActivity extends BaseActivity {
 

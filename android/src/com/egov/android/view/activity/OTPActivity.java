@@ -30,7 +30,8 @@ public class OTPActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.verify_otp:
-                verifyOTP();
+                startActivity(new Intent(this, ComplaintTypeListActivity.class));
+                //verifyOTP();
                 break;
         }
     }
@@ -42,7 +43,7 @@ public class OTPActivity extends BaseActivity {
         EditText code = (EditText) findViewById(R.id.otp_code);
 
         if (isEmpty(code.getText().toString())) {
-            _changeStatus("error", R.id.otp_code_status, "Please enter the verification code");
+            _changeStatus("error", R.id.otp_code_status, _setMessage(R.string.code_empty));
         }
 
         if (!isEmpty(code.getText().toString())) {
@@ -60,6 +61,10 @@ public class OTPActivity extends BaseActivity {
     private void _changeStatus(String type, int id, String message) {
         setImageBackground(id, type);
         showMsg(message);
+    }
+
+    private String _setMessage(int id) {
+        return getResources().getString(id);
     }
 
     private void showMsg(String message) {

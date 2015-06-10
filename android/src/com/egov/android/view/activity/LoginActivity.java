@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.egov.android.R;
+import com.egov.android.controller.ApiController;
 import com.egov.android.library.api.ApiResponse;
 import com.egov.android.library.listener.Event;
 
@@ -34,9 +35,9 @@ public class LoginActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.login_doLogin:
-                login();
+                startActivity(new Intent(this, ComplaintTypeListActivity.class));
+                //login();
                 break;
-
             case R.id.login_register:
                 startActivity(new Intent(this, RegisterActivity.class));
                 break;
@@ -54,15 +55,15 @@ public class LoginActivity extends BaseActivity {
         EditText password = (EditText) findViewById(R.id.login_password);
 
         if (isEmpty(email.getText().toString())) {
-            _changeStatus("error", R.id.login_email_status, "Please enter email or phone number");
+            _changeStatus("error", R.id.login_email_status, _setMessage(R.string.email_phone_empty));
         }
         if (isEmpty(password.getText().toString())) {
-            _changeStatus("error", R.id.login_password_status, "Please enter password");
+            _changeStatus("error", R.id.login_password_status, _setMessage(R.string.password_empty));
         }
 
         if (!isEmpty(email.getText().toString()) && !isEmpty(password.getText().toString())) {
-            // ApiController.getInstance().login(this);
-            startActivity(new Intent(this, ComplaintTypeListActivity.class));
+            ApiController.getInstance().login(this);
+
         }
     }
 
@@ -76,6 +77,10 @@ public class LoginActivity extends BaseActivity {
     private void _changeStatus(String type, int id, String message) {
         setImageBackground(id, type);
         showMsg(message);
+    }
+
+    private String _setMessage(int id) {
+        return getResources().getString(id);
     }
 
     private void showMsg(String message) {

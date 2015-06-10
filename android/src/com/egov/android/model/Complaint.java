@@ -10,6 +10,7 @@ import com.egov.android.library.model.IModel;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Complaint extends BaseModel implements IModel {
     private String name = "";
+    private String image = "";
 
     public String getName() {
         return name;
@@ -17,6 +18,18 @@ public class Complaint extends BaseModel implements IModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSearchString() {
+        return this.name;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getImage() {
+        return image;
     }
 
 }

@@ -1,11 +1,11 @@
 package com.egov.android.view.component;
 
+import com.egov.android.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-
-import com.egov.android.R;
 
 public class Body extends LinearLayout {
 

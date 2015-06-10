@@ -1,10 +1,9 @@
 package com.egov.android.view.activity;
 
+import com.egov.android.R;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-
-import com.egov.android.R;
 
 public class SplashActivity extends BaseActivity implements Runnable {
 

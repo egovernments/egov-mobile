@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.egov.android.view.activity.helper.ActivityHelper;
 import com.egov.android.library.view.activity.AndroidActivity;
+import com.egov.android.view.activity.helper.ActivityHelper;
 
 public class BaseActivity extends AndroidActivity implements OnClickListener {
 
     private ActivityHelper helper = null;
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
