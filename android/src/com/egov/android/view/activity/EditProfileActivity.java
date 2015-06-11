@@ -1,6 +1,7 @@
 package com.egov.android.view.activity;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.egov.android.R;
 import com.egov.android.controller.ApiController;
 import com.egov.android.library.api.ApiResponse;
+import com.egov.android.library.common.StorageManager;
 import com.egov.android.library.http.IHttpClientListener;
 import com.egov.android.library.http.Uploader;
 import com.egov.android.library.listener.Event;
@@ -40,8 +42,11 @@ import com.egov.android.view.component.EGovRoundedImageView;
 public class EditProfileActivity extends BaseActivity implements IHttpClientListener {
 
     private Dialog dialog;
+    private String assetPath = "";
     private boolean toastShown = false;
-    private static final int RESULT_LOAD_IMAGE = 1;
+    private String currentPhotoPath = "";
+    private static final int CAPTURE_IMAGE = 1000;
+    private static final int FROM_GALLERY = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,11 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         ((Button) findViewById(R.id.editprofile_doEditprofile)).setOnClickListener(this);
         ((Button) findViewById(R.id.changepicture)).setOnClickListener(this);
         ((ImageView) findViewById(R.id.edit_profile_calendar)).setOnClickListener(this);
+
+        StorageManager sm = new StorageManager();
+        Object[] obj = sm.getStorageInfo();
+        assetPath = obj[0].toString() + "/egovernments";
+        sm.mkdirs(assetPath);
     }
 
     @Override
@@ -64,11 +74,11 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
                 openDialog();
                 break;
             case R.id.from_gallery:
-                uploadImageFromSDCard();
+                _openGalleryImages();
                 dialog.cancel();
                 break;
             case R.id.from_camera:
-                captureImage();
+                _openCamera();
                 dialog.cancel();
                 break;
             case R.id.edit_profile_calendar:
@@ -87,10 +97,18 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         ((LinearLayout) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
     }
 
-    private void uploadImageFromSDCard() {
-        Intent photo_picker = new Intent(Intent.ACTION_PICK);
-        photo_picker.setType("image/*,video/*");
-        startActivityForResult(photo_picker, RESULT_LOAD_IMAGE);
+    private void _openCamera() {
+        Intent mediaCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File imageFile = null;
+        try {
+            imageFile = File.createTempFile("photo_" + Calendar.getInstance().getTimeInMillis(),
+                    ".jpg", new File(assetPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        currentPhotoPath = imageFile.getAbsolutePath();
+        mediaCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(mediaCamera, CAPTURE_IMAGE);
     }
 
     private void showDatePicker() {
@@ -101,15 +119,18 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
         new DatePickerDialog(this, datepicker, year, month, date).show();
     }
 
-    private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, RESULT_LOAD_IMAGE);
+    private void _openGalleryImages() {
+        Intent photo_picker = new Intent(Intent.ACTION_PICK);
+        photo_picker.setType("image/*");
+        startActivityForResult(photo_picker, FROM_GALLERY);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RESULT_LOAD_IMAGE && null != data) {
+        toastShown = false;
+        if (requestCode == CAPTURE_IMAGE && resultCode == RESULT_OK) {
+            _validateImageUrl(currentPhotoPath);
+        } else if (requestCode == FROM_GALLERY && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -120,20 +141,24 @@ public class EditProfileActivity extends BaseActivity implements IHttpClientList
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String imagePath = cursor.getString(columnIndex);
             cursor.close();
+            _validateImageUrl(imagePath);
+        }
 
-            if (!checkFileExtension(imagePath)) {
-                showMsg(_setMessage(R.string.file_type));
-                return;
-            }
-            File file = new File(imagePath);
-            long bytes = file.length();
-            long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
+    }
 
-            if (bytes > Long.valueOf(fileSize)) {
-                showMsg(_setMessage(R.string.file_size));
-            } else {
-                _setImageResource(imagePath);
-            }
+    private void _validateImageUrl(String filePath) {
+        if (!checkFileExtension(filePath)) {
+            showMsg(_setMessage(R.string.file_type));
+            return;
+        }
+        File file = new File(filePath);
+        long bytes = file.length();
+        long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
+
+        if (bytes > Long.valueOf(fileSize)) {
+            showMsg(_setMessage(R.string.file_size));
+        } else {
+            _setImageResource(filePath);
         }
     }
 

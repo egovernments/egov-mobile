@@ -25,9 +25,8 @@ public class ComplaintListActivity extends BaseActivity implements OnItemClickLi
         setContentView(R.layout.activity_complaint_list);
 
         String[] values = new String[] { "Burning Of Solid Wastes", "Cleaners Not Coming",
-        "Clearing off the Dead Animals", "Clearing Off The Dust",
-                "Door-To-Door Solid Waste Management", "Hospitals and Dispensaries",
-                "Clearing Off The Cow Dung" };
+                "Clearing off the Dead Animals", "Clearing Off The Dust",
+                "Hospitals and Dispensaries", "Clearing Off The Cow Dung" };
 
         listItem = new ArrayList<Complaint>();
         Complaint item = null;

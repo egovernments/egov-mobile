@@ -1,7 +1,9 @@
 package com.egov.android.view.activity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +20,7 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.TypedValue;
@@ -42,6 +45,8 @@ import com.egov.android.api.ApiUrl;
 import com.egov.android.controller.ApiController;
 import com.egov.android.library.api.ApiResponse;
 import com.egov.android.library.api.IApiUrl;
+import com.egov.android.library.common.StorageManager;
+import com.egov.android.library.conf.Config;
 import com.egov.android.library.http.IHttpClientListener;
 import com.egov.android.library.http.Uploader;
 import com.egov.android.library.listener.Event;
@@ -51,13 +56,18 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
     List<String> list = null;
     private Dialog dialog = null;
     private String imagePath = "";
+    private String assetPath = "";
     private ImageView addIcon = null;
-    private TextView percentage = null;
     private int file_upload_limit = 0;
+    private TextView percentage = null;
     private boolean toastShown = false;
+    private String currentPhotoPath = "";
     private LinearLayout container = null;
     private RelativeLayout deleteView = null;
     private AutoCompleteTextView autocomplete = null;
+    private static final int CAPTURE_IMAGE = 1000;
+    private static final int FROM_GALLERY = 2000;
+    private static final int GET_LOCATION = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +79,11 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
         ((Button) findViewById(R.id.complaint_doComplaint)).setOnClickListener(this);
         autocomplete = (AutoCompleteTextView) findViewById(R.id.complaint_type);
         ApiController.getInstance().getComplaintType(this);
+
+        StorageManager sm = new StorageManager();
+        Object[] obj = sm.getStorageInfo();
+        assetPath = obj[0].toString() + "/egovernments";
+        sm.mkdirs(assetPath);
     }
 
     @Override
@@ -79,17 +94,17 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
                 //addComplaint();
                 break;
             case R.id.complaint_location_icon:
-                startActivityForResult(new Intent(this, MapActivity.class), 2);
+                startActivityForResult(new Intent(this, MapActivity.class), GET_LOCATION);
                 break;
             case R.id.add_photo:
                 openDialog(true);
                 break;
             case R.id.from_gallery:
-                uploadImageFromSDCard();
+                _openGalleryImages();
                 dialog.cancel();
                 break;
             case R.id.from_camera:
-                captureImage();
+                _openCamera();
                 dialog.cancel();
                 break;
             case R.id.view:
@@ -121,25 +136,35 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
         dialog.show();
     }
 
-    private void uploadImageFromSDCard() {
+    private void _openGalleryImages() {
         Intent photo_picker = new Intent(Intent.ACTION_PICK);
-        photo_picker.setType("image/*,video/*");
-        startActivityForResult(photo_picker, 1);
+        photo_picker.setType("image/*");
+        startActivityForResult(photo_picker, FROM_GALLERY);
     }
 
-    private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, 1);
+    private void _openCamera() {
+        Intent mediaCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File imageFile = null;
+        try {
+            imageFile = File.createTempFile("photo_" + Calendar.getInstance().getTimeInMillis(),
+                    ".jpg", new File(assetPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        currentPhotoPath = imageFile.getAbsolutePath();
+        mediaCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        startActivityForResult(mediaCamera, CAPTURE_IMAGE);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         toastShown = false;
-        if (requestCode == 1 && null != data) {
 
+        if (requestCode == CAPTURE_IMAGE && resultCode == RESULT_OK) {
+            _validateImageUrl(currentPhotoPath);
+        } else if (requestCode == FROM_GALLERY && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null,
                     null);
             cursor.moveToFirst();
@@ -147,26 +172,31 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String imagePath = cursor.getString(columnIndex);
             cursor.close();
+            _validateImageUrl(imagePath);
 
-            if (!checkFileExtension(imagePath)) {
-                showMsg(_setMessage(R.string.file_type));
-                return;
-            }
-            File file = new File(imagePath);
-            long bytes = file.length();
-            long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
-
-            if (bytes > Long.valueOf(fileSize)) {
-                showMsg(_setMessage(R.string.file_size));
-            } else if (getConfig().getInt("upload.file.limit") <= file_upload_limit) {
-                showMsg(_setMessage(R.string.file_upload_count));
-            } else {
-                file_upload_limit++;
-                _uploadImage(imagePath);
-            }
-        } else if (requestCode == 2 && null != data) {
+        } else if (requestCode == GET_LOCATION && null != data) {
             String city_name = data.getStringExtra("city_name");
             ((EditText) findViewById(R.id.complaint_location)).setText(city_name);
+        }
+
+    }
+
+    private void _validateImageUrl(String filePath) {
+        if (!checkFileExtension(filePath)) {
+            showMsg(_setMessage(R.string.file_type));
+            return;
+        }
+        File file = new File(filePath);
+        long bytes = file.length();
+        long fileSize = getConfig().getInt("upload.file.size") * 1024 * 1024;
+
+        if (bytes > Long.valueOf(fileSize)) {
+            showMsg(_setMessage(R.string.file_size));
+        } else if (getConfig().getInt("upload.file.limit") <= file_upload_limit) {
+            showMsg(_setMessage(R.string.file_upload_count));
+        } else {
+            file_upload_limit++;
+            _uploadTestImage(filePath);
         }
     }
 
@@ -178,6 +208,16 @@ public class ComplaintActivity extends BaseActivity implements IHttpClientListen
             return true;
         }
         return false;
+    }
+
+    private void _uploadTestImage(String image_path) {
+        imagePath = image_path;
+        _addImageView();
+        //percentage = (TextView) findViewById(R.id.percentage);
+        // addIcon = (ImageView) findViewById(R.id.add_photo);
+
+        // addIcon.setVisibility(View.GONE);
+        // percentage.setVisibility(View.VISIBLE);
     }
 
     private void _uploadImage(String image_path) {
