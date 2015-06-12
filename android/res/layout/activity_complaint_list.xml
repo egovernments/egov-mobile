@@ -18,23 +18,36 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ffffff" >
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:padding="8dp" >
 
-            <com.egov.android.view.component.EGovTextView
-                android:id="@+id/errorMsg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/text"
-                android:visibility="gone" />
-
-            <com.egov.android.view.component.SearchListView
-                android:id="@+id/list_complaint"
+            <com.egov.android.view.component.EGovEditText
+                android:id="@+id/search_keyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:typeHint="Search Text" >
-            </com.egov.android.view.component.SearchListView>
+                android:background="@drawable/edittext_border"
+                android:paddingLeft="5dp"
+                android:singleLine="true"
+                android:textColorHint="#CCCCCC" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/search_icon" />
         </RelativeLayout>
+
+        <ExpandableListView
+            android:id="@+id/expandable_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#F0D7C9"
+            android:dividerHeight="1px"
+            android:groupIndicator="@null" />
     </LinearLayout>
 
 </com.egov.android.library.view.component.slider.SlidingDrawerLayout>

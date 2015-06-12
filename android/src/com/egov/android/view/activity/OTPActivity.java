@@ -30,7 +30,7 @@ public class OTPActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.verify_otp:
-                startActivity(new Intent(this, ComplaintTypeListActivity.class));
+                startActivity(new Intent(this, ComplaintListActivity.class));
                 //verifyOTP();
                 break;
         }

@@ -51,8 +51,8 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
-    public void getComplaintByType(IApiListener listener) {
-        ApiMethod apiMethod = new ApiMethod(ApiUrl.COMPLAINT_BY_TYPE);
+    public void getComplaint(IApiListener listener) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT);
         _createApiClient(apiMethod, listener, false).call();
     }
 

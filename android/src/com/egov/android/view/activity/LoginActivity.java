@@ -35,7 +35,7 @@ public class LoginActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.login_doLogin:
-                startActivity(new Intent(this, ComplaintTypeListActivity.class));
+                startActivity(new Intent(this, ComplaintListActivity.class));
                 //login();
                 break;
             case R.id.login_register:

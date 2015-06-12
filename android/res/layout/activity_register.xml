@@ -48,7 +48,7 @@
                     <com.egov.android.view.component.EGovEditText
                         android:id="@+id/register_phone"
                         style="@style/FormRow.EditText"
-                        android:hint="Phone Number"
+                        android:hint="Mobile Number"
                         android:inputType="number"
                         android:singleLine="true" />
 
