@@ -13,7 +13,7 @@
         android:padding="8dp"
         android:visibility="gone" >
 
-        <com.egov.android.view.component.EGovEditText
+        <org.egov.android.view.component.EGovEditText
             android:id="@+id/search_keyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

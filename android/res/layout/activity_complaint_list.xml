@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
@@ -9,7 +9,7 @@
         style="@style/MainContainer"
         android:background="@android:color/white" >
 
-        <com.egov.android.view.component.Header
+        <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back|add_complaint|setting"
@@ -23,12 +23,13 @@
             android:gravity="center_vertical"
             android:padding="8dp" >
 
-            <com.egov.android.view.component.EGovEditText
+            <org.egov.android.view.component.EGovEditText
                 android:id="@+id/search_keyText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/edittext_border"
-                android:paddingLeft="5dp"
+                android:hint="Search text"
+                android:paddingLeft="10dp"
                 android:singleLine="true"
                 android:textColorHint="#CCCCCC" />
 
@@ -50,4 +51,4 @@
             android:groupIndicator="@null" />
     </LinearLayout>
 
-</com.egov.android.library.view.component.slider.SlidingDrawerLayout>
+</org.egov.android.library.view.component.slider.SlidingDrawerLayout>

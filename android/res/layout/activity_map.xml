@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
     <LinearLayout style="@style/MainContainer" >
 
-        <com.egov.android.view.component.Header
+        <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back"
             app:title="Location" />
 
-        <com.egov.android.view.component.Body style="@style/Body" >
+        <org.egov.android.view.component.Body style="@style/Body" >
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -26,7 +26,7 @@
                     android:layout_marginBottom="40dp"
                     class="com.google.android.gms.maps.SupportMapFragment" />
 
-                <com.egov.android.view.component.EGovButton
+                <org.egov.android.view.component.EGovButton
                     android:id="@+id/get_location"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -35,7 +35,7 @@
                     android:text="Confirm Location"
                     android:textColor="@android:color/white" />
             </RelativeLayout>
-        </com.egov.android.view.component.Body>
+        </org.egov.android.view.component.Body>
     </LinearLayout>
 
-</com.egov.android.library.view.component.slider.SlidingDrawerLayout>
+</org.egov.android.library.view.component.slider.SlidingDrawerLayout>

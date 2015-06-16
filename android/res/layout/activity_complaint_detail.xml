@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/com.egov.android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
     <LinearLayout style="@style/MainContainer" >
 
-        <com.egov.android.view.component.Header
+        <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back|setting"
             app:title="Complaint Details" />
 
-        <com.egov.android.view.component.Body style="@style/Body" >
+        <org.egov.android.view.component.Body style="@style/Body" >
 
             <ScrollView
                 android:layout_width="fill_parent"
@@ -33,19 +33,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Location"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Chennai"
@@ -58,19 +58,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Mobile"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="986541237890"
@@ -83,19 +83,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Email"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="sample@gmail.com"
@@ -108,19 +108,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Type"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="illegal drg connection"
@@ -133,19 +133,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Details"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="drainage problem in our street"
@@ -158,19 +158,19 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Landmark"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="First Floor,769,\nAnna salai,\nChennai, Tamilnadu"
@@ -183,25 +183,25 @@
                         android:layout_margin="@dimen/viewMargin"
                         android:orientation="horizontal" >
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
                             android:text="Status"
                             android:textColor="@color/dark_gray" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="10dp"
                             android:layout_height="wrap_content"
                             android:text=":"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovTextView
+                        <org.egov.android.view.component.EGovTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Forwarded"
                             android:textColor="@color/text" />
 
-                        <com.egov.android.view.component.EGovButton
+                        <org.egov.android.view.component.EGovButton
                             android:id="@+id/status_summary"
                             style="@style/ButtonStyle"
                             android:layout_width="wrap_content"
@@ -223,7 +223,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
-        </com.egov.android.view.component.Body>
+        </org.egov.android.view.component.Body>
     </LinearLayout>
 
-</com.egov.android.library.view.component.slider.SlidingDrawerLayout>
+</org.egov.android.library.view.component.slider.SlidingDrawerLayout>

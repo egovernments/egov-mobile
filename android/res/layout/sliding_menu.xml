@@ -31,11 +31,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <com.egov.android.view.component.EGovTextView
+            <org.egov.android.view.component.EGovTextView
                 android:id="@+id/setting_profile"
                 style="@style/SettingMenuItem"
                 android:text="Profile" />
-            <com.egov.android.view.component.EGovTextView
+            <org.egov.android.view.component.EGovTextView
                 android:id="@+id/setting_logout"
                 style="@style/SettingMenuItem"
                 android:text="Logout" />
