@@ -13,42 +13,79 @@
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="nav_back|add_complaint|setting"
-            app:title="Complaint List" />
+            app:title="All Complaints" />
 
-        <RelativeLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true"
-            android:gravity="center_vertical"
-            android:padding="8dp" >
+            android:layout_height="1dp"
+            android:background="#FC9228" />
 
-            <org.egov.android.view.component.EGovEditText
-                android:id="@+id/search_keyText"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/orange"
+            android:orientation="horizontal" >
+
+            <RelativeLayout
+                android:id="@+id/complaint"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/edittext_border"
-                android:hint="Search text"
-                android:paddingLeft="10dp"
-                android:singleLine="true"
-                android:textColorHint="#CCCCCC" />
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/menu_hover"
+                android:onClick="_loadView" >
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/search_icon" />
-        </RelativeLayout>
+                <org.egov.android.view.component.EGovTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="Complaints"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
-        <ExpandableListView
-            android:id="@+id/expandable_list"
+                <View
+                    android:id="@+id/view_complaint"
+                    android:layout_width="100dp"
+                    android:layout_height="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#F4B16E"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/menu_hover"
+                android:onClick="_loadView" >
+
+                <org.egov.android.view.component.EGovTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="Me"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/view_me"
+                    android:layout_width="50dp"
+                    android:layout_height="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="#F4B16E"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/add_fragment"
+            android:name="android.app.ListFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#F0D7C9"
-            android:dividerHeight="1px"
-            android:groupIndicator="@null" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </org.egov.android.library.view.component.slider.SlidingDrawerLayout>

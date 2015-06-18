@@ -63,13 +63,13 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="org.egov.android.view.activity.ComplaintActivity"
+            android:name="org.egov.android.view.activity.CreateComplaintActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="org.egov.android.view.activity.ComplaintListActivity"
+            android:name="org.egov.android.view.activity.ComplaintActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
