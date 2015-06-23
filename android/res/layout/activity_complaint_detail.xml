@@ -10,7 +10,7 @@
         <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
-            app:actionButton="nav_back|setting"
+            app:actionButton="nav_back|setting|add_complaint|search"
             app:title="Complaint Details" />
 
         <org.egov.android.view.component.Body style="@style/Body" >
@@ -61,7 +61,32 @@
                         <org.egov.android.view.component.EGovTextView
                             android:layout_width="75dp"
                             android:layout_height="wrap_content"
-                            android:text="Mobile"
+                            android:text="Title"
+                            android:textColor="@color/dark_gray" />
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="10dp"
+                            android:layout_height="wrap_content"
+                            android:text=":"
+                            android:textColor="@color/text" />
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Garbage"
+                            android:textColor="@color/text" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/viewMargin"
+                        android:orientation="horizontal" >
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="75dp"
+                            android:layout_height="wrap_content"
+                            android:text="Phone"
                             android:textColor="@color/dark_gray" />
 
                         <org.egov.android.view.component.EGovTextView
@@ -206,7 +231,7 @@
                             style="@style/ButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_marginLeft="8dp"
-                            android:text="Status" />
+                            android:text="Status Summary" />
                     </LinearLayout>
 
                     <LinearLayout

@@ -5,174 +5,38 @@
     style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
-    <LinearLayout style="@style/MainContainer" >
+    <LinearLayout
+        style="@style/MainContainer"
+        android:background="@android:color/white" >
 
         <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
-            app:actionButton="nav_back|setting"
-            app:title="Create Complaint" />
+            app:actionButton="nav_back|setting|add_complaint|search"
+            app:title="All Complaints" />
 
-        <org.egov.android.view.component.Body
-            style="@style/Body"
-            android:layout_margin="@dimen/viewMargin" >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FC9228" />
 
-            <ScrollView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/orange"
+            android:orientation="vertical" >
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#ffffff"
-                    android:orientation="vertical"
-                    android:padding="@dimen/viewMargin" >
+            <org.egov.android.view.SlidingTab.SlidingTabLayout
+                android:id="@+id/tabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" >
-
-                        <LinearLayout style="@style/FormRow" >
-
-                            <org.egov.android.view.component.EGovEditText
-                                android:id="@+id/complaint_location"
-                                style="@style/FormRow.EditText"
-                                android:hint="Location" />
-
-                            <ImageView
-                                android:id="@+id/complaint_location_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:background="@drawable/location" />
-
-                            <ImageView
-                                android:id="@+id/complaint_location_status"
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
-                                android:visibility="invisible" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout style="@style/FormRow" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/complaint_phone"
-                            style="@style/FormRow.EditText"
-                            android:hint="Phone Number" />
-
-                        <ImageView
-                            android:id="@+id/complaint_phone_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <LinearLayout style="@style/FormRow" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/complaint_email"
-                            style="@style/FormRow.EditText"
-                            android:hint="Email" />
-
-                        <ImageView
-                            android:id="@+id/complaint_email_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <LinearLayout style="@style/FormRow" >
-
-                        <AutoCompleteTextView
-                            android:id="@+id/complaint_type"
-                            style="@style/FormRow.EditText"
-                            android:ems="10"
-                            android:hint="Type"
-                            android:singleLine="true" >
-                        </AutoCompleteTextView>
-
-                        <ImageView
-                            android:id="@+id/complaint_type_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <LinearLayout style="@style/FormRow" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/complaint_details"
-                            style="@style/FormRow.EditText"
-                            android:hint="Details" />
-
-                        <ImageView
-                            android:id="@+id/complaint_details_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <LinearLayout style="@style/FormRow" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/complaint_landmark"
-                            style="@style/FormRow.EditText"
-                            android:hint="Landmark" />
-
-                        <ImageView
-                            android:id="@+id/complaint_landmark_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <HorizontalScrollView
-                        android:id="@+id/hr_scroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/edittext_border"
-                        android:scrollbars="none" >
-
-                        <LinearLayout
-                            android:id="@+id/container"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal" >
-
-                            <RelativeLayout
-                                android:id="@+id/add_button"
-                                android:layout_width="120dp"
-                                android:layout_height="120dp"
-                                android:background="@drawable/edittext_border" >
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:id="@+id/percentage"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:visibility="gone" />
-
-                                <ImageView
-                                    android:id="@+id/add_photo"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerInParent="true"
-                                    android:background="@drawable/add_photo_icon" />
-                            </RelativeLayout>
-                        </LinearLayout>
-                    </HorizontalScrollView>
-
-                    <org.egov.android.view.component.EGovButton
-                        android:id="@+id/complaint_doComplaint"
-                        style="@style/ButtonStyle"
-                        android:layout_marginTop="20dp"
-                        android:text="Submit" />
-                </LinearLayout>
-            </ScrollView>
-        </org.egov.android.view.component.Body>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+            </android.support.v4.view.ViewPager>
+        </LinearLayout>
     </LinearLayout>
 
 </org.egov.android.library.view.component.slider.SlidingDrawerLayout>

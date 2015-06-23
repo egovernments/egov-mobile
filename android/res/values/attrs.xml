@@ -23,8 +23,8 @@
         <attr name="actionButton">
             <flag name="nav_back" value="1" />
             <flag name="setting" value="2" />
-            <flag name="search" value="4" />
-            <flag name="add_complaint" value="8" />
+            <flag name="search" value="8" />
+            <flag name="add_complaint" value="4" />
         </attr>
     </declare-styleable>
     <declare-styleable name="EGovRoundedImageView">

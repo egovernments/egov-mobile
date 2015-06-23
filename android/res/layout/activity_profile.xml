@@ -240,6 +240,62 @@
                             <org.egov.android.view.component.EGovTextView
                                 android:layout_width="115dp"
                                 android:layout_height="wrap_content"
+                                android:text="PAN Card Number"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="10dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text=":"
+                                android:textColor="@color/text" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/pan"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text=""
+                                android:textColor="@color/text" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/viewMargin" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="115dp"
+                                android:layout_height="wrap_content"
+                                android:text="Aadhaar Card Number"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="10dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text=":"
+                                android:textColor="@color/text" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/aadhaar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text=""
+                                android:textColor="@color/text" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/viewMargin" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="115dp"
+                                android:layout_height="wrap_content"
                                 android:text="Preferred Language"
                                 android:textColor="@color/dark_gray" />
 
