@@ -184,7 +184,7 @@
                             <org.egov.android.view.component.EGovTextView
                                 android:layout_width="115dp"
                                 android:layout_height="wrap_content"
-                                android:text="Alternate Phone"
+                                android:text="Alternate Number"
                                 android:textColor="@color/dark_gray" />
 
                             <org.egov.android.view.component.EGovTextView

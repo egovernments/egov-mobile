@@ -34,7 +34,8 @@
                         android:id="@+id/login_email"
                         style="@style/FormRow.EditText"
                         android:hint="Email/Phone"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="" />
 
                     <ImageView
                         android:id="@+id/login_email_status"
@@ -50,7 +51,8 @@
                         style="@style/FormRow.EditText"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="" />
 
                     <ImageView
                         android:id="@+id/login_password_status"
