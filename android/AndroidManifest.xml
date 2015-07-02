@@ -125,9 +125,15 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
 
+        <!--
+             <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyChV9famhnmABPguZ7rUUEU_NgZgWd5JRA" />
+        -->
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyChV9famhnmABPguZ7rUUEU_NgZgWd5JRA" />
+            android:value="AIzaSyBC878eivAWUKd-EkSZV2nAfoi9Mm_S_D8" />
     </application>
 
 </manifest>

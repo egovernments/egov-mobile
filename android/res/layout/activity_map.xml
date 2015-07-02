@@ -10,7 +10,7 @@
         <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
-            app:actionButton="nav_back"
+            app:actionButton="nav_back|refresh"
             app:title="Location" />
 
         <org.egov.android.view.component.Body style="@style/Body" >

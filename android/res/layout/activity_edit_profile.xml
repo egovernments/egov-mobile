@@ -121,58 +121,6 @@
                     <org.egov.android.view.component.EGovTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Phone"
-                        android:textColor="@color/dark_gray" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/viewMargin"
-                        android:background="@drawable/edittext_border" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/edit_profile_mobile"
-                            style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="96522568952" />
-
-                        <ImageView
-                            android:id="@+id/edit_profile_mobile_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center_vertical"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <org.egov.android.view.component.EGovTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Email"
-                        android:textColor="@color/dark_gray" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/viewMargin"
-                        android:background="@drawable/edittext_border" >
-
-                        <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/edit_profile_email"
-                            style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="john@gmail.com" />
-
-                        <ImageView
-                            android:id="@+id/edit_profile_email_status"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center_vertical"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-
-                    <org.egov.android.view.component.EGovTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:text="Alternate Number"
                         android:textColor="@color/dark_gray" />
 

@@ -13,7 +13,9 @@
             app:actionButton="nav_back|setting|add_complaint|search"
             app:title="Complaint Details" />
 
-        <org.egov.android.view.component.Body style="@style/Body" >
+        <org.egov.android.view.component.Body
+            style="@style/Body"
+            android:layout_margin="@dimen/viewMargin" >
 
             <ScrollView
                 android:layout_width="fill_parent"
@@ -23,9 +25,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/viewMargin"
                     android:background="#ffffff"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:padding="@dimen/viewMargin" >
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -49,81 +51,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Chennai"
-                            android:textColor="@color/text" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/viewMargin"
-                        android:orientation="horizontal" >
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="75dp"
-                            android:layout_height="wrap_content"
-                            android:text="Title"
-                            android:textColor="@color/dark_gray" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="@color/text" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Garbage"
-                            android:textColor="@color/text" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/viewMargin"
-                        android:orientation="horizontal" >
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="75dp"
-                            android:layout_height="wrap_content"
-                            android:text="Phone"
-                            android:textColor="@color/dark_gray" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="@color/text" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="986541237890"
-                            android:textColor="@color/text" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/viewMargin"
-                        android:orientation="horizontal" >
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="75dp"
-                            android:layout_height="wrap_content"
-                            android:text="Email"
-                            android:textColor="@color/dark_gray" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content"
-                            android:text=":"
-                            android:textColor="@color/text" />
-
-                        <org.egov.android.view.component.EGovTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="sample@gmail.com"
                             android:textColor="@color/text" />
                     </LinearLayout>
 
@@ -244,8 +171,87 @@
                             android:id="@+id/imageView1"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
-                            android:src="@drawable/profile" />
+                            android:src="@drawable/complaint" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#ededed"
+                        android:orientation="vertical"
+                        android:padding="10dp" >
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="115dp"
+                            android:layout_height="wrap_content"
+                            android:text="Actions"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/viewMargin" >
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="115dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Change Status"
+                            android:textColor="@color/dark_gray" />
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="10dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text=":"
+                            android:textColor="@color/text" />
+
+                        <Spinner
+                            android:id="@+id/status_spinner"
+                            style="@android:style/Widget.Holo.Light.Spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/viewMargin" >
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="115dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Message"
+                            android:textColor="@color/dark_gray" />
+
+                        <org.egov.android.view.component.EGovTextView
+                            android:layout_width="10dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text=":"
+                            android:textColor="@color/text" />
+
+                        <org.egov.android.view.component.EGovEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/edittext_border"
+                            android:gravity="top|left"
+                            android:inputType="textMultiLine"
+                            android:lines="3"
+                            android:textColor="@color/text" />
+                    </LinearLayout>
+
+                    <org.egov.android.view.component.EGovButton
+                        android:id="@+id/complaint_changeStatus"
+                        style="@style/ButtonStyle"
+                        android:layout_marginTop="20dp"
+                        android:text="Save" />
                 </LinearLayout>
             </ScrollView>
         </org.egov.android.view.component.Body>
