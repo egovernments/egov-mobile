@@ -35,13 +35,7 @@
                         style="@style/FormRow.EditText"
                         android:hint="Email/Phone"
                         android:singleLine="true"
-                        android:text="" />
-
-                    <ImageView
-                        android:id="@+id/login_email_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
+                        android:text="9999999999" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -52,13 +46,7 @@
                         android:hint="Password"
                         android:inputType="textPassword"
                         android:singleLine="true"
-                        android:text="" />
-
-                    <ImageView
-                        android:id="@+id/login_password_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
+                        android:text="demo" />
                 </LinearLayout>
 
                 <org.egov.android.view.component.EGovButton

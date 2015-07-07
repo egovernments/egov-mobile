@@ -52,12 +52,6 @@
                         style="@style/FormRow.EditText"
                         android:hint="Verification Code"
                         android:singleLine="true" />
-
-                    <ImageView
-                        android:id="@+id/otp_code_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="visible" />
                 </LinearLayout>
 
                 <org.egov.android.view.component.EGovButton

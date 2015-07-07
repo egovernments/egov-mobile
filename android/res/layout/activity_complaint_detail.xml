@@ -48,6 +48,7 @@
                             android:textColor="@color/text" />
 
                         <org.egov.android.view.component.EGovTextView
+                            android:id="@+id/location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Chennai"
@@ -73,6 +74,7 @@
                             android:textColor="@color/text" />
 
                         <org.egov.android.view.component.EGovTextView
+                            android:id="@+id/complaintType"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="illegal drg connection"
@@ -98,6 +100,7 @@
                             android:textColor="@color/text" />
 
                         <org.egov.android.view.component.EGovTextView
+                            android:id="@+id/details"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="drainage problem in our street"
@@ -123,6 +126,7 @@
                             android:textColor="@color/text" />
 
                         <org.egov.android.view.component.EGovTextView
+                            android:id="@+id/landmarkDetails"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="First Floor,769,\nAnna salai,\nChennai, Tamilnadu"
@@ -148,6 +152,7 @@
                             android:textColor="@color/text" />
 
                         <org.egov.android.view.component.EGovTextView
+                            android:id="@+id/complaintStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Forwarded"

@@ -35,12 +35,6 @@
                         style="@style/FormRow.EditText"
                         android:hint="Name"
                         android:singleLine="true" />
-
-                    <ImageView
-                        android:id="@+id/register_name_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -51,12 +45,6 @@
                         android:hint="Mobile Number"
                         android:inputType="number"
                         android:singleLine="true" />
-
-                    <ImageView
-                        android:id="@+id/register_phone_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -65,12 +53,6 @@
                         android:id="@+id/register_email"
                         style="@style/FormRow.EditText"
                         android:hint="Email" />
-
-                    <ImageView
-                        android:id="@+id/register_email_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -81,12 +63,6 @@
                         android:hint="Password"
                         android:inputType="textPassword"
                         android:singleLine="true" />
-
-                    <ImageView
-                        android:id="@+id/register_password_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -97,12 +73,6 @@
                         android:hint="Confirm Password"
                         android:inputType="textPassword"
                         android:singleLine="true" />
-
-                    <ImageView
-                        android:id="@+id/register_cfrm_password_status"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <org.egov.android.view.component.EGovButton

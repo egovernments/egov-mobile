@@ -69,13 +69,13 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="org.egov.android.view.activity.PopularCategoryActivity"
+            android:name="org.egov.android.view.activity.FreqComplaintTypeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
         <activity
-            android:name="org.egov.android.view.activity.AllCategoryActivity"
+            android:name="org.egov.android.view.activity.AllComplaintTypeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
