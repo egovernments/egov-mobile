@@ -68,8 +68,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/edit_profile_name"
                             style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="john" />
+                            android:singleLine="true" />
                     </LinearLayout>
 
                     <org.egov.android.view.component.EGovTextView
@@ -126,8 +125,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/edit_profile_alt_contact"
                             style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="952356841" />
+                            android:singleLine="true" />
                     </LinearLayout>
 
                     <org.egov.android.view.component.EGovTextView
@@ -145,8 +143,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/edit_profile_dob"
                             style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="1985-05-12" />
+                            android:singleLine="true" />
 
                         <ImageView
                             android:id="@+id/edit_profile_calendar"
@@ -170,10 +167,9 @@
                         android:background="@drawable/edittext_border" >
 
                         <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/edit_pan"
+                            android:id="@+id/edit_profile_pan"
                             style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="" />
+                            android:singleLine="true" />
                     </LinearLayout>
 
                     <org.egov.android.view.component.EGovTextView
@@ -189,10 +185,9 @@
                         android:background="@drawable/edittext_border" >
 
                         <org.egov.android.view.component.EGovEditText
-                            android:id="@+id/edit_aadhaar"
+                            android:id="@+id/edit_profile_aadhaar"
                             style="@style/FormRow.EditText"
-                            android:singleLine="true"
-                            android:text="" />
+                            android:singleLine="true" />
                     </LinearLayout>
 
                     <org.egov.android.view.component.EGovTextView

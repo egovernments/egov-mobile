@@ -23,6 +23,8 @@ Powered by eGovernments Foundation </string>
     <string name="landmark_empty">Please enter landmark</string>
     <string name="alt_phone_empty">Please enter alternative contact number</string>
     <string name="birth_empty">Please select date of birth</string>
+    <string name="aadhaar_empty">Please enter aadhaar card number</string>
+    <string name="pan_empty">Please enter pan card number</string>
     <string name="map_load_failure">Sorry! unable to create maps</string>
     <string name="unknown_location">Please select a valid location</string>
     <string name="logout_message">Are you sure you want to logout?</string>
