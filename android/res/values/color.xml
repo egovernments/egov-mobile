@@ -13,5 +13,7 @@
     <color name="list_item_selected">#FCB853</color>
     <color name="tabsScrollColor">#F4B16E</color>
     <color name="white">#FFFFFF</color>
+    <color name="light_gray">#DDDDDD</color>
+    
 
 </resources>
