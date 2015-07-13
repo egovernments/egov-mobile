@@ -125,6 +125,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/edit_profile_alt_contact"
                             style="@style/FormRow.EditText"
+                            android:inputType="number"
                             android:singleLine="true" />
                     </LinearLayout>
 
@@ -140,10 +141,9 @@
                         android:layout_marginBottom="@dimen/viewMargin"
                         android:background="@drawable/edittext_border" >
 
-                        <org.egov.android.view.component.EGovEditText
+                        <org.egov.android.view.component.EGovTextView
                             android:id="@+id/edit_profile_dob"
-                            style="@style/FormRow.EditText"
-                            android:singleLine="true" />
+                            style="@style/FormRow.EditText" />
 
                         <ImageView
                             android:id="@+id/edit_profile_calendar"
