@@ -12,8 +12,10 @@ Powered by eGovernments Foundation </string>
     <string name="title_empty">Please enter title</string>
     <string name="invalid_email">Please enter valid email</string>
     <string name="password_empty">Please enter password</string>
+    <string name="password_length">Password must be at least 6 characters</string>
     <string name="name_empty">Please enter name</string>
-    <string name="phone_empty">Please enter mobile number</string>
+    <string name="name_length">Name must be at least 3 characters</string>
+    <string name="phone_empty">Please enter phone number</string>
     <string name="phone_number_length">Mobile number must be at least 10 digits</string>
     <string name="confirm_password_empty">Please enter confirm password</string>
     <string name="password_match">Password doesn\'t match</string>
@@ -32,6 +34,8 @@ Powered by eGovernments Foundation </string>
     <string name="file_type">File type must be jpg or png or bmp</string>
     <string name="file_size">File size must be less than 1MB</string>
     <string name="file_upload_count">Maximum number of file upload is five</string>
-    <string name="sdcard_spcae_not_sufficient">There is no sufficient space in your sdcard</string>
+    <string name="sdcard_space_not_sufficient">There is no sufficient space in your sdcard</string>
+    <string name="search_empty">Please enter search keyword</string>
+    <string name="search_length">Type atleast three character</string>
 
 </resources>

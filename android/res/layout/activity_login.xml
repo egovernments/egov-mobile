@@ -34,7 +34,8 @@
                         android:id="@+id/login_email"
                         style="@style/FormRow.EditText"
                         android:hint="Email/Phone"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="9489113814" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -44,7 +45,8 @@
                         style="@style/FormRow.EditText"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="123456" />
                 </LinearLayout>
 
                 <org.egov.android.view.component.EGovButton
