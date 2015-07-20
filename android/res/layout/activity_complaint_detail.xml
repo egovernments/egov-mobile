@@ -158,7 +158,7 @@
                             style="@style/ButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_marginLeft="8dp"
-                            android:text="Status Summary" />
+                            android:text="@string/status_summary_btn" />
                     </LinearLayout>
 
                     <HorizontalScrollView
@@ -260,7 +260,7 @@
                             android:id="@+id/complaint_changeStatus"
                             style="@style/ButtonStyle"
                             android:layout_marginTop="20dp"
-                            android:text="Save" />
+                            android:text="@string/save_btn" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>

@@ -37,5 +37,13 @@ Powered by eGovernments Foundation </string>
     <string name="sdcard_space_not_sufficient">There is no sufficient space in your sdcard</string>
     <string name="search_empty">Please enter search keyword</string>
     <string name="search_length">Type atleast three character</string>
+    <string name="login_btn">Login</string>
+    <string name="register_btn">Register</string>
+    <string name="send_btn">Send</string>
+    <string name="verify_otp_btn">Verify OTP</string>
+    <string name="save_btn">Save</string>
+    <string name="status_summary_btn">Status Summary</string>
+    <string name="change_picture_btn">Change Picture</string>
+    <string name="save_change_btn">Save Changes</string>
 
 </resources>

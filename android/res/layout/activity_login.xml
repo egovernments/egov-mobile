@@ -53,7 +53,7 @@
                     android:id="@+id/login_doLogin"
                     style="@style/ButtonStyle"
                     android:layout_marginTop="20dp"
-                    android:text="Login" />
+                    android:text="@string/login_btn" />
 
                 <org.egov.android.view.component.EGovTextView
                     android:id="@+id/forgot_pwd_link"
@@ -67,7 +67,7 @@
                     android:id="@+id/login_register"
                     style="@style/ButtonStyle"
                     android:layout_marginTop="30dp"
-                    android:text="Register" />
+                    android:text="@string/register_btn" />
             </LinearLayout>
         </ScrollView>
     </org.egov.android.view.component.Body>

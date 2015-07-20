@@ -50,7 +50,7 @@
                             android:layout_width="150dp"
                             android:layout_gravity="center"
                             android:layout_marginTop="15dp"
-                            android:text="Change Picture" />
+                            android:text="@string/change_picture_btn" />
                     </LinearLayout>
 
                     <org.egov.android.view.component.EGovTextView
@@ -233,7 +233,7 @@
                         android:id="@+id/editprofile_doEditprofile"
                         style="@style/ButtonStyle"
                         android:layout_marginTop="20dp"
-                        android:text="Save Changes" />
+                        android:text="@string/save_change_btn" />
                 </LinearLayout>
             </ScrollView>
         </org.egov.android.view.component.Body>

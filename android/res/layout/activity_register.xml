@@ -79,7 +79,7 @@
                     android:id="@+id/register_doRegister"
                     style="@style/ButtonStyle"
                     android:layout_marginTop="20dp"
-                    android:text="Register" />
+                    android:text="@string/register_btn" />
             </LinearLayout>
         </ScrollView>
     </org.egov.android.view.component.Body>
