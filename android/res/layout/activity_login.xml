@@ -8,9 +8,10 @@
     tools:context="${packageName}.${activityClass}" >
 
     <org.egov.android.view.component.Header
+        android:id="@+id/header"
         style="@style/Header"
         android:layout_width="match_parent"
-        app:actionButton="nav_back"
+        app:actionButton=""
         app:title="Login" />
 
     <org.egov.android.view.component.Body style="@style/Body" >
@@ -34,8 +35,7 @@
                         android:id="@+id/login_email"
                         style="@style/FormRow.EditText"
                         android:hint="Email/Phone"
-                        android:singleLine="true"
-                        android:text="9489113815" />
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/FormRow" >
@@ -45,8 +45,7 @@
                         style="@style/FormRow.EditText"
                         android:hint="Password"
                         android:inputType="textPassword"
-                        android:singleLine="true"
-                        android:text="123456" />
+                        android:singleLine="true" />
                 </LinearLayout>
 
                 <org.egov.android.view.component.EGovButton

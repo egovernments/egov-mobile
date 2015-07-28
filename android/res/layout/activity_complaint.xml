@@ -12,7 +12,7 @@
         <org.egov.android.view.component.Header
             style="@style/Header"
             android:layout_width="match_parent"
-            app:actionButton="nav_back|setting|add_complaint|search"
+            app:actionButton="setting|add_complaint|search"
             app:title="All Complaints" />
 
         <View
