@@ -1,66 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.egov.android.library.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    style="@style/SlidingDrawerLayout"
     tools:context="${packageName}.${activityClass}" >
 
-    <org.egov.android.view.component.Header
-        style="@style/Header"
-        android:layout_width="match_parent"
-        app:actionButton="nav_back"
-        app:title="Activation" />
+    <LinearLayout style="@style/MainContainer" >
 
-    <org.egov.android.view.component.Body style="@style/Body" >
+        <org.egov.android.view.component.Header
+            android:id="@+id/header"
+            style="@style/Header"
+            app:actionButton="nav_back"
+            app:title="Activation" />
 
-        <ScrollView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" >
+        <org.egov.android.view.component.Body
+            style="@style/Body"
+            android:layout_margin="@dimen/viewMargin" >
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ScrollView
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/viewMargin"
-                android:background="#ffffff"
-                android:orientation="vertical"
-                android:padding="15dp" >
+                android:layout_gravity="center" >
 
-                <org.egov.android.view.component.EGovTextView
-                    style="@style/TextView"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/otpMessage"
-                    android:textColor="#B5B3B3"
-                    android:textSize="14dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffff"
+                    android:orientation="vertical"
+                    android:padding="@dimen/viewMargin" >
 
-                <org.egov.android.view.component.EGovTextView
-                    style="@style/TextView"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="25dp"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/accountDeleteInfo"
-                    android:textColor="#B5B3B3"
-                    android:textSize="14dp" />
+                    <org.egov.android.view.component.EGovTextView
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:text="@string/otpMessage"
+                        android:textColor="#B5B3B3"
+                        android:textSize="14dp" />
 
-                <LinearLayout style="@style/FormRow" >
+                    <org.egov.android.view.component.EGovTextView
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="25dp"
+                        android:layout_marginTop="15dp"
+                        android:text="@string/accountDeleteInfo"
+                        android:textColor="#B5B3B3"
+                        android:textSize="14dp" />
 
-                    <org.egov.android.view.component.EGovEditText
-                        android:id="@+id/otp_code"
-                        style="@style/FormRow.EditText"
-                        android:hint="Verification Code"
-                        android:singleLine="true" />
+                    <LinearLayout style="@style/FormRow" >
+
+                        <org.egov.android.view.component.EGovEditText
+                            android:id="@+id/otp_code"
+                            style="@style/FormRow.EditText"
+                            android:hint="Verification Code"
+                            android:singleLine="true" />
+                    </LinearLayout>
+
+                    <org.egov.android.view.component.EGovButton
+                        android:id="@+id/verify_otp"
+                        style="@style/ButtonStyle"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/verify_otp_btn" />
                 </LinearLayout>
+            </ScrollView>
+        </org.egov.android.view.component.Body>
+    </LinearLayout>
 
-                <org.egov.android.view.component.EGovButton
-                    android:id="@+id/verify_otp"
-                    style="@style/ButtonStyle"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/verify_otp_btn" />
-            </LinearLayout>
-        </ScrollView>
-    </org.egov.android.view.component.Body>
-
-</LinearLayout>
+</org.egov.android.library.view.component.slider.SlidingDrawerLayout>

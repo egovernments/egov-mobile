@@ -221,7 +221,15 @@
                                 style="@android:style/Widget.Holo.Light.Spinner"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:spinnerMode="dropdown" />
+                                android:spinnerMode="dropdown"
+                                android:visibility="gone" />
+
+                            <Spinner
+                                android:id="@+id/status_normal_spinner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:spinnerMode="dropdown"
+                                android:visibility="gone" />
                         </LinearLayout>
 
                         <LinearLayout
