@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    style="@style/MainContainer" >
+
+    <org.egov.android.view.component.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        android:layout_width="match_parent"
+        app:actionButton="nav_back"
+        app:title="Pick a category" />
+
+    <org.egov.android.view.component.Body
+        style="@style/Body"
+        android:layout_below="@+id/header"
+        android:background="@color/white" >
+
+        <ListView
+            android:id="@+id/all_category_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+    </org.egov.android.view.component.Body>
+
+</RelativeLayout>

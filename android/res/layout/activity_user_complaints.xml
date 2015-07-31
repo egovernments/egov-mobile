@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#EBEBEB" >
+
+    <ListView
+        android:id="@+id/user_complaint_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:listSelector="@android:color/transparent" >
+    </ListView>
+
+    <org.egov.android.view.component.EGovTextView
+        android:id="@+id/user_errMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No data found"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone" />
+
+</RelativeLayout>

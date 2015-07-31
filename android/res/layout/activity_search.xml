@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    style="@style/SlidingDrawerLayout"
+    tools:context="${packageName}.${activityClass}" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+        style="@style/MainContainer" >
+
+        <org.egov.android.view.component.Header
+            style="@style/Header"
+            android:layout_width="match_parent"
+            app:actionButton="nav_back|setting|add_complaint"
+            app:title="Complaint Search" />
+
+        <org.egov.android.view.component.Body
+            style="@style/Body"
+            android:background="#EBEBEB" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <RelativeLayout
+                    android:id="@+id/search_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp" >
+
+                    <org.egov.android.view.component.EGovEditText
+                        android:id="@+id/search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/edittext_border"
+                        android:hint="Search"
+                        android:paddingLeft="10dp"
+                        android:singleLine="true"
+                        android:textColorHint="#CCCCCC" />
+
+                    <ImageView
+                        android:id="@+id/search_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="8dp"
+                        android:src="@drawable/search_icon" />
+                </RelativeLayout>
+
+                <ListView
+                    android:id="@+id/search_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/search_container"
+                    android:divider="@android:color/transparent"
+                    android:listSelector="@android:color/transparent" />
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/search_errMsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="No data found"
+                    android:textColor="@color/dark_gray"
+                    android:visibility="gone" />
+            </RelativeLayout>
+        </org.egov.android.view.component.Body>
+    </LinearLayout>
+
+</org.egov.android.view.component.slider.SlidingDrawerLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#EBEBEB" >
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:spinnerMode="dropdown" />
+
+    <View
+        android:id="@+id/view_ln"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/spinner"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#BDBDBD" />
+
+    <ListView
+        android:id="@+id/all_complaint_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view_ln"
+        android:divider="@android:color/transparent"
+        android:listSelector="@android:color/transparent" >
+    </ListView>
+
+    <org.egov.android.view.component.EGovTextView
+        android:id="@+id/all_errMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No data found"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone" />
+
+</RelativeLayout>

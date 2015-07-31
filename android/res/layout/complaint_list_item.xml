@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <org.egov.android.view.component.EGovRoundedImageView
+                android:id="@+id/image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                app:border_color="#FFFFFF"
+                app:border_width="5dp"
+                app:shadow="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical" >
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#595959"
+                    android:textSize="18dp" />
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:textColor="#818181"
+                    android:textSize="14dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <org.egov.android.view.component.EGovTextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp" >
+
+            <org.egov.android.view.component.EGovTextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textColor="@color/dark_gray" />
+
+            <org.egov.android.view.component.EGovTextView
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textColor="@color/text" />
+
+            <org.egov.android.view.component.EGovTextView
+                android:id="@+id/complaint_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <org.egov.android.view.component.EGovTextView
+        android:id="@+id/load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Tap here to load more"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone" />
+
+</LinearLayout>

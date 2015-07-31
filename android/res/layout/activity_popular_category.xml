@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    style="@style/MainContainer" >
+
+    <org.egov.android.view.component.Header
+        android:id="@+id/header"
+        style="@style/Header"
+        android:layout_width="match_parent"
+        app:actionButton="nav_back"
+        app:title="Pick a category" />
+
+    <org.egov.android.view.component.Body 
+        style="@style/Body"
+        android:layout_below="@+id/header" >
+        
+
+        <ListView
+            android:id="@+id/all_category_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:visibility="gone" >
+        </ListView>
+
+        <LinearLayout
+            android:id="@+id/frequentTypes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/viewMargin"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <org.egov.android.view.component.EGovTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please tell us what is the complaint about. Here are the most popular categories" />
+
+            <GridView
+                android:id="@+id/gridView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:horizontalSpacing="5dp"
+                android:listSelector="@android:color/transparent"
+                android:numColumns="3"
+                android:verticalSpacing="5dp" />
+
+            <RelativeLayout
+                android:id="@+id/all_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+
+                <org.egov.android.view.component.EGovTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="None of the above? Pick from the list" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/arrow_left" />
+            </RelativeLayout>
+        </LinearLayout>
+    </org.egov.android.view.component.Body>
+
+</RelativeLayout>

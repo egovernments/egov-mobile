@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    style="@style/SlidingDrawerLayout"
+    tools:context="${packageName}.${activityClass}" >
+
+    <LinearLayout style="@style/MainContainer" >
+
+        <org.egov.android.view.component.Header
+            style="@style/Header"
+            android:layout_width="match_parent"
+            app:actionButton="nav_back|setting|add_complaint|search"
+            app:title="Track Status" />
+
+        <org.egov.android.view.component.Body
+            style="@style/Body"
+            android:layout_margin="@dimen/viewMargin" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/viewMargin"
+                            android:orientation="vertical" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/status_heading"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="15dp"
+                                android:layout_marginTop="15dp"
+                                android:background="@drawable/status_summary_border"
+                                android:orientation="vertical"
+                                android:paddingLeft="5dp"
+                                android:paddingRight="5dp" >
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:orientation="vertical" >
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:paddingBottom="5dp" >
+
+                                        <org.egov.android.view.component.EGovTextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Registered"
+                                            android:textColor="@color/black"
+                                            android:textSize="14dp" />
+
+                                        <org.egov.android.view.component.EGovTextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:paddingLeft="33dp"
+                                            android:text="Forwarded"
+                                            android:textColor="@color/black"
+                                            android:textSize="14dp" />
+
+                                        <org.egov.android.view.component.EGovTextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:paddingLeft="58dp"
+                                            android:text="Closed"
+                                            android:textColor="@color/black"
+                                            android:textSize="14dp" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:paddingBottom="0dp" >
+
+                                        <View
+                                            android:id="@+id/register"
+                                            android:layout_width="23dp"
+                                            android:layout_height="23dp"
+                                            android:background="@drawable/status_summary_inactive_circle" />
+
+                                        <View
+                                            android:id="@+id/forwarded_bg"
+                                            android:layout_width="99dp"
+                                            android:layout_height="2dp"
+                                            android:layout_marginTop="10dp"
+                                            android:background="@color/light_gray" />
+
+                                        <View
+                                            android:id="@+id/forwarded"
+                                            android:layout_width="23dp"
+                                            android:layout_height="23dp"
+                                            android:background="@drawable/status_summary_inactive_circle" />
+
+                                        <View
+                                            android:id="@+id/close_bg"
+                                            android:layout_width="99dp"
+                                            android:layout_height="2dp"
+                                            android:layout_marginTop="10dp"
+                                            android:background="@color/light_gray" />
+
+                                        <View
+                                            android:id="@+id/closed"
+                                            android:layout_width="23dp"
+                                            android:layout_height="23dp"
+                                            android:background="@drawable/status_summary_inactive_circle" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:paddingTop="7dp"
+                                android:text="Status Summary:"
+                                android:textColor="@color/red" />
+
+                            <View
+                                android:layout_width="10px"
+                                android:layout_height="fill_parent"
+                                android:background="#90909090" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/register_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="7dp"
+                                android:textColor="@color/text" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/forworded_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="7dp"
+                                android:textColor="@color/text" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/closed_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingTop="7dp"
+                                android:textColor="@color/text" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </org.egov.android.view.component.Body>
+    </LinearLayout>
+
+</org.egov.android.view.component.slider.SlidingDrawerLayout>
