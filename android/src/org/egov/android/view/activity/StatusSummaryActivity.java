@@ -135,7 +135,7 @@ public class StatusSummaryActivity extends BaseActivity {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private static String getDateTextFormat(String datetime) throws ParseException {
+    private String getDateTextFormat(String datetime) throws ParseException {
         String newdate = datetime;
         SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         Date newdate1 = dateformat2.parse(newdate);
@@ -145,7 +145,7 @@ public class StatusSummaryActivity extends BaseActivity {
     }
 
     @SuppressLint("SimpleDateFormat")
-    public static String getFormatDate(String datetime) throws ParseException {
+    private String getFormatDate(String datetime) throws ParseException {
         String s = datetime;
         String[] parts = s.split("\\."); // escape .
         String part1 = parts[0];
