@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.io.File;
@@ -110,7 +141,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 startActivityForResult(new Intent(this, MapActivity.class), GET_LOCATION);
                 break;
             case R.id.add_photo:
-                openDialog();
+                _openDialog();
                 break;
             case R.id.from_gallery:
                 _openGalleryImages();
@@ -126,7 +157,11 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
-    private void openDialog() {
+    /**
+     * Function called when click on add photo. Used to show the options where to pick the image
+     * from gallery or camera
+     */
+    private void _openDialog() {
         dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.custom_upload_dialog);
@@ -135,12 +170,20 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         dialog.show();
     }
 
+    /**
+     * Function called when choose the gallery option. Start the implicit intent ACTION_PICK for
+     * result.
+     */
     private void _openGalleryImages() {
         Intent photo_picker = new Intent(Intent.ACTION_PICK);
         photo_picker.setType("image/*");
         startActivityForResult(photo_picker, FROM_GALLERY);
     }
 
+    /**
+     * Function called when choose the camera option. Start the implicit intent ACTION_IMAGE_CAPTURE
+     * for result.
+     */
     private void _openCamera() {
         File imageFile = null;
         try {
@@ -157,6 +200,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to copy the file to complaint folder from gallery
+     * 
+     * @param path
+     *            => image file path from gallery
+     */
     @SuppressWarnings("resource")
     private void _createImageFile(String path) {
         try {
@@ -184,6 +233,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to delete the file
+     * 
+     * @param path
+     *            => file path
+     */
     private void _deleteFile(String path) {
         File file = new File(path);
         if (file.exists()) {
@@ -198,6 +253,9 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to order the images if any one is deleted in between the image list
+     */
     private void _reorderFiles() {
         String path = assetPath + File.separator + "current";
         File folder = new File(path);
@@ -222,6 +280,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Event triggered When an action completed in another activity(request send from this
+     * activity)).
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -245,6 +307,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to check file extension before add it to complaint
+     * 
+     * @param filePath
+     * @return
+     */
     private boolean checkFileExtension(String filePath) {
         String fileType = (String) getConfig().get("upload.file.type", "");
         Pattern fileExtnPtrn = Pattern.compile("([^\\s]+(\\.(?i)(" + fileType + "))$)");
@@ -255,6 +323,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         return false;
     }
 
+    /**
+     * Function used to validate the image file before upload. Here we have checked the file
+     * extension, size and count
+     * 
+     * @param imagePath
+     */
     private void _validateImageUrl(String imagePath) {
         if (!checkFileExtension(imagePath)) {
             _deleteFile(imagePath);
@@ -278,6 +352,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to show the image added to complaint in image view. A close icon shown top
+     * right corner of the image to delete it
+     * 
+     * @param imagePath
+     */
     @SuppressLint("InflateParams")
     private void _addImageView(String imagePath) {
         final ImageView image_container = (ImageView) findViewById(R.id.image_container);
@@ -287,7 +367,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 
         RelativeLayout inner_container = (RelativeLayout) view.findViewById(R.id.inner_container);
         LinearLayout.LayoutParams inner_container_params = new LinearLayout.LayoutParams(
-                dpToPix(100), dpToPix(100));
+                _dpToPix(100), _dpToPix(100));
 
         inner_container.setLayoutParams(inner_container_params);
 
@@ -329,6 +409,14 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }, 500);
     }
 
+    /**
+     * Function used to decode the file(for memory consumption) and return the bitmap to show it in
+     * image view
+     * 
+     * @param path
+     *            => image file path
+     * @return bitmap
+     */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 8;
@@ -336,11 +424,23 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         return bmp;
     }
 
-    private int dpToPix(float value) {
+    /**
+     * Function used to convert dp unit to pixel unit
+     * 
+     * @param value
+     *            => dp value
+     * @return pixel value
+     */
+    private int _dpToPix(float value) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, getResources()
                 .getDisplayMetrics());
     }
 
+    /**
+     * Function to set the data to auto complete text view component to show the loaction
+     * 
+     * @param list
+     */
     private void setSpinnerData(List<JSONObject> list) {
         ArrayList<String> item = new ArrayList<String>();
         try {
@@ -357,6 +457,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Api response handler. Here we have checked the invalid access token error to redirect to
+     * login page
+     */
     @Override
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);
@@ -404,6 +508,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Function used to upload the images attached in a complaint to server.
+     * 
+     * @param id
+     *            => complaint id
+     */
     private void _addUploadJobs(String id) {
         File folder = new File(assetPath + File.separator + id);
         File[] listOfFiles = new File[] {};
@@ -433,6 +543,9 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         finish();
     }
 
+    /**
+     * Function called when click on create complaint
+     */
     private void _addComplaint() {
 
         String detail = ((EditText) findViewById(R.id.complaint_details)).getText().toString()
@@ -471,6 +584,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 
     }
 
+    /**
+     * Event triggered on auto complete text view's text change. When the text length is 3 call the
+     * api to get the locations
+     */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s.length() == 3) {
@@ -478,6 +595,9 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    /**
+     * Event triggered when click on any location from the list.
+     */
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
         try {

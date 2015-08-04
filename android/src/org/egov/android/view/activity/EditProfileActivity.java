@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.io.File;
@@ -58,6 +89,13 @@ public class EditProfileActivity extends BaseActivity {
     private static final int FROM_GALLERY = 2000;
     private int apiLevel = 0;
 
+    /**
+     * To set the layout for the ProfileActivity and set click listeners to the save changes, change
+     * picture and calendar icon. Here we have checked the api level to set the layout. If api level
+     * greater than 13 then activity_edit_profile layout else activity_lower_version_edit_profile
+     * layout. activity_edit_profile layout contains EGovRoundedImageView component which is not
+     * supported in lower api levels.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +145,10 @@ public class EditProfileActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Event triggered when click on the item having click listener. When click on edit icon
+     * redirect to EditProfileActivity and pass the user informations through intent.
+     */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -115,7 +157,7 @@ public class EditProfileActivity extends BaseActivity {
                 _editProfile();
                 break;
             case R.id.changepicture:
-                openDialog();
+                _openDialog();
                 break;
             case R.id.from_gallery:
                 _openGalleryImages();
@@ -126,12 +168,16 @@ public class EditProfileActivity extends BaseActivity {
                 dialog.cancel();
                 break;
             case R.id.edit_profile_calendar:
-                showDatePicker();
+                _showDatePicker();
                 break;
         }
     }
 
-    private void openDialog() {
+    /**
+     * Function called when click on add photo. Used to show the options where to pick the image
+     * from gallery or camera
+     */
+    private void _openDialog() {
         dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.custom_upload_dialog);
@@ -140,6 +186,10 @@ public class EditProfileActivity extends BaseActivity {
         ((LinearLayout) dialog.findViewById(R.id.from_camera)).setOnClickListener(this);
     }
 
+    /**
+     * Function called when choose the camera option. Start the implicit intent ACTION_IMAGE_CAPTURE
+     * for result.
+     */
     private void _openCamera() {
         Intent mediaCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File imageFile = new File(profPath + "/photo_temp_user.jpg");
@@ -147,7 +197,11 @@ public class EditProfileActivity extends BaseActivity {
         startActivityForResult(mediaCamera, CAPTURE_IMAGE);
     }
 
-    private void showDatePicker() {
+    /**
+     * Function used to choose the user dob
+     */
+    @SuppressLint("NewApi")
+    private void _showDatePicker() {
         Calendar c = Calendar.getInstance();
         int year = 0;
         int month = 0;
@@ -169,12 +223,20 @@ public class EditProfileActivity extends BaseActivity {
         datePicker.show();
     }
 
+    /**
+     * Function called when choose the gallery option. Start the implicit intent ACTION_PICK for
+     * result.
+     */
     private void _openGalleryImages() {
         Intent photo_picker = new Intent(Intent.ACTION_PICK);
         photo_picker.setType("image/*");
         startActivityForResult(photo_picker, FROM_GALLERY);
     }
 
+    /**
+     * Event triggered When an action completed in another activity(request send from this
+     * activity)).
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE && resultCode == RESULT_OK) {
@@ -207,6 +269,9 @@ public class EditProfileActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Function used to validate whether the device has space to save the image or not.
+     */
     private void _validateImageUrl() {
 
         StorageManager sm = new StorageManager();
@@ -225,12 +290,25 @@ public class EditProfileActivity extends BaseActivity {
         ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(_getBitmapImage(tempPath));
     }
 
+    /**
+     * Function used to decode the file(for memory consumption) and return the bitmap to show it in
+     * image view
+     * 
+     * @param path
+     *            => image file path
+     * @return bitmap
+     */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         return BitmapFactory.decodeFile(path, options);
     }
 
+    /**
+     * Function called when click on edit profile. Check the empty fields validation and call edit
+     * profile api.
+     */
+    @SuppressLint("DefaultLocale")
     private void _editProfile() {
 
         String name = ((EditText) findViewById(R.id.edit_profile_name)).getText().toString().trim();
@@ -284,6 +362,10 @@ public class EditProfileActivity extends BaseActivity {
         ApiController.getInstance().updateProfile(this, user);
     }
 
+    /**
+     * Event triggered when set the date in date picker and format the date like 'yyyy-MM-dd' using
+     * SimpleDateFormat.
+     */
     private DatePickerDialog.OnDateSetListener datepicker = new DatePickerDialog.OnDateSetListener() {
         @SuppressLint("SimpleDateFormat")
         @Override
@@ -300,6 +382,10 @@ public class EditProfileActivity extends BaseActivity {
         }
     };
 
+    /**
+     * Api response handler. Here we have checked the invalid access token error to redirect to
+     * login page
+     */
     @Override
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);

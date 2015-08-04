@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.util.regex.Matcher;
@@ -20,6 +51,9 @@ import android.widget.EditText;
 
 public class RegisterActivity extends BaseActivity {
 
+    /**
+     * To set the layout for the RegisterActivity and set click listener to the save button.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,17 +62,25 @@ public class RegisterActivity extends BaseActivity {
         ((Button) findViewById(R.id.register_doRegister)).setOnClickListener(this);
     }
 
+    /**
+     * Event triggered when click on the item having click listener. When click on save button
+     * _register() function get called.
+     */
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.register_doRegister:
-                register();
+                _register();
                 break;
         }
     }
 
-    private void register() {
+    /**
+     * Function called when click on save button. Check the empty field validation and show the
+     * message. If all fields are correct then call the register api.
+     */
+    private void _register() {
 
         String name = ((EditText) findViewById(R.id.register_name)).getText().toString().trim();
         String phone = ((EditText) findViewById(R.id.register_phone)).getText().toString().trim();
@@ -91,6 +133,13 @@ public class RegisterActivity extends BaseActivity {
         ApiController.getInstance().register(this, user);
     }
 
+    /**
+     * Function used to check whether the entered mail id is valid or not
+     * 
+     * @param email
+     *            => mail id entered by user
+     * @return
+     */
     private boolean _isValidEmail(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
@@ -98,6 +147,9 @@ public class RegisterActivity extends BaseActivity {
         return matcher.matches() ? true : false;
     }
 
+    /**
+     * Function used to clear the fields once user successfully registered
+     */
     private void _clearAllText() {
         ((EditText) findViewById(R.id.register_name)).setText("");
         ((EditText) findViewById(R.id.register_phone)).setText("");
@@ -106,6 +158,11 @@ public class RegisterActivity extends BaseActivity {
         ((EditText) findViewById(R.id.register_confirm_password)).setText("");
     }
 
+    /**
+     * Register api call response handler. If the response has status as 'success' then call
+     * _clearAllText() function to reset the fields and redirect to AccountActivationActivity and
+     * pass the email/phone through intent.
+     */
     @Override
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);

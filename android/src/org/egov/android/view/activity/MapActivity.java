@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.io.IOException;
@@ -35,6 +66,10 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     private double latitude = 0.0;
     private double longitude = 0.0;
 
+    /**
+     * To set the layout for the MapActivity and set click listener to confirm location button.
+     * Create instance of DGeoLocation class and call _initilizeMap() function.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +78,14 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         ((Button) findViewById(R.id.get_location)).setOnClickListener(this);
 
         new GeoLocation(this);
-        initilizeMap();
+        _initilizeMap();
     }
 
-    private void initilizeMap() {
+    /**
+     * Initialize the map view and set map click listener to map view. When tap on any location will
+     * show the marker on the location.
+     */
+    private void _initilizeMap() {
         googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
@@ -78,6 +117,15 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         });
     }
 
+    /**
+     * Function used to set the marker in the current location/ lat and lng location
+     * 
+     * @param lat
+     *            => latitude
+     * @param lng
+     *            => longitude
+     * @param isDefault
+     */
     private void _setLocation(double lat, double lng, boolean isDefault) {
 
         latitude = lat;
@@ -86,7 +134,7 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         int zoom = (isDefault) ? 4 : 15;
 
         if (latitude == 0 && longitude == 0) {
-            showMsg("Unable to get your current location");
+            _showMsg("Unable to get your current location");
             _setLocation(20.593684, 78.962880, true);
             return;
         }
@@ -101,10 +149,14 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         googleMap.animateCamera(yourLocation);
     }
 
-    private void getLocationName() {
+    /**
+     * Function used to send the location name tapped by the user in the map to the
+     * CreateComplaintActivity
+     */
+    private void _getLocationName() {
         try {
             if (latitude == 0 && longitude == 0) {
-                showMsg(_setMessage(R.string.location_empty));
+                _showMsg(_getMessage(R.string.location_empty));
                 return;
             }
             List<Address> addresses;
@@ -119,18 +171,29 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
                 setResult(2, intent);
                 finish();
             } else {
-                showMsg(_setMessage(R.string.unknown_location));
+                _showMsg(_getMessage(R.string.unknown_location));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private String _setMessage(int id) {
+    /**
+     * Function used to get string from string resource using id.
+     * 
+     * @param id
+     * @return
+     */
+    private String _getMessage(int id) {
         return getResources().getString(id);
     }
 
-    private void showMsg(String message) {
+    /**
+     * Function used to show message in toast.
+     * 
+     * @param message
+     */
+    private void _showMsg(String message) {
         if (message != null && !message.equals("")) {
             Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP, 0, 120);
@@ -138,20 +201,29 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         }
     }
 
+    /**
+     * Event triggered when click on the item having click listener. When click on confirm location
+     * button will call _getLocationName() function. When click on refresh icon will call the
+     * _initilizeMap() function.
+     */
     @Override
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.get_location:
-                getLocationName();
+                _getLocationName();
                 break;
             case Header.ACTION_REFRESH:
-                initilizeMap();
+                _initilizeMap();
                 break;
         }
     }
 
-    public void _showSettingsAlert() {
+    /**
+     * Function called if the user not enabled GPS/Location in their device. Give options to enable
+     * GPS/Location and cancel the pop up.
+     */
+    private void _showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Settings");
         alertDialog.setMessage("Enable Location Provider! Go to settings menu?");

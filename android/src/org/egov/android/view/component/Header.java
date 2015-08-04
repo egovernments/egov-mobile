@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.component;
 
 import org.egov.android.R;
@@ -46,6 +77,12 @@ public class Header extends RelativeLayout implements OnClickListener {
         _init(context, attrs);
     }
 
+    /**
+     * Set the layout of the header.
+     * 
+     * @param context
+     * @param attrs
+     */
     private void _init(Context context, AttributeSet attrs) {
         final LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -102,6 +139,13 @@ public class Header extends RelativeLayout implements OnClickListener {
         this.actionListener = actionListener;
     }
 
+    /**
+     * Function used to get the image view having the given id and resource id
+     * 
+     * @param id
+     * @param resId
+     * @return
+     */
     public View _getImageView(int id, int resId) {
         ImageView img = new ImageView(getContext());
         img.setId(id);
@@ -113,6 +157,13 @@ public class Header extends RelativeLayout implements OnClickListener {
         return img;
     }
 
+    /**
+     * Function used to get the text view having the given id and text
+     * 
+     * @param id
+     * @param text
+     * @return
+     */
     public View _getTextView(int id, String text) {
         EGovTextView txt = new EGovTextView(new ContextThemeWrapper(getContext(),
                 R.style.Header_Text));
@@ -126,6 +177,12 @@ public class Header extends RelativeLayout implements OnClickListener {
         return txt;
     }
 
+    /**
+     * Function used to get pixel value from dp unit
+     * 
+     * @param dp
+     * @return
+     */
     private int dpToPixel(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);

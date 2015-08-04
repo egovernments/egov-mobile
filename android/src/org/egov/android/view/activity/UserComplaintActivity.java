@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.io.File;
@@ -41,12 +72,18 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private int apiLevel = 0;
     private int page = 1;
 
+    /**
+     * Get the api level from the session
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         apiLevel = AndroidLibrary.getInstance().getSession().getInt("api_level", 0);
     }
 
+    /**
+     * This is used to call the api respect to the visible fragment.
+     */
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -57,11 +94,20 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         }
     }
 
+    /**
+     * To set the layout for the UserComplaintActivity.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_user_complaints, container, false);
     }
 
+    /**
+     * Function called after got response from api call to display the list
+     * 
+     * @param isPagination
+     *            => flag to inform the adapter to show load more button
+     */
     private void _displayListView(boolean isPagination) {
         ListView list = (ListView) getActivity().findViewById(R.id.user_complaint_list);
         list.setOnItemClickListener(this);
@@ -70,6 +116,15 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Function called after got success api response to download the images under the complaints
+     * After downloading the images, the images will be updated in list
+     * 
+     * @param path
+     *            => complaint folder path
+     * @param jsonObj
+     *            => contain complaint information
+     */
     private void _addDownloadJobs(String path, JSONObject jsonObj) {
         JSONObject jo = null;
         try {
@@ -91,6 +146,16 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         }
     }
 
+    /**
+     * Function used to check whether the key value is exist in the given json object If the key
+     * exist means return the value from the json object else return empty string
+     * 
+     * @param jo
+     *            => json object where to check the key exist
+     * @param key
+     *            => name of the key to check
+     * @return string
+     */
     private String _getValue(JSONObject jo, String key) {
         String result = "";
         try {
@@ -101,6 +166,10 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         return result;
     }
 
+    /**
+     * User complaints api response handler. Here we have checked the invalid access token error to
+     * redirect to login page
+     */
     @Override
     public void onResponse(Event<ApiResponse> event) {
         String status = event.getData().getApiStatus().getStatus();
@@ -159,7 +228,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
             }
         } else {
             if (msg.matches(".*Invalid access token.*")) {
-                showMsg("Session expired");
+                _showMsg("Session expired");
                 AndroidLibrary.getInstance().getSession().edit().putString("access_token", "")
                         .commit();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -168,12 +237,17 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                 getActivity().finish();
             } else {
                 page = (page > 1) ? page - 1 : 1;
-                showMsg(msg);
+                _showMsg(msg);
             }
         }
     }
 
-    private void showMsg(String message) {
+    /**
+     * Function used to show a message in toast.
+     * 
+     * @param message
+     */
+    private void _showMsg(String message) {
         if (message != null && !message.equals("")) {
             Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP, 0, 120);
@@ -181,6 +255,9 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         }
     }
 
+    /**
+     * Event triggered when click on an item in listview. Click on list item redirect to detail page
+     */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Complaint complaint = listItem.get(position);
@@ -191,6 +268,9 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         startActivity(intent);
     }
 
+    /**
+     * Event triggered When click on load more in ComplaintAdapter to call api.
+     */
     @Override
     public void actionPerformed(String tag, Object... value) {
         if (tag.equals("LOAD_MORE")) {

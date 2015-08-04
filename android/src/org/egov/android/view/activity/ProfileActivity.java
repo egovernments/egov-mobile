@@ -1,3 +1,34 @@
+/**
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
+
 package org.egov.android.view.activity;
 
 import java.io.File;
@@ -30,6 +61,12 @@ public class ProfileActivity extends BaseActivity {
     private String aadhaarCardNumber = "";
     private String langauge = "";
 
+    /**
+     * To set the layout for the ProfileActivity and set click listener to the edit icon. Here we
+     * have checked the api level to set the layout. If api level greater than 13 then
+     * activity_profile layout else activity_lower_version_profile layout. activity_profile layout
+     * contains EGovRoundedImageView component which is not supported in lower api levels.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,12 +79,19 @@ public class ProfileActivity extends BaseActivity {
         ((ImageView) findViewById(R.id.edit_icon)).setOnClickListener(this);
     }
 
+    /**
+     * Call the profile api when start the activity.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         ApiController.getInstance().getProfile(this);
     }
 
+    /**
+     * Event triggered when click on the item having click listener. When click on edit icon
+     * redirect to EditProfileActivity and pass the user informations through intent.
+     */
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -68,6 +112,11 @@ public class ProfileActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Profile api call response handler. Show the success/error message to the user. If the
+     * response has status as 'success' then get the user informations from the response and show it
+     * in layout. If the error is like 'Invalid access token' then redirect to the login page.
+     */
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);
         String status = event.getData().getApiStatus().getStatus();
@@ -120,12 +169,30 @@ public class ProfileActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Function used to decode the file(for memory consumption) and return the bitmap to show it in
+     * image view
+     * 
+     * @param path
+     *            => image file path
+     * @return bitmap
+     */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         return BitmapFactory.decodeFile(path, options);
     }
 
+    /**
+     * Function used to check whether the key value is exist in the given json object If the key
+     * exist means return the value from the json object else return empty string
+     * 
+     * @param jo
+     *            => json object where to check the key exist
+     * @param key
+     *            => name of the key to check
+     * @return string
+     */
     private String _getValue(JSONObject jo, String key) {
         String result = "";
         try {
