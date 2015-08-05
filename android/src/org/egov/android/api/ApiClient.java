@@ -68,6 +68,13 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
 
     Dialog dialog = null;
 
+    /**
+     * Constructor to set apiMethod and apiLsteners. apiMethod is used to
+     * identify which api is called. apiListeners is used to send response to
+     * the activity from where the api is called.
+     * 
+     * @param apiMethod
+     */
     public ApiClient(ApiMethod apiMethod) {
         this.apiMethod = apiMethod;
         apiListeners = new ArrayList<IApiListener>();
@@ -100,6 +107,10 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
         return this;
     }
 
+    /**
+     * To add listener to the apiMethod. Used to send response back to the
+     * activity.
+     */
     public ApiClient addListener(IApiListener listener) {
         apiListeners.add(listener);
         return this;
@@ -120,7 +131,9 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     }
 
     /**
-     * 
+     * This method gets executed before starting the http client requests. If
+     * the api method has cache and cache has data then it returns the data from
+     * the cache. If the cache is empty then call the api with page loading.
      */
     @Override
     protected void onPreExecute() {
@@ -145,6 +158,12 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
         }
     }
 
+    /**
+     * Function used to send response as an event to the activity from where the
+     * api is called.
+     * 
+     * @param response
+     */
     protected void triggerEvent(ApiResponse response) {
         Event<ApiResponse> event = new Event<ApiResponse>();
         ReflectionUtil.setFieldData(event, "data", response);
@@ -155,6 +174,12 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
         }
     }
 
+    /**
+     * This method is the completion of the http request either success or
+     * failure. If the response does not contain any data then return the
+     * function. If the response has data and has cache then store it in cache
+     * and trigger the response to the listener.
+     */
     @Override
     protected void onPostExecute(ApiResponse response) {
         super.onPostExecute(response);
@@ -183,6 +208,13 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
         this.triggerEvent(response);
     }
 
+    /**
+     * This method runs in background. This function will call after
+     * onPreExecute and before onPostExecute. If the request enter into any
+     * errors like authentication, network error and server errors set the error
+     * flag as true. Otherwise read the input stream and get the content for the
+     * response.
+     */
     @Override
     protected ApiResponse doInBackground(Void... params) {
         String url = apiMethod.getApiUrl().getUrl(true) + apiMethod.getExtraParam();

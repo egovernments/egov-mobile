@@ -35,6 +35,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * This is to read the egov.conf file. Get the values like database name, database version, cache
+ * duration and date format If the value is assigned in the assets/egov.conf file then it will take
+ * that value. If not then it will take the default value from here.
+ */
 public class Config {
 
     Properties property = null;

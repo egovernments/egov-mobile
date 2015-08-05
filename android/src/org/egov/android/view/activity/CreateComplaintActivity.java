@@ -38,17 +38,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.egov.android.R;
-import org.egov.android.api.ApiUrl;
-import org.egov.android.controller.ApiController;
-import org.egov.android.controller.ServiceController;
 import org.egov.android.AndroidLibrary;
+import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.api.ApiUrl;
 import org.egov.android.api.IApiUrl;
 import org.egov.android.common.StorageManager;
+import org.egov.android.controller.ApiController;
+import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.model.Complaint;
@@ -63,6 +64,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,6 +109,15 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     private static final int GET_LOCATION = 3000;
     ArrayList<String> imageUrl = new ArrayList<String>();
 
+    /**
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize the
+     * CreateComplaintActivity, set click listener to the complaint type,complaint location,add
+     * complaint photo and create complaint button. StorageManager is the interface to the systems'
+     * storage service. The storage manager handles storage-related items. mkdirs creates a new
+     * directory on a device storage area to store the complaint photos
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +142,36 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
     }
+
+    private void _getCurrentLocation(double lat, double lng) {
+
+        if (lat == 0 && lng == 0) {
+            return;
+        }
+
+        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(lat, lng, 1);
+            latitude = lat;
+            longitute = lng;
+            if (addresses.size() > 0) {
+                String cityName = addresses.get(0).getAddressLine(0);
+                location.setText(cityName);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Event triggered when clicking on the item having click listener. When clicking on create
+     * complaint button, _addComplaint() will be called When clicking on location icon, MapActivity
+     * is started. When clicking on add photo icon, call to _openDialog() method. open dialog method
+     * has two options, add photo from gallery and camera. When clicking on from_gallery
+     * _openGalleryImages() will be called. When clicking on from_camera _openCamera() will be
+     * called. When clicking on complaint_type FreqComplaintTypeActivity is started.
+     */
 
     @Override
     public void onClick(View v) {
@@ -158,8 +201,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function called when click on add photo. Used to show the options where to pick the image
-     * from gallery or camera
+     * Function called when clicking on add photo. Used to show the options where to pick the image,
+     * i.e, from gallery or camera
      */
     private void _openDialog() {
         dialog = new Dialog(this);
@@ -181,8 +224,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function called when choose the camera option. Start the implicit intent ACTION_IMAGE_CAPTURE
-     * for result.
+     * Function called when choosing the camera option. Start the implicit intent
+     * ACTION_IMAGE_CAPTURE for result.
      */
     private void _openCamera() {
         File imageFile = null;
@@ -281,8 +324,16 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Event triggered When an action completed in another activity(request send from this
-     * activity)).
+     * Event triggered when an action is completed in another activity(request from this activity)).
+     * We have checked the request code value If the request code value is equal to the
+     * CAPTURE_IMAGE value and RESULT_OK then _validateImageUrl will be called. If the request code
+     * value is equal to the FROM_GALLERY then uri of the selected image file from gallery is stored
+     * to the variable selectedImage and the selected image is accessed through the ContentProvider
+     * object.The ContentResolver object communicates with the ContentProvider object and the result
+     * is sent to the cursor object,the cursor object contains the imagepath. _createImageFile() is
+     * called to store the selected gallery image to the complaint photos directory on the storage
+     * device.If the request code value is equal to the GET_LOCATION then latitude,longitute are
+     * retrieved from the map activity then the location is diplayed to the create complaint layout.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -308,7 +359,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function used to check file extension before add it to complaint
+     * Function used to check file extension before adding it to complaint
      * 
      * @param filePath
      * @return
@@ -349,12 +400,67 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         } else {
             file_upload_limit++;
             _addImageView(imagePath);
+
+            if (file_upload_limit == 1) {
+                _getLatAndLng(imagePath);
+            }
         }
     }
 
+    private void _getLatAndLng(String imageUrl) {
+        try {
+            ExifInterface exif = new ExifInterface(imageUrl);
+            String attrLatitute = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            String attrLatituteRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            String attrLONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            String attrLONGITUDEREf = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+
+            if (attrLatitute == null && attrLONGITUDE == null) {
+                return;
+            }
+
+            if (attrLatituteRef.equals("N")) {
+                latitude = convertToDegree(attrLatitute);
+            }
+
+            if (attrLONGITUDEREf.equals("E")) {
+                longitute = convertToDegree(attrLONGITUDE);
+            }
+            _getCurrentLocation(latitude, longitute);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Float convertToDegree(String stringDMS) {
+        Float result = null;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = new Double(stringD[0]);
+        Double D1 = new Double(stringD[1]);
+        Double FloatD = D0 / D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = new Double(stringM[0]);
+        Double M1 = new Double(stringM[1]);
+        Double FloatM = M0 / M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = new Double(stringS[0]);
+        Double S1 = new Double(stringS[1]);
+        Double FloatS = S0 / S1;
+
+        result = new Float(FloatD + (FloatM / 60) + (FloatS / 3600));
+
+        return result;
+
+    }
+
     /**
-     * Function used to show the image added to complaint in image view. A close icon shown top
-     * right corner of the image to delete it
+     * Function used to show the image added to complaint in image view. A close icon is shown at
+     * the top right corner of the image to delete it
      * 
      * @param imagePath
      */
@@ -437,7 +543,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function to set the data to auto complete text view component to show the loaction
+     * Function to set the data to auto complete text view component to show the location
      * 
      * @param list
      */
@@ -458,8 +564,9 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Api response handler. Here we have checked the invalid access token error to redirect to
-     * login page
+     * The onResponse method will be invoked after the API call onResponse methods will contain the
+     * response If the response has a status as 'success' then we have checked whether the access
+     * token is valid or not If the access token is invalid ,redirect to login page.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
@@ -544,7 +651,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function called when click on create complaint
+     * Function called when clicking on create complaint
      */
     private void _addComplaint() {
 
@@ -585,7 +692,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Event triggered on auto complete text view's text change. When the text length is 3 call the
+     * Event triggered on auto complete text view's text change. When the text length is 3, call the
      * api to get the locations
      */
     @Override
@@ -596,11 +703,13 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Event triggered when click on any location from the list.
+     * Event triggered when clicking on any location from the list.
      */
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
         try {
+            latitude = 0.0;
+            longitute = 0.0;
             locationId = list.get(position).getInt("id");
         } catch (JSONException e) {
             e.printStackTrace();

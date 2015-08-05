@@ -31,8 +31,15 @@
 
 package org.egov.android.api;
 
+/**
+ * To set the request method type as GET, POST, PUT.
+ */
+
 public enum RequestMethod {
-    GET("GET"), POST("POST"), PUT("PUT"), DELETE("DELETE");
+
+    //fields
+
+    GET("GET"), POST("POST"), PUT("PUT");
 
     private String method = "";
 

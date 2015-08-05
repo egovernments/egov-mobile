@@ -42,6 +42,10 @@ import android.widget.EditText;
 public class EGovEditText extends EditText {
 
     private Context context = null;
+    /**
+     * The constructor of the EGovEditText class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public EGovEditText(Context context) {
         super(context);
@@ -60,6 +64,8 @@ public class EGovEditText extends EditText {
 
     /**
      * Function used to set common font style to the edit text in entire app
+     * apply the fontface using customFont.
+     * If the customfont value is null then we apply the default app font
      * 
      * @param context
      * @param attrs

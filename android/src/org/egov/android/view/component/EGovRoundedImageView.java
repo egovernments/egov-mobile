@@ -53,6 +53,10 @@ public class EGovRoundedImageView extends ImageView {
     private Bitmap image;
     private Paint paint;
     private Paint paintBorder;
+    /**
+     * The constructor of the EGovRoundedImageView class and we supplied the application Context as a parameter.
+     * @param context
+     */
 
     public EGovRoundedImageView(final Context context) {
         this(context, null);
@@ -61,18 +65,20 @@ public class EGovRoundedImageView extends ImageView {
     public EGovRoundedImageView(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.circularImageViewStyle);
     }
+    /**
+     * init paint and load the styled attributes and set their properties.
+     * Sets the image view border color and border width and sets the shadow.
+     * @param context
+     * @param attrs
+     * @param defStyle
+     */
 
     public EGovRoundedImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-
-        // init paint
+        super(context, attrs, defStyle);       
         paint = new Paint();
         paint.setAntiAlias(true);
-
         paintBorder = new Paint();
-        paintBorder.setAntiAlias(true);
-
-        // load the styled attributes and set their properties
+        paintBorder.setAntiAlias(true); 
         TypedArray attributes = context.obtainStyledAttributes(attrs,
                 R.styleable.EGovRoundedImageView, defStyle, 0);
 
@@ -87,12 +93,18 @@ public class EGovRoundedImageView extends ImageView {
         if (attributes.getBoolean(R.styleable.EGovRoundedImageView_shadow, false))
             addShadow();
     }
+    /**
+     * sets the image view border width 
+     */
 
     public void setBorderWidth(int borderWidth) {
         this.borderWidth = borderWidth;
         this.requestLayout();
         this.invalidate();
     }
+    /**
+     * sets the image view border color 
+     */
 
     public void setBorderColor(int borderColor) {
         if (paintBorder != null)
@@ -108,13 +120,17 @@ public class EGovRoundedImageView extends ImageView {
 
     /**
      * Function used to show the image in rounded shape.
+     * load the bitmap and init shader using BitmapShader
+     * circleCenter is the x or y of the view's center
+     * radius is the radius in pixels of the cirle to be drawn
+     * paint contains the shader that will texture the shape
      */
     @Override
     public void onDraw(Canvas canvas) {
-        // load the bitmap
+        
         image = drawableToBitmap(getDrawable());
 
-        // init shader
+       
         if (image != null) {
 
             canvasSize = canvas.getWidth();
@@ -124,10 +140,6 @@ public class EGovRoundedImageView extends ImageView {
             BitmapShader shader = new BitmapShader(Bitmap.createScaledBitmap(image, canvasSize,
                     canvasSize, false), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             paint.setShader(shader);
-
-            // circleCenter is the x or y of the view's center
-            // radius is the radius in pixels of the cirle to be drawn
-            // paint contains the shader that will texture the shape
             int circleCenter = (canvasSize - (borderWidth * 2)) / 2;
             canvas.drawCircle(circleCenter + borderWidth, circleCenter + borderWidth,
                     ((canvasSize - (borderWidth * 2)) / 2) + borderWidth - 4.0f, paintBorder);
@@ -135,13 +147,20 @@ public class EGovRoundedImageView extends ImageView {
                     ((canvasSize - (borderWidth * 2)) / 2) - 4.0f, paint);
         }
     }
-
+    /**
+     * Called to determine the size requirements(width and height) for the image view 
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = measureWidth(widthMeasureSpec);
         int height = measureHeight(heightMeasureSpec);
         setMeasuredDimension(width, height);
     }
+    /**
+     * measuring the width of the image view
+     * @param measureSpec
+     * @return
+     */
 
     private int measureWidth(int measureSpec) {
         int result = 0;
@@ -161,6 +180,11 @@ public class EGovRoundedImageView extends ImageView {
 
         return result;
     }
+    /**
+     * measuring the height of the image view
+     * @param measureSpec
+     * @return
+     */
 
     private int measureHeight(int measureSpecHeight) {
         int result = 0;
@@ -180,6 +204,11 @@ public class EGovRoundedImageView extends ImageView {
 
         return (result + 2);
     }
+    /**
+     * convert drawable image to bitmap image using createBitmap method and return bitmap
+     * @param drawable
+     * @return
+     */
 
     public Bitmap drawableToBitmap(Drawable drawable) {
         if (drawable == null) {

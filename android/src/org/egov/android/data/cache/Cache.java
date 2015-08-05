@@ -39,7 +39,9 @@ import org.egov.android.annotation.Table;
 import org.egov.android.data.ColumnType;
 import org.egov.android.model.BaseModel;
 
-import android.util.Log;
+/**
+ * This is to create cache table with the fields url, data etc. We will check the cache time expiry.
+ */
 
 @Table(name = "cache")
 public class Cache extends BaseModel {
@@ -58,8 +60,6 @@ public class Cache extends BaseModel {
 
     @Column
     private String timezone = "";
-
-    private final static String TAG = "Cache";
 
     public Cache() {
 
@@ -117,9 +117,7 @@ public class Cache extends BaseModel {
 
     @JsonIgnore(value = true)
     public boolean hasExpired() {
-        Log.d(TAG, String.valueOf(this.getTimestamp()));
         long timeDiff = (Calendar.getInstance().getTimeInMillis() - this.getTimestamp().getTime()) / 1000;
-        Log.d(TAG, String.valueOf(timeDiff));
         return (timeDiff > this.getDuration());
     }
 

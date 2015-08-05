@@ -56,9 +56,8 @@ public class ActivityHelper {
     }
 
     /**
-     * Get configuration informations and assign it in config variable. Get shared preference object
+     * Get configuration informations and assign it to config variable. Get shared preference object
      * having app name and assign it to session variable
-     * 
      * @param savedInstanceState
      */
     public void onCreate(Bundle savedInstanceState) {

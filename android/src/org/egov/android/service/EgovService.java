@@ -47,9 +47,18 @@ public class EgovService extends IntentService {
     public final static int START_DOWN_SYNC = 600;
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
+    /**
+     * Intent service to start/stop background jobs(upload/download)
+     */
     public EgovService() {
         super("org.egov.android.service.EgovService");
     }
+
+    /**
+     * This class is used for handle the messages from controller. If the message from the
+     * controller is 'start', then set the network availability to true and start the jobs. If the
+     * message from the controller is 'stop', then set the network availability to false.
+     */
 
     class IncomingHandler extends Handler {
         @Override
@@ -68,14 +77,25 @@ public class EgovService extends IntentService {
         }
     }
 
+    /**
+     * This method is invoked on thread with a request to process.
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
     }
 
+    /**
+     * Called by the system when the service is first created.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
     }
+
+    /**
+     * Called by the system every time a client explicitly starts the service by calling
+     * startService(Intent).
+     */
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -83,11 +103,17 @@ public class EgovService extends IntentService {
         return START_STICKY;
     }
 
+    /**
+     * provides binding for the service.
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return mMessenger.getBinder();
     }
 
+    /**
+     * Called by the system to notify a Service that it is no longer used and is being removed.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();

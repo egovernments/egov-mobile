@@ -43,50 +43,78 @@ import org.egov.android.data.ColumnType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class BaseModel implements IModel {
 
-	@Column(type = ColumnType.INTEGER, isAutoIncrement = true, isPrimaryKey = true)
-	private int id = 0;
+    @Column(type = ColumnType.INTEGER, isAutoIncrement = true, isPrimaryKey = true)
+    private int id = 0;
 
-	@Column(type = ColumnType.TIMESTAMP)
-	private Date timestamp = null;
+    @Column(type = ColumnType.TIMESTAMP)
+    private Date timestamp = null;
 
-	// ------------------------------------------------------------------------------------------------//
+    /**
+     * constructor for this class.
+     */
 
-	public BaseModel() {
+    public BaseModel() {
 
-	}
+    }
 
-	// ------------------------------------------------------------------------------------------------//
+    /**
+     * returns the column id
+     */
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    /**
+     * sets the column id
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	// ------------------------------------------------------------------------------------------------//
+    /**
+     * returns the time stamp as a string.
+     * 
+     * @return
+     */
 
-	public String getTimestampAsString() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-		return sdf.format(this.timestamp);
-	}
+    public String getTimestampAsString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+        return sdf.format(this.timestamp);
+    }
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
+    /**
+     * returns the time stamp as a Date object.
+     * 
+     * @return
+     */
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-	@JsonIgnore
-	public void setTimestamp(String timestamp) {
-		try {
-			this.timestamp = new SimpleDateFormat("yyy-MM-dd HH:mm:ss")
-					.parse(timestamp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * sets the time stamp as a Date object.
+     * 
+     * @return
+     */
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * sets the time stamp as a String.
+     * 
+     * @return
+     */
+
+    @JsonIgnore
+    public void setTimestamp(String timestamp) {
+        try {
+            this.timestamp = new SimpleDateFormat("yyy-MM-dd HH:mm:ss").parse(timestamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 }

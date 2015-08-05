@@ -42,124 +42,112 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+/**
+ * It is to get the device storage path and its size.
+ */
+
 public class StorageManager {
 
-	private static final String TAG = StorageManager.class.getName();
+    private static final String TAG = StorageManager.class.getName();
 
-	// ----------------------------------------------------------------------------//
+    public Object[] getStorageInfo() {
 
-	/**
-	 * 
-	 * @return Object[] <br/>
-	 *         0 - Path <br/>
-	 *         1 - State <br/>
-	 *         2 - Size <br/>
-	 */
+        String path = this.getExternalStoragePath();
 
-	public Object[] getStorageInfo() {
+        Object[] result = new Object[] { "", "", 0, "" };
 
-		String path = this.getExternalStoragePath();
+        result[0] = path;
 
-		Object[] result = new Object[] { "", "", 0, "" };
+        long blockSize = 0;
+        long availableBlock = 0;
+        long size = 0;
+        if (path.equals("")) {
+            return result;
+        }
 
-		result[0] = path;
+        File f = new File(path);
 
-		long blockSize = 0;
-		long availableBlock = 0;
-		long size = 0;
-		if (path.equals("")) {
-			return result;
-		}
+        if (!f.canWrite()) {
+            result[1] = Environment.MEDIA_MOUNTED_READ_ONLY;
+        } else {
+            StatFs stat = new StatFs(path);
+            blockSize = stat.getBlockSize();
+            availableBlock = stat.getAvailableBlocks();
+            size = blockSize * availableBlock;
+            result[1] = Environment.getExternalStorageState();
+        }
 
-		File f = new File(path);
+        result[2] = size;
+        result[3] = Environment.getExternalStorageDirectory().getPath();
 
-		if (!f.canWrite()) {
-			result[1] = Environment.MEDIA_MOUNTED_READ_ONLY;
-		} else {
-			StatFs stat = new StatFs(path);
-			blockSize = stat.getBlockSize();
-			availableBlock = stat.getAvailableBlocks();
-			size = blockSize * availableBlock;
-			result[1] = Environment.getExternalStorageState();
-		}
+        Log.d(TAG, result[0].toString());
+        Log.d(TAG, result[1].toString());
+        Log.d(TAG, result[2].toString());
+        Log.d(TAG, result[3].toString());
+        return result;
+    }
 
-		result[2] = size;
-		result[3] = Environment.getExternalStorageDirectory().getPath();
+    /**
+     * 
+     * @return path
+     * 
+     */
+    public String getExternalStoragePath() {
+        String path = "";
+        BufferedReader br = null;
 
-		Log.d(TAG, result[0].toString());
-		Log.d(TAG, result[1].toString());
-		Log.d(TAG, result[2].toString());
-		Log.d(TAG, result[3].toString());
-		return result;
-	}
+        try {
+            br = new BufferedReader(new FileReader("/proc/mounts"));
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.contains("/mnt/secure") || line.contains("/mnt/asec")
+                        || line.contains("/mnt/obb") || line.contains("/dev/mapper")
+                        || line.contains("tmpfs")) {
+                    continue;
+                }
+                if (line.contains("vfat") || line.contains("/mnt")) {
+                    StringTokenizer tokens = new StringTokenizer(line, " ");
+                    String s = tokens.nextToken();
+                    s = tokens.nextToken();
+                    if (line.contains("/dev/block/vold")) {
+                        File file = new File(s);
+                        if (!file.canWrite()) {
+                            path = "";
+                        } else {
+                            path = s;
+                        }
+                    }
+                }
+            }
 
-	// ----------------------------------------------------------------------------//
-	/**
-	 * 
-	 * @return path
-	 * 
-	 */
-	public String getExternalStoragePath() {
-		String path = "";
-		BufferedReader br = null;
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+            }
+        }
 
-		try {
-			br = new BufferedReader(new FileReader("/proc/mounts"));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("/mnt/secure") || line.contains("/mnt/asec")
-						|| line.contains("/mnt/obb")
-						|| line.contains("/dev/mapper")
-						|| line.contains("tmpfs")) {
-					continue;
-				}
-				if (line.contains("vfat") || line.contains("/mnt")) {
-					StringTokenizer tokens = new StringTokenizer(line, " ");
-					String s = tokens.nextToken();
-					s = tokens.nextToken();
-					if (line.contains("/dev/block/vold")) {
-						File file = new File(s);
-						if (!file.canWrite()) {
-							path = "";
-						} else {
-							path = s;
-						}
-					}
-				}
-			}
+        return path.equals("") ? Environment.getExternalStorageDirectory().getPath() : path;
+    }
 
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-			}
-		}
+    /**
+     * @param path
+     * @return boolean
+     * 
+     *         true - if directories has been created successfully; false - if already exist or an
+     *         error occur.
+     * 
+     */
 
-		return path.equals("") ? Environment.getExternalStorageDirectory()
-				.getPath() : path;
-	}
-
-	// ----------------------------------------------------------------------------//
-	/**
-	 * 
-	 * 
-	 * @param path
-	 * @return boolean
-	 * 
-	 *         true - if directories has been created successfully <br/>
-	 *         false - if already exist or an error occur. <br/>
-	 * 
-	 */
-
-	public boolean mkdirs(String path) {
-		File f = new File(path);
-		if (f.exists()) {
-			Log.d(TAG, "path exist ==>");
-			return false;
-		}
-		return f.mkdirs();
-	}
+    public boolean mkdirs(String path) {
+        File f = new File(path);
+        if (f.exists()) {
+            Log.d(TAG, "path exist ==>");
+            return false;
+        }
+        return f.mkdirs();
+    }
 
 }

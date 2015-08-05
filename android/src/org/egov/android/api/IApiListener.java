@@ -33,6 +33,10 @@ package org.egov.android.api;
 
 import org.egov.android.listener.Event;
 
+/**
+ * After api call, the data will be received in the onResponse method in the Activity.
+ */
+
 public interface IApiListener {
 
     public void onResponse(Event<ApiResponse> event);

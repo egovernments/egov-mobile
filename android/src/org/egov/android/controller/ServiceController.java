@@ -75,7 +75,8 @@ public class ServiceController implements IHttpClientListener {
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     /**
-     * Create an instance for the ServiceController
+     * This class is used to manage the upload and download jobs running on background. To avoid
+     * unnecessary object creation, we have used the getInstance() function.
      * 
      * @return
      */
@@ -86,7 +87,8 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to start EgovService which extend an intent service.
+     * When starting an activity, this function is called. If the service is already started, then
+     * no need to start it again. The service is called to run the jobs in background.
      * 
      * @param ctx
      */
@@ -101,16 +103,8 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to stop EgovService
-     */
-    public void stopService() {
-        isServiceStarted = false;
-        unBindService();
-    }
-
-    /**
-     * Function to bind EgovService by mConnection. If the service already binded means the isBound
-     * flag is set to true. When the flag false that time only the service go to bind.
+     * We have to bind the service to handle messages. If the service get the message correctly,
+     * then only it can start the background jobs.
      */
     public void bindService() {
         if (!isBound) {
@@ -119,17 +113,6 @@ public class ServiceController implements IHttpClientListener {
         }
     }
 
-    /**
-     * Function to unbind the EgovService
-     */
-    public void unBindService() {
-        ctx.unbindService(mConnection);
-        isBound = false;
-    }
-
-    /**
-     * Create a service connection to bind the service
-     */
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -162,12 +145,13 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to send message to service like start, stop
+     * After binding the service, we can send message to the service to start/stop running
+     * background jobs.
      * 
      * @param action
      *            => START, STOP
      * @param b
-     *            => bundle data what you want to send
+     *            => bundle data to be send
      */
     public void sendMessageToService(int action, Bundle b) {
         if (isBound && myService != null) {
@@ -182,14 +166,15 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to send message to service to start jobs
+     * This function is called when upload/download jobs are added in 'jobs' table and when network
+     * change is received.
      */
     public void startJobs() {
         sendMessageToService(EgovService.START, null);
     }
 
     /**
-     * Function to send message to service to start jobs
+     * This function is called when no job exists in 'jobs' table and no network state is received.
      */
     public void stopJobs() {
         isJobRunning = false;
@@ -197,10 +182,10 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to start job from 'jobs' table. Before start a job we have checked the network state
-     * and another job running state. If any one is true, don't start the job and there is no jobs
-     * in the 'jobs' table then call stopJobs() function. If any job getting started then change the
-     * job status to 'started'.
+     * Function to start job from 'jobs' table. Before starting a job, we have checked the network
+     * state and also another job's running state. If any one is true, don't start the job. If there
+     * are no jobs in the 'jobs' table then call stopJobs() function. When starting a job, change
+     * the job status to 'started'.
      */
     public void startJob() {
         if (!isNetAvailable || isJobRunning) {
@@ -238,7 +223,7 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to upload the file using Uploader class.
+     * Function to upload the file using Uploader class.We have set the source and destination path.
      * 
      * @param data
      *            => json object contains the source and destination path
@@ -259,7 +244,8 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to download the file using Downloader class.
+     * Function to download the file using Downloader class. We have set the source and destination
+     * path.
      * 
      * @param data
      *            => json object contains the source and destination path
@@ -283,7 +269,7 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * Function to set network availability
+     * When network change received by the service, call this function to set net availability.
      * 
      * @param isNetAvailable
      *            => boolean
@@ -298,8 +284,8 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * On complete the job delete the entry having the job id from 'jobs' table and start the next
-     * job.
+     * On completing the jo,b delete the entry having the job id from 'jobs' table and start the
+     * next job.
      */
     @Override
     public void onComplete(byte[] data) {
@@ -310,8 +296,8 @@ public class ServiceController implements IHttpClientListener {
     }
 
     /**
-     * On error we have checked the file size with device available space if the space not
-     * sufficient then show the message else we have incremented the tried count.
+     * On error we have checked the file size with device available spac. If the space is
+     * insufficient then show the message else increment the tried count.
      */
     @Override
     public void onError(byte[] data) {

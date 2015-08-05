@@ -37,6 +37,10 @@ import android.content.Context;
 
 public class SQLiteDB extends SQLiteHelper {
 
+    /**
+     * Constructor to create database
+     */
+
     public SQLiteDB(Context context, String database, int version) {
         super(context, database, version);
     }

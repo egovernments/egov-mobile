@@ -49,7 +49,8 @@ public class ComplaintTypeAdapter extends BaseAdapter {
     private ArrayList<ComplaintType> item;
 
     /**
-     * This adapter is used to show all complaint types
+     * This adapter is used to show the complaint type list. If we want to create a listview
+     * component we have to set an adapter to it.
      * 
      * @param context
      * @param item
@@ -82,6 +83,10 @@ public class ComplaintTypeAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * This class stores each of the component views inside the tag field of the Layout, so we can
+     * immediately access them without the need to look them up repeatedly.
+     */
     static class ViewHolder {
         TextView imageTitle;
         ImageView image;

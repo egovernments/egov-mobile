@@ -34,6 +34,10 @@ package org.egov.android.model;
 import org.egov.android.model.BaseModel;
 import org.egov.android.model.IModel;
 
+/**
+ * This Complaint Model class contains the complaint information.
+ */
+
 public class Complaint extends BaseModel implements IModel {
 
     private String complaintId = "";
@@ -49,97 +53,208 @@ public class Complaint extends BaseModel implements IModel {
     private String createdBy = "";
     private boolean isPagination = false;
 
+    /**
+     * returns the ComplaintId
+     * 
+     * @return
+     */
+
     public String getComplaintId() {
         return complaintId;
     }
+
+    /**
+     * sets the ComplaintId
+     */
 
     public void setComplaintId(String complaintId) {
         this.complaintId = complaintId;
     }
 
+    /**
+     * returns the Complain details
+     * 
+     * @return
+     */
+
     public String getDetails() {
         return details;
     }
+
+    /**
+     * sets the Complain details
+     */
 
     public void setDetails(String details) {
         this.details = details;
     }
 
+    /**
+     * returns the Complain location
+     * 
+     * @return
+     */
+
     public int getLocationId() {
         return locationId;
     }
+
+    /**
+     * sets the Complain location
+     */
 
     public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 
+    /**
+     * returns the landmark details
+     * 
+     * @return
+     */
     public String getLandmarkDetails() {
         return landmarkDetails;
     }
+
+    /**
+     * sets the landmark details
+     */
 
     public void setLandmarkDetails(String landmarkDetails) {
         this.landmarkDetails = landmarkDetails;
     }
 
+    /**
+     * returns the ComplaintTypeId
+     * 
+     * @return
+     */
     public int getComplaintTypeId() {
         return complaintTypeId;
     }
+
+    /**
+     * sets the ComplaintTypeId
+     */
 
     public void setComplaintTypeId(int complaintTypeId) {
         this.complaintTypeId = complaintTypeId;
     }
 
+    /**
+     * returns the date of created complaints
+     * 
+     * @return
+     */
+
     public String getCreatedDate() {
         return createdDate;
     }
+
+    /**
+     * sets the date of created complaints
+     */
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
+    /**
+     * returns the Latitude of complaint location
+     * 
+     * @return
+     */
+
     public double getLatitude() {
         return latitude;
     }
+
+    /**
+     * sets the Latitude of complaint location
+     */
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
+    /**
+     * returns the Longitute of complaint location
+     * 
+     * @return
+     */
     public double getLongitute() {
         return longitute;
     }
+
+    /**
+     * sets the Longitute of complaint location
+     */
 
     public void setLongitute(double longitute) {
         this.longitute = longitute;
     }
 
+    /**
+     * returns the complaint status.
+     */
+
     public String getStatus() {
         return status;
     }
+
+    /**
+     * sets the complaint status.
+     */
 
     public void setStatus(String status) {
         this.status = status;
     }
 
+    /**
+     * returns the image path.
+     */
+
     public String getImagePath() {
         return imagePath;
     }
+
+    /**
+     * sets the image path.
+     */
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 
+    /**
+     * returns the name of a person who create the complaints.
+     */
+
     public String getCreatedBy() {
         return createdBy;
     }
+
+    /**
+     * sets the name of a person who create the complaints.
+     */
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
+    /**
+     * checking whether the pagination is available or not
+     */
+
     public boolean isPagination() {
         return isPagination;
     }
+
+    /**
+     * setting the pagination
+     * 
+     * @param isPagination
+     */
 
     public void setPagination(boolean isPagination) {
         this.isPagination = isPagination;

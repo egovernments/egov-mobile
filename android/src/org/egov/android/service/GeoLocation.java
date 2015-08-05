@@ -50,6 +50,14 @@ public class GeoLocation implements LocationListener {
     private static double latitude;
     private static double longitude;
 
+    /**
+     * The constructor of the GeoLocation class and we supplied the Context as a parameter.
+     * initialize the application context. Criteria class indicating the application criteria for
+     * selecting a location provider. locationManager class provides access to the system location
+     * services. These services allow applications to obtain periodic updates of the device's
+     * geographical location
+     */
+
     public GeoLocation(Context ctx) {
         context = ctx;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -68,6 +76,10 @@ public class GeoLocation implements LocationListener {
         provider = locationManager.getBestProvider(criteria, true);
         locationManager.requestLocationUpdates(provider, 5000, 0, this);
     }
+
+    /**
+     * To obtain periodic updates of the device's geographical location.
+     */
 
     @Override
     public void onLocationChanged(Location location) {
@@ -89,13 +101,30 @@ public class GeoLocation implements LocationListener {
         }
     }
 
+    /**
+     * To get the Latitude value
+     * 
+     * @return
+     */
+
     public static double getLatitude() {
         return latitude;
     }
 
+    /**
+     * To get the Longitude value
+     * 
+     * @return
+     */
     public static double getLongitude() {
         return longitude;
     }
+
+    /**
+     * returns the GpsStatus,whether the GPS is enabled or not.
+     * 
+     * @return
+     */
 
     public static boolean getGpsStatus() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -107,16 +136,29 @@ public class GeoLocation implements LocationListener {
         return gpsStatus;
     }
 
+    /**
+     * Called when the provider is disabled by the user. provider is the name of the location
+     * provider. A location provider provides periodic reports on the geographical location of the
+     * device.
+     */
+
     @Override
     public void onProviderDisabled(String provider) {
         updateLocation(null);
     }
 
+    /**
+     * Called when the provider is enabled by the user.
+     */
     @Override
     public void onProviderEnabled(String provider) {
 
     }
 
+    /**
+     * This method is called when a provider is unable to fetch a location. Called when the provider
+     * status changes.
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {

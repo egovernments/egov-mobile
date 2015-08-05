@@ -48,8 +48,12 @@ public class ComplaintActivity extends BaseFragmentActivity {
     CharSequence titles[] = { "Complaints", "Me" };
 
     /**
-     * To set the layout for the ComplaintActivity. This activity act as a sliding tab. Here we have
-     * two tabs. For each tabs set different activity.
+     * It is  used to initialize an activity.
+     * An Activity is an application component that provides a screen 
+     * with which users can interact in order to do something,
+     * To initialize and set the layout for the ComplaintActivity.
+     * This activity acts as a sliding tab. Here we have two tabs, 
+     * each tab contain seperate activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

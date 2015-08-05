@@ -39,6 +39,10 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 public class Body extends LinearLayout {
+    /**
+     * The constructor of the Body class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public Body(Context context) {
         super(context);

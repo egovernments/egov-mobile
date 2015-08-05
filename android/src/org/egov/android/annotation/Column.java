@@ -38,6 +38,9 @@ import java.lang.annotation.Target;
 
 import org.egov.android.data.ColumnType;
 
+/**
+ * At run time, create field in table with name, type, default value etc.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface Column {
@@ -51,8 +54,6 @@ public @interface Column {
     boolean isAutoIncrement() default false;
 
     boolean isPrimaryKey() default false;
-
-    String version() default "1.0";
 
     String defaultValue() default "";
 }

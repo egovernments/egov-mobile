@@ -84,6 +84,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     private Spinner spinner = null;
 
     /**
+     * When activity is created, the onActivityCreated() is called after the onCreateView() method .
      * Create an instance of GeoLocation to know whether the GPS/Location is on/off. Set the spinner
      * data as latest and near by. If the GPS/Location is in off mode then call _showSettingsAlert
      * function.
@@ -123,9 +124,10 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
 
     /**
      * To set the layout for the AllComplaintActivity. Here we have checked the api level to set the
-     * layout. If api level greater than 13 then activity_all_complaints layout else
+     * layout. If api level greater than 13 then set activity_all_complaints layout else set
      * activity_lower_version_all_complaints layout. activity_all_complaints layout contains
-     * EGovRoundedImageView component which is not supported in lower api levels.
+     * EGovRoundedImageView component is the custom image view to show the image in a circle, which
+     * is not supported in lower api levels.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,7 +141,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Function called if the user not enabled GPS/Location in their device. Give options to enable
+     * Function called if the user didnt enable GPS/Location in their device. Give options to enable
      * GPS/Location and cancel the pop up.
      */
     public void _showSettingsAlert() {
@@ -161,7 +163,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Function called after got response from api call to display the list
+     * Function called after getting response from api call to display the list
      * 
      * @param isPagination
      *            => flag to inform the adapter to show load more button
@@ -175,13 +177,13 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Function called after got success api response to download the images under the complaints
-     * After downloading the images, the images will be updated in list
+     * Function called after getting success api response to download the images under the
+     * complaints After downloading the images, the images will be updated in the list
      * 
      * @param path
      *            => complaint folder path
      * @param jsonObj
-     *            => contain complaint information
+     *            => contains complaint information
      */
     private void _addDownloadJobs(String path, JSONObject jsonObj) {
         JSONObject jo = null;
@@ -205,8 +207,8 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Function used to check whether the key value is exist in the given json object If the key
-     * exist means return the value from the json object else return empty string
+     * Function used to check whether the key value is existing in the given json object. If the key
+     * exists return the value from the json object else return empty string
      * 
      * @param jo
      *            => json object where to check the key exist
@@ -225,8 +227,18 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * All complaints api response handler. Here we have checked the invalid access token error to
-     * redirect to login page
+     * The onResponse method will be invoked after the all complaint API call. onResponse methods
+     * will contain the response.If the response has a status as 'success' then we have checked
+     * whether the access token is valid or not.If the access token is invalid, redirect to login
+     * page. If the access token is valid, the response contains the JSON object.
+     * createdDate,complainantName,detail,crn,status values are retrieved from the response object
+     * and store it to the variable then these values are set to the all complaint layout.
+     * call the _addDownloadJobs method to display the complaint photo from 
+     * the complaint photos directory on the storage device.
+     * displays the All complaints list with the corresponding complaint image.
+     * we have checked the pagination value.This value is retrieved from the api response 
+     * if the value is true then 
+     * load more option will be displayed below the complaint list view.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
@@ -306,7 +318,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
      * Function used to show toast
      * 
      * @param message
-     *            => want to show
+     *            => Message to be shown
      */
     private void _showMsg(String message) {
         if (message != null && !message.equals("")) {
@@ -317,7 +329,8 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Event triggered when click on an item in listview. Click on list item redirect to detail page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirects to
+     * detail page
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -332,7 +345,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Event triggered when choose an item in spinner component. If the position is 0 then call
+     * Event triggered when choosing an item from spinner component. If the position is 0, then call
      * latest complaint api else call near by complaint api
      */
     @Override
@@ -361,7 +374,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
     }
 
     /**
-     * Event triggered When click on load more in ComplaintAdapter to call api.
+     * Event triggered When clicking on load more in ComplaintAdapter to call api.
      */
     @Override
     public void actionPerformed(String tag, Object... value) {

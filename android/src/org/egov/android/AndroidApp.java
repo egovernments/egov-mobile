@@ -42,42 +42,42 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * Here the egov.conf file will be read and stored in the session We can get the egov.conf file
+ * details through out the app
+ */
+
 public class AndroidApp extends Application {
 
-	private Config config = null;
-	private SharedPreferences session = null;
+    private Config config = null;
+    private SharedPreferences session = null;
 
-	public void configure(String configFile) {
-		try {
-			InputStream is = getAssets().open(configFile);
-			config = new Config(is);
-			is.close();
-			ReflectionUtil.setFieldData(AndroidLibrary.getInstance(), "config",
-					config);
-			ReflectionUtil.setFieldData(
-					AndroidLibrary.getInstance(),
-					"session",
-					getSharedPreferences(config.getString("app.name"),
-							Context.MODE_PRIVATE));
-			SQLiteHelper.newInstance(getApplicationContext()).initialize();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		session = getSharedPreferences(config.getString("app.name"),
-				Context.MODE_PRIVATE);
-	}
+    public void configure(String configFile) {
+        try {
+            InputStream is = getAssets().open(configFile);
+            config = new Config(is);
+            is.close();
+            ReflectionUtil.setFieldData(AndroidLibrary.getInstance(), "config", config);
+            ReflectionUtil.setFieldData(AndroidLibrary.getInstance(), "session",
+                    getSharedPreferences(config.getString("app.name"), Context.MODE_PRIVATE));
+            SQLiteHelper.newInstance(getApplicationContext()).initialize();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        session = getSharedPreferences(config.getString("app.name"), Context.MODE_PRIVATE);
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		this.configure("alib.conf");
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        this.configure("alib.conf");
+    }
 
-	public Config getConfig() {
-		return this.config;
-	}
+    public Config getConfig() {
+        return this.config;
+    }
 
-	public SharedPreferences getSession() {
-		return this.session;
-	}
+    public SharedPreferences getSession() {
+        return this.session;
+    }
 }

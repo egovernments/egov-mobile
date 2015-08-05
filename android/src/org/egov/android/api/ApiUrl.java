@@ -36,6 +36,12 @@ import org.egov.android.api.IApiUrl;
 
 public enum ApiUrl implements IApiUrl {
 
+    /**
+     * To set api url. To check whether we have to pass access token to the url. If it is true the
+     * access token will be passed to the url. If it is false access token will not be passed to the
+     * url.
+     */
+
     //@formatter:off
 
     LOGIN("api/oauth/token"),
@@ -78,8 +84,6 @@ public enum ApiUrl implements IApiUrl {
 
     private String url = "";
 
-    private boolean isSecured = false;
-
     private boolean useAccessToken = false;
 
     ApiUrl(String url) {
@@ -99,15 +103,6 @@ public enum ApiUrl implements IApiUrl {
     @Override
     public String getUrl(boolean prefixWithBaseUrl) {
         return AndroidLibrary.getInstance().getConfig().getString("api.baseUrl") + "/" + this.url;
-    }
-
-    public void setSecured(boolean isSecured) {
-        this.isSecured = isSecured;
-    }
-
-    @Override
-    public boolean isSecured() {
-        return isSecured;
     }
 
     public boolean useAccessToken() {

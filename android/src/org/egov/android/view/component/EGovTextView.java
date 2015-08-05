@@ -42,6 +42,10 @@ import android.widget.TextView;
 public class EGovTextView extends TextView {
 
     private Context context = null;
+    /**
+     * The constructor of the EGovTextView class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public EGovTextView(Context context) {
         super(context);
@@ -60,6 +64,8 @@ public class EGovTextView extends TextView {
 
     /**
      * Function used to set common font style to the entire app
+     * Apply the fontface  using customFont.
+     * If the customfont value is null then we apply the default app font
      * @param context
      * @param attrs
      * @param defStyle

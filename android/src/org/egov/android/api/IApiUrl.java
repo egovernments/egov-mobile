@@ -31,13 +31,16 @@
 
 package org.egov.android.api;
 
+/**
+ * Its is to get the url. To check if access token is passed through the url
+ *
+ */
+
 public interface IApiUrl {
 
-	public String getUrl();
+    public String getUrl();
 
-	public boolean isSecured();
+    public String getUrl(boolean prefixWithBaseUrl);
 
-	public String getUrl(boolean prefixWithBaseUrl);
-	
-	public boolean useAccessToken();
+    public boolean useAccessToken();
 }

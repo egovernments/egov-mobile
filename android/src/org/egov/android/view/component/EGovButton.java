@@ -46,6 +46,10 @@ import android.widget.Button;
 public class EGovButton extends Button implements OnTouchListener {
 
     private Context context = null;
+    /**
+     * The constructor of the EGovButton class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public EGovButton(Context context) {
         super(context);
@@ -85,7 +89,9 @@ public class EGovButton extends Button implements OnTouchListener {
 
     /**
      * Function used to set common font style to the buttons in entire app
-     * 
+     * OnTouchListener to Detect Common Gestures Like Tap and Swipes on Android
+     * Apply the fontface  using customFont. 
+     * If the customfont value is null then we apply the default app font
      * @param context
      * @param attrs
      */

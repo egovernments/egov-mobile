@@ -37,6 +37,10 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 public class EGovImageView extends ImageView {
+    /**
+     * The constructor of the EGovImageView class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
     public EGovImageView(Context context) {
         super(context);
     }
@@ -48,6 +52,9 @@ public class EGovImageView extends ImageView {
     public EGovImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
+    /**
+     * Called to determine the size requirements(width and height) for the image view 
+     */
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

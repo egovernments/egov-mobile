@@ -34,11 +34,13 @@ package org.egov.android.annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * At run time, create table with name.
+ */
+
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Table {
 
     String name() default "";
-
-    String version() default "1.0";
 
 }

@@ -62,7 +62,7 @@ public class StatusSummaryActivity extends BaseActivity {
     private String complaintTypeName = "";
 
     /**
-     * To set the layout for the StatusSummaryActivity and call complaint status api
+     * To set the layout for the StatusSummaryActivity ,call complaint status api
      */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,9 +87,9 @@ public class StatusSummaryActivity extends BaseActivity {
     }
 
     /**
-     * Complaint status api response handler. If the response is success the show the pictorial
-     * representation of the complaint status from response and also check the error is invalid
-     * access token to redirect to login page.
+     * Complaint status api response handler. If the response is success, show the pictorial
+     * representation of the complaint status from response.Check whether the access token is invalid or not,
+     * If invalid, redirect to login page.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

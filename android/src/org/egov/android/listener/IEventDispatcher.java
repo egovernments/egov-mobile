@@ -31,6 +31,10 @@
 
 package org.egov.android.listener;
 
+/**
+ * This interface contains the declaration of dispatchEvent().
+ */
+
 public interface IEventDispatcher {
-	public void dispatchEvent(Event<Object> event);
+    public void dispatchEvent(Event<Object> event);
 }

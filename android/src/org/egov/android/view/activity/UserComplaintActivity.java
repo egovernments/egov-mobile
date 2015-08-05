@@ -73,7 +73,9 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private int page = 1;
 
     /**
+     * The onActivityCreated() is called after the onCreateView() method when activity is created.
      * Get the api level from the session
+     * api level denotes the api versions of the android device
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -103,7 +105,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Function called after got response from api call to display the list
+     * Function called after getting response from api call to display the list
      * 
      * @param isPagination
      *            => flag to inform the adapter to show load more button
@@ -117,7 +119,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Function called after got success api response to download the images under the complaints
+     * Function called after getting success api response to download the images under the complaints.
      * After downloading the images, the images will be updated in list
      * 
      * @param path
@@ -147,11 +149,11 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Function used to check whether the key value is exist in the given json object If the key
-     * exist means return the value from the json object else return empty string
+     * Function used to check whether the key value exist in the given json object.If the key
+     * exists return the value from the json object else return empty string
      * 
      * @param jo
-     *            => json object where to check the key exist
+     *            => json object to check the key existance
      * @param key
      *            => name of the key to check
      * @return string
@@ -165,10 +167,22 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         }
         return result;
     }
-
     /**
-     * User complaints api response handler. Here we have checked the invalid access token error to
-     * redirect to login page
+     * The onResponse method will be invoked after the user complaints API call .
+     * onResponse methods will contain the response.
+     * If the response has a status as 'success' then,
+     * we have checked whether the access token is valid or not.
+     * If the access token is invalid, redirect to login page.
+     * If the access token is valid 
+     * createdDate,complainantName,detail,crn,status values are retrieved from the response object
+     * and store it to the variable then these values are set to the all complaint layout.
+     * then call the _addDownloadJobs method to display the complaint photo 
+     * from the complaint photos directory on the storage device.
+     * displays the user complaints list with the corresponding complaint image.
+     * we have checked the pagination value.This value is retrieved from the api response 
+     * if the value is true then 
+     * load more option will be displayed below the user complaint list view.
+     * 
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
@@ -256,7 +270,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Event triggered when click on an item in listview. Click on list item redirect to detail page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirect to detail page
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -269,7 +283,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Event triggered When click on load more in ComplaintAdapter to call api.
+     * Event triggered when clicking on load more in ComplaintAdapter to call api.
      */
     @Override
     public void actionPerformed(String tag, Object... value) {

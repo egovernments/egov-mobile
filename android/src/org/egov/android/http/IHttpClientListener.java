@@ -31,6 +31,10 @@
 
 package org.egov.android.http;
 
+/**
+ * This interface is for download and upload.
+ */
+
 public interface IHttpClientListener {
 
     public void onProgress(int percent);

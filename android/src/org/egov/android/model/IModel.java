@@ -33,6 +33,10 @@ package org.egov.android.model;
 
 import java.util.Date;
 
+/**
+ * The Interface IModel contains ID and time stamp.
+ */
+
 public interface IModel {
 
     public void setId(int id);

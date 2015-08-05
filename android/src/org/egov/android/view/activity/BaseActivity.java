@@ -107,7 +107,7 @@ public class BaseActivity extends AndroidActivity implements OnClickListener {
     }
 
     /**
-     * Function used to finish all previous activities when move to login page
+     * Function used to finish all previous activities while moving to login page
      */
     public void startLoginActivity() {
         AndroidLibrary.getInstance().getSession().edit().putString("access_token", "").commit();

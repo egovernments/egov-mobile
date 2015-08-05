@@ -34,11 +34,11 @@ package org.egov.android.common;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import android.util.Log;
+/**
+ * To store object key and its value.
+ */
 
 public class ReflectionUtil {
-
-    private final static String TAG = ReflectionUtil.class.getName();
 
     /**
      * 
@@ -68,8 +68,6 @@ public class ReflectionUtil {
             method.setAccessible(true);
             return method.invoke(instance, args);
         } catch (Exception e) {
-            Log.d(TAG, "********** errro ***********");
-            Log.d(TAG, e.getMessage());
         }
 
         return null;
@@ -88,10 +86,7 @@ public class ReflectionUtil {
             field.setAccessible(true);
             field.set(instance, data);
         } catch (Exception e) {
-            Log.d(TAG, "set field error " + e.getMessage());
         }
-
-        //ReflectionUtil.setFieldData(instance, new String[] { fieldName }, new Object[] { data });
     }
 
     /**

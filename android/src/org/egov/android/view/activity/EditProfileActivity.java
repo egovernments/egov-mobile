@@ -90,11 +90,17 @@ public class EditProfileActivity extends BaseActivity {
     private int apiLevel = 0;
 
     /**
-     * To set the layout for the ProfileActivity and set click listeners to the save changes, change
-     * picture and calendar icon. Here we have checked the api level to set the layout. If api level
-     * greater than 13 then activity_edit_profile layout else activity_lower_version_edit_profile
+     * To initialize and set the layout for the ProfileActivity.Set click listeners to the save changes, change
+     * picture and calendar icon. Here we have checked the api level to set the layout. If api level is
+     * greater than 13, then call activity_edit_profile layout else call activity_lower_version_edit_profile
      * layout. activity_edit_profile layout contains EGovRoundedImageView component which is not
      * supported in lower api levels.
+     * get all the user profile field values from the intent that is passed from the Profile Acticity and
+     * displays those values to the corresponding UI fields of EditProfile Layout
+     * StorageManager is the interface to the systems' storage service. 
+     * The storage manager handles storage-related items.
+     * profile picture is stored in /egovernments/profile directory on device storage area.
+     * profile picture is displayed using setImageBitmap method.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +152,13 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on edit icon
-     * redirect to EditProfileActivity and pass the user informations through intent.
+     * Event triggered when clicking on the item having click listener. 
+     * When clicking on edit icon, redirects to EditProfileActivity and pass the user informations through intent.
+     * When clicking on change picture _openDialog() will be called.
+     * open dialog method has two options, add photo from gallery and camera.
+     * When clicking on from_gallery, _openGalleryImages() will be called.
+     * When clicking on from_camera, _openCamera() will be called.
+     * when clicking on dob calender, _showDatePicker() will be called. 
      */
     @Override
     public void onClick(View v) {
@@ -174,7 +185,7 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Function called when click on add photo. Used to show the options where to pick the image
+     * Function called when clicking on add photo. Used to show the options where to pick the image, i.e,
      * from gallery or camera
      */
     private void _openDialog() {
@@ -187,7 +198,7 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Function called when choose the camera option. Start the implicit intent ACTION_IMAGE_CAPTURE
+     * Function called when choosing the camera option. Start the implicit intent ACTION_IMAGE_CAPTURE
      * for result.
      */
     private void _openCamera() {
@@ -224,7 +235,7 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Function called when choose the gallery option. Start the implicit intent ACTION_PICK for
+     * Function called when choosing the gallery option. Start the implicit intent ACTION_PICK for
      * result.
      */
     private void _openGalleryImages() {
@@ -234,7 +245,7 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered When an action completed in another activity(request send from this
+     * Event triggered when an action completed in another activity(request from this
      * activity)).
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -363,7 +374,7 @@ public class EditProfileActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when set the date in date picker and format the date like 'yyyy-MM-dd' using
+     * Event triggered when setting the date in date picker and format the date like 'yyyy-MM-dd' using
      * SimpleDateFormat.
      */
     private DatePickerDialog.OnDateSetListener datepicker = new DatePickerDialog.OnDateSetListener() {
@@ -383,9 +394,15 @@ public class EditProfileActivity extends BaseActivity {
     };
 
     /**
-     * Api response handler. Here we have checked the invalid access token error to redirect to
-     * login page
+     * The onResponse method will be invoked after the API call 
+     * onResponse methods will contain the response
+     * If the response has a status as 'success' then
+     * we have checked whether the access token is valid or not
+     * If the access token is invalid, redirect to login page.
+     * If the access token is valid then stores the profile picture to the device profile picture directory
+     * then call finish() method.
      */
+    
     @Override
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);

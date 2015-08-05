@@ -31,32 +31,23 @@
 
 package org.egov.android.data;
 
+/**
+ * Sets ColumnType.
+ */
 public enum ColumnType {
 
     INTEGER("integer"),
-    /**
-     * 
-     */
+
     REAL("real"),
-    /**
-     * 
-     */
+
     BLOB("blob"),
-    /**
-     * 
-     */
+
     DOUBLE("double"),
-    /**
-     * 
-     */
+
     FLOAT("float"),
-    /**
-     * 
-     */
+
     TEXT("text"),
-    /**
-     * 
-     */
+
     TIMESTAMP("timestamp");
 
     private String type = "";

@@ -47,6 +47,10 @@ import java.util.Set;
 import android.os.AsyncTask;
 import android.util.Log;
 
+/**
+ * This is to download a file.
+ */
+
 public class Downloader extends AsyncTask<Void, Integer, byte[]> {
 
     private static final String TAG = Downloader.class.getName();
@@ -64,10 +68,9 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         params = new HashMap<String, Object>();
     }
 
-    //----------------------------------------------------------------------------//
-
-  
-    //----------------------------------------------------------------------------//
+    /**
+     * Function to set and get url.
+     */
 
     public String getUrl() {
         return url;
@@ -81,12 +84,22 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         return params;
     }
 
+    /**
+     * Function to add parameters
+     * 
+     * @param key
+     * @param value
+     * @return
+     */
+
     public Downloader addParams(String key, String value) {
         params.put(key, value);
         return this;
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * Function to set and get the listener.
+     */
 
     public IHttpClientListener getListener() {
         return listener;
@@ -97,7 +110,9 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         return this;
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * Function to set and get destination path.
+     */
 
     public String getDestination() {
         return destination;
@@ -108,7 +123,9 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         return this;
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * Function to set and get request method.
+     */
 
     public String getRequestMethod() {
         return requestMethod;
@@ -119,18 +136,28 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         return this;
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * Function to start download.
+     */
 
     public void start() {
         execute();
     }
+
+    /**
+     * This method gets executed before download starts.
+     */
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * This method is the completion of the download either success or failure. If it is success, the
+     * result will be set to the onComplete listener. If it is error, the result will be set to the
+     * onError listener.
+     */
 
     @Override
     protected void onPostExecute(byte[] result) {
@@ -142,7 +169,10 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         }
     }
 
-    //----------------------------------------------------------------------------//
+    /**
+     * This method runs in background. This function will be called after onPreExecute and before
+     * onPostExecute.
+     */
 
     @Override
     protected byte[] doInBackground(Void... params) {
@@ -156,11 +186,8 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
                 for (Entry<String, Object> obj : paramsSet) {
                     String p = "";
                     try {
-						p = obj.getKey()
-								+ "="
-								+ URLEncoder
-										.encode(String.valueOf(obj.getValue()),
-												"UTF-8");
+                        p = obj.getKey() + "="
+                                + URLEncoder.encode(String.valueOf(obj.getValue()), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -177,7 +204,6 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
             con.setRequestMethod(requestMethod);
             con.setUseCaches(false);
             con.setDoInput(true);
-            //con.setReadTimeout(10000);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -206,7 +232,6 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
                 fs.close();
             }
             hasError = con.getResponseCode() != 200;
-            //content = out.toByteArray();
             out.close();
 
         } catch (Exception e) {
@@ -219,13 +244,9 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         return null;
     }
 
-    //----------------------------------------------------------------------------//
-
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
         listener.onProgress(values[0]);
     }
-    //----------------------------------------------------------------------------//
-
 }

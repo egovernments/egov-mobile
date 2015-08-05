@@ -45,9 +45,17 @@ import android.content.Context;
 import android.os.Environment;
 
 public class AppUncaughtException implements UncaughtExceptionHandler {
+    /**
+     * The constructor of the AppUncaughtException class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public AppUncaughtException(Context context) {
     }
+
+    /**
+     * uncaughtException handler handles all uncaught exceptions in the app.
+     */
 
     public void uncaughtException(Thread t, Throwable e) {
         final StringWriter result = new StringWriter();
@@ -58,6 +66,14 @@ public class AppUncaughtException implements UncaughtExceptionHandler {
         String filename = String.valueOf(Calendar.getInstance().getTimeInMillis()) + ".txt";
         _writeToFile(stacktrace, filename);
     }
+
+    /**
+     * writes the stack trace and the exception description to a log file in the directory
+     * '/assets/log'
+     * 
+     * @param stacktrace
+     * @param filename
+     */
 
     private void _writeToFile(String stacktrace, String filename) {
         String path = "";

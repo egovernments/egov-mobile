@@ -44,7 +44,10 @@ import android.widget.EditText;
 public class ForgotPasswordActivity extends BaseActivity {
 
     /**
-     * To set the layout for the ForgotPasswordActivity and set click listener to the send button.
+     * It is  used to initialize an activity.
+     * An Activity is an application component that provides a screen 
+     * with which users can interact in order to do something,
+     * To set the layout for the ForgotPasswordActivity.Set click listener to the send button.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class ForgotPasswordActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on send button
+     * Event triggered when clicking on the item having click listener. When clicking on send button
      * _forgotPassword() function get called.
      */
     @Override
@@ -68,7 +71,7 @@ public class ForgotPasswordActivity extends BaseActivity {
     }
 
     /**
-     * Function called when click on forgot password. If the phone field is empty show empty field
+     * Function called when clicking on forgot password. If the phone field is empty, show empty field
      * message. Otherwise send the phone number to back end to reset the password through api call.
      */
     private void _forgotPassword() {
@@ -81,8 +84,10 @@ public class ForgotPasswordActivity extends BaseActivity {
     }
 
     /**
-     * Forgot password api call response handler. Show the success/error message to the user. If the
-     * response has status as 'success' then finish the ForgotPasswordActivity.
+     * The onResponse method will be invoked after the Forgot password api call 
+     * onResponse methods will contain the response.
+     * Show the success/error message to the user by a toast. 
+     * If the response has status as 'success' then finish the ForgotPasswordActivity.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

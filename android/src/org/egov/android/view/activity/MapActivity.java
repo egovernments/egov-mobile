@@ -82,7 +82,7 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     }
 
     /**
-     * Initialize the map view and set map click listener to map view. When tap on any location will
+     * Initialize the map view and set map click listener to map view. Tapping on any location will
      * show the marker on the location.
      */
     private void _initilizeMap() {
@@ -202,8 +202,8 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on confirm location
-     * button will call _getLocationName() function. When click on refresh icon will call the
+     * Event triggered when clicking on the item having click listener. Clicking on confirm location
+     * button will call _getLocationName() function. Clicking on refresh icon will call the
      * _initilizeMap() function.
      */
     @Override
@@ -220,8 +220,8 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     }
 
     /**
-     * Function called if the user not enabled GPS/Location in their device. Give options to enable
-     * GPS/Location and cancel the pop up.
+     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
+     * GPS/Location and cancels the pop up.
      */
     private void _showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);

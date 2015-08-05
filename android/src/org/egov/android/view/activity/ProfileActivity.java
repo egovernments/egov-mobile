@@ -62,9 +62,12 @@ public class ProfileActivity extends BaseActivity {
     private String langauge = "";
 
     /**
-     * To set the layout for the ProfileActivity and set click listener to the edit icon. Here we
-     * have checked the api level to set the layout. If api level greater than 13 then
-     * activity_profile layout else activity_lower_version_profile layout. activity_profile layout
+     * It is used to initialize an activity.
+     * An Activity is an application component that provides a screen 
+     * with which users can interact in order to do something,
+     * To initialize and set the layout for the ProfileActivity.Set click listener to the edit icon. Here we
+     * have checked the api level to set the layout. If api level is greater than 13, then call
+     * activity_profile layout else call activity_lower_version_profile layout. activity_profile layout
      * contains EGovRoundedImageView component which is not supported in lower api levels.
      */
     @Override
@@ -80,7 +83,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     /**
-     * Call the profile api when start the activity.
+     * Call the profile api when the activity is started.
      */
     @Override
     protected void onStart() {
@@ -89,7 +92,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on edit icon
+     * Event triggered when clicking on the item having click listener. Clicking on edit icon
      * redirect to EditProfileActivity and pass the user informations through intent.
      */
     @Override
@@ -113,8 +116,9 @@ public class ProfileActivity extends BaseActivity {
     }
 
     /**
-     * Profile api call response handler. Show the success/error message to the user. If the
-     * response has status as 'success' then get the user informations from the response and show it
+     * The onResponse method will be invoked after the API call 
+     * onResponse methods will contain the response.
+     * If the response has status as 'success' then get the user informations from the response and show it
      * in layout. If the error is like 'Invalid access token' then redirect to the login page.
      */
     public void onResponse(Event<ApiResponse> event) {
@@ -184,11 +188,11 @@ public class ProfileActivity extends BaseActivity {
     }
 
     /**
-     * Function used to check whether the key value is exist in the given json object If the key
-     * exist means return the value from the json object else return empty string
+     * Function used to check whether the key value exists in the given json object. If the key
+     * exist ,return the value from the json object else return empty string
      * 
      * @param jo
-     *            => json object where to check the key exist
+     *            => json object to check the key existance
      * @param key
      *            => name of the key to check
      * @return string

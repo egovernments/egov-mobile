@@ -58,11 +58,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+/**
+ * This is to get the data from the api and store in the cache table
+ * 
+ * @param <E>
+ */
+
 public class ActiveDAO<E> implements IApiListener {
 
     public static String TAG = ActiveDAO.class.getName();
 
-    // private ISQLiteHelper dbHelper = null;
     private Config conf = null;
     private E model = null;
     private Class<E> modelClass = null;
@@ -78,8 +83,6 @@ public class ActiveDAO<E> implements IApiListener {
 
     private void _init(Class<E> clazz) {
         this.conf = AndroidLibrary.getInstance().getConfig();
-        // this.dbHelper = AndroidLibrary.getInstance().getDatabase();
-
         this.modelClass = clazz;
         this.tableInfo = new TableInfo(clazz);
     }
@@ -177,9 +180,9 @@ public class ActiveDAO<E> implements IApiListener {
     }
 
     /**
-     * @return
-     * 
+     * Insert data into table.
      */
+
     public long save() {
         IModel m = (IModel) this.model;
         m.setTimestamp(new Date());
@@ -190,8 +193,9 @@ public class ActiveDAO<E> implements IApiListener {
     // ------------------------------------------------------------------------------------------------//
 
     /**
-     * 
+     * Update data in cache table.
      */
+
     public int update(String whereClause, String[] whereArgs) {
         ContentValues cv = toContentValues(Purpose.UPDATE);
         return SQLiteHelper.getInstance().update(this.tableInfo.getTableName(), cv, whereClause,
@@ -201,20 +205,22 @@ public class ActiveDAO<E> implements IApiListener {
     // ------------------------------------------------------------------------------------------------//
 
     /**
-     * 
+     * Delete the entry from the table.
      */
+
     public int delete(String whereClause, String[] whereArgs) {
         return SQLiteHelper.getInstance().delete(this.tableInfo.getTableName(), whereClause,
                 whereArgs);
     }
 
+    /**
+     * Get all the fields in the table.
+     */
+
     public List<E> get(String selection, String[] selectionArgs) {
         return this.get(null, selection, selectionArgs);
     }
 
-    /**
-     * 
-     */
     public List<E> get(String[] columns, String selection, String[] selectionArgs) {
         return this.get(columns, selection, selectionArgs, null, null, null, null);
     }
@@ -226,10 +232,7 @@ public class ActiveDAO<E> implements IApiListener {
                        String having,
                        String orderBy,
                        String limit) {
-        Log.d(TAG, "get");
-        /**
-         * Check here need of getReadableDatabase()
-         */
+
         SQLiteDatabase db = SQLiteHelper.getInstance().getReadableDatabase();
         Cursor cursor = db.query(this.tableInfo.getTableName(), columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
@@ -342,8 +345,6 @@ public class ActiveDAO<E> implements IApiListener {
         StringBuffer sb = new StringBuffer();
         while (itFields.hasNext()) {
             Field field = itFields.next();
-
-            // .replaceAll("([A-Z])", "_$1").toLowerCase();
             Column col = field.getAnnotation(Column.class);
             type = col.type().toString();
             boolean autoInc = col.isAutoIncrement();
@@ -353,8 +354,6 @@ public class ActiveDAO<E> implements IApiListener {
                 autoInc = true;
                 isNull = false;
             }
-
-            // The order should me NOT NULL, PRIMARY KEY, AUTOINCREMENT
 
             if (!isNull) {
                 type += " NOT NULL";

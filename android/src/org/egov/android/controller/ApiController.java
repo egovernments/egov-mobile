@@ -53,6 +53,12 @@ public class ApiController {
     public ApiController() {
     }
 
+    /**
+     * This class is used to implement api calls. To avoid unnecessary object creation, we have used
+     * the getInstance() function.
+     * 
+     * @return
+     */
     public static ApiController getInstance() {
         if (_instance == null) {
             _instance = new ApiController();
@@ -64,6 +70,14 @@ public class ApiController {
         this.context = context;
     }
 
+    /**
+     * This function is used for citizen register. Here we are passing citizen information by user
+     * object. Set query type to check whether to post the parameters through the http url or postData.
+     * Add parameters to apiMethod using addParameter function.
+     * 
+     * @param listener
+     * @param user
+     */
     public void register(IApiListener listener, User user) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.REGISTER);
         apiMethod.setMethod(RequestMethod.POST);
@@ -78,6 +92,13 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for citizen login. Here we are passing citizen information by user
+     * object. We have added 'Authorization' in header for security.
+     * 
+     * @param listener
+     * @param user
+     */
     public void login(IApiListener listener, User user) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.LOGIN);
         apiMethod.setMethod(RequestMethod.POST);
@@ -89,6 +110,12 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for reset password. identity value is the user's mobile number.
+     * 
+     * @param listener
+     * @param identity
+     */
     public void forgotPassword(IApiListener listener, String identity) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.FORGOT_PASSWORD);
         apiMethod.setMethod(RequestMethod.POST);
@@ -96,6 +123,15 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for activate an account. After completion of registration, We have sent
+     * an OTP to the user's mobile/email. Users get the OTP and activate their account by send the
+     * OTP to backend.
+     * 
+     * @param listener
+     * @param userName
+     * @param activationCode
+     */
     public void accountActivation(IApiListener listener, String userName, String activationCode) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.VERIFY_OTP);
         apiMethod.setMethod(RequestMethod.POST);
@@ -104,34 +140,73 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for logout. When the user logs out from the app, this function
+     *is called.
+     * 
+     * @param listener
+     */
     public void logout(IApiListener listener) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.LOGOUT);
         apiMethod.setMethod(RequestMethod.POST);
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for get frequent complaint types to show it in list.
+     * 
+     * @param listener
+     */
     public void getFreqComplaintTypes(IApiListener listener) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_FREQ_COMPLAINT_TYPES);
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used for get all complaint types to show it in list.
+     * 
+     * @param listener
+     */
     public void getComplaintTypes(IApiListener listener) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT_TYPES);
         _createApiClient(apiMethod, listener, true).call();
     }
 
+    /**
+     * This function is used to get complaints created by the logged in user. We
+     * set item count for each page as 5. By using access_token, we get the user complaints list.
+     * 
+     * @param listener
+     * @param page
+     */
     public void getUserComplaints(IApiListener listener, int page) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_MY_COMPLAINTS);
         apiMethod.setExtraParam(String.valueOf(page) + "/" + String.valueOf(5));
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get latest complaints. We set item count for each page as 5.
+     * 
+     * @param listener
+     * @param page
+     */
     public void getLatestComplaints(IApiListener listener, int page) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_LATEST_COMPLAINTS);
         apiMethod.setExtraParam(String.valueOf(page) + "/" + String.valueOf(5));
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get nearby complaints. Before calling this api, we have to get the
+     * current latitude and longitude.The response will be the complaints around 5000 kms of the current geo location.
+     * We set item count for each page as 5.
+     * @param listener
+     * @param page
+     * @param lat
+     * @param lng
+     * @param distance
+     */
     public void getNearByComplaints(IApiListener listener,
                                     int page,
                                     double lat,
@@ -145,18 +220,44 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get complaint's detail. To get the complaint detail, we have sent
+     * the complaint id.
+     * 
+     * @param listener
+     * @param id
+     *            => complaint id
+     */
     public void getComplaintDetail(IApiListener listener, String id) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT_DETAIL);
         apiMethod.setExtraParam(id + "/detail");
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get complaint status. To get complaint status we have to pass the
+     * complaint id.
+     * 
+     * @param listener
+     * @param id
+     *            => complaint id
+     */
     public void getComplaintStatus(IApiListener listener, String id) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT_STATUS);
         apiMethod.setExtraParam(id + "/status");
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to change the complaint status. We can withdrawn the complaint by
+     * calling this api.
+     * 
+     * @param listener
+     * @param id
+     *            => complaint id
+     * @param status
+     * @param comment
+     */
     public void complaintChangeStatus(IApiListener listener,
                                       String id,
                                       String status,
@@ -170,6 +271,14 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get location name. When user create complaints, the location must be entered.
+     * After entering three letters in the location field, we call this api to show the
+     * location names by sending the three letters.
+     * 
+     * @param listener
+     * @param locationName
+     */
     public void getLocationByName(IApiListener listener, String locationName) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_LOCATION_BY_NAME);
         apiMethod.setMethod(RequestMethod.GET);
@@ -177,6 +286,13 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to create a complaint. If the complaint object has lat and lng then
+     * create complaint using them. Otherwise create complaint using location id.
+     * 
+     * @param listener
+     * @param complaint
+     */
     public void addComplaint(IApiListener listener, Complaint complaint) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.ADD_COMPLAINT);
         apiMethod.setMethod(RequestMethod.POST);
@@ -193,6 +309,13 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to search complaints by search text. Search text will be send through postdata
+     * so we set query type as 'json'.
+     * 
+     * @param listener
+     * @param searchText
+     */
     public void getSearchComplaints(IApiListener listener, String searchText) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_SEARCH_COMPLAINTS);
         apiMethod.setMethod(RequestMethod.POST);
@@ -201,11 +324,23 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to get the user information by access_token.
+     * 
+     * @param listener
+     */
     public void getProfile(IApiListener listener) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_PROFILE);
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to update the user information. User information will be send to the backend
+     * by postdata so we set query type as'json'.
+     * 
+     * @param listener
+     * @param user
+     */
     public void updateProfile(IApiListener listener, User user) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.UPDATE_PROFILE);
         apiMethod.setMethod(RequestMethod.PUT);
@@ -223,6 +358,15 @@ public class ApiController {
         _createApiClient(apiMethod, listener, false).call();
     }
 
+    /**
+     * This function is used to create an apiClient object for each api calls. useCache flag is to
+     * denote whether the api call has cache. If the useCache flag is true, save the data in cache.
+     * 
+     * @param apiMethod
+     * @param listener
+     * @param useCache
+     * @return
+     */
     private IApiClient _createApiClient(ApiMethod apiMethod, IApiListener listener, boolean useCache) {
 
         IApiClient client = null;

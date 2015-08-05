@@ -61,6 +61,10 @@ public class Header extends RelativeLayout implements OnClickListener {
     public final static int ACTION_REFRESH = 16;
 
     private OnClickListener actionListener = null;
+    /**
+     * The constructor of the Header class and we supplied the Context as a parameter.
+     * initialize the application context.
+     */
 
     public Header(Context context) {
         super(context);
@@ -79,7 +83,7 @@ public class Header extends RelativeLayout implements OnClickListener {
 
     /**
      * Set the layout of the header.
-     * 
+     * Set the background to the header resource. 
      * @param context
      * @param attrs
      */
@@ -131,6 +135,11 @@ public class Header extends RelativeLayout implements OnClickListener {
         }
     }
 
+    /**
+     * Interface definition for a callback to be invoked when a view is clicked.
+     * 
+     * @return
+     */
     public OnClickListener getActionListener() {
         return actionListener;
     }
@@ -140,7 +149,8 @@ public class Header extends RelativeLayout implements OnClickListener {
     }
 
     /**
-     * Function used to get the image view having the given id and resource id
+     * Function used to get the image view having the given id and resource id.
+     * add click listener and Sets the padding.
      * 
      * @param id
      * @param resId
@@ -158,7 +168,9 @@ public class Header extends RelativeLayout implements OnClickListener {
     }
 
     /**
-     * Function used to get the text view having the given id and text
+     * Function used to get the text view having the given id and text.
+     * add click listener and sets the padding.
+     * add layout param such as wrap content and match parent.
      * 
      * @param id
      * @param text

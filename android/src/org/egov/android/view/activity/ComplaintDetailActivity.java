@@ -76,6 +76,15 @@ public class ComplaintDetailActivity extends BaseActivity {
     private String lastModifiedDate = "";
     private String complaintFolderName = "";
     private boolean isComplaintDetail = true;
+    
+    /**
+     * It is  used to initialize an activity.
+     * An Activity is an application component that provides a screen 
+     * with which users can interact in order to do something,
+     * To initialize the ComplaintDetailActivity.
+     * Set click listener to the status summary button and change status button.
+     * call the complaint detail api
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +124,13 @@ public class ComplaintDetailActivity extends BaseActivity {
         isComplaintDetail = true;
         ApiController.getInstance().getComplaintDetail(this, id);
     }
+    
+    /**
+     * Event triggered when clicking on the item having click listener. 
+     * When clicking on status summary, the complaintId,complaintTypeName,status,created_date,lastModifiedDate values are 
+     * stored in an Intent of StatusSummaryActivity. 
+     * When clicking on change status, the _changeStatus() will be called
+     */
 
     @Override
     public void onClick(View v) {
@@ -136,7 +152,8 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function called when click on change status
+     * Function called when clicking on change status
+     * call the complaintChangeStatus api to change the complaint status
      */
     @SuppressLint("DefaultLocale")
     private void _changeStatus() {
@@ -206,8 +223,8 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function called after got success api response to download the images under the complaints
-     * After downloading the images, the images will be updated in detail
+     * Function called after getting success api response to download the images under the complaints
+     * After downloading the images, the images will be updated in detail screen
      * 
      * @param totalFiles
      *            => total files attached in a complaint
@@ -233,8 +250,18 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Api response handler Here we have checked the invalid access token error to redirect to login
-     * page
+     * onResponse methods will contain the response
+     * If the response has a status as 'success' then
+     * We have checked whether the access token is valid or not.
+     * If the access token is invalid, redirect to login page.
+     * If access token is valid the retrieve the crn,complaintType,details,landmarkDetails,complaintStatus 
+     * values from the JSON Object and store it to the variables,
+     * then display the crn,complaintType,details,landmarkDetails,complaintStatus
+     * values to the corresponding UI field of complaint detail page ui.
+     * location name coordinate  is retrieved from the api response and
+     * Geocoder is used to transforming a (latitude, longitude) coordinate into a location name and 
+     * location name is displayed to the corresponding UI.
+     * 
      */
     @SuppressLint("DefaultLocale")
     @Override
@@ -304,11 +331,11 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function used to check whether the key value is exist in the given json object If the key
-     * exist means return the value from the json object else return empty string
+     * Function used to check whether the key value is existing in the given json object. If the key
+     * exists return the value from the json object else return empty string
      * 
      * @param jo
-     *            => json object where to check the key exist
+     *            => json object to check the key existance
      * @param key
      *            => name of the key to check
      * @return string

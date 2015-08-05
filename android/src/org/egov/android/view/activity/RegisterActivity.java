@@ -52,7 +52,10 @@ import android.widget.EditText;
 public class RegisterActivity extends BaseActivity {
 
     /**
-     * To set the layout for the RegisterActivity and set click listener to the save button.
+     * It is  used to initialize an activity.
+     * An Activity is an application component that provides a screen
+     *  with which users can interact in order to do something,
+     * To initialize the RegisterActivity.Set click listener to the save button.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on save button
+     * Event triggered when clicking on the item having click listener. When user clicks on save button
      * _register() function get called.
      */
     @Override
@@ -77,8 +80,8 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * Function called when click on save button. Check the empty field validation and show the
-     * message. If all fields are correct then call the register api.
+     * Function called when clicking on save button. Check the empty field validation and show the
+     * message. If all fields are correct then call the register api to register a new citizen.
      */
     private void _register() {
 
@@ -159,8 +162,13 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * Register api call response handler. If the response has status as 'success' then call
-     * _clearAllText() function to reset the fields and redirect to AccountActivationActivity and
+     * The onResponse method will be invoked after the Register activation API call 
+     * onResponse methods will contain the response
+     * If the response has status as 'success' then 
+     * onResponse contains the JSON object.
+     * The JSONObject is handled in the onResponse method.finally
+     * _clearAllText() function to reset the fields.
+     * then  redirect to AccountActivationActivity and
      * pass the email/phone through intent.
      */
     @Override

@@ -34,49 +34,103 @@ package org.egov.android.model;
 import org.egov.android.model.BaseModel;
 import org.egov.android.model.IModel;
 
-public class ComplaintType extends BaseModel implements IModel{
-    
+/**
+ * This ComplaintType Model class contains the complaint type information.
+ *
+ */
+
+public class ComplaintType extends BaseModel implements IModel {
+
     private int id = 0;
     private String name = "";
     private String description = "";
     private int image = 0;
     private String imagePath = "";
 
+    /**
+     * returns the ComplainType Id
+     * 
+     * @return
+     */
+
     public int getId() {
         return id;
     }
+
+    /**
+     * sets the ComplainType Id
+     */
 
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * returns the ComplainType name
+     * 
+     * @return
+     */
+
     public String getName() {
         return name;
     }
+
+    /**
+     * sets the ComplainType name
+     */
 
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * returns the ComplainType description
+     * 
+     * @return
+     */
+
     public String getDescription() {
         return description;
     }
 
+    /**
+     * sets the ComplainType description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * returns the ComplainType image
+     * 
+     * @return
+     */
 
     public int getImage() {
         return image;
     }
 
+    /**
+     * sets the ComplainType image
+     */
+
     public void setImage(int image) {
         this.image = image;
     }
 
+    /**
+     * returns the ComplainType image path
+     * 
+     * @return
+     */
+
     public String getImagePath() {
         return imagePath;
     }
+
+    /**
+     * sets the ComplainType image path
+     */
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;

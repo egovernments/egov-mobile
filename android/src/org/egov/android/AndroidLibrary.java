@@ -35,6 +35,10 @@ import org.egov.android.conf.Config;
 
 import android.content.SharedPreferences;
 
+/**
+ * Here we create a instance and stored the session value
+ */
+
 public class AndroidLibrary {
 
     private static AndroidLibrary _instance = null;

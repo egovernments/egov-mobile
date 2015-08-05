@@ -52,7 +52,8 @@ public class GridViewAdapter extends BaseAdapter {
     private ArrayList<ComplaintType> item;
 
     /**
-     * This adapter is used to show frequent complaint types.
+     * This adapter is used to show frequent complaint type list. If we want to create a gridview
+     * component we have to set an adapter to it.
      * 
      * @param context
      * @param item
@@ -94,8 +95,9 @@ public class GridViewAdapter extends BaseAdapter {
     }
 
     /**
-     * Function used to decode the file(for memory consumption) and return the bitmap to show it in
-     * image view
+     * Function used to decode the file(for memory consumption) and return the bitmap. If we are not
+     * using this method there might be a chance to memory leakage because in list page we are
+     * loading more images.
      * 
      * @param path
      *            => image file path
@@ -108,6 +110,10 @@ public class GridViewAdapter extends BaseAdapter {
         return bmp;
     }
 
+    /**
+     * This class stores each of the component views inside the tag field of the Layout, so we can
+     * immediately access them without the need to look them up repeatedly.
+     */
     static class ViewHolder {
         TextView imageTitle;
         ImageView image;

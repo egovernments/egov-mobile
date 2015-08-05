@@ -54,6 +54,12 @@ public class ApiMethod {
         this(null);
     }
 
+    /**
+     * Constructor used to set the api url, header and query parameters to the
+     * api call
+     * 
+     * @param apiUrl
+     */
     public ApiMethod(IApiUrl apiUrl) {
         this.apiUrl = apiUrl;
         header = new HashMap<String, String>();

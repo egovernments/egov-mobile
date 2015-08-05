@@ -31,11 +31,6 @@
 
 package org.egov.android.api;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.egov.android.model.IModel;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +46,13 @@ public class ApiResponse {
     private Object response = null;
     private boolean hasData = true;
 
+    /**
+     * Constructor used to create api response send to the activity
+     * 
+     * @param response
+     * @param apiMethod
+     * @param source
+     */
     public ApiResponse(String response, ApiMethod apiMethod, String source) {
 
         this.apiMethod = apiMethod;
@@ -141,22 +143,6 @@ public class ApiResponse {
 
     public Object getResponse() {
         return this.response;
-    }
-
-    public <T extends IModel> List<T> parse(Class<T> clazz) {
-        if (this.response == null) {
-            return null;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        List<T> result = null;
-        try {
-            result = mapper.readValue(this.response.toString(), mapper.getTypeFactory()
-                    .constructCollectionType(List.class, clazz));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
     }
 
     public ApiMethod getApiMethod() {

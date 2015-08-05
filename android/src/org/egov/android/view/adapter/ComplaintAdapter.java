@@ -65,7 +65,12 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     private int apiLevel = 0;
 
     /**
-     * This adapter is used to show the complaint list
+     * This adapter is used to show the complaint list. If we want to create a listview component we
+     * have to set an adapter to it. To show/hide load more in the list, we have passed isPagination
+     * flag from the activity. To show/hide user name in the list, we have passed isUserName flag
+     * from the activity. Some custom components are not supported in android lower version to check
+     * that and so we have passed the apiLevel value.
+     * 
      * 
      * @param activity
      * @param listItem
@@ -73,9 +78,9 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      * @param isPagination
      *            => pagination flag
      * @param isUsername
-     *            => has user name
+     *            => to check whether user name exists
      * @param apiLevel
-     *            => android os api level
+     *            => android os api version
      * @param iListener
      *            => action listener
      */
@@ -89,6 +94,10 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         this.isUsername = isUsername;
     }
 
+    /**
+     * Before getting the view for list item, we have checked the apiLevel to show the image in either
+     * rounded view or normal view because rounded view will not work in api version less than 14.
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -144,8 +153,9 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * Function used to decode the file(for memory consumption) and return the bitmap to show it in
-     * image view
+     * Function used to decode the file(for memory consumption) and return the bitmap. If we are not
+     * using this method there might be a chance for memory leakage because in list page we are
+     * loading more images.
      * 
      * @param path
      *            => image file path
@@ -158,7 +168,8 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * Function used to format the date
+     * Function used to format the date. If we want convert a string to date, the string must be in
+     * a valid format. This function returns the string in valid format.
      * 
      * @param datetime
      * @return
@@ -176,7 +187,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     }
 
     /**
-     * Function used to get time difference between two dates
+     * Function used to get time difference between the given date and current date.
      * 
      * @param createdAt
      * @return
@@ -213,6 +224,10 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         return currentTime;
     }
 
+    /**
+     * This class stores each of the component views inside the tag field of the Layout, so we can
+     * immediately access them without the need to look them up repeatedly.
+     */
     static class ViewHolder {
         TextView name;
         TextView description;

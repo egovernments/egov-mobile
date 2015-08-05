@@ -44,8 +44,8 @@ public class CacheDAO extends ActiveDAO<Cache> {
     }
 
     /**
-     * It will check whether data is available or not in the local database if data available and it
-     * will check the expiry also both or ok then it will return true otherwise it will return false
+     * It will check whether data is available or not in the local database. If data is available and is within expiry
+     * then it will return true otherwise it will return false
      * 
      * @return boolean
      * 

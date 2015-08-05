@@ -31,6 +31,10 @@
 
 package org.egov.android.listener;
 
+/**
+ * This interface contains the declaration of actionPerformed(). The actions like click,pressed,etc.
+ */
+
 public interface IActionListener {
     public void actionPerformed(String tag, Object... value);
 }

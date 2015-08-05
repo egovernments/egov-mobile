@@ -68,7 +68,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     private int apiLevel = 0;
 
     /**
-     * To set the layout for the SearchActivity and set click listener to the search icon and editor
+     * To set the layout for the SearchActivity .Set click listener to the search icon and editor
      * action listener to search EditText.
      */
     @Override
@@ -83,7 +83,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Event triggered when click on the item having click listener. When click on search icon
+     * Event triggered when clicking on the item having click listener.On Clicking search icon
      * _getSearchList() function get called.
      */
     public void onClick(View v) {
@@ -96,7 +96,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Function called after got response from search complaint api to display the searh list
+     * Function called after getting response from search complaint api to display the search list
      */
     private void _displayListView() {
         ListView list = (ListView) findViewById(R.id.search_list);
@@ -106,8 +106,8 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Function called after got search complaint api response to download the image of the
-     * complaint After downloading the images, the images will be updated in list
+     * Function called after getting search complaint api response to download the image of the
+     * complaint. After downloading the images, the images will be updated in the list
      * 
      * @param path
      *            => complaint folder path
@@ -199,7 +199,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Event triggered when click on an item in listview. Click on list item redirect to detail page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirect to detail page
      */
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
@@ -211,7 +211,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Event triggered when press enter/done key and call _getSearchList() function
+     * Event triggered when pressing enter/done key,call _getSearchList() function
      */
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -223,7 +223,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Function called when search the complaints. If the search text field is empty or less than 3
+     * Function called when searching the complaints. If the search text field is empty or less than 3
      * characters then show the error message. Otherwise call the search list api by search text.
      */
     private void _getSearchList() {

@@ -57,8 +57,11 @@ public class AllComplaintTypeActivity extends BaseActivity implements IApiListen
     private ArrayList<ComplaintType> listItem;
 
     /**
-     * To set the layout for the AllComplaintTypeActivity and call all complaint type api to show the
-     * list
+     * It is  used to initialize an activity.
+     * An Activity is an application component that provides a screen 
+     * with which users can interact in order to do something,
+     * To initialize and set the layout for the AllComplaintTypeActivity
+     * call all complaint type api to show the list
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class AllComplaintTypeActivity extends BaseActivity implements IApiListen
     }
 
     /**
-     * Function called after got response from all complaint type api to display the list
+     * Function called after getting response from all complaint type api to display the list
      */
     private void _displayListView() {
         ListView list = (ListView) findViewById(R.id.all_category_list);
@@ -79,8 +82,11 @@ public class AllComplaintTypeActivity extends BaseActivity implements IApiListen
     }
 
     /**
-     * All complaint type api response handler. Here we have checked the invalid access token error to redirect to login
-     * page
+     * The onResponse method will be invoked after the all complaint type API call. 
+     * onResponse methods will contain the response.
+     * If the response has a status as 'success' then
+     * We have checked whether the access token is valid or not
+     * If the access token is invalid, redirect to login page.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
@@ -114,7 +120,7 @@ public class AllComplaintTypeActivity extends BaseActivity implements IApiListen
     }
 
     /**
-     * Event triggered when click on an item in listview. Click on list item redirect to create complaint page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirects to create complaint page
      */
     @Override
     public void onItemClick(AdapterView<?> adapterview, View view, int position, long arg3) {

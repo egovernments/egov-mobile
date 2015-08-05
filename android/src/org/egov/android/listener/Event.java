@@ -37,25 +37,48 @@ public class Event<E> {
     private E data = null;
     private boolean stopPropogation = false;
 
+    /**
+     * returns the event type
+     * 
+     * @return
+     */
     public String getType() {
         return type;
     }
+    /**
+     * sets the event type
+     */
 
     public void setType(String type) {
         this.type = type;
     }
+    /**
+     * returns the event data
+     * 
+     * @return
+     */
 
     public E getData() {
         return data;
     }
-
+    /**
+     * sets the event data
+     */
     public void setData(E data) {
         this.data = data;
     }
+    /**
+     * returns the event propogation status
+     * 
+     * @return
+     */
 
     public boolean isStopPropogation() {
         return stopPropogation;
     }
+    /**
+     * sets the event propogation status
+     */
 
     public void stopPropogation(boolean stopPropogation) {
         this.stopPropogation = stopPropogation;

@@ -40,6 +40,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class NetworkChangeReceiver extends BroadcastReceiver {
+    /**
+     * This method is called when the BroadcastReceiver is receiving an Intent broadcast. A
+     * broadcast is a message that an app can receive. The system delivers various broadcasts. Intent
+     * broadcast is used to deliver a broadcast to the app. 
+     * ConnectivityManager queries about the state of network
+     * connectivity. It also notifies applications when network connectivity changes. Get an
+     * instance of this class by calling Context.getSystemService(Context.CONNECTIVITY_SERVICE).
+     * getNetworkInfo() Returns connection status information about a particular Network. 
+     */
 
     @Override
     public void onReceive(Context context, Intent intent) {

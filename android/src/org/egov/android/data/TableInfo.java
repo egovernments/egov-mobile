@@ -39,83 +39,85 @@ import org.egov.android.annotation.Column;
 import org.egov.android.annotation.Table;
 import org.egov.android.filter.IFilter;
 
+/**
+ * This is to get the table and it fields.
+ */
 public class TableInfo {
 
-	private Class<?> clazz = null;
-	private String tableName = "";
+    private Class<?> clazz = null;
+    private String tableName = "";
 
-	/**
-	 * 
-	 * @param clazz
-	 */
-	public TableInfo(Class<?> clazz) {
-		this.clazz = clazz;
-		this._init();
-	}
-
-	/**
+    /**
      * 
+     * @param clazz
      */
-	private void _init() {
-		if (this.clazz == null) {
-			return;
-		}
-		if (this.clazz.isAnnotationPresent(Table.class)) {
-			Table e = this.clazz.getAnnotation(Table.class);
-			this.tableName = e.name().equals("") ? "" : "tbl_" + e.name();
-		}
-		if (this.tableName.equals("")) {
-			String tbl = "tbl" + this.clazz.getSimpleName();
-			this.tableName = tbl.replaceAll("([A-Z])", "_$1").toLowerCase();
-		}
-	}
+    public TableInfo(Class<?> clazz) {
+        this.clazz = clazz;
+        this._init();
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public String getTableName() {
-		return this.tableName;
-	}
+    private void _init() {
+        if (this.clazz == null) {
+            return;
+        }
+        if (this.clazz.isAnnotationPresent(Table.class)) {
+            Table e = this.clazz.getAnnotation(Table.class);
+            this.tableName = e.name().equals("") ? "" : "tbl_" + e.name();
+        }
+        if (this.tableName.equals("")) {
+            String tbl = "tbl" + this.clazz.getSimpleName();
+            this.tableName = tbl.replaceAll("([A-Z])", "_$1").toLowerCase();
+        }
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Field> getFields() {
-		return this.getFields(null);
-	}
+    /**
+     * Returs the table name
+     * 
+     * @return
+     */
+    public String getTableName() {
+        return this.tableName;
+    }
 
-	public List<Field> getFields(IFilter<Field, Column> filter) {
-		return this._getFields(this.clazz, filter);
-	}
+    /**
+     * Returns all fields
+     * 
+     * @return
+     */
+    public List<Field> getFields() {
+        return this.getFields(null);
+    }
 
-	/**
-	 * 
-	 * @param filter
-	 * @return
-	 */
-	public List<Field> _getFields(Class<?> clazz, IFilter<Field, Column> filter) {
-		List<Field> fieldList = new ArrayList<Field>();
+    public List<Field> getFields(IFilter<Field, Column> filter) {
+        return this._getFields(this.clazz, filter);
+    }
 
-		Class<?> c = clazz.getSuperclass();
-		if (c != null && !c.getName().equals("java.lang.Object")) {
-			fieldList.addAll(_getFields(c, filter));
-		}
-		Field[] fields = clazz.getDeclaredFields();
+    /**
+     * 
+     * @param filter
+     * @return
+     */
+    public List<Field> _getFields(Class<?> clazz, IFilter<Field, Column> filter) {
+        List<Field> fieldList = new ArrayList<Field>();
 
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(Column.class)) {
-				Column col = field.getAnnotation(Column.class);
-				if (filter == null) {
-					fieldList.add(field);
-				} else if (filter.filter(field, col)) {
-					fieldList.add(field);
-				}
-			}
-		}
+        Class<?> c = clazz.getSuperclass();
+        if (c != null && !c.getName().equals("java.lang.Object")) {
+            fieldList.addAll(_getFields(c, filter));
+        }
+        Field[] fields = clazz.getDeclaredFields();
 
-		return fieldList;
-	}
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Column.class)) {
+                Column col = field.getAnnotation(Column.class);
+                if (filter == null) {
+                    fieldList.add(field);
+                } else if (filter.filter(field, col)) {
+                    fieldList.add(field);
+                }
+            }
+        }
+
+        return fieldList;
+    }
 
 }

@@ -33,6 +33,11 @@ package org.egov.android;
 
 import org.egov.android.AndroidApp;
 
+/**
+ * This file executes first at the launch of the app. This is to read the egov.conf file from the
+ * assets folder. It extends AndroidApp
+ */
+
 public class EGovApp extends AndroidApp {
 
     @Override

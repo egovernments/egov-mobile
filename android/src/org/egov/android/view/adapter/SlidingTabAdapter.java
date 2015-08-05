@@ -44,7 +44,8 @@ public class SlidingTabAdapter extends FragmentStatePagerAdapter {
     int numberOfTabs;
 
     /**
-     * This adapter is used to show All complaints and user complaints in sliding tab.
+     * This adapter is used to show 'All complaints' and 'User complaints' in sliding tab. We have
+     * defined different activities for each slides.
      * 
      * @param fm
      * @param titles

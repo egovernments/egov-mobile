@@ -32,5 +32,5 @@
 package org.egov.android.common;
 
 public enum Purpose {
-    DDL_SCRIPT, ALL, INSERT, UPDATE, JSON_TO_OBJECT, CURSOR_TO_OBJECT;
+    ALL, INSERT, UPDATE, CURSOR_TO_OBJECT;
 }

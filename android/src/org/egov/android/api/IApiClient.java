@@ -35,6 +35,11 @@ import org.egov.android.data.cache.Cache;
 
 import android.content.Context;
 
+/**
+ * This interface is for api calls to show spinner. set cache etc.
+ *
+ */
+
 public interface IApiClient {
 
     public void call();
