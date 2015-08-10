@@ -77,7 +77,7 @@ public class Event<E> {
         return stopPropogation;
     }
     /**
-     * sets the event propogation status
+     * sets the event propagation status
      */
 
     public void stopPropogation(boolean stopPropogation) {

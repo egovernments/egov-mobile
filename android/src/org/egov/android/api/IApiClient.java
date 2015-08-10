@@ -57,9 +57,9 @@ public interface IApiClient {
     public ApiClient setShowSpinner(boolean showSpinner);
 
     public ApiClient addListener(IApiListener listener);
-
+    
+    public void setCache(Cache cache);
+    
     public Cache getCache();
-
-    public ApiClient setCache(Cache cache);
-
+    
 }

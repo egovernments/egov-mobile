@@ -38,13 +38,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.egov.android.api.SSLTrustManager;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -67,7 +70,7 @@ public class Uploader extends AsyncTask<Void, Integer, byte[]> {
     private Map<String, String> params;
     private Map<String, String> header = new HashMap<String, String>();
 
-    HttpURLConnection con = null;
+    HttpsURLConnection con = null;
 
     private String loadingMessage = " Loading ...";
     private IHttpClientListener listener = null;
@@ -197,9 +200,9 @@ public class Uploader extends AsyncTask<Void, Integer, byte[]> {
     }
 
     /**
-     * This method is the completion of the download either success or failure. If it is success, the
-     * result will be set to the onComplete listener. If it is error, the result will be set to the
-     * onError listener.
+     * This method is the completion of the download either success or failure. If it is success,
+     * the result will be set to the onComplete listener. If it is error, the result will be set to
+     * the onError listener.
      */
     @Override
     protected void onPostExecute(byte[] result) {
@@ -229,7 +232,9 @@ public class Uploader extends AsyncTask<Void, Integer, byte[]> {
             String url = _getUrlWidthParams();
 
             Log.d(TAG, "URL : " + url);
-            con = (HttpURLConnection) new URL(url).openConnection();
+
+            new SSLTrustManager();
+            con = (HttpsURLConnection) new URL(url).openConnection();
             con.setRequestMethod("POST");
             con.setUseCaches(false);
             con.setDoOutput(true);

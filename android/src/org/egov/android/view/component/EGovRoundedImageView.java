@@ -122,7 +122,7 @@ public class EGovRoundedImageView extends ImageView {
      * Function used to show the image in rounded shape.
      * load the bitmap and init shader using BitmapShader
      * circleCenter is the x or y of the view's center
-     * radius is the radius in pixels of the cirle to be drawn
+     * radius is the radius in pixels of the circle to be drawn
      * paint contains the shader that will texture the shape
      */
     @Override

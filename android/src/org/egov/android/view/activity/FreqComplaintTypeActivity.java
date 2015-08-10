@@ -69,11 +69,9 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
     private ArrayList<ComplaintType> listItem = new ArrayList<ComplaintType>();
 
     /**
-     * It is  used to initialize an activity.
-     * An Activity is an application component that provides a screen 
-     * with which users can interact in order to do something,
-     * To initialize and set the layout for the FreqComplaintTypeActivity. 
-     * Set click listener to the all complaint type text . 
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize and set the
+     * layout for the FreqComplaintTypeActivity. Set click listener to the all complaint type text .
      * Call the frequent complaint type api to load data in grid view.
      */
     @Override
@@ -85,8 +83,8 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
     }
 
     /**
-     * Event triggered when clicking on the item having click listener. When clicking on all complaint
-     * types text, go to AllComplaintTypeActivity.
+     * Event triggered when clicking on the item having click listener. When clicking on all
+     * complaint types text, go to AllComplaintTypeActivity.
      */
     public void onClick(View v) {
         super.onClick(v);
@@ -114,7 +112,7 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
             jo.put("type", "complaintType");
             jo.put("destPath", path + "/" + jsonObj.getString("typeImage"));
             SQLiteHelper.getInstance().execSQL(
-                    "INSERT INTO jobs(data, status, type, triedCount) values ('" + jo.toString()
+                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
                             + "', 'waiting', 'download', 0)");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,8 +120,8 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
     }
 
     /**
-     * Event triggered when clicking on an item in listview. Clicking on list item, redirect to create
-     * complaint page
+     * Event triggered when clicking on an item in listview. Clicking on list item, redirect to
+     * create complaint page
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
@@ -147,12 +145,11 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
     }
 
     /**
-     * The onResponse method will be invoked after the Frequent complaint type API call 
-     * onResponse methods will contain the response.
-     * If the response has status as 'success' then get the complaint type from the response and 
-     * show it in layout. 
-     * If there is no frequent complaint types then show all complaint types.
-     * If the error is like 'Invalid access token' then redirect to the login page.     
+     * The onResponse method will be invoked after the Frequent complaint type API call onResponse
+     * methods will contain the response. If the response has status as 'success' then get the
+     * complaint type from the response and show it in layout. If there is no frequent complaint
+     * types then show all complaint types. If the error is like 'Invalid access token' then
+     * redirect to the login page.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

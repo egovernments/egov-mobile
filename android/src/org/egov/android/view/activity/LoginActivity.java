@@ -32,8 +32,8 @@
 package org.egov.android.view.activity;
 
 import org.egov.android.R;
-import org.egov.android.controller.ApiController;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.model.User;
 import org.json.JSONArray;
@@ -51,11 +51,10 @@ import android.widget.TextView;
 public class LoginActivity extends BaseActivity {
 
     /**
-     * It is  used to initialize an activity.
-     * An Activity is an application component that provides a screen 
-     * with which users can interact in order to do something,
-     * To initialize and set the layout for the LoginActivity.Set click listeners to the login, register and
-     * forgot password views.
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize and set the
+     * layout for the LoginActivity.Set click listeners to the login, register and forgot password
+     * views.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +71,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when clicking on the item having click listener. 
-     * When clicking on login button, _login() function get called. 
-     * When clicking on register button, redirect to RegisterActivity.
-     * When clicking on forgot password, textview redirect to ForgotPasswordActivity.
+     * Event triggered when clicking on the item having click listener. When clicking on login
+     * button, _login() function get called. When clicking on register button, redirect to
+     * RegisterActivity. When clicking on forgot password, textview redirect to
+     * ForgotPasswordActivity.
      */
     @Override
     public void onClick(View v) {
@@ -94,9 +93,9 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * Function called when clicking on login button. Check the empty validations 
-     * If any require field is empty, show the message by toast. 
-     * If the user enter the credentials, call the login api to check the user credentials.
+     * Function called when clicking on login button. Check the empty validations If any require
+     * field is empty, show the message by toast. If the user enter the credentials, call the login
+     * api to check the user credentials.
      */
     private void _login() {
 
@@ -123,14 +122,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * The onResponse method will be invoked after the Login API call 
-     * onResponse methods will contain the response
-     * If the response has status as "success" then store the
-     * access_token from the response in shared preference object for session management. 
-     * Shared Preference is used to save and retrieve data in the form of key,value pair.
-     * finally redirects to ComplaintActivity and finish the LoginActivity. 
-     * If the response has error as activate your account then redirect to the AccountActivationActivity and 
-     * send the email/phone entered by the user from login form through intent.
+     * The onResponse method will be invoked after the Login API call onResponse methods will
+     * contain the response If the response has status as "success" then store the access_token from
+     * the response in shared preference object for session management. Shared Preference is used to
+     * save and retrieve data in the form of key,value pair. finally redirects to ComplaintActivity
+     * and finish the LoginActivity. If the response has error as activate your account then
+     * redirect to the AccountActivationActivity and send the email/phone entered by the user from
+     * login form through intent.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

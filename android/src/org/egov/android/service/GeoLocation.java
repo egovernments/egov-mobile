@@ -31,8 +31,14 @@
 
 package org.egov.android.service;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import android.content.Context;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -129,7 +135,6 @@ public class GeoLocation implements LocationListener {
     public static boolean getGpsStatus() {
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             gpsStatus = false;
-
         } else {
             gpsStatus = true;
         }
@@ -175,5 +180,26 @@ public class GeoLocation implements LocationListener {
 
                 break;
         }
+    }
+
+    public static String getCurrentLocation(double lat, double lng) {
+
+        String cityName = "";
+
+        if (lat == 0 && lng == 0) {
+            return "";
+        }
+
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(lat, lng, 1);
+            if (addresses.size() > 0) {
+                cityName = addresses.get(0).getAddressLine(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cityName;
     }
 }

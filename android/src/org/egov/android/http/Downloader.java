@@ -36,13 +36,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.egov.android.api.SSLTrustManager;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -54,14 +57,12 @@ import android.util.Log;
 public class Downloader extends AsyncTask<Void, Integer, byte[]> {
 
     private static final String TAG = Downloader.class.getName();
-
     private IHttpClientListener listener;
     private String requestMethod = "GET";
     private String destination = "";
     private Map<String, Object> params;
-    private HttpURLConnection con = null;
+    private HttpsURLConnection con = null;
     private String url = null;
-
     private boolean hasError = false;
 
     public Downloader() {
@@ -154,9 +155,9 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
     }
 
     /**
-     * This method is the completion of the download either success or failure. If it is success, the
-     * result will be set to the onComplete listener. If it is error, the result will be set to the
-     * onError listener.
+     * This method is the completion of the download either success or failure. If it is success,
+     * the result will be set to the onComplete listener. If it is error, the result will be set to
+     * the onError listener.
      */
 
     @Override
@@ -200,7 +201,8 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
 
             Log.d(TAG, "Download Start => " + url);
 
-            con = (HttpURLConnection) new URL(url).openConnection();
+            new SSLTrustManager();
+            con = (HttpsURLConnection) new URL(url).openConnection();
             con.setRequestMethod(requestMethod);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -240,7 +242,6 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         } finally {
             con.disconnect();
         }
-
         return null;
     }
 

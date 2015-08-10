@@ -32,7 +32,7 @@
 package org.egov.android.api;
 
 /**
- * Its is to get the url. To check if access token is passed through the url
+ * Its is to get the url. To check if access token is passed through the url.
  *
  */
 

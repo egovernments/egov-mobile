@@ -32,28 +32,27 @@
 package org.egov.android.view.activity;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
-import org.egov.android.R;
-import org.egov.android.controller.ApiController;
-import org.egov.android.controller.ServiceController;
 import org.egov.android.AndroidLibrary;
+import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.common.StorageManager;
+import org.egov.android.controller.ApiController;
+import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
+import org.egov.android.service.GeoLocation;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -76,14 +75,12 @@ public class ComplaintDetailActivity extends BaseActivity {
     private String lastModifiedDate = "";
     private String complaintFolderName = "";
     private boolean isComplaintDetail = true;
-    
+
     /**
-     * It is  used to initialize an activity.
-     * An Activity is an application component that provides a screen 
-     * with which users can interact in order to do something,
-     * To initialize the ComplaintDetailActivity.
-     * Set click listener to the status summary button and change status button.
-     * call the complaint detail api
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize the
+     * ComplaintDetailActivity. Set click listener to the status summary button and change status
+     * button. call the complaint detail api
      */
 
     @Override
@@ -122,14 +119,40 @@ public class ComplaintDetailActivity extends BaseActivity {
         complaintFolderName = obj[0].toString() + "/egovernments/complaints/" + id;
         _showComplaintImages();
         isComplaintDetail = true;
+        new GeoLocation(this);
+        if (!GeoLocation.getGpsStatus()) {
+            _showSettingsAlert();
+        }
         ApiController.getInstance().getComplaintDetail(this, id);
     }
-    
+
     /**
-     * Event triggered when clicking on the item having click listener. 
-     * When clicking on status summary, the complaintId,complaintTypeName,status,created_date,lastModifiedDate values are 
-     * stored in an Intent of StatusSummaryActivity. 
-     * When clicking on change status, the _changeStatus() will be called
+     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
+     * GPS/Location and cancel the pop up.
+     */
+    public void _showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Settings");
+        alertDialog.setMessage("Enable Location Provider! Go to settings menu?");
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
+    }
+
+    /**
+     * Event triggered when clicking on the item having click listener. When clicking on status
+     * summary, the complaintId,complaintTypeName,status,created_date,lastModifiedDate values are
+     * stored in an Intent of StatusSummaryActivity. When clicking on change status, the
+     * _changeStatus() will be called
      */
 
     @Override
@@ -152,8 +175,8 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function called when clicking on change status
-     * call the complaintChangeStatus api to change the complaint status
+     * Function called when clicking on change status call the complaintChangeStatus api to change
+     * the complaint status
      */
     @SuppressLint("DefaultLocale")
     private void _changeStatus() {
@@ -223,8 +246,8 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function called after getting success api response to download the images under the complaints
-     * After downloading the images, the images will be updated in detail screen
+     * Function called after getting success api response to download the images under the
+     * complaints After downloading the images, the images will be updated in detail screen
      * 
      * @param totalFiles
      *            => total files attached in a complaint
@@ -240,7 +263,7 @@ public class ComplaintDetailActivity extends BaseActivity {
                 jo.put("type", "complaint");
                 jo.put("destPath", complaintFolderName + "/photo_" + i + ".jpg");
                 SQLiteHelper.getInstance().execSQL(
-                        "INSERT INTO jobs(data, status, type, triedCount) values ('"
+                        "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                 + jo.toString() + "', 'waiting', 'download', 0)");
             }
             ServiceController.getInstance().startJobs();
@@ -250,17 +273,15 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * onResponse methods will contain the response
-     * If the response has a status as 'success' then
-     * We have checked whether the access token is valid or not.
-     * If the access token is invalid, redirect to login page.
-     * If access token is valid the retrieve the crn,complaintType,details,landmarkDetails,complaintStatus 
-     * values from the JSON Object and store it to the variables,
-     * then display the crn,complaintType,details,landmarkDetails,complaintStatus
-     * values to the corresponding UI field of complaint detail page ui.
-     * location name coordinate  is retrieved from the api response and
-     * Geocoder is used to transforming a (latitude, longitude) coordinate into a location name and 
-     * location name is displayed to the corresponding UI.
+     * onResponse methods will contain the response If the response has a status as 'success' then
+     * We have checked whether the access token is valid or not. If the access token is invalid,
+     * redirect to login page. If access token is valid the retrieve the
+     * crn,complaintType,details,landmarkDetails,complaintStatus values from the JSON Object and
+     * store it to the variables, then display the
+     * crn,complaintType,details,landmarkDetails,complaintStatus values to the corresponding UI
+     * field of complaint detail page ui. location name coordinate is retrieved from the api
+     * response and Geocoder is used to transforming a (latitude, longitude) coordinate into a
+     * location name and location name is displayed to the corresponding UI.
      * 
      */
     @SuppressLint("DefaultLocale")
@@ -292,18 +313,9 @@ public class ComplaintDetailActivity extends BaseActivity {
                         ((TextView) findViewById(R.id.location)).setText(_getValue(jo,
                                 "locationName"));
                     } else {
-                        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-                        List<Address> addresses;
-                        try {
-                            addresses = geocoder.getFromLocation(jo.getDouble("lat"),
-                                    jo.getDouble("lng"), 1);
-                            if (addresses.size() > 0) {
-                                String cityName = addresses.get(0).getAddressLine(0);
-                                ((TextView) findViewById(R.id.location)).setText(cityName);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        String cityName = GeoLocation.getCurrentLocation(jo.getDouble("lat"),
+                                jo.getDouble("lng"));
+                        ((TextView) findViewById(R.id.location)).setText(cityName);
                     }
                     File complaintFolder = new File(complaintFolderName);
                     if (!complaintFolder.exists()) {

@@ -100,7 +100,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
      */
     private void _displayListView() {
         ListView list = (ListView) findViewById(R.id.search_list);
-        adapter = new ComplaintAdapter(this, listItem, false, true, apiLevel, null);
+        adapter = new ComplaintAdapter(this, listItem, false, "search", apiLevel, null);
         list.setOnItemClickListener(this);
         list.setAdapter(adapter);
     }
@@ -123,7 +123,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
             jo.put("type", "complaintSearch");
             jo.put("destPath", path + "/photo_" + crn + ".jpg");
             SQLiteHelper.getInstance().execSQL(
-                    "INSERT INTO jobs(data, status, type, triedCount) values ('" + jo.toString()
+                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
                             + "', 'waiting', 'download', 0)");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -199,7 +199,8 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Event triggered when clicking on an item in listview. Clicking on list item redirect to detail page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirect to
+     * detail page
      */
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
@@ -223,8 +224,8 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     }
 
     /**
-     * Function called when searching the complaints. If the search text field is empty or less than 3
-     * characters then show the error message. Otherwise call the search list api by search text.
+     * Function called when searching the complaints. If the search text field is empty or less than
+     * 3 characters then show the error message. Otherwise call the search list api by search text.
      */
     private void _getSearchList() {
         String searchText = ((EditText) findViewById(R.id.search)).getText().toString().trim();

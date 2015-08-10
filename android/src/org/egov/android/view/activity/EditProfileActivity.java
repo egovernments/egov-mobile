@@ -95,7 +95,7 @@ public class EditProfileActivity extends BaseActivity {
      * greater than 13, then call activity_edit_profile layout else call activity_lower_version_edit_profile
      * layout. activity_edit_profile layout contains EGovRoundedImageView component which is not
      * supported in lower api levels.
-     * get all the user profile field values from the intent that is passed from the Profile Acticity and
+     * get all the user profile field values from the intent that is passed from the Profile Activity and
      * displays those values to the corresponding UI fields of EditProfile Layout
      * StorageManager is the interface to the systems' storage service. 
      * The storage manager handles storage-related items.
@@ -158,7 +158,7 @@ public class EditProfileActivity extends BaseActivity {
      * open dialog method has two options, add photo from gallery and camera.
      * When clicking on from_gallery, _openGalleryImages() will be called.
      * When clicking on from_camera, _openCamera() will be called.
-     * when clicking on dob calender, _showDatePicker() will be called. 
+     * when clicking on dob calendar, _showDatePicker() will be called. 
      */
     @Override
     public void onClick(View v) {
@@ -311,7 +311,7 @@ public class EditProfileActivity extends BaseActivity {
      */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;
+        options.inSampleSize = 8;
         return BitmapFactory.decodeFile(path, options);
     }
 

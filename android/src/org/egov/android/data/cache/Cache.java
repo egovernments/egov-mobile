@@ -32,93 +32,149 @@
 package org.egov.android.data.cache;
 
 import java.util.Calendar;
+import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.egov.android.annotation.Column;
-import org.egov.android.annotation.Table;
-import org.egov.android.data.ColumnType;
-import org.egov.android.model.BaseModel;
+import org.egov.android.AndroidLibrary;
+import org.egov.android.api.ApiResponse;
+import org.egov.android.data.SQLiteHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-/**
- * This is to create cache table with the fields url, data etc. We will check the cache time expiry.
- */
+import android.content.ContentValues;
 
-@Table(name = "cache")
-public class Cache extends BaseModel {
+public class Cache {
 
-    @Column
     private String url = "";
 
-    @Column
-    private Object data = "";
+    private Map<String, String> params;
 
-    @Column
-    private String ref = "";
-
-    @Column(type = ColumnType.INTEGER)
-    private long duration = 0;
-
-    @Column
-    private String timezone = "";
-
-    public Cache() {
-
+    public Map<String, String> getParams() {
+        return params;
     }
 
-    public Cache(String url, long duration) {
-        this.url = url;
-        this.duration = duration;
+    public void setParams(Map<String, String> params) {
+        this.params = params;
     }
 
     public String getUrl() {
         return url;
     }
 
-    public Cache setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
-        return this;
     }
 
-    public String getRef() {
-        return ref;
+    /**
+     * Function used to get data from cache table. If the cache table has an entry for the
+     * particular url then get the data from the cache table.
+     * 
+     * @return
+     */
+    public String getData() {
+        String data = "";
+        JSONObject jo = (JSONObject) get();
+        try {
+            data = jo.getString("data");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
-    public Cache setRef(String ref) {
-        this.ref = ref;
-        return this;
+    /**
+     * If any api call has cache, then save the data which comes in success response. Before saving the data
+     * we have to check whether the cache is expired or not. If the cache is expired, remove the data
+     * from cache and save the new data.
+     * 
+     * @param data
+     * @return
+     */
+    public int add(Object data) {
+        if (hasExpired()) {
+            remove();
+        }
+        insert(data);
+        return 0;
     }
 
-    public long getDuration() {
-        return duration;
+    /**
+     * Function used to add an entry in cache table for the particular url, data and timeStamp. The
+     * data field holds the success response data. The timeStamp field holds the current
+     * time in milliseconds. This field is used to check whether the cache is expired or not.
+     * 
+     * @param data
+     */
+    protected void insert(Object data) {
+        ApiResponse response = (ApiResponse) data;
+        ContentValues cv = new ContentValues();
+        cv.put("url", this.url);
+        cv.put("data", response.getResponse().toString());
+        cv.put("timeStamp", Long.toString(Calendar.getInstance().getTimeInMillis()));
+        SQLiteHelper.getInstance().insert("tbl_cache", cv);
     }
 
-    public Cache setDuration(long duration) {
-        this.duration = duration;
-        return this;
+    /**
+     * Function is used to remove an entry having specific url. This function is called when cache
+     * is expired.
+     */
+    public void remove() {
+        SQLiteHelper.getInstance().delete("tbl_cache", "url=?", new String[] { this.url });
     }
 
-    public String getTimezone() {
-        return timezone;
+    /**
+     * Function is used to get the entry having particular url. By using this entry, we get the
+     * data saved in cache.
+     * 
+     * @return
+     */
+    public Object get() {
+        JSONObject cacheObj = null;
+        JSONArray arr = SQLiteHelper.getInstance().query(
+                "SELECT * FROM tbl_cache WHERE url = '" + url + "'");
+        if (arr != null) {
+            try {
+                JSONObject jo = arr.getJSONObject(0);
+                cacheObj = jo;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return cacheObj;
     }
 
-    public Cache setTimezone(String timezone) {
-        this.timezone = timezone;
-        return this;
-    }
-
-    public Object getData() {
-        return this.data;
-    }
-
-    public Cache setData(Object data) {
-        this.data = data;
-        return this;
-    }
-
-    @JsonIgnore(value = true)
+    /**
+     * Function is used to check whether the cache is expired or not, by comparing the timeStamp and
+     * current time. Cache expire time set to 24 hours. If the time difference between timeStamp and
+     * current time is greater than 24 hours, then the cache data is expired.
+     * 
+     * @return
+     */
     public boolean hasExpired() {
-        long timeDiff = (Calendar.getInstance().getTimeInMillis() - this.getTimestamp().getTime()) / 1000;
-        return (timeDiff > this.getDuration());
+        JSONObject cacheObj = (JSONObject) get();
+        if (cacheObj == null) {
+            return true;
+        }
+        int limit = (int) AndroidLibrary.getInstance().getConfig().getCacheDuration();
+        try {
+            Long d = (Calendar.getInstance().getTimeInMillis() - Long.valueOf(cacheObj
+                    .getLong("timeStamp"))) / 1000;
+            return d > limit;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return true;
+        }
     }
 
+    /**
+     * Function used to check whether the particular url has data in cache table or not.
+     * 
+     * @return
+     */
+    public boolean hasData() {
+        JSONObject cacheObj = (JSONObject) get();
+        if (cacheObj == null || hasExpired())
+            return false;
+        return true;
+    }
 }

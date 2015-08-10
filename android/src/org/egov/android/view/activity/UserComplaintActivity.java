@@ -74,8 +74,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
 
     /**
      * The onActivityCreated() is called after the onCreateView() method when activity is created.
-     * Get the api level from the session
-     * api level denotes the api versions of the android device
+     * Get the api level from the session api level denotes the api versions of the android device
      */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -113,14 +112,14 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private void _displayListView(boolean isPagination) {
         ListView list = (ListView) getActivity().findViewById(R.id.user_complaint_list);
         list.setOnItemClickListener(this);
-        adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, false, apiLevel, this);
+        adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, "me", apiLevel, this);
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
     /**
-     * Function called after getting success api response to download the images under the complaints.
-     * After downloading the images, the images will be updated in list
+     * Function called after getting success api response to download the images under the
+     * complaints. After downloading the images, the images will be updated in list
      * 
      * @param path
      *            => complaint folder path
@@ -140,7 +139,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                 jo.put("type", "complaint");
                 jo.put("destPath", path + "/photo_" + i + ".jpg");
                 SQLiteHelper.getInstance().execSQL(
-                        "INSERT INTO jobs(data, status, type, triedCount) values ('"
+                        "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                 + jo.toString() + "', 'waiting', 'download', 0)");
             }
         } catch (JSONException e) {
@@ -149,11 +148,11 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Function used to check whether the key value exist in the given json object.If the key
-     * exists return the value from the json object else return empty string
+     * Function used to check whether the key value exist in the given json object.If the key exists
+     * return the value from the json object else return empty string
      * 
      * @param jo
-     *            => json object to check the key existance
+     *            => json object to check the key existence
      * @param key
      *            => name of the key to check
      * @return string
@@ -167,21 +166,18 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         }
         return result;
     }
+
     /**
-     * The onResponse method will be invoked after the user complaints API call .
-     * onResponse methods will contain the response.
-     * If the response has a status as 'success' then,
-     * we have checked whether the access token is valid or not.
-     * If the access token is invalid, redirect to login page.
-     * If the access token is valid 
-     * createdDate,complainantName,detail,crn,status values are retrieved from the response object
-     * and store it to the variable then these values are set to the all complaint layout.
-     * then call the _addDownloadJobs method to display the complaint photo 
-     * from the complaint photos directory on the storage device.
-     * displays the user complaints list with the corresponding complaint image.
-     * we have checked the pagination value.This value is retrieved from the api response 
-     * if the value is true then 
-     * load more option will be displayed below the user complaint list view.
+     * The onResponse method will be invoked after the user complaints API call . onResponse methods
+     * will contain the response. If the response has a status as 'success' then, we have checked
+     * whether the access token is valid or not. If the access token is invalid, redirect to login
+     * page. If the access token is valid createdDate,complainantName,detail,crn,status values are
+     * retrieved from the response object and store it to the variable then these values are set to
+     * the all complaint layout. then call the _addDownloadJobs method to display the complaint
+     * photo from the complaint photos directory on the storage device. displays the user complaints
+     * list with the corresponding complaint image. we have checked the pagination value.This value
+     * is retrieved from the api response if the value is true then load more option will be
+     * displayed below the user complaint list view.
      * 
      */
     @Override
@@ -270,7 +266,8 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     }
 
     /**
-     * Event triggered when clicking on an item in listview. Clicking on list item redirect to detail page
+     * Event triggered when clicking on an item in listview. Clicking on list item redirect to
+     * detail page
      */
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {

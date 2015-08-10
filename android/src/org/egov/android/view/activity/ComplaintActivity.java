@@ -53,7 +53,7 @@ public class ComplaintActivity extends BaseFragmentActivity {
      * with which users can interact in order to do something,
      * To initialize and set the layout for the ComplaintActivity.
      * This activity acts as a sliding tab. Here we have two tabs, 
-     * each tab contain seperate activity.
+     * each tab contain separate activity.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

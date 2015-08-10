@@ -31,14 +31,14 @@
 
 package org.egov.android.model;
 
-import org.egov.android.model.BaseModel;
-import org.egov.android.model.IModel;
+import java.io.Serializable;
 
 /**
  * This Complaint Model class contains the complaint information.
  */
 
-public class Complaint extends BaseModel implements IModel {
+@SuppressWarnings("serial")
+public class Complaint implements Serializable {
 
     private String complaintId = "";
     private String details = "";

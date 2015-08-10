@@ -193,10 +193,10 @@ public class ServiceController implements IHttpClientListener {
         }
         JSONArray ja = SQLiteHelper
                 .getInstance()
-                .query("SELECT * FROM jobs WHERE status='waiting' OR (status='error' AND triedCount < 4) ORDER BY status DESC LIMIT 1");
+                .query("SELECT * FROM tbl_jobs WHERE status='waiting' OR (status='error' AND triedCount < 4) ORDER BY status DESC LIMIT 1");
         if (ja == null || ja.length() == 0) {
             ja = SQLiteHelper.getInstance().query(
-                    "SELECT * FROM jobs WHERE status='started' ORDER BY id LIMIT 1");
+                    "SELECT * FROM tbl_jobs WHERE status='started' ORDER BY id LIMIT 1");
             if (ja == null || ja.length() == 0) {
                 stopJobs();
                 return;
@@ -215,7 +215,8 @@ public class ServiceController implements IHttpClientListener {
                 _download(data);
             }
 
-            SQLiteHelper.getInstance().execSQL("UPDATE jobs SET status='started' WHERE id = " + id);
+            SQLiteHelper.getInstance().execSQL(
+                    "UPDATE tbl_jobs SET status='started' WHERE id = " + id);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -290,7 +291,7 @@ public class ServiceController implements IHttpClientListener {
     @Override
     public void onComplete(byte[] data) {
         //delete the entry
-        SQLiteHelper.getInstance().execSQL("DELETE FROM jobs WHERE id = " + id);
+        SQLiteHelper.getInstance().execSQL("DELETE FROM tbl_jobs WHERE id = " + id);
         isJobRunning = false;
         startJob();
     }
@@ -307,7 +308,8 @@ public class ServiceController implements IHttpClientListener {
         long totalSize = (Long) obj[2];
         if (jobType.equals("download")
                 && totalSize < AndroidLibrary.getInstance().getConfig().getInt("upload.file.size") * 1024 * 1024) {
-            SQLiteHelper.getInstance().execSQL("UPDATE jobs SET status='error' WHERE id = " + id);
+            SQLiteHelper.getInstance().execSQL(
+                    "UPDATE tbl_jobs SET status='error' WHERE id = " + id);
             Toast toast = Toast.makeText(ctx, "There is no sufficient space in your sdcard",
                     Toast.LENGTH_LONG);
             toast.setGravity(Gravity.TOP, 0, 120);
@@ -315,7 +317,7 @@ public class ServiceController implements IHttpClientListener {
             stopJobs();
             return;
         }
-        JSONArray ja = SQLiteHelper.getInstance().query("SELECT * FROM jobs WHERE id = " + id);
+        JSONArray ja = SQLiteHelper.getInstance().query("SELECT * FROM tbl_jobs WHERE id = " + id);
         if (ja == null || (ja != null && ja.length() == 0)) {
             startJob();
             return;
@@ -329,7 +331,8 @@ public class ServiceController implements IHttpClientListener {
         }
 
         SQLiteHelper.getInstance().execSQL(
-                "UPDATE jobs SET status='error', triedCount=" + triedCount + " WHERE id = " + id);
+                "UPDATE tbl_jobs SET status='error', triedCount=" + triedCount + " WHERE id = "
+                        + id);
         isJobRunning = false;
         startJob();
     }

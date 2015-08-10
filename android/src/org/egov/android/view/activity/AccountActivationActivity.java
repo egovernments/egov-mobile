@@ -46,12 +46,10 @@ public class AccountActivationActivity extends BaseActivity {
     private String username = "";
 
     /**
-     * It is  used to initialize an activity.
-     * An Activity is an application component that provides a screen 
-     * with which users can interact in order to do something,
-     * To initialize the AccountActivationActivity.
-     * Assign the value passed from the Register activity through intent as 'username' to variable username. 
-     * Set click listener to the verify OTP button.
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize the
+     * AccountActivationActivity. Assign the value passed from the Register activity through intent
+     * as 'username' to variable username. Set click listener to the verify OTP button.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +60,8 @@ public class AccountActivationActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when clicking on the item having click listener. Clicking on verify OTP button
-     * _accountActivation() function get called.
+     * Event triggered when clicking on the item having click listener. Clicking on verify OTP
+     * button _accountActivation() function get called.
      */
     @Override
     public void onClick(View v) {
@@ -76,9 +74,9 @@ public class AccountActivationActivity extends BaseActivity {
     }
 
     /**
-     * Function called when clicking on verify OTP button. Check the account activation code entered or
-     * not.If not entered show the empty message. If the user enters the code call the account activation
-     * api with username and code to check whether the code is correct or not.
+     * Function called when clicking on verify OTP button. Check the account activation code entered
+     * or not.If not entered show the empty message. If the user enters the code call the account
+     * activation api with username and code to check whether the code is correct or not.
      */
     private void _accountActivation() {
         String code = ((EditText) findViewById(R.id.otp_code)).getText().toString().trim();
@@ -90,11 +88,10 @@ public class AccountActivationActivity extends BaseActivity {
     }
 
     /**
-     * The onResponse method will be invoked after the Account activation API call 
-     * onResponse methods will contain the response
-     * If the response has a status as 'success' then     
-     * message is displayed in toast. Finally calls the startLoginActivity() function 
-     * and redirects to Loginactivity.
+     * The onResponse method will be invoked after the Account activation API call onResponse
+     * methods will contain the response If the response has a status as 'success' then message is
+     * displayed in toast. Finally calls the startLoginActivity() function and redirects to
+     * Login Activity.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

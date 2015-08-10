@@ -33,7 +33,6 @@ package org.egov.android.data;
 
 import org.egov.android.AndroidLibrary;
 import org.egov.android.conf.Config;
-import org.egov.android.data.cache.CacheDAO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,16 +48,12 @@ import android.util.Log;
  * This is to create database
  */
 
-public class SQLiteHelper extends SQLiteOpenHelper implements ISQLiteHelper {
-
-    private static final String TAG = SQLiteHelper.class.getName();
+public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static SQLiteHelper instance = null;
-    private Context context = null;
 
     public SQLiteHelper(Context context, String database, int version) {
         super(context, database, null, version);
-        this.context = context;
     }
 
     /**
@@ -86,10 +81,6 @@ public class SQLiteHelper extends SQLiteOpenHelper implements ISQLiteHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        CacheDAO helper = new CacheDAO();
-        String sql = helper.generateCreateScript();
-        Log.d(TAG, sql);
-        db.execSQL(sql);
     }
 
     /**

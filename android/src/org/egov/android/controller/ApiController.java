@@ -31,10 +31,9 @@
 
 package org.egov.android.controller;
 
-import org.egov.android.api.ApiUrl;
-import org.egov.android.AndroidLibrary;
 import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiMethod;
+import org.egov.android.api.ApiUrl;
 import org.egov.android.api.IApiClient;
 import org.egov.android.api.IApiListener;
 import org.egov.android.api.RequestMethod;
@@ -72,8 +71,8 @@ public class ApiController {
 
     /**
      * This function is used for citizen register. Here we are passing citizen information by user
-     * object. Set query type to check whether to post the parameters through the http url or postData.
-     * Add parameters to apiMethod using addParameter function.
+     * object. Set query type to check whether to post the parameters through the https url or
+     * postData. Add parameters to apiMethod using addParameter function.
      * 
      * @param listener
      * @param user
@@ -141,8 +140,8 @@ public class ApiController {
     }
 
     /**
-     * This function is used for logout. When the user logs out from the app, this function
-     *is called.
+     * This function is used for logout. When the user logs out from the app, this function is
+     * called.
      * 
      * @param listener
      */
@@ -173,8 +172,8 @@ public class ApiController {
     }
 
     /**
-     * This function is used to get complaints created by the logged in user. We
-     * set item count for each page as 5. By using access_token, we get the user complaints list.
+     * This function is used to get complaints created by the logged in user. We set item count for
+     * each page as 5. By using access_token, we get the user complaints list.
      * 
      * @param listener
      * @param page
@@ -199,8 +198,9 @@ public class ApiController {
 
     /**
      * This function is used to get nearby complaints. Before calling this api, we have to get the
-     * current latitude and longitude.The response will be the complaints around 5000 kms of the current geo location.
-     * We set item count for each page as 5.
+     * current latitude and longitude.The response will be the complaints around 5000 kms of the
+     * current geo location. We set item count for each page as 5.
+     * 
      * @param listener
      * @param page
      * @param lat
@@ -272,8 +272,8 @@ public class ApiController {
     }
 
     /**
-     * This function is used to get location name. When user create complaints, the location must be entered.
-     * After entering three letters in the location field, we call this api to show the
+     * This function is used to get location name. When user create complaints, the location must be
+     * entered. After entering three letters in the location field, we call this api to show the
      * location names by sending the three letters.
      * 
      * @param listener
@@ -310,8 +310,8 @@ public class ApiController {
     }
 
     /**
-     * This function is used to search complaints by search text. Search text will be send through postdata
-     * so we set query type as 'json'.
+     * This function is used to search complaints by search text. Search text will be send through
+     * postdata so we set query type as 'json'.
      * 
      * @param listener
      * @param searchText
@@ -335,8 +335,8 @@ public class ApiController {
     }
 
     /**
-     * This function is used to update the user information. User information will be send to the backend
-     * by postdata so we set query type as'json'.
+     * This function is used to update the user information. User information will be send to the
+     * backend by postdata so we set query type as'json'.
      * 
      * @param listener
      * @param user
@@ -370,14 +370,12 @@ public class ApiController {
     private IApiClient _createApiClient(ApiMethod apiMethod, IApiListener listener, boolean useCache) {
 
         IApiClient client = null;
-
-        Cache cache = null;
-        if (useCache) {
-            cache = new Cache();
-            cache.setDuration(AndroidLibrary.getInstance().getConfig().getCacheDuration());
-        }
         client = new ApiClient(apiMethod);
-        client.setCache(cache);
+        if(useCache){
+            Cache cache = new Cache();
+            cache.setUrl(apiMethod.getFullUrl());
+            client.setCache(cache);
+        }
         client.addListener(listener);
         client.setContext(this.context);
         return client;

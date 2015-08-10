@@ -88,8 +88,8 @@ public class StatusSummaryActivity extends BaseActivity {
 
     /**
      * Complaint status api response handler. If the response is success, show the pictorial
-     * representation of the complaint status from response.Check whether the access token is invalid or not,
-     * If invalid, redirect to login page.
+     * representation of the complaint status from response.Check whether the access token is
+     * invalid or not, If invalid, redirect to login page.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
@@ -103,6 +103,7 @@ public class StatusSummaryActivity extends BaseActivity {
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
                         try {
+
                             if (jo.getString("value").equalsIgnoreCase("registered")) {
                                 register.setText(_getDateTextFormat(jo.getString("createdDate"))
                                         + " Complaint registered");
@@ -113,26 +114,28 @@ public class StatusSummaryActivity extends BaseActivity {
                                 forwarded.setText(_getDateTextFormat(jo
                                         .getString("lastModifiedDate")) + " Complaint forwarded");
                                 _drawgraph(jo.getString("value"));
-                            } else {
+                            } else if (!complaintStatus.equalsIgnoreCase("forwarded")) {
                                 forwarded.setVisibility(View.GONE);
                             }
 
                             if (complaintStatus.equalsIgnoreCase("forwarded")) {
-                                forwarded.setText(_getFormatDate(lastModifiedDate)
+                                forwarded.setText(_getDateTextFormat(lastModifiedDate)
                                         + " Complaint forwarded");
                                 _drawgraph(complaintStatus);
                             } else if (complaintStatus.equalsIgnoreCase("withdrawn")) {
-                                closed.setText(_getFormatDate(lastModifiedDate)
+                                closed.setText(_getDateTextFormat(lastModifiedDate)
                                         + " Complaint closed");
                                 _drawgraph(complaintStatus);
                             }
+
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                 } else {
                     try {
-                        register.setText(_getFormatDate(complaintDate) + " Complaint registered");
+                        register.setText(_getDateTextFormat(complaintDate)
+                                + " Complaint registered");
                         _drawgraph(complaintStatus);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -189,30 +192,6 @@ public class StatusSummaryActivity extends BaseActivity {
     @SuppressLint("SimpleDateFormat")
     private String _getDateTextFormat(String datetime) throws ParseException {
         String newdate = datetime;
-        SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        Date newdate1 = dateformat2.parse(newdate);
-        Format formatter1 = new SimpleDateFormat("EEEE dd MMMM yyyy hh:mm a");
-        String date1 = formatter1.format(newdate1);
-        return date1;
-    }
-
-    /**
-     * Function used to format the date(different date format) like Friday 31 July 2015 01:30 PM
-     * 
-     * @param datetime
-     * @return formated date string
-     * @throws ParseException
-     */
-    @SuppressLint("SimpleDateFormat")
-    private String _getFormatDate(String datetime) throws ParseException {
-        String s = datetime;
-        String[] parts = s.split("\\."); // escape .
-        String part1 = parts[0];
-        String s1 = part1.replace('T', '\t');
-        String[] parts1 = s1.split("\\t");
-        String date = parts1[0];
-        String time = parts1[1];
-        String newdate = date + " " + time;
         SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         Date newdate1 = dateformat2.parse(newdate);
         Format formatter1 = new SimpleDateFormat("EEEE dd MMMM yyyy hh:mm a");

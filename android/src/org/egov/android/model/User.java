@@ -31,14 +31,14 @@
 
 package org.egov.android.model;
 
-import org.egov.android.model.BaseModel;
-import org.egov.android.model.IModel;
+import java.io.Serializable;
 
 /**
  * This User Model class contains the user information.
  */
 
-public class User extends BaseModel implements IModel {
+@SuppressWarnings("serial")
+public class User implements Serializable {
     private String name = "";
     private String email = "";
     private String password = "";

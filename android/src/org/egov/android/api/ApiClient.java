@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,10 +43,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.egov.android.R;
 import org.egov.android.common.ReflectionUtil;
 import org.egov.android.data.cache.Cache;
-import org.egov.android.data.cache.CacheDAO;
 import org.egov.android.listener.Event;
 
 import android.app.Dialog;
@@ -69,9 +69,8 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     Dialog dialog = null;
 
     /**
-     * Constructor to set apiMethod and apiLsteners. apiMethod is used to
-     * identify which api is called. apiListeners is used to send response to
-     * the activity from where the api is called.
+     * Constructor to set apiMethod and apiLsteners. apiMethod is used to identify which api is
+     * called. apiListeners is used to send response to the activity from where the api is called.
      * 
      * @param apiMethod
      */
@@ -108,20 +107,10 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     }
 
     /**
-     * To add listener to the apiMethod. Used to send response back to the
-     * activity.
+     * To add listener to the apiMethod. Used to send response back to the activity.
      */
     public ApiClient addListener(IApiListener listener) {
         apiListeners.add(listener);
-        return this;
-    }
-
-    public Cache getCache() {
-        return cache;
-    }
-
-    public ApiClient setCache(Cache cache) {
-        this.cache = cache;
         return this;
     }
 
@@ -131,36 +120,38 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     }
 
     /**
-     * This method gets executed before starting the http client requests. If
-     * the api method has cache and cache has data then it returns the data from
-     * the cache. If the cache is empty then call the api with page loading.
+     * This method gets executed before starting the https client requests. If the api method has
+     * cache and cache has data then it returns the data from the cache. If the cache is empty then
+     * call the api with page loading.
      */
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         ApiStatus.isError = false;
-        String url = apiMethod.getFullUrl();
-        CacheDAO cacheDao = new CacheDAO();
-        if (this.cache != null && cacheDao.hasData(url)) {
-            Cache cache = cacheDao.get(url);
-            this.triggerEvent(new ApiResponse(cache.getData().toString(), this.apiMethod, "cache"));
+        if (this.cache != null && this.cache.hasData()) {
+            this.triggerEvent(new ApiResponse(cache.getData(), this.apiMethod, "cache"));
             cancel(true);
             return;
         }
-        if (isShowSpinner()) {
-            if (dialog == null) {
-                dialog = new Dialog(context, R.style.DialogTheme);
-                dialog.setContentView(R.layout.custom_loading);
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.setCancelable(false);
-                dialog.show();
+
+        try {
+            if (isShowSpinner()) {
+                if (dialog == null) {
+                    dialog = new Dialog(context, R.style.DialogTheme);
+                    dialog.setContentView(R.layout.custom_loading);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.setCancelable(false);
+                    dialog.show();
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     /**
-     * Function used to send response as an event to the activity from where the
-     * api is called.
+     * Function used to send response as an event to the activity from where the api is called.
      * 
      * @param response
      */
@@ -175,10 +166,9 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     }
 
     /**
-     * This method is the completion of the http request either success or
-     * failure. If the response does not contain any data then return the
-     * function. If the response has data and has cache then store it in cache
-     * and trigger the response to the listener.
+     * This method is the completion of the https request either success or failure. If the response
+     * does not contain any data then return the function. If the response has data and has cache
+     * then store it in cache and trigger the response to the listener.
      */
     @Override
     protected void onPostExecute(ApiResponse response) {
@@ -195,11 +185,8 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
         }
 
         if (this.cache != null && !ApiStatus.isError) {
-            CacheDAO cacheDao = new CacheDAO();
-            Cache cache = new Cache();
-            cache.setUrl(apiMethod.getFullUrl()).setData(response.getResponse()).setDuration(1000);
-            cacheDao.setModel(cache);
-            cacheDao.save();
+            cache.setUrl(apiMethod.getFullUrl());
+            cache.add(response);
         }
         /**
          * get cache duration from config
@@ -209,17 +196,16 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
     }
 
     /**
-     * This method runs in background. This function will call after
-     * onPreExecute and before onPostExecute. If the request enter into any
-     * errors like authentication, network error and server errors set the error
-     * flag as true. Otherwise read the input stream and get the content for the
-     * response.
+     * This method runs in background. This function will call after onPreExecute and before
+     * onPostExecute. If the request enter into any errors like authentication, network error and
+     * server errors set the error flag as true. Otherwise read the input stream and get the content
+     * for the response.
      */
     @Override
     protected ApiResponse doInBackground(Void... params) {
         String url = apiMethod.getApiUrl().getUrl(true) + apiMethod.getExtraParam();
 
-        HttpURLConnection con = null;
+        HttpsURLConnection con = null;
         RequestMethod method = apiMethod.getMethod();
         String content = "";
         try {
@@ -233,10 +219,12 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
             }
             Log.d(TAG, "===================" + url);
 
-            con = (HttpURLConnection) new URL(url).openConnection();
+            new SSLTrustManager();
+            con = (HttpsURLConnection) new URL(url).openConnection();
             con.setRequestMethod(method.toString());
             con.setDoInput(true);
             con.setUseCaches(false);
+
             con.setRequestProperty("Content-Type", "application/" + apiMethod.getQueryType());
             con.setRequestProperty("Accept-Encoding", "gzip");
 
@@ -297,5 +285,15 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements 
             }
         }
         return new ApiResponse(content, this.apiMethod, "live");
+    }
+
+    @Override
+    public void setCache(Cache cache) {
+        this.cache = cache;
+    }
+
+    @Override
+    public Cache getCache() {
+        return cache;
     }
 }

@@ -170,7 +170,8 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
      */
     private void _displayListView(boolean isPagination) {
         ListView list = (ListView) getActivity().findViewById(R.id.all_complaint_list);
-        adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, true, apiLevel, this);
+        adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, "allcomplaint",
+                apiLevel, this);
         list.setOnItemClickListener(this);
         list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -198,7 +199,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
                 jo.put("type", "complaint");
                 jo.put("destPath", path + "/photo_" + i + ".jpg");
                 SQLiteHelper.getInstance().execSQL(
-                        "INSERT INTO jobs(data, status, type, triedCount) values ('"
+                        "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                 + jo.toString() + "', 'waiting', 'download', 0)");
             }
         } catch (JSONException e) {
@@ -232,13 +233,11 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
      * whether the access token is valid or not.If the access token is invalid, redirect to login
      * page. If the access token is valid, the response contains the JSON object.
      * createdDate,complainantName,detail,crn,status values are retrieved from the response object
-     * and store it to the variable then these values are set to the all complaint layout.
-     * call the _addDownloadJobs method to display the complaint photo from 
-     * the complaint photos directory on the storage device.
-     * displays the All complaints list with the corresponding complaint image.
-     * we have checked the pagination value.This value is retrieved from the api response 
-     * if the value is true then 
-     * load more option will be displayed below the complaint list view.
+     * and store it to the variable then these values are set to the all complaint layout. call the
+     * _addDownloadJobs method to display the complaint photo from the complaint photos directory on
+     * the storage device. displays the All complaints list with the corresponding complaint image.
+     * we have checked the pagination value.This value is retrieved from the api response if the
+     * value is true then load more option will be displayed below the complaint list view.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {

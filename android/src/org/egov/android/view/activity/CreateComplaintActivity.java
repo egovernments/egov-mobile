@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,24 +52,26 @@ import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.model.Complaint;
+import org.egov.android.service.GeoLocation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -123,6 +124,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_complaint);
 
+        new GeoLocation(this);
         Bundle bundle = getIntent().getExtras();
         complaintTypeId = bundle.getInt("complaintTypeId");
         ((TextView) findViewById(R.id.complaint_type)).setText(bundle
@@ -141,27 +143,32 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         assetPath = obj[0].toString() + "/egovernments/complaints";
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
+        if (!GeoLocation.getGpsStatus()) {
+            _showSettingsAlert();
+        }
+        _getCurrentLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude());
     }
 
-    private void _getCurrentLocation(double lat, double lng) {
-
-        if (lat == 0 && lng == 0) {
-            return;
-        }
-
-        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-        List<Address> addresses;
-        try {
-            addresses = geocoder.getFromLocation(lat, lng, 1);
-            latitude = lat;
-            longitute = lng;
-            if (addresses.size() > 0) {
-                String cityName = addresses.get(0).getAddressLine(0);
-                location.setText(cityName);
+    /**
+     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
+     * GPS/Location and cancel the pop up.
+     */
+    public void _showSettingsAlert() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Settings");
+        alertDialog.setMessage("Enable Location Provider! Go to settings menu?");
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
     }
 
     /**
@@ -332,8 +339,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      * object.The ContentResolver object communicates with the ContentProvider object and the result
      * is sent to the cursor object,the cursor object contains the imagepath. _createImageFile() is
      * called to store the selected gallery image to the complaint photos directory on the storage
-     * device.If the request code value is equal to the GET_LOCATION then latitude,longitute are
-     * retrieved from the map activity then the location is diplayed to the create complaint layout.
+     * device.If the request code value is equal to the GET_LOCATION then latitude,longitude are
+     * retrieved from the map activity then the location is displayed to the create complaint layout.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -431,6 +438,11 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void _getCurrentLocation(double lat, double lng) {
+        String cityName = GeoLocation.getCurrentLocation(lat, lng);
+        location.setText(cityName);
     }
 
     private Float convertToDegree(String stringDMS) {
@@ -638,7 +650,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                     jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
                             + "/api/v1.0/complaint/" + id + "/uploadSupportDocument");
                     SQLiteHelper.getInstance().execSQL(
-                            "INSERT INTO jobs(data, status, type, triedCount) values ('"
+                            "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                     + jo.toString() + "', 'waiting', 'upload', 0)");
                 } catch (JSONException e) {
                     e.printStackTrace();

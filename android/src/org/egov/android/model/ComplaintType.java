@@ -31,15 +31,15 @@
 
 package org.egov.android.model;
 
-import org.egov.android.model.BaseModel;
-import org.egov.android.model.IModel;
+import java.io.Serializable;
 
 /**
  * This ComplaintType Model class contains the complaint type information.
  *
  */
 
-public class ComplaintType extends BaseModel implements IModel {
+@SuppressWarnings("serial")
+public class ComplaintType implements Serializable {
 
     private int id = 0;
     private String name = "";

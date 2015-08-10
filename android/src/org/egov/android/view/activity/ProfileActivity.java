@@ -183,7 +183,7 @@ public class ProfileActivity extends BaseActivity {
      */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;
+        options.inSampleSize = 8;
         return BitmapFactory.decodeFile(path, options);
     }
 
@@ -192,7 +192,7 @@ public class ProfileActivity extends BaseActivity {
      * exist ,return the value from the json object else return empty string
      * 
      * @param jo
-     *            => json object to check the key existance
+     *            => json object to check the key existence
      * @param key
      *            => name of the key to check
      * @return string

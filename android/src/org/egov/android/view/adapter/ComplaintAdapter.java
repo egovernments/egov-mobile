@@ -61,7 +61,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     private ViewHolder holder = null;
     private IActionListener iListener = null;
     private boolean isPagination = false;
-    private boolean isUsername = false;
+    private String page = "";
     private int apiLevel = 0;
 
     /**
@@ -85,18 +85,19 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      *            => action listener
      */
     public ComplaintAdapter(Activity activity, ArrayList<Complaint> listItem, boolean isPagination,
-            boolean isUsername, int apiLevel, IActionListener iListener) {
+            String page, int apiLevel, IActionListener iListener) {
         this.activity = activity;
         this.listItem = listItem;
         this.iListener = iListener;
         this.isPagination = isPagination;
         this.apiLevel = apiLevel;
-        this.isUsername = isUsername;
+        this.page = page;
     }
 
     /**
-     * Before getting the view for list item, we have checked the apiLevel to show the image in either
-     * rounded view or normal view because rounded view will not work in api version less than 14.
+     * Before getting the view for list item, we have checked the apiLevel to show the image in
+     * either rounded view or normal view because rounded view will not work in api version less
+     * than 14.
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -123,7 +124,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         }
 
         Complaint data = listItem.get(position);
-        if (isUsername) {
+        if (page.equalsIgnoreCase("allcomplaint")) {
             holder.name.setText(data.getCreatedBy());
             holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
         } else {
@@ -193,8 +194,13 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      * @return
      */
     private String getActualTime(String createdAt) {
+
+        if (createdAt.length() == 17) {
+            return "";
+        }
+
         Date date = new Date();
-        String dateStart = formatdate(createdAt);
+        String dateStart = page.equals("search") ? formatdate(createdAt) : createdAt;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String current_date = format.format(date);
 

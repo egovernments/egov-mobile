@@ -51,7 +51,11 @@ public class SplashActivity extends BaseActivity implements Runnable {
         SQLiteHelper
                 .getInstance()
                 .execSQL(
-                        "CREATE TABLE IF NOT EXISTS jobs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, data TEXT, status TEXT, type TEXT, triedCount INTEGER, timeStamp DATETIME DEFAULT (datetime('now','localtime')), UNIQUE(data) ON CONFLICT REPLACE)");
+                        "CREATE TABLE IF NOT EXISTS tbl_cache (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, url TEXT, data TEXT, timeStamp TEXT, UNIQUE(data) ON CONFLICT REPLACE)");
+        SQLiteHelper
+                .getInstance()
+                .execSQL(
+                        "CREATE TABLE IF NOT EXISTS tbl_jobs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, data TEXT, status TEXT, type TEXT, triedCount INTEGER, timeStamp DATETIME DEFAULT (datetime('now','localtime')), UNIQUE(data) ON CONFLICT REPLACE)");
         new Handler().postDelayed(this, 2000);
     }
 
