@@ -31,6 +31,7 @@
 
 package org.egov.android.controller;
 
+import org.egov.android.AndroidLibrary;
 import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiMethod;
 import org.egov.android.api.ApiUrl;
@@ -119,6 +120,8 @@ public class ApiController {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.FORGOT_PASSWORD);
         apiMethod.setMethod(RequestMethod.POST);
         apiMethod.addParameter("identity", identity);
+        apiMethod.addParameter("redirectURL",
+                AndroidLibrary.getInstance().getConfig().getString("api.baseUrl"));
         _createApiClient(apiMethod, listener, false).call();
     }
 
@@ -371,7 +374,7 @@ public class ApiController {
 
         IApiClient client = null;
         client = new ApiClient(apiMethod);
-        if(useCache){
+        if (useCache) {
             Cache cache = new Cache();
             cache.setUrl(apiMethod.getFullUrl());
             client.setCache(cache);

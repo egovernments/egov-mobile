@@ -103,7 +103,7 @@ public class RegisterActivity extends BaseActivity {
         } else if (isEmpty(phone)) {
             showMessage(getMessage(R.string.phone_empty));
             return;
-        } else if (phone.length() < 10) {
+        } else if (phone.length() != 10) {
             showMessage(getMessage(R.string.phone_number_length));
             return;
         } else if (isEmpty(email)) {

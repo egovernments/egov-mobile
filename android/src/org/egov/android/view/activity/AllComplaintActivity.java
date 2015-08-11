@@ -261,8 +261,10 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
                         item = new Complaint();
+                        String userName = _getValue(jo, "complainantName");
                         item.setCreatedDate(_getValue(jo, "createdDate"));
-                        item.setCreatedBy(_getValue(jo, "complainantName"));
+                        item.setCreatedBy((userName.equals("")) ? _getValue(jo, "lastModifiedBy")
+                                : userName);
                         item.setDetails(_getValue(jo, "detail"));
                         item.setComplaintId(jo.getString("crn"));
                         item.setStatus(jo.getString("status"));

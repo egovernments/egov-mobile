@@ -32,7 +32,6 @@
 package org.egov.android.view.activity.helper;
 
 import org.egov.android.R;
-
 import org.egov.android.controller.ApiController;
 import org.egov.android.AndroidLibrary;
 import org.egov.android.api.ApiResponse;
@@ -50,6 +49,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -156,7 +156,14 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
 
     @Override
     public void onOpen() {
-        ((TextView) this.activity.findViewById(R.id.setting_profile)).setOnClickListener(this);
+        String className = this.activity.getClass().getSimpleName();
+        if (className.equalsIgnoreCase("ProfileActivity")
+                || className.equalsIgnoreCase("EditProfileActivity")) {
+            ((TextView) this.activity.findViewById(R.id.setting_profile)).setTextColor(Color.GRAY);
+        } else {
+            ((TextView) this.activity.findViewById(R.id.setting_profile)).setTextColor(Color.WHITE);
+            ((TextView) this.activity.findViewById(R.id.setting_profile)).setOnClickListener(this);
+        }
         ((TextView) this.activity.findViewById(R.id.setting_logout)).setOnClickListener(this);
     }
 

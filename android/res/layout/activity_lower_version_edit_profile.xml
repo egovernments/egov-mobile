@@ -31,6 +31,8 @@
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
 
+
+
 -->
 
 <org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -91,11 +93,25 @@
                                 android:text="@string/change_picture_btn" />
                         </LinearLayout>
 
-                        <org.egov.android.view.component.EGovTextView
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Name"
-                            android:textColor="@color/dark_gray" />
+                            android:layout_height="wrap_content" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/name_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Name"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/name_text"
+                                android:paddingLeft="3dp"
+                                android:text="*"
+                                android:textColor="@color/red" />
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -109,11 +125,25 @@
                                 android:singleLine="true" />
                         </LinearLayout>
 
-                        <org.egov.android.view.component.EGovTextView
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Gender"
-                            android:textColor="@color/dark_gray" />
+                            android:layout_height="wrap_content" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/gender_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gender"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/gender_text"
+                                android:paddingLeft="3dp"
+                                android:text="*"
+                                android:textColor="@color/red" />
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -167,11 +197,25 @@
                                 android:singleLine="true" />
                         </LinearLayout>
 
-                        <org.egov.android.view.component.EGovTextView
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Date of Birth"
-                            android:textColor="@color/dark_gray" />
+                            android:layout_height="wrap_content" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/date_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Date of Birth"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/date_text"
+                                android:paddingLeft="3dp"
+                                android:text="*"
+                                android:textColor="@color/red" />
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -228,11 +272,25 @@
                                 android:singleLine="true" />
                         </LinearLayout>
 
-                        <org.egov.android.view.component.EGovTextView
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Preferred Language"
-                            android:textColor="@color/dark_gray" />
+                            android:layout_height="wrap_content" >
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:id="@+id/language_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Preferred Language"
+                                android:textColor="@color/dark_gray" />
+
+                            <org.egov.android.view.component.EGovTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/language_text"
+                                android:paddingLeft="3dp"
+                                android:text="*"
+                                android:textColor="@color/red" />
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"

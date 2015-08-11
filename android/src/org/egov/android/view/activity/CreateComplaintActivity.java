@@ -150,8 +150,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     /**
-     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
-     * GPS/Location and cancel the pop up.
+     * Function called if the user didn't enable GPS/Location in their device. Give options to
+     * enable GPS/Location and cancel the pop up.
      */
     public void _showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
@@ -340,7 +340,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      * is sent to the cursor object,the cursor object contains the imagepath. _createImageFile() is
      * called to store the selected gallery image to the complaint photos directory on the storage
      * device.If the request code value is equal to the GET_LOCATION then latitude,longitude are
-     * retrieved from the map activity then the location is displayed to the create complaint layout.
+     * retrieved from the map activity then the location is displayed to the create complaint
+     * layout.
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -416,6 +417,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 
     private void _getLatAndLng(String imageUrl) {
         try {
+            double lat = 0.0;
+            double lng = 0.0;
             ExifInterface exif = new ExifInterface(imageUrl);
             String attrLatitute = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
             String attrLatituteRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
@@ -427,13 +430,13 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             }
 
             if (attrLatituteRef.equals("N")) {
-                latitude = convertToDegree(attrLatitute);
+                lat = convertToDegree(attrLatitute);
             }
 
             if (attrLONGITUDEREf.equals("E")) {
-                longitute = convertToDegree(attrLONGITUDE);
+                lng = convertToDegree(attrLONGITUDE);
             }
-            _getCurrentLocation(latitude, longitute);
+            _getCurrentLocation(lat, lng);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -441,6 +444,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     private void _getCurrentLocation(double lat, double lng) {
+        latitude = lat;
+        longitute = lng;
         String cityName = GeoLocation.getCurrentLocation(lat, lng);
         location.setText(cityName);
     }

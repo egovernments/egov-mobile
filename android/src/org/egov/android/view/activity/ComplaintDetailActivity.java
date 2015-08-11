@@ -127,8 +127,8 @@ public class ComplaintDetailActivity extends BaseActivity {
     }
 
     /**
-     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
-     * GPS/Location and cancel the pop up.
+     * Function called if the user didn't enable GPS/Location in their device. Give options to
+     * enable GPS/Location and cancel the pop up.
      */
     public void _showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
