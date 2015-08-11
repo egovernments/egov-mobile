@@ -1,4 +1,11 @@
-# Steps to run the android application
+## eGov Mobile Application (MeGov)
+
+#### Issue Tracking
+Report issues via the [MeGov Opensource JIRA][].
+#### License
+eGov Mobile Application is released under version 3.0 of the [GPL][].
+
+### Steps to run the android application
 
 1) Start Eclipse
 
@@ -17,3 +24,7 @@
 7) In Target tab select ‘Always point to pick a device’ to run the application in the mobile devices
 Or
 Launch on all compatible devices/AVD'S to run the application in android emulator
+
+
+[MeGov Opensource JIRA]: http://issues.egovernments.org/browse/MEGOV
+[GPL]: http://www.gnu.org/licenses/
