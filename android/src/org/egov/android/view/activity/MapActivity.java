@@ -65,6 +65,8 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     private GoogleMap googleMap;
     private double latitude = 0.0;
     private double longitude = 0.0;
+    private double defaultLat = 0.0;
+    private double defaultLng = 0.0;
 
     /**
      * To set the layout for the MapActivity and set click listener to confirm location button.
@@ -74,10 +76,10 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
         ((Button) findViewById(R.id.get_location)).setOnClickListener(this);
-
         new GeoLocation(this);
+        defaultLat = getIntent().getDoubleExtra("latitude", 0);
+        defaultLng = getIntent().getDoubleExtra("longitude", 0);
         _initilizeMap();
     }
 
@@ -90,13 +92,16 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
                 .getMap();
 
         if (googleMap == null) {
-            Toast.makeText(getApplicationContext(), R.string.map_load_failure, Toast.LENGTH_SHORT)
-                    .show();
+            _showMsg("Sorry! unable to create maps");
             return;
         }
 
         if (GeoLocation.getGpsStatus()) {
-            _setLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude(), false);
+            if (defaultLat != 0 && defaultLng != 0) {
+                _setLocation(defaultLat, defaultLng, false);
+            } else {
+                _setLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude(), false);
+            }
         } else {
             _showSettingsAlert();
         }
@@ -220,8 +225,8 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     }
 
     /**
-     * Function called if the user didn't enable GPS/Location in their device. Give options to enable
-     * GPS/Location and cancels the pop up.
+     * Function called if the user didn't enable GPS/Location in their device. Give options to
+     * enable GPS/Location and cancels the pop up.
      */
     private void _showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);

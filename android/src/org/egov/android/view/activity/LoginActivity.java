@@ -109,9 +109,6 @@ public class LoginActivity extends BaseActivity {
         } else if (isEmpty(password)) {
             showMessage(getMessage(R.string.password_empty));
             return;
-        } else if (password.length() < 6) {
-            showMessage(getMessage(R.string.password_length));
-            return;
         }
 
         User user = new User();
@@ -142,6 +139,7 @@ public class LoginActivity extends BaseActivity {
                 JSONObject jo = ja.getJSONObject(0);
                 getSession().edit().putString("access_token", jo.getString("access_token"))
                         .commit();
+                getSession().edit().putString("user_name", "Settings").commit();
                 startActivity(new Intent(this, ComplaintActivity.class));
                 finish();
             } catch (JSONException e) {

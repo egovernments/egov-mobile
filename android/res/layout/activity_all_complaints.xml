@@ -30,7 +30,6 @@
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
-
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -62,7 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/view_ln"
         android:divider="@android:color/transparent"
-        android:listSelector="@android:color/transparent" >
+        android:listSelector="@android:color/transparent"
+        android:transcriptMode="normal" >
     </ListView>
 
     <org.egov.android.view.component.EGovTextView

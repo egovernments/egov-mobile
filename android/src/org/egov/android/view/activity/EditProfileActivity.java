@@ -43,11 +43,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.egov.android.R;
-import org.egov.android.controller.ApiController;
 import org.egov.android.AndroidLibrary;
+import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.common.StorageManager;
+import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.model.User;
 
@@ -86,7 +86,6 @@ public class EditProfileActivity extends BaseActivity {
     private String dateOfBirth = "";
     private String panCardNumber = "";
     private String aadhaarCardNumber = "";
-    private String langauge = "";
     private static final int CAPTURE_IMAGE = 1000;
     private static final int FROM_GALLERY = 2000;
     private int apiLevel = 0;
@@ -125,13 +124,12 @@ public class EditProfileActivity extends BaseActivity {
         dateOfBirth = getIntent().getExtras().getString("dateOfBirth");
         panCardNumber = getIntent().getExtras().getString("panCardNumber");
         aadhaarCardNumber = getIntent().getExtras().getString("aadhaarCardNumber");
-        langauge = getIntent().getExtras().getString("langauge");
 
         ((EditText) findViewById(R.id.edit_profile_name)).setText(userName);
         ((EditText) findViewById(R.id.edit_profile_alt_contact)).setText(altContactNumber);
-        ((TextView) findViewById(R.id.edit_profile_dob)).setText(dateOfBirth);
         ((EditText) findViewById(R.id.edit_profile_pan)).setText(panCardNumber);
         ((EditText) findViewById(R.id.edit_profile_aadhaar)).setText(aadhaarCardNumber);
+        ((TextView) findViewById(R.id.edit_profile_dob)).setText(dateOfBirth);
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -151,14 +149,11 @@ public class EditProfileActivity extends BaseActivity {
         };
 
         ((EditText) findViewById(R.id.edit_profile_pan)).setFilters(new InputFilter[] { filter });
-        int selected_lang = (langauge.equalsIgnoreCase("english")) ? R.id.english : (langauge
-                .equalsIgnoreCase("hindi")) ? R.id.hindi : R.id.english;
 
         int selected_gender = (gender.equalsIgnoreCase("male")) ? R.id.male : (gender
                 .equalsIgnoreCase("female")) ? R.id.female : R.id.male;
 
         ((RadioGroup) findViewById(R.id.gender)).check(selected_gender);
-        ((RadioGroup) findViewById(R.id.language)).check(selected_lang);
 
         StorageManager sm = new StorageManager();
         Object[] obj = sm.getStorageInfo();
@@ -231,6 +226,7 @@ public class EditProfileActivity extends BaseActivity {
      */
     @SuppressLint("NewApi")
     private void _showDatePicker() {
+        DatePickerDialog datePicker = null;
         Calendar c = Calendar.getInstance();
         int year = 0;
         int month = 0;
@@ -239,13 +235,15 @@ public class EditProfileActivity extends BaseActivity {
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             date = c.get(Calendar.DAY_OF_MONTH);
+            datePicker = new DatePickerDialog(this, datepicker, year, month, date);
         } else {
             String[] birth = dateOfBirth.split("-");
             year = Integer.valueOf(birth[0]);
             month = Integer.valueOf(birth[1]) - 1;
             date = Integer.valueOf(birth[2]);
+            datePicker = new DatePickerDialog(this, datepicker, date, month, year);
         }
-        DatePickerDialog datePicker = new DatePickerDialog(this, datepicker, year, month, date);
+
         if (apiLevel > 13) {
             datePicker.getDatePicker().setMaxDate(System.currentTimeMillis());
         }
@@ -352,10 +350,6 @@ public class EditProfileActivity extends BaseActivity {
         int genderSelected = gender.getCheckedRadioButtonId();
         RadioButton genderButton = (RadioButton) findViewById(genderSelected);
 
-        RadioGroup language = (RadioGroup) findViewById(R.id.language);
-        int languageSelected = language.getCheckedRadioButtonId();
-        RadioButton languageButton = (RadioButton) findViewById(languageSelected);
-
         if (isEmpty(name)) {
             showMessage(getMessage(R.string.name_empty));
             return;
@@ -376,14 +370,16 @@ public class EditProfileActivity extends BaseActivity {
             return;
         }
 
+        String[] parts = date_of_birth.split("-");
+
         User user = new User();
         user.setName(name);
         user.setGender(genderButton.getText().toString().toUpperCase());
         user.setAltContactNumber(alt_conatct_no);
-        user.setDateOfBirth(date_of_birth);
+        user.setDateOfBirth(parts[2] + "-" + parts[1] + "-" + parts[0]);
         user.setPanCardNumber(panNo);
         user.setAadhaarCardNumber(aadhaarNo);
-        user.setLanguage(languageButton.getText().toString());
+        user.setLanguage("");
         user.setEmail(mailId);
         user.setMobileNo(mobileNo);
 
@@ -400,8 +396,8 @@ public class EditProfileActivity extends BaseActivity {
         public void onDateSet(DatePicker view, int year, int month, int date) {
 
             try {
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-                Date d = dateFormatter.parse(String.valueOf(year + "-" + (month + 1) + "-" + date));
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+                Date d = dateFormatter.parse(String.valueOf(date + "-" + (month + 1) + "-" + year));
                 String formatedDate = dateFormatter.format(d);
                 ((TextView) findViewById(R.id.edit_profile_dob)).setText(formatedDate);
             } catch (ParseException e) {

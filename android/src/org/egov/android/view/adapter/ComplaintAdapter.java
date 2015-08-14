@@ -124,7 +124,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         }
 
         Complaint data = listItem.get(position);
-        if (page.equalsIgnoreCase("allcomplaint")) {
+        if (page.equalsIgnoreCase("allcomplaint") || page.equalsIgnoreCase("search")) {
             holder.name.setText(data.getCreatedBy());
             holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
         } else {
@@ -195,13 +195,10 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      */
     private String getActualTime(String createdAt) {
 
-        if (createdAt.length() == 17) {
-            return "";
-        }
-
         Date date = new Date();
-        String dateStart = page.equals("search") ? formatdate(createdAt) : createdAt;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        createdAt = createdAt.substring(0, Math.min(createdAt.length(), 16));
+        String dateStart = (createdAt.contains("T")) ? formatdate(createdAt) : createdAt;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String current_date = format.format(date);
 
         Date d1 = null;

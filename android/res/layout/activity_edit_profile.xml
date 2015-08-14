@@ -31,6 +31,7 @@
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
 
+
 -->
 
 <org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -272,59 +273,6 @@
                                 style="@style/FormRow.EditText"
                                 android:inputType="number"
                                 android:singleLine="true" />
-                        </LinearLayout>
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
-
-                            <org.egov.android.view.component.EGovTextView
-                                android:id="@+id/language_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Preferred Language"
-                                android:textColor="@color/dark_gray" />
-
-                            <org.egov.android.view.component.EGovTextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_toRightOf="@+id/language_text"
-                                android:paddingLeft="3dp"
-                                android:text="*"
-                                android:textColor="@color/red" />
-                        </RelativeLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/viewMargin"
-                            android:background="@drawable/edittext_border"
-                            android:orientation="horizontal" >
-
-                            <RadioGroup
-                                android:id="@+id/language"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal" >
-
-                                <RadioButton
-                                    android:id="@+id/english"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:button="@drawable/radiobutton_selector"
-                                    android:checked="true"
-                                    android:text="English"
-                                    android:textColor="@color/text" />
-
-                                <RadioButton
-                                    android:id="@+id/hindi"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="5dp"
-                                    android:button="@drawable/radiobutton_selector"
-                                    android:text="Hindi"
-                                    android:textColor="@color/text" />
-                            </RadioGroup>
                         </LinearLayout>
 
                         <org.egov.android.view.component.EGovButton

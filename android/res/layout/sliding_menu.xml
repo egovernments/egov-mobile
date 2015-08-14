@@ -31,6 +31,8 @@
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
 
+
+
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -49,10 +51,12 @@
         android:paddingTop="12dp" >
 
         <TextView
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:text="Settings"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
 
@@ -65,14 +69,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <org.egov.android.view.component.EGovTextView
-                android:id="@+id/setting_profile"
-                style="@style/SettingMenuItem"
-                android:text="Profile" />
-            <org.egov.android.view.component.EGovTextView
-                android:id="@+id/setting_logout"
-                style="@style/SettingMenuItem"
-                android:text="Logout" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                 android:background="@drawable/setting_line"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/user_settings" />
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/setting_profile"
+                    style="@style/SettingMenuItem"
+                    android:text="Profile" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="14dp"
+                android:background="@drawable/setting_line"
+                android:orientation="horizontal" >
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/logout_settings" />
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/setting_logout"
+                    style="@style/SettingMenuItem"
+                    android:text="Logout" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

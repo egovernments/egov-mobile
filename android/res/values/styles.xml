@@ -27,8 +27,6 @@
  * trade names or trademarks of eGovernments Foundation.
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-
-
 -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res/org.egov.android">
@@ -71,8 +69,8 @@
     <style name="SettingMenuItem" parent="TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:padding">12dp</item>
-        <item name="android:background">@drawable/setting_line</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">10dp</item>
     </style>
 
     <style name="ButtonStyle" parent="TextView">
@@ -128,14 +126,14 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
-    
-    <!--  library usage -->
+
+    <!-- library usage -->
     <style name="DialogTheme">
-       <item name="android:windowBackground">@android:color/transparent</item>
-       <item name="android:windowContentOverlay">@null</item>
-       <item name="android:windowNoTitle">true</item>
-       <item name="android:windowIsFloating">true</item>
-       <item name="android:backgroundDimEnabled">false</item>
-   </style>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 
 </resources>

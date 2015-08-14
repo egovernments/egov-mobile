@@ -285,6 +285,15 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
                         }
                         listItem.add(item);
                     }
+
+                    if (listItem.size() > 5) {
+                        ((ListView) getActivity().findViewById(R.id.all_complaint_list))
+                                .setStackFromBottom(true);
+                    } else {
+                        ((ListView) getActivity().findViewById(R.id.all_complaint_list))
+                                .setStackFromBottom(false);
+                    }
+
                     if (pagination.equals("true")) {
                         item = new Complaint();
                         listItem.add(item);

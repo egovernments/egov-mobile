@@ -59,16 +59,14 @@ public class ProfileActivity extends BaseActivity {
     private String dateOfBirth = "";
     private String panCardNumber = "";
     private String aadhaarCardNumber = "";
-    private String langauge = "";
 
     /**
-     * It is used to initialize an activity.
-     * An Activity is an application component that provides a screen 
-     * with which users can interact in order to do something,
-     * To initialize and set the layout for the ProfileActivity.Set click listener to the edit icon. Here we
-     * have checked the api level to set the layout. If api level is greater than 13, then call
-     * activity_profile layout else call activity_lower_version_profile layout. activity_profile layout
-     * contains EGovRoundedImageView component which is not supported in lower api levels.
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize and set the
+     * layout for the ProfileActivity.Set click listener to the edit icon. Here we have checked the
+     * api level to set the layout. If api level is greater than 13, then call activity_profile
+     * layout else call activity_lower_version_profile layout. activity_profile layout contains
+     * EGovRoundedImageView component which is not supported in lower api levels.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,17 +107,16 @@ public class ProfileActivity extends BaseActivity {
                 intent.putExtra("dateOfBirth", dateOfBirth);
                 intent.putExtra("panCardNumber", panCardNumber);
                 intent.putExtra("aadhaarCardNumber", aadhaarCardNumber);
-                intent.putExtra("langauge", langauge);
                 startActivity(intent);
                 break;
         }
     }
 
     /**
-     * The onResponse method will be invoked after the API call 
-     * onResponse methods will contain the response.
-     * If the response has status as 'success' then get the user informations from the response and show it
-     * in layout. If the error is like 'Invalid access token' then redirect to the login page.
+     * The onResponse method will be invoked after the API call onResponse methods will contain the
+     * response. If the response has status as 'success' then get the user informations from the
+     * response and show it in layout. If the error is like 'Invalid access token' then redirect to
+     * the login page.
      */
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);
@@ -129,6 +126,7 @@ public class ProfileActivity extends BaseActivity {
         if (status.equalsIgnoreCase("success")) {
             try {
                 JSONObject jo = new JSONObject(event.getData().getResponse().toString());
+                String birth_date = "";
                 userName = _getValue(jo, "name");
                 mailId = _getValue(jo, "emailId");
                 mobileNo = _getValue(jo, "mobileNumber");
@@ -136,11 +134,14 @@ public class ProfileActivity extends BaseActivity {
                         0, 1).toUpperCase()
                         + _getValue(jo, "gender").substring(1).toLowerCase();
                 altContactNumber = _getValue(jo, "altContactNumber");
-                dateOfBirth = _getValue(jo, "dob");
+                birth_date = _getValue(jo, "dob");
                 panCardNumber = _getValue(jo, "panCard");
                 aadhaarCardNumber = _getValue(jo, "aadhaarCard");
-                langauge = _getValue(jo, "preferredLanguage");
 
+                if (!birth_date.equals("")) {
+                    String[] parts = birth_date.split("-");
+                    dateOfBirth = parts[2] + "-" + parts[1] + "-" + parts[0];
+                }
                 ((TextView) findViewById(R.id.name)).setText(userName);
                 ((TextView) findViewById(R.id.email)).setText(mailId);
                 ((TextView) findViewById(R.id.mobile)).setText(mobileNo);
@@ -149,7 +150,6 @@ public class ProfileActivity extends BaseActivity {
                 ((TextView) findViewById(R.id.dob)).setText(dateOfBirth);
                 ((TextView) findViewById(R.id.pan)).setText(panCardNumber);
                 ((TextView) findViewById(R.id.aadhaar)).setText(aadhaarCardNumber);
-                ((TextView) findViewById(R.id.pref_lang)).setText(langauge);
 
                 StorageManager sm = new StorageManager();
                 Object[] obj = sm.getStorageInfo();

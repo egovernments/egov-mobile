@@ -45,17 +45,18 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class RegisterActivity extends BaseActivity {
 
     /**
-     * It is  used to initialize an activity.
-     * An Activity is an application component that provides a screen
-     *  with which users can interact in order to do something,
-     * To initialize the RegisterActivity.Set click listener to the save button.
+     * It is used to initialize an activity. An Activity is an application component that provides a
+     * screen with which users can interact in order to do something, To initialize the
+     * RegisterActivity.Set click listener to the save button.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,8 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * Event triggered when clicking on the item having click listener. When user clicks on save button
-     * _register() function get called.
+     * Event triggered when clicking on the item having click listener. When user clicks on save
+     * button _register() function get called.
      */
     @Override
     public void onClick(View v) {
@@ -115,8 +116,14 @@ public class RegisterActivity extends BaseActivity {
         } else if (isEmpty(password)) {
             showMessage(getMessage(R.string.password_empty));
             return;
-        } else if (password.length() < 6) {
-            showMessage(getMessage(R.string.password_length));
+        } else if (!_isValidPassword(password)) {
+            Toast toast = Toast
+                    .makeText(
+                            this,
+                            "Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet,number and special character except \'& < > # % \" ' / \\' and space",
+                            2000);
+            toast.setGravity(Gravity.TOP, 0, 120);
+            toast.show();
             return;
         } else if (isEmpty(confirm_password.toString())) {
             showMessage(getMessage(R.string.confirm_password_empty));
@@ -134,6 +141,13 @@ public class RegisterActivity extends BaseActivity {
         user.setConfirmPassword(confirm_password);
         user.setDeviceId(deviceId);
         ApiController.getInstance().register(this, user);
+    }
+
+    private boolean _isValidPassword(String password) {
+        String expression = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$]).{8,32})";
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
     }
 
     /**
@@ -162,13 +176,10 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * The onResponse method will be invoked after the Register activation API call 
-     * onResponse methods will contain the response
-     * If the response has status as 'success' then 
-     * onResponse contains the JSON object.
-     * The JSONObject is handled in the onResponse method.finally
-     * _clearAllText() function to reset the fields.
-     * then  redirect to AccountActivationActivity and
+     * The onResponse method will be invoked after the Register activation API call onResponse
+     * methods will contain the response If the response has status as 'success' then onResponse
+     * contains the JSON object. The JSONObject is handled in the onResponse method.finally
+     * _clearAllText() function to reset the fields. then redirect to AccountActivationActivity and
      * pass the email/phone through intent.
      */
     @Override

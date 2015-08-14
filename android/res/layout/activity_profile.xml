@@ -29,8 +29,6 @@
  * trade names or trademarks of eGovernments Foundation.
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-
-
 -->
 
 <org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -314,33 +312,6 @@
 
                                 <org.egov.android.view.component.EGovTextView
                                     android:id="@+id/aadhaar"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:textColor="@color/text" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:padding="@dimen/viewMargin" >
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:layout_width="115dp"
-                                    android:layout_height="wrap_content"
-                                    android:text="Preferred Language"
-                                    android:textColor="@color/dark_gray" />
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:layout_width="10dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:text=":"
-                                    android:textColor="@color/text" />
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:id="@+id/pref_lang"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_vertical"

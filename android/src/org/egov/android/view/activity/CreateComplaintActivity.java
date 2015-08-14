@@ -188,7 +188,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 _addComplaint();
                 break;
             case R.id.complaint_location_icon:
-                startActivityForResult(new Intent(this, MapActivity.class), GET_LOCATION);
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitute);
+                startActivityForResult(intent, GET_LOCATION);
                 break;
             case R.id.add_photo:
                 _openDialog();
@@ -437,7 +440,6 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 lng = convertToDegree(attrLONGITUDE);
             }
             _getCurrentLocation(lat, lng);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -716,6 +718,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         if (s.length() == 3) {
             ApiController.getInstance().getLocationByName(this, s.toString());
+        }
+        if (s.length() == 0) {
+            latitude = 0;
+            longitute = 0;
         }
     }
 

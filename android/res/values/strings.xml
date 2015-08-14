@@ -46,7 +46,7 @@ Powered by eGovernments Foundation </string>
     <string name="title_empty">Please enter title</string>
     <string name="invalid_email">Please enter valid email</string>
     <string name="password_empty">Please enter password</string>
-    <string name="password_length">Password must be at least 6 characters</string>
+    <string name="password_length">Password must be at least 8 characters</string>
     <string name="name_empty">Please enter name</string>
     <string name="name_length">Name must be at least 3 characters</string>
     <string name="phone_empty">Please enter phone number</string>
@@ -62,7 +62,6 @@ Powered by eGovernments Foundation </string>
     <string name="birth_empty">Please select date of birth</string>
     <string name="aadhaar_empty">Please enter aadhaar card number</string>
     <string name="pan_empty">Please enter pan card number</string>
-    <string name="map_load_failure">Sorry! unable to create maps</string>
     <string name="unknown_location">Please select a valid location</string>
     <string name="logout_message">Are you sure you want to logout?</string>
     <string name="file_type">File type must be jpg or png or bmp</string>

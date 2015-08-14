@@ -223,6 +223,11 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         }
                         listItem.add(item);
                     }
+
+                    if (listItem.size() > 5) {
+                        ((ListView) getActivity().findViewById(R.id.user_complaint_list))
+                                .setStackFromBottom(true);
+                    }
                     if (pagination.equals("true")) {
                         item = new Complaint();
                         listItem.add(item);

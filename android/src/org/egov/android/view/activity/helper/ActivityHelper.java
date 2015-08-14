@@ -157,6 +157,8 @@ public class ActivityHelper implements OnClickListener, ISlidingDrawerListener {
     @Override
     public void onOpen() {
         String className = this.activity.getClass().getSimpleName();
+        ((TextView) this.activity.findViewById(R.id.user_name)).setText(AndroidLibrary
+                .getInstance().getSession().getString("user_name", ""));
         if (className.equalsIgnoreCase("ProfileActivity")
                 || className.equalsIgnoreCase("EditProfileActivity")) {
             ((TextView) this.activity.findViewById(R.id.setting_profile)).setTextColor(Color.GRAY);
