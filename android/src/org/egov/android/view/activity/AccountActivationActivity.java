@@ -127,7 +127,9 @@ public class AccountActivationActivity extends BaseActivity {
                     getSession().edit().putString("access_token", jo.getString("access_token"))
                             .commit();
                     getSession().edit().putString("user_name", jo.getString("user_name")).commit();
-                    startActivity(new Intent(this, ComplaintActivity.class));
+                    Intent intent = new Intent(this, ComplaintActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                     finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
