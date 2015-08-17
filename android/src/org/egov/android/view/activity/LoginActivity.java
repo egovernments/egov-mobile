@@ -139,7 +139,7 @@ public class LoginActivity extends BaseActivity {
                 JSONObject jo = ja.getJSONObject(0);
                 getSession().edit().putString("access_token", jo.getString("access_token"))
                         .commit();
-                getSession().edit().putString("user_name", "Settings").commit();
+                getSession().edit().putString("user_name", jo.getString("user_name")).commit();
                 startActivity(new Intent(this, ComplaintActivity.class));
                 finish();
             } catch (JSONException e) {

@@ -357,7 +357,6 @@ public class ApiController {
         apiMethod.addParameter("dob", user.getDateOfBirth());
         apiMethod.addParameter("pan", user.getPanCardNumber());
         apiMethod.addParameter("aadhaarNumber", user.getAadhaarCardNumber());
-        apiMethod.addParameter("locale", user.getLanguage());
         _createApiClient(apiMethod, listener, false).call();
     }
 

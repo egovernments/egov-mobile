@@ -33,6 +33,7 @@
 
 
 
+
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,8 +55,8 @@
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             android:ellipsize="end"
-            android:gravity="center"
             android:maxLines="1"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
@@ -72,9 +73,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="14dp"
-                 android:background="@drawable/setting_line"
-                android:orientation="horizontal" >
+                android:background="@drawable/setting_line"
+                android:orientation="horizontal"
+                android:padding="14dp" >
 
                 <ImageView
                     android:layout_width="20dp"
@@ -89,9 +90,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="14dp"
                 android:background="@drawable/setting_line"
-                android:orientation="horizontal" >
+                android:orientation="horizontal"
+                android:padding="14dp" >
 
                 <ImageView
                     android:layout_width="20dp"

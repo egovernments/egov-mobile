@@ -128,7 +128,7 @@ public class RegisterActivity extends BaseActivity {
         } else if (isEmpty(confirm_password.toString())) {
             showMessage(getMessage(R.string.confirm_password_empty));
             return;
-        } else if (!password.equalsIgnoreCase(confirm_password)) {
+        } else if (!password.equals(confirm_password)) {
             showMessage(getMessage(R.string.password_match));
             return;
         }
@@ -144,7 +144,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private boolean _isValidPassword(String password) {
-        String expression = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$]).{8,32})";
+        String expression = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$;:+=-_?()!]).{8,32})";
         Pattern pattern = Pattern.compile(expression);
         Matcher matcher = pattern.matcher(password);
         return matcher.matches();

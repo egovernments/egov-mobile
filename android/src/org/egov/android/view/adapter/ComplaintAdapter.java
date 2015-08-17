@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.egov.android.R;
+import org.egov.android.common.StorageManager;
 import org.egov.android.listener.IActionListener;
 import org.egov.android.model.Complaint;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -135,7 +136,16 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         if (file.exists()) {
             holder.image.setImageBitmap(_getBitmapImage(data.getImagePath()));
         } else {
-            holder.image.setImageResource(R.drawable.complaint);
+            StorageManager sm = new StorageManager();
+            Object[] obj = sm.getStorageInfo();
+            String complaintImagePath = obj[0].toString() + "/egovernments/complaints/"
+                    + data.getComplaintId() + File.separator + "photo_complaint_type.jpg";
+            File complaintTypeImage = new File(complaintImagePath);
+            if (complaintTypeImage.exists()) {
+                holder.image.setImageBitmap(_getBitmapImage(complaintImagePath));
+            } else {
+                holder.image.setImageResource(R.drawable.complaint);
+            }
         }
         holder.description.setText(data.getDetails());
         holder.date.setText((data.getCreatedDate().equals("")) ? "" : getActualTime(data

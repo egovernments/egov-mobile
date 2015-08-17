@@ -50,7 +50,7 @@ Powered by eGovernments Foundation </string>
     <string name="name_empty">Please enter name</string>
     <string name="name_length">Name must be at least 3 characters</string>
     <string name="phone_empty">Please enter phone number</string>
-    <string name="phone_number_length">Mobile number must be at least 10 digits</string>
+    <string name="phone_number_length">Phone number must be 10 digits</string>
     <string name="confirm_password_empty">Please enter confirm password</string>
     <string name="password_match">Password doesn\'t match</string>
     <string name="code_empty">Please enter verification code</string>

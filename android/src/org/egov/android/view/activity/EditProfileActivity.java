@@ -50,6 +50,8 @@ import org.egov.android.common.StorageManager;
 import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.model.User;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -379,7 +381,6 @@ public class EditProfileActivity extends BaseActivity {
         user.setDateOfBirth(parts[2] + "-" + parts[1] + "-" + parts[0]);
         user.setPanCardNumber(panNo);
         user.setAadhaarCardNumber(aadhaarNo);
-        user.setLanguage("");
         user.setEmail(mailId);
         user.setMobileNo(mobileNo);
 
@@ -399,6 +400,7 @@ public class EditProfileActivity extends BaseActivity {
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
                 Date d = dateFormatter.parse(String.valueOf(date + "-" + (month + 1) + "-" + year));
                 String formatedDate = dateFormatter.format(d);
+                dateOfBirth = formatedDate;
                 ((TextView) findViewById(R.id.edit_profile_dob)).setText(formatedDate);
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -422,12 +424,19 @@ public class EditProfileActivity extends BaseActivity {
 
         if (status.equalsIgnoreCase("success")) {
             showMessage(msg);
-            File tempFile = new File(profPath + "/photo_temp_user.jpg");
-            String path = profPath + "/photo_" + mobileNo + ".jpg";
-            File profFile = new File(path);
-            tempFile.renameTo(profFile);
-            ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(_getBitmapImage(path));
-            finish();
+            try {
+                JSONObject jo = new JSONObject(event.getData().getResponse().toString());
+                getSession().edit().putString("user_name", jo.getString("name")).commit();
+                File tempFile = new File(profPath + "/photo_temp_user.jpg");
+                String path = profPath + "/photo_" + mobileNo + ".jpg";
+                File profFile = new File(path);
+                tempFile.renameTo(profFile);
+                ((ImageView) findViewById(R.id.profile_image))
+                        .setImageBitmap(_getBitmapImage(path));
+                finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             if (msg.matches(".*Invalid access token.*")) {
                 showMessage("Session expired");

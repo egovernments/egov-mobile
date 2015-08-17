@@ -101,7 +101,7 @@ public class ApiResponse {
                 this.apiStatus = new ApiStatus(status.getString("type"),
                         status.getString("message"), pagination);
             } else {
-                String type = "", message = "", value = "";
+                String type = "", message = "";
 
                 JSONObject result = new JSONObject();
 
@@ -110,8 +110,8 @@ public class ApiResponse {
                     message = content.getString("error_description");
                 } else {
                     type = "success";
-                    value = content.getString("access_token");
-                    result.put("access_token", value);
+                    result.put("access_token", content.getString("access_token"));
+                    result.put("user_name", content.getString("name"));
                 }
 
                 JSONObject oauthResp = new JSONObject();

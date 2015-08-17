@@ -130,17 +130,30 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         JSONObject jo = null;
         try {
             int totalFiles = jsonObj.getInt("supportDocsSize");
-            for (int i = 1; i <= totalFiles; i++) {
+            if (totalFiles == 0) {
                 jo = new JSONObject();
-                jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
-                        + "/api/v1.0/complaint/" + jsonObj.getString("crn")
-                        + "/downloadSupportDocument");
-                jo.put("fileNo", i);
-                jo.put("type", "complaint");
-                jo.put("destPath", path + "/photo_" + i + ".jpg");
+                jo.put("url",
+                        AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
+                                + "/pgr/resources/images/complaintType/"
+                                + jsonObj.getString("complaintTypeImage"));
+                jo.put("type", "complaintType");
+                jo.put("destPath", path + "/photo_complaint_type.jpg");
                 SQLiteHelper.getInstance().execSQL(
                         "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                 + jo.toString() + "', 'waiting', 'download', 0)");
+            } else {
+                for (int i = 1; i <= totalFiles; i++) {
+                    jo = new JSONObject();
+                    jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
+                            + "/api/v1.0/complaint/" + jsonObj.getString("crn")
+                            + "/downloadSupportDocument");
+                    jo.put("fileNo", i);
+                    jo.put("type", "complaint");
+                    jo.put("destPath", path + "/photo_" + i + ".jpg");
+                    SQLiteHelper.getInstance().execSQL(
+                            "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
+                                    + jo.toString() + "', 'waiting', 'download', 0)");
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -185,6 +198,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         String status = event.getData().getApiStatus().getStatus();
         String pagination = event.getData().getApiStatus().isPagination();
         String msg = event.getData().getApiStatus().getMessage();
+        final ListView listView = (ListView) getActivity().findViewById(R.id.user_complaint_list);
         if (page == 1) {
             listItem = new ArrayList<Complaint>();
         }
@@ -213,8 +227,13 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                                 + "/egovernments/complaints/" + jo.getString("crn");
                         File complaintFolder = new File(complaintFolderName);
                         if (!complaintFolder.exists()) {
-                            item.setImagePath(complaintFolderName + File.separator + "photo_"
-                                    + jo.getInt("supportDocsSize") + ".jpg");
+                            if (jo.getInt("supportDocsSize") == 0) {
+                                item.setImagePath(complaintFolderName + File.separator
+                                        + "photo_complaint_type.jpg");
+                            } else {
+                                item.setImagePath(complaintFolderName + File.separator + "photo_"
+                                        + jo.getInt("supportDocsSize") + ".jpg");
+                            }
                             sm.mkdirs(complaintFolderName);
                             _addDownloadJobs(complaintFolderName, jo);
                         } else {
@@ -225,9 +244,14 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                     }
 
                     if (listItem.size() > 5) {
-                        ((ListView) getActivity().findViewById(R.id.user_complaint_list))
-                                .setStackFromBottom(true);
+                        listView.postDelayed(new Runnable() {
+                            public void run() {
+                                listView.setStackFromBottom(true);
+                                listView.setSelection(listItem.size() - 8);
+                            }
+                        }, 0);
                     }
+
                     if (pagination.equals("true")) {
                         item = new Complaint();
                         listItem.add(item);
