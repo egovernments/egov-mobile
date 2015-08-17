@@ -143,6 +143,20 @@ public class ApiController {
     }
 
     /**
+     * This function is used for resend OTP. We have sent an OTP to the user's mobile/email. Users
+     * get the OTP and activate their account by send the OTP to backend.
+     * 
+     * @param listener
+     * @param identity
+     */
+    public void resendOTP(IApiListener listener, String identity) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.RESEND_OTP);
+        apiMethod.setMethod(RequestMethod.POST);
+        apiMethod.addParameter("identity", identity);
+        _createApiClient(apiMethod, listener, false).call();
+    }
+
+    /**
      * This function is used for logout. When the user logs out from the app, this function is
      * called.
      * 

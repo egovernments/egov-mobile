@@ -143,7 +143,7 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
             _setLocation(20.593684, 78.962880, true);
             return;
         }
-
+        googleMap.setMyLocationEnabled(true);
         LatLng coordinate = new LatLng(lat, lng);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.title("latitude" + lat + ":" + lng);

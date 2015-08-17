@@ -189,12 +189,14 @@ public class RegisterActivity extends BaseActivity {
         String status = event.getData().getApiStatus().getStatus();
         showMessage(msg);
         if (status.equalsIgnoreCase("success")) {
-            _clearAllText();
             try {
                 JSONObject jo = new JSONObject(event.getData().getResponse().toString());
                 Intent intent = new Intent(this, AccountActivationActivity.class);
                 intent.putExtra("username", jo.getString("userName"));
+                intent.putExtra("password", ((EditText) findViewById(R.id.register_password))
+                        .getText().toString().trim());
                 startActivity(intent);
+                _clearAllText();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

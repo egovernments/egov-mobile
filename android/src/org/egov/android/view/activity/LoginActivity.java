@@ -150,6 +150,8 @@ public class LoginActivity extends BaseActivity {
                 Intent intent = new Intent(this, AccountActivationActivity.class);
                 intent.putExtra("username", ((EditText) findViewById(R.id.login_email)).getText()
                         .toString().trim());
+                intent.putExtra("password", ((EditText) findViewById(R.id.login_password))
+                        .getText().toString().trim());
                 startActivity(intent);
             }
         }

@@ -32,18 +32,27 @@
 package org.egov.android.view.activity;
 
 import org.egov.android.R;
-import org.egov.android.controller.ApiController;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.api.ApiUrl;
+import org.egov.android.api.IApiUrl;
+import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
+import org.egov.android.model.User;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AccountActivationActivity extends BaseActivity {
 
     private String username = "";
+    private String password = "";
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -56,7 +65,9 @@ public class AccountActivationActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
         username = getIntent().getExtras().getString("username");
+        password = getIntent().getExtras().getString("password");
         ((Button) findViewById(R.id.verify_otp)).setOnClickListener(this);
+        ((TextView) findViewById(R.id.resend_otp)).setOnClickListener(this);
     }
 
     /**
@@ -69,6 +80,9 @@ public class AccountActivationActivity extends BaseActivity {
         switch (v.getId()) {
             case R.id.verify_otp:
                 _accountActivation();
+                break;
+            case R.id.resend_otp:
+                ApiController.getInstance().resendOTP(this, username);
                 break;
         }
     }
@@ -90,17 +104,35 @@ public class AccountActivationActivity extends BaseActivity {
     /**
      * The onResponse method will be invoked after the Account activation API call onResponse
      * methods will contain the response If the response has a status as 'success' then message is
-     * displayed in toast. Finally calls the startLoginActivity() function and redirects to
-     * Login Activity.
+     * displayed in toast. Finally calls the startLoginActivity() function and redirects to Login
+     * Activity.
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
         super.onResponse(event);
+        IApiUrl url = event.getData().getApiMethod().getApiUrl();
         String status = event.getData().getApiStatus().getStatus();
         String msg = event.getData().getApiStatus().getMessage();
         showMessage(msg);
         if (status.equalsIgnoreCase("success")) {
-            startLoginActivity();
+            if (url.getUrl().equals(ApiUrl.VERIFY_OTP.getUrl())) {
+                User user = new User();
+                user.setEmail(username);
+                user.setPassword(password);
+                ApiController.getInstance().login(this, user);
+            } else if (url.getUrl().equals(ApiUrl.LOGIN.getUrl())) {
+                try {
+                    JSONArray ja = new JSONArray(event.getData().getResponse().toString());
+                    JSONObject jo = ja.getJSONObject(0);
+                    getSession().edit().putString("access_token", jo.getString("access_token"))
+                            .commit();
+                    getSession().edit().putString("user_name", jo.getString("user_name")).commit();
+                    startActivity(new Intent(this, ComplaintActivity.class));
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -30,7 +30,6 @@
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 
-
 -->
 
 <org.egov.android.view.component.slider.SlidingDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -94,6 +93,14 @@
                         style="@style/ButtonStyle"
                         android:layout_marginTop="20dp"
                         android:text="@string/verify_otp_btn" />
+
+                    <org.egov.android.view.component.EGovTextView
+                        android:id="@+id/resend_otp"
+                        style="@style/TextView"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="15dp"
+                        android:text="Resend OTP"
+                        android:textColor="@color/linkColor" />
                 </LinearLayout>
             </ScrollView>
         </org.egov.android.view.component.Body>

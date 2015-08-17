@@ -78,7 +78,9 @@ public enum ApiUrl implements IApiUrl {
 
     GET_LOCATION_BY_NAME("api/v1.0/complaint/getLocation", true),
 
-    GET_SEARCH_COMPLAINTS("api/v1.0/complaint/search", true);
+    GET_SEARCH_COMPLAINTS("api/v1.0/complaint/search", true),
+
+    RESEND_OTP("api/v1.0/sendOTP");
 
     //@formatter:off
 
