@@ -1,4 +1,4 @@
-## eGov Mobile Application (MeGov)
+## eGov Mobile Application (MeGov) [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 #### Issue Tracking
 Report issues via the [MeGov Opensource JIRA][].
