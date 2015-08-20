@@ -29,6 +29,7 @@
  * trade names or trademarks of eGovernments Foundation.
  * 
  * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -127,6 +128,13 @@
         </activity>
         <activity
             android:name="org.egov.android.view.activity.ComplaintDetailActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="org.egov.android.view.activity.PhotoViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"

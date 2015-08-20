@@ -56,6 +56,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -88,7 +89,6 @@ public class ComplaintDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complaint_detail);
 
-        imageCntainer = (LinearLayout) findViewById(R.id.complaint_image_container);
         String[] items = { "Select", "Withdrawn" };
 
         int apiLevel = AndroidLibrary.getInstance().getSession().getInt("api_level", 0);
@@ -102,6 +102,8 @@ public class ComplaintDetailActivity extends BaseActivity {
                 android.R.layout.simple_spinner_item, items);
         dataAdapter.setDropDownViewResource(R.layout.custom_spinner_list_item);
         statusSpinner.setAdapter(dataAdapter);
+
+        imageCntainer = (LinearLayout) findViewById(R.id.complaint_image_container);
 
         ((Button) findViewById(R.id.status_summary)).setOnClickListener(this);
         ((Button) findViewById(R.id.complaint_changeStatus)).setOnClickListener(this);
@@ -206,10 +208,24 @@ public class ComplaintDetailActivity extends BaseActivity {
             if (listOfFiles[i].isFile()) {
                 Log.d("EGOV_JOB", "File path" + complaintFolderName + File.separator
                         + listOfFiles[i].getName());
+                if (listOfFiles[i].getName().equalsIgnoreCase("photo_complaint_type.jpg")) {
+                    return;
+                }
                 image = new ImageView(this);
                 Bitmap bmp = _getBitmapImage(complaintFolderName + File.separator
                         + listOfFiles[i].getName());
                 image.setImageBitmap(bmp);
+                image.setId(i);
+                image.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent photo_viewer = new Intent(ComplaintDetailActivity.this,
+                                PhotoViewerActivity.class);
+                        photo_viewer.putExtra("path", complaintFolderName);
+                        photo_viewer.putExtra("imageId", v.getId());
+                        startActivity(photo_viewer);
+                    }
+                });
                 LinearLayout.LayoutParams inner_container_params = new LinearLayout.LayoutParams(
                         _dpToPix(80), _dpToPix(80));
 

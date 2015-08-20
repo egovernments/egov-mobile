@@ -59,6 +59,7 @@ public class ProfileActivity extends BaseActivity {
     private String dateOfBirth = "";
     private String panCardNumber = "";
     private String aadhaarCardNumber = "";
+    private String imagePath = "";
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -77,6 +78,7 @@ public class ProfileActivity extends BaseActivity {
         } else {
             setContentView(R.layout.activity_lower_version_profile);
         }
+        ((ImageView) findViewById(R.id.profile_image)).setOnClickListener(this);
         ((ImageView) findViewById(R.id.edit_icon)).setOnClickListener(this);
     }
 
@@ -108,6 +110,14 @@ public class ProfileActivity extends BaseActivity {
                 intent.putExtra("panCardNumber", panCardNumber);
                 intent.putExtra("aadhaarCardNumber", aadhaarCardNumber);
                 startActivity(intent);
+                break;
+            case R.id.profile_image:
+                if (!imagePath.equals("")) {
+                    Intent photo_viewer = new Intent(this, PhotoViewerActivity.class);
+                    photo_viewer.putExtra("path", imagePath);
+                    photo_viewer.putExtra("imageId", 0);
+                    startActivity(photo_viewer);
+                }
                 break;
         }
     }
@@ -157,6 +167,7 @@ public class ProfileActivity extends BaseActivity {
                 sm.mkdirs(profPath);
                 File imgFile = new File(profPath + "/photo_" + mobileNo + ".jpg");
                 if (imgFile.exists()) {
+                    imagePath = profPath;
                     ImageView image = (ImageView) findViewById(R.id.profile_image);
                     image.setImageBitmap(_getBitmapImage(profPath + "/photo_" + mobileNo + ".jpg"));
                 }
@@ -182,9 +193,7 @@ public class ProfileActivity extends BaseActivity {
      * @return bitmap
      */
     private Bitmap _getBitmapImage(String path) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
-        return BitmapFactory.decodeFile(path, options);
+        return BitmapFactory.decodeFile(path, null);
     }
 
     /**

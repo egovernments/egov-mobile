@@ -56,6 +56,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -90,7 +91,9 @@ public class EditProfileActivity extends BaseActivity {
     private String aadhaarCardNumber = "";
     private static final int CAPTURE_IMAGE = 1000;
     private static final int FROM_GALLERY = 2000;
+    private static final int PICTURE_CROP = 3000;
     private int apiLevel = 0;
+    private File profileImage = null;
 
     /**
      * To initialize and set the layout for the ProfileActivity.Set click listeners to the save
@@ -161,9 +164,13 @@ public class EditProfileActivity extends BaseActivity {
         Object[] obj = sm.getStorageInfo();
         profPath = obj[0].toString() + "/egovernments/profile";
         String path = profPath + "/photo_" + mobileNo + ".jpg";
+        profileImage = new File(profPath + "/photo_temp_user.jpg");
         File imgFile = new File(path);
         if (imgFile.exists()) {
             ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(_getBitmapImage(path));
+        }
+        if (profileImage.exists()) {
+            profileImage.delete();
         }
     }
 
@@ -218,8 +225,7 @@ public class EditProfileActivity extends BaseActivity {
      */
     private void _openCamera() {
         Intent mediaCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File imageFile = new File(profPath + "/photo_temp_user.jpg");
-        mediaCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
+        mediaCamera.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(profileImage));
         startActivityForResult(mediaCamera, CAPTURE_IMAGE);
     }
 
@@ -257,7 +263,8 @@ public class EditProfileActivity extends BaseActivity {
      * result.
      */
     private void _openGalleryImages() {
-        Intent photo_picker = new Intent(Intent.ACTION_PICK);
+        Intent photo_picker = new Intent();
+        photo_picker.setAction(Intent.ACTION_PICK);
         photo_picker.setType("image/*");
         startActivityForResult(photo_picker, FROM_GALLERY);
     }
@@ -268,8 +275,24 @@ public class EditProfileActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE && resultCode == RESULT_OK) {
-            _validateImageUrl();
-        } else if (requestCode == FROM_GALLERY && null != data) {
+
+            _cropImage();
+        } else if (requestCode == PICTURE_CROP && data != null) {
+            Bundle extras = data.getExtras();
+            if (extras != null && extras.getParcelable("data") != null) {
+                try {
+                    Bitmap photo = (Bitmap) extras.getParcelable("data");
+                    OutputStream outstream = new FileOutputStream(profileImage);
+                    photo.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+                    outstream.close();
+                    _validateImageUrl();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (requestCode == FROM_GALLERY && data != null) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null,
@@ -280,7 +303,7 @@ public class EditProfileActivity extends BaseActivity {
             cursor.close();
             try {
                 InputStream in = new FileInputStream(new File(imagePath));
-                OutputStream out = new FileOutputStream(new File(profPath + "/photo_temp_user.jpg"));
+                OutputStream out = new FileOutputStream(profileImage);
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
@@ -288,12 +311,32 @@ public class EditProfileActivity extends BaseActivity {
                 }
                 in.close();
                 out.close();
+                _cropImage();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            _validateImageUrl();
+        }
+    }
+
+    /**
+     * Function used to crop image.
+     */
+
+    private void _cropImage() {
+        try {
+            Uri imageUri = Uri.fromFile(profileImage);
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+            cropIntent.setDataAndType(imageUri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 100);
+            cropIntent.putExtra("outputY", 100);
+            cropIntent.putExtra("return-data", true);
+            startActivityForResult(cropIntent, PICTURE_CROP);
+        } catch (ActivityNotFoundException anfe) {
         }
     }
 
@@ -314,7 +357,6 @@ public class EditProfileActivity extends BaseActivity {
             tempFile.delete();
             return;
         }
-
         ((ImageView) findViewById(R.id.profile_image)).setImageBitmap(_getBitmapImage(tempPath));
     }
 
@@ -327,9 +369,7 @@ public class EditProfileActivity extends BaseActivity {
      * @return bitmap
      */
     private Bitmap _getBitmapImage(String path) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
-        return BitmapFactory.decodeFile(path, options);
+        return BitmapFactory.decodeFile(path, null);
     }
 
     /**
