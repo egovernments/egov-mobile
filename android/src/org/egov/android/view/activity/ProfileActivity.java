@@ -60,6 +60,7 @@ public class ProfileActivity extends BaseActivity {
     private String panCardNumber = "";
     private String aadhaarCardNumber = "";
     private String imagePath = "";
+    private boolean isPreview = false;
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -88,7 +89,10 @@ public class ProfileActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ApiController.getInstance().getProfile(this);
+        if (!isPreview) {
+            ApiController.getInstance().getProfile(this);
+        }
+        isPreview = false;
     }
 
     /**
@@ -113,6 +117,7 @@ public class ProfileActivity extends BaseActivity {
                 break;
             case R.id.profile_image:
                 if (!imagePath.equals("")) {
+                    isPreview = true;
                     Intent photo_viewer = new Intent(this, PhotoViewerActivity.class);
                     photo_viewer.putExtra("path", imagePath);
                     photo_viewer.putExtra("imageId", 0);

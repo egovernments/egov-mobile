@@ -57,6 +57,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -94,6 +95,7 @@ public class EditProfileActivity extends BaseActivity {
     private static final int PICTURE_CROP = 3000;
     private int apiLevel = 0;
     private File profileImage = null;
+    private DatePickerDialog datePickerDialog = null;
 
     /**
      * To initialize and set the layout for the ProfileActivity.Set click listeners to the save
@@ -234,7 +236,6 @@ public class EditProfileActivity extends BaseActivity {
      */
     @SuppressLint("NewApi")
     private void _showDatePicker() {
-        DatePickerDialog datePicker = null;
         Calendar c = Calendar.getInstance();
         int year = 0;
         int month = 0;
@@ -243,19 +244,28 @@ public class EditProfileActivity extends BaseActivity {
             year = c.get(Calendar.YEAR);
             month = c.get(Calendar.MONTH);
             date = c.get(Calendar.DAY_OF_MONTH);
-            datePicker = new DatePickerDialog(this, datepicker, year, month, date);
+            datePickerDialog = new DatePickerDialog(this, datepicker, year, month, date);
         } else {
             String[] birth = dateOfBirth.split("-");
             year = Integer.valueOf(birth[0]);
             month = Integer.valueOf(birth[1]) - 1;
             date = Integer.valueOf(birth[2]);
-            datePicker = new DatePickerDialog(this, datepicker, date, month, year);
+            datePickerDialog = new DatePickerDialog(this, datepicker, date, month, year);
         }
 
         if (apiLevel > 13) {
-            datePicker.getDatePicker().setMaxDate(System.currentTimeMillis());
+            datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Set",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            DatePicker picker = datePickerDialog.getDatePicker();
+                            picker.clearFocus();
+                            datepicker.onDateSet(picker, picker.getYear(), picker.getMonth(),
+                                    picker.getDayOfMonth());
+                        }
+                    });
         }
-        datePicker.show();
+        datePickerDialog.show();
     }
 
     /**

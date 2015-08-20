@@ -612,9 +612,11 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                     showMessage(msg);
                     JSONObject result = new JSONObject((String) event.getData().getResponse());
                     File f1 = new File(assetPath + File.separator + "current");
-                    File f2 = new File(assetPath + File.separator + result.getString("crn"));
-                    f1.renameTo(f2);
-                    _addUploadJobs(result.getString("crn"));
+                    if (f1.listFiles().length > 0) {
+                        File f2 = new File(assetPath + File.separator + result.getString("crn"));
+                        f1.renameTo(f2);
+                        _addUploadJobs(result.getString("crn"));
+                    }
                     Intent intent = new Intent(this, ComplaintActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

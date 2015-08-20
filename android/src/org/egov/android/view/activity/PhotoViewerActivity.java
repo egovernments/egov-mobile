@@ -34,6 +34,7 @@ package org.egov.android.view.activity;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 
 import android.graphics.Bitmap;
@@ -122,7 +123,8 @@ public class PhotoViewerActivity extends FragmentActivity {
 
         private Bitmap _getBitmapImage(String path) {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = (path.contains("profile")) ? 1 : 8;
+            int apiLevel = AndroidLibrary.getInstance().getSession().getInt("api_level", 0);
+            options.inSampleSize = (apiLevel > 13) ? 2 : 8;
             return BitmapFactory.decodeFile(path, options);
         }
     }
