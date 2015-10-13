@@ -41,6 +41,8 @@ public interface IApiUrl {
     public String getUrl();
 
     public String getUrl(boolean prefixWithBaseUrl);
+    
+    public void setBaseServer(String serverBaseURL);
 
     public boolean useAccessToken();
 }

@@ -87,6 +87,8 @@ public enum ApiUrl implements IApiUrl {
     private String url = "";
 
     private boolean useAccessToken = false;
+    
+    private String baseServerURL=null;
 
     ApiUrl(String url) {
         this.url = url;
@@ -97,14 +99,14 @@ public enum ApiUrl implements IApiUrl {
         this.useAccessToken = useAccessToken;
     }
 
-    @Override
+	@Override
     public String getUrl() {
         return this.url;
     }
 
     @Override
     public String getUrl(boolean prefixWithBaseUrl) {
-        return AndroidLibrary.getInstance().getConfig().getString("api.baseUrl") + "/" + this.url;
+        return (baseServerURL==null?AndroidLibrary.getInstance().getConfig().getString("api.baseUrl") + "/" + this.url : baseServerURL+this.url);
     }
 
     public boolean useAccessToken() {
@@ -114,4 +116,10 @@ public enum ApiUrl implements IApiUrl {
     public void setUseAccessToken(boolean useAccessToken) {
         this.useAccessToken = useAccessToken;
     }
+
+	@Override
+	public void setBaseServer(String serverURL) {
+		// TODO Auto-generated method stub
+		baseServerURL=serverURL;
+	}
 }

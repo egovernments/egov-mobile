@@ -259,4 +259,5 @@ public class Complaint implements Serializable {
     public void setPagination(boolean isPagination) {
         this.isPagination = isPagination;
     }
+    
 }

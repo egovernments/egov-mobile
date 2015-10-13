@@ -35,6 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
+
 /**
  * This is to read the egov.conf file. Get the values like database name, database version, cache
  * duration and date format If the value is assigned in the assets/egov.conf file then it will take
@@ -43,14 +47,17 @@ import java.util.Properties;
 public class Config {
 
     Properties property = null;
+    Context appContext=null;
 
-    public Config(InputStream inputStream) {
+    public Config(InputStream inputStream, Context appContext) {
 
         try {
             property = new Properties();
             property.load(inputStream);
             inputStream.close();
+            this.appContext = appContext;
         } catch (IOException e) {
+        	e.printStackTrace();
         }
     }
 
@@ -75,6 +82,15 @@ public class Config {
     }
 
     public String getString(String key) {
+    	if(key.equals("api.baseUrl"))
+    	{
+    		SharedPreferences pref = appContext.getSharedPreferences("eGovPreference", 0);
+    		String value=pref.getString(key, null);
+    		if(value!=null)
+    		{
+    			return value;
+    		}
+    	}
         return this.get(key, "").toString();
     }
 

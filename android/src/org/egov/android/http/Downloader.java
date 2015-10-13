@@ -33,9 +33,12 @@ package org.egov.android.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -47,6 +50,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.egov.android.api.SSLTrustManager;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -61,7 +65,7 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
     private String requestMethod = "GET";
     private String destination = "";
     private Map<String, Object> params;
-    private HttpsURLConnection con = null;
+    private HttpURLConnection con = null;
     private String url = null;
     private boolean hasError = false;
 
@@ -201,8 +205,15 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
 
             Log.d(TAG, "Download Start => " + url);
 
-            new SSLTrustManager();
-            con = (HttpsURLConnection) new URL(url).openConnection();
+            /* Protocal Switch Condition Whether sending https request or http request */
+			if (url.startsWith("https://")) {
+			   new SSLTrustManager();
+			   con = (HttpsURLConnection) new URL(url).openConnection();
+			}
+			else
+			{
+			   con = (HttpURLConnection) new URL(url).openConnection();
+			}
             con.setRequestMethod(requestMethod);
             con.setUseCaches(false);
             con.setDoInput(true);
@@ -250,4 +261,6 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
         super.onProgressUpdate(values);
         listener.onProgress(values[0]);
     }
+    
+   
 }

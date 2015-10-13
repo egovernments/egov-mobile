@@ -78,8 +78,8 @@ public class ApiController {
      * @param listener
      * @param user
      */
-    public void register(IApiListener listener, User user) {
-        ApiMethod apiMethod = new ApiMethod(ApiUrl.REGISTER);
+    public void register(IApiListener listener, User user, String regServerBaseURL) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.REGISTER, regServerBaseURL);
         apiMethod.setMethod(RequestMethod.POST);
         apiMethod.setQueryType("json");
         apiMethod.addParameter("emailId", user.getEmail());
@@ -99,8 +99,8 @@ public class ApiController {
      * @param listener
      * @param user
      */
-    public void login(IApiListener listener, User user) {
-        ApiMethod apiMethod = new ApiMethod(ApiUrl.LOGIN);
+    public void login(IApiListener listener, User user, String logServerBaseURL) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.LOGIN, logServerBaseURL);
         apiMethod.setMethod(RequestMethod.POST);
         apiMethod.addHeader("Authorization", "Basic ZWdvdi1hcGk6ZWdvdi1hcGk=");
         apiMethod.addParameter("username", user.getEmail());
@@ -116,8 +116,8 @@ public class ApiController {
      * @param listener
      * @param identity
      */
-    public void forgotPassword(IApiListener listener, String identity) {
-        ApiMethod apiMethod = new ApiMethod(ApiUrl.FORGOT_PASSWORD);
+    public void forgotPassword(IApiListener listener, String identity, String forgotServerBaseURL) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.FORGOT_PASSWORD, forgotServerBaseURL);
         apiMethod.setMethod(RequestMethod.POST);
         apiMethod.addParameter("identity", identity);
         apiMethod.addParameter("redirectURL",
@@ -283,7 +283,10 @@ public class ApiController {
         apiMethod.setMethod(RequestMethod.PUT);
         apiMethod.setQueryType("json");
         apiMethod.setExtraParam(id + "/updateStatus");
-        apiMethod.addParameter("action", status);
+        if(!status.isEmpty())
+        {
+         apiMethod.addParameter("action", status);
+        }
         apiMethod.addParameter("comment", comment);
         _createApiClient(apiMethod, listener, false).call();
     }
@@ -300,7 +303,7 @@ public class ApiController {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_LOCATION_BY_NAME);
         apiMethod.setMethod(RequestMethod.GET);
         apiMethod.addParameter("locationName", locationName);
-        _createApiClient(apiMethod, listener, false).call();
+        _createApiClient(apiMethod, listener, false, false).call();
     }
 
     /**
@@ -387,6 +390,21 @@ public class ApiController {
 
         IApiClient client = null;
         client = new ApiClient(apiMethod);
+        if (useCache) {
+            Cache cache = new Cache();
+            cache.setUrl(apiMethod.getFullUrl());
+            client.setCache(cache);
+        }
+        client.addListener(listener);
+        client.setContext(this.context);
+        return client;
+    }
+    
+    private IApiClient _createApiClient(ApiMethod apiMethod, IApiListener listener, boolean useCache, boolean isShowSpinner) {
+
+        IApiClient client = null;
+        client = new ApiClient(apiMethod);
+        client.setShowSpinner(isShowSpinner);
         if (useCache) {
             Cache cache = new Cache();
             cache.setUrl(apiMethod.getFullUrl());

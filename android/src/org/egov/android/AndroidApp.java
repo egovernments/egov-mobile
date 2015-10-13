@@ -55,7 +55,7 @@ public class AndroidApp extends Application {
     public void configure(String configFile) {
         try {
             InputStream is = getAssets().open(configFile);
-            config = new Config(is);
+            config = new Config(is, getApplicationContext());
             is.close();
             ReflectionUtil.setFieldData(AndroidLibrary.getInstance(), "config", config);
             ReflectionUtil.setFieldData(AndroidLibrary.getInstance(), "session",

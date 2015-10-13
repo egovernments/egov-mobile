@@ -49,6 +49,7 @@ public class ApiMethod {
     private HashMap<String, Object> queryParams;
     private String queryType = "x-www-form-urlencoded";
     private String extraParam = null;
+    private String serverBaseURL=null;
 
     public ApiMethod() {
         this(null);
@@ -65,6 +66,14 @@ public class ApiMethod {
         header = new HashMap<String, String>();
         queryParams = new HashMap<String, Object>();
     }
+    
+    public ApiMethod(IApiUrl apiUrl, String serverBaseURL) {
+        this.apiUrl = apiUrl;
+        this.apiUrl.setBaseServer(serverBaseURL);
+        this.serverBaseURL=serverBaseURL;
+        header = new HashMap<String, String>();
+        queryParams = new HashMap<String, Object>();
+    }
 
     /**
      * Function used to get the full api url with parameters
@@ -72,8 +81,8 @@ public class ApiMethod {
      * @return
      */
     public String getFullUrl() {
-        String url = this.apiUrl.getUrl(true);
-
+    	//added condition for url with serverbaseurl or not
+    	String url = (serverBaseURL!=null? serverBaseURL+this.apiUrl.getUrl() : this.apiUrl.getUrl(true));
         if (this.queryParams.size() > 0) {
             url += "?" + getQueryParameter();
         }

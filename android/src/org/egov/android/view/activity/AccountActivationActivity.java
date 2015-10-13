@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -53,6 +54,8 @@ public class AccountActivationActivity extends BaseActivity {
 
     private String username = "";
     private String password = "";
+	private String baseServerURL="";
+	SharedPreferences sharedPreference=null;
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -68,6 +71,8 @@ public class AccountActivationActivity extends BaseActivity {
         password = getIntent().getExtras().getString("password");
         ((Button) findViewById(R.id.verify_otp)).setOnClickListener(this);
         ((TextView) findViewById(R.id.resend_otp)).setOnClickListener(this);
+        sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+		baseServerURL = sharedPreference.getString("api.baseUrl", null);
     }
 
     /**
@@ -119,7 +124,7 @@ public class AccountActivationActivity extends BaseActivity {
                 User user = new User();
                 user.setEmail(username);
                 user.setPassword(password);
-                ApiController.getInstance().login(this, user);
+                ApiController.getInstance().login(this, user, baseServerURL);
             } else if (url.getUrl().equals(ApiUrl.LOGIN.getUrl())) {
                 try {
                     JSONArray ja = new JSONArray(event.getData().getResponse().toString());

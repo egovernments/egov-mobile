@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class Uploader extends AsyncTask<Void, Integer, byte[]> {
     private Map<String, String> params;
     private Map<String, String> header = new HashMap<String, String>();
 
-    HttpsURLConnection con = null;
+    HttpURLConnection con = null;
 
     private String loadingMessage = " Loading ...";
     private IHttpClientListener listener = null;
@@ -233,8 +234,15 @@ public class Uploader extends AsyncTask<Void, Integer, byte[]> {
 
             Log.d(TAG, "URL : " + url);
 
-            new SSLTrustManager();
-            con = (HttpsURLConnection) new URL(url).openConnection();
+            /* Protocal Switch Condition Whether sending https request or http request */
+			if (url.startsWith("https://")) {
+			   new SSLTrustManager();
+			   con = (HttpsURLConnection) new URL(url).openConnection();
+			}
+			else
+			{
+			   con = (HttpURLConnection) new URL(url).openConnection();
+			}
             con.setRequestMethod("POST");
             con.setUseCaches(false);
             con.setDoOutput(true);
