@@ -149,7 +149,7 @@
                                     android:id="@+id/complaint_location"
                                     style="@style/FormRow.EditText"
                                     android:completionThreshold="3"
-                                    android:hint="Location"
+                                    android:hint="Start typing the grievance location or use the map icon."
                                     android:singleLine="true" >
                                 </AutoCompleteTextView>
 
