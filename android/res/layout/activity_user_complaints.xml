@@ -54,5 +54,9 @@
         android:text="No data found"
         android:textColor="@color/dark_gray"
         android:visibility="gone" />
+    
+    <ProgressBar android:id="@+id/imagelistloader" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_centerVertical="true" android:layout_centerHorizontal="true" 
+        android:visibility="gone" />"
 
 </RelativeLayout>

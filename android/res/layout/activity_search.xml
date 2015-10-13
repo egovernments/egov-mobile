@@ -100,6 +100,14 @@
                     android:text="No data found"
                     android:textColor="@color/dark_gray"
                     android:visibility="gone" />
+                
+                <ProgressBar
+                     android:id="@+id/searchimgloader"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content" 
+                     android:layout_centerInParent="true"
+                     android:visibility="gone"/>
+                
             </RelativeLayout>
         </org.egov.android.view.component.Body>
     </LinearLayout>

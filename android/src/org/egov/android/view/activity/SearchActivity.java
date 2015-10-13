@@ -32,13 +32,27 @@
 package org.egov.android.view.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.egov.android.R;
 import org.egov.android.controller.ApiController;
 import org.egov.android.controller.ServiceController;
 import org.egov.android.AndroidLibrary;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.api.SSLTrustManager;
 import org.egov.android.common.StorageManager;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
@@ -49,7 +63,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -58,6 +76,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -66,6 +85,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     private ArrayList<Complaint> listItem = null;
     private ComplaintAdapter adapter;
     private int apiLevel = 0;
+    private JSONArray downloadThumbImages = new JSONArray();
 
     /**
      * To set the layout for the SearchActivity .Set click listener to the search icon and editor
@@ -117,16 +137,142 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
     private void _addDownloadJobs(String path, String crn) {
         JSONObject jo = null;
         try {
-            jo = new JSONObject();
-            jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
-                    + "/api/v1.0/complaint/" + crn + "/downloadSupportDocument");
-            jo.put("type", "complaintSearch");
-            jo.put("destPath", path + "/photo_" + crn + ".jpg");
-            SQLiteHelper.getInstance().execSQL(
-                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
-                            + "', 'waiting', 'download', 0)");
+        	
+        	if(!new File(path + "/thumb_photo_" + crn + ".jpg").exists())
+        	{
+	            jo = new JSONObject();
+	            jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
+	                    + "/api/v1.0/complaint/" + crn + "/downloadSupportDocument");
+	            jo.put("type", "complaintSearch");
+	            jo.put("destPath", path + "/thumb_photo_" + crn + ".jpg");
+	            jo.put("isThumbnail", true);
+	            /*SQLiteHelper.getInstance().execSQL(
+	                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
+	                            + "', 'waiting', 'download', 0)");*/
+	            downloadThumbImages.put(jo);
+        	}
+            
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+    
+    class ImageDownloaderTask extends AsyncTask<JSONArray, Void, String> {
+    	
+    	private ProgressBar loader=null;
+    	
+    	public ImageDownloaderTask(ProgressBar loader) {
+			// TODO Auto-generated constructor stub
+    		this.loader=loader;
+    		//this.mDialog = new ProgressDialog(context);
+		}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		super.onPreExecute();
+    		loader.setVisibility(View.VISIBLE);
+            /*mDialog.setMessage("Loading...");
+            mDialog.setCancelable(false);
+            mDialog.show();*/
+    	}
+
+        @Override
+        protected String doInBackground(JSONArray... params) {
+            downloadBitmap(params[0]);
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String downloadedImagePath) {
+        	
+        	if(loader!=null)
+        	{
+        	   loader.setVisibility(View.GONE);
+        	}
+            _displayListView();
+            adapter.notifyDataSetChanged();
+            
+        }
+        
+        private String generateDownloadImageURL(String downImgURL, List<NameValuePair> params)
+        {
+        	try {
+                if(!downImgURL.endsWith("?")){
+                	downImgURL += "?";
+                }
+                String paramString = URLEncodedUtils.format(params, "utf-8");
+                downImgURL += paramString;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        	return downImgURL;
+        }
+        
+        private String downloadBitmap(JSONArray jsonarry) {
+        	HttpURLConnection con = null;
+        	
+            try {
+            	String accessToken = AndroidLibrary.getInstance().getSession()
+                        .getString("access_token", "");
+            	
+            	String requestMethod = "GET";
+            	
+            	for(int i=0; i<jsonarry.length(); i++)
+            	{
+            		JSONObject jobj=jsonarry.getJSONObject(i);
+	            	String url = jobj.getString("url");
+	            	String filePath = jobj.getString("destPath");
+	            	
+	            	List<NameValuePair> params=new LinkedList<NameValuePair>();
+	                if(!jobj.isNull("isThumbnail"))
+	                {
+                  	   params.add(new BasicNameValuePair("isThumbnail", String.valueOf(jobj.getBoolean("isThumbnail"))));
+	                }
+	                params.add(new BasicNameValuePair("access_token", accessToken));
+	            	
+	                /* Protocal Switch Condition Whether sending https request or http request */
+	    			if (url.startsWith("https://")) {
+	    			   new SSLTrustManager();
+	    			   con = (HttpsURLConnection) new URL(generateDownloadImageURL(url, params)).openConnection();
+	    			}
+	    			else
+	    			{
+	    			   con = (HttpURLConnection) new URL(generateDownloadImageURL(url, params)).openConnection();
+	    			}
+	            	new SSLTrustManager();
+	                con.setRequestMethod(requestMethod);
+	                con.setUseCaches(false);
+	                con.setDoInput(true);
+	
+	                InputStream inputStream = con.getInputStream();
+	                if (inputStream != null) {
+	                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+	                    saveImage(bitmap, filePath);
+	                }
+            	}
+            	return "SUCCESS";
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.w(TAG, "Error downloading image from server!");
+            } finally {
+                con.disconnect();
+            }
+            return null;
+        }
+        
+        
+        private void saveImage(Bitmap image, String filePath) {
+            File pictureFile = new File(filePath);
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }  
         }
     }
 
@@ -143,6 +289,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
                 JSONArray ja = new JSONArray(event.getData().getResponse().toString());
                 listItem = new ArrayList<Complaint>();
                 Complaint item = null;
+                downloadThumbImages = new JSONArray();
                 if (ja.length() > 0) {
                     StorageManager sm = new StorageManager();
                     Object[] obj = sm.getStorageInfo();
@@ -173,9 +320,12 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
                         item.setStatus(statusObj.getString("name"));
                         String complaintFolderName = obj[0].toString()
                                 + "/egovernments/search/complaints/" + complaintNo;
-                        item.setImagePath(complaintFolderName + File.separator + "photo_"
+                        item.setImagePath(complaintFolderName + File.separator + "thumb_photo_"
                                 + complaintNo + ".jpg");
-                        sm.mkdirs(complaintFolderName);
+                        if(!new File(complaintFolderName).exists())
+                        {
+                         sm.mkdirs(complaintFolderName);
+                        }
                         _addDownloadJobs(complaintFolderName, complaintNo);
                         listItem.add(item);
                     }
@@ -183,8 +333,16 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
                 } else {
                     ((TextView) findViewById(R.id.search_errMsg)).setVisibility(View.VISIBLE);
                 }
-                _displayListView();
-                adapter.notifyDataSetChanged();
+                
+                if(downloadThumbImages.length()>0)
+                {
+                	new ImageDownloaderTask((ProgressBar)findViewById(R.id.searchimgloader)).execute(downloadThumbImages);
+                }
+                else{
+                 _displayListView();
+                 adapter.notifyDataSetChanged();
+                }
+                
             } catch (JSONException e) {
                 e.printStackTrace();
             }

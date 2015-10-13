@@ -260,6 +260,10 @@ public class ServiceController implements IHttpClientListener {
             if (data.getString("type").equals("complaint")) {
                 downloader.addParams("fileNo", data.getString("fileNo"));
             }
+            if(!data.isNull("isThumbnail"))
+            {
+            	downloader.addParams("isThumbnail", String.valueOf(data.getBoolean("isThumbnail")));
+            }
             downloader.addParams("access_token", accessToken);
             downloader.setDestination(data.getString("destPath"));
             downloader.setListener(this);

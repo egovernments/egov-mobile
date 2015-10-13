@@ -32,6 +32,7 @@
 package org.egov.android.view.activity;
 
 import org.egov.android.R;
+import org.egov.android.controller.ServiceController;
 import org.egov.android.view.SlidingTab.SlidingTabLayout;
 import org.egov.android.view.adapter.SlidingTabAdapter;
 
@@ -42,10 +43,13 @@ import android.widget.TextView;
 public class ComplaintActivity extends BaseFragmentActivity {
 
     ViewPager pager;
-    int numberOfTabs = 2;
+    int numberOfTabs = 1;
+    /*int numberOfTabs = 2;*/
     SlidingTabLayout tabs;
     SlidingTabAdapter slidingTabAdapter;
-    CharSequence titles[] = { "Complaints", "Me" };
+    CharSequence titles[] = { "Me" };
+    /*CharSequence titles[] = { "Complaints", "Me" };*/
+
 
     /**
      * It is  used to initialize an activity.
@@ -76,6 +80,16 @@ public class ComplaintActivity extends BaseFragmentActivity {
             }
         });
         tabs.setViewPager(pager);
-        pager.setCurrentItem(1);
+        pager.setCurrentItem(0);
+        
+        /*pager.setCurrentItem(1);*/
     }
+    
+    @Override
+    protected void onStart() {
+    	// TODO Auto-generated method stub
+    	super.onStart();
+    	//ServiceController.getInstance().startService(this);
+    }
+    
 }

@@ -40,20 +40,25 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class ForgotPasswordActivity extends BaseActivity {
 
+	String baseServerURL="";
+	
     /**
      * It is  used to initialize an activity.
      * An Activity is an application component that provides a screen 
      * with which users can interact in order to do something,
      * To set the layout for the ForgotPasswordActivity.Set click listener to the send button.
      */
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
         ((Button) findViewById(R.id.forgot_pwd_send)).setOnClickListener(this);
+        baseServerURL=getIntent().getExtras().getString("baseServerURL");
     }
 
     /**
@@ -79,7 +84,7 @@ public class ForgotPasswordActivity extends BaseActivity {
         if (isEmpty(phone)) {
             showMessage(getMessage(R.string.phone_empty));
         } else {
-            ApiController.getInstance().forgotPassword(this, phone);
+            ApiController.getInstance().forgotPassword(this, phone, baseServerURL);
         }
     }
 

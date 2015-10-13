@@ -49,7 +49,7 @@
 
         <org.egov.android.view.component.Body
             style="@style/Body"
-            android:layout_margin="@dimen/viewMargin" >
+            android:layout_margin="@dimen/viewMargin">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,12 +60,12 @@
 
                 <ScrollView
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" >
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                             <org.egov.android.view.component.EGovTextView
                                 android:layout_width="75dp"
                                 android:layout_height="wrap_content"
-                                android:text="Title"
+                                android:text="Ref.No"
                                 android:textColor="@color/dark_gray" />
 
                             <org.egov.android.view.component.EGovTextView
@@ -282,7 +282,6 @@
 
                                 <Spinner
                                     android:id="@+id/status_spinner"
-                                    style="@android:style/Widget.Holo.Light.Spinner"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:spinnerMode="dropdown"

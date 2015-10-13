@@ -47,7 +47,7 @@
             style="@style/Header"
             android:layout_width="match_parent"
             app:actionButton="setting|add_complaint|search"
-            app:title="All Complaints" />
+            app:title="My Complaints" />
 
         <View
             android:layout_width="match_parent"

@@ -32,16 +32,28 @@
 package org.egov.android.view.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.message.BasicNameValuePair;
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.api.IApiListener;
+import org.egov.android.api.SSLTrustManager;
 import org.egov.android.common.StorageManager;
 import org.egov.android.controller.ApiController;
-import org.egov.android.controller.ServiceController;
-import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.listener.IActionListener;
 import org.egov.android.model.Complaint;
@@ -51,8 +63,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,17 +76,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserComplaintActivity extends Fragment implements IApiListener, OnItemClickListener,
         IActionListener {
 
+	private static final String TAG = UserComplaintActivity.class.getName();
     private ArrayList<Complaint> listItem = new ArrayList<Complaint>();
     private ComplaintAdapter adapter;
     private boolean isApiLoaded = false;
     private int apiLevel = 0;
     private int page = 1;
+    private JSONArray downloadThumbImages = new JSONArray();
 
     /**
      * The onActivityCreated() is called after the onCreateView() method when activity is created.
@@ -131,34 +150,171 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         try {
             int totalFiles = jsonObj.getInt("supportDocsSize");
             if (totalFiles == 0) {
-                jo = new JSONObject();
-                jo.put("url",
-                        AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
-                                + "/pgr/resources/images/complaintType/"
-                                + jsonObj.getString("complaintTypeImage"));
-                jo.put("type", "complaintType");
-                jo.put("destPath", path + "/photo_complaint_type.jpg");
-                SQLiteHelper.getInstance().execSQL(
+            	
+            	if(!new File(path + "/thumb_photo_complaint_type.jpg").exists())
+            	{
+	                jo = new JSONObject();
+	                jo.put("url",
+	                        AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
+	                                + "/pgr/resources/images/complaintType/"
+	                                + jsonObj.getString("complaintTypeImage"));
+	                jo.put("type", "complaintType");
+	                jo.put("destPath", path + "/thumb_photo_complaint_type.jpg");
+	                jo.put("isThumbnail", true);
+            	}
+                /*SQLiteHelper.getInstance().execSQL(
                         "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
-                                + jo.toString() + "', 'waiting', 'download', 0)");
+                                + jo.toString() + "', 'waiting', 'download', 0)");*/
             } else {
-                for (int i = 1; i <= totalFiles; i++) {
+                //for (int i = 1; i <= totalFiles; i++) {
+            	if(!new File(path + "/thumb_photo_" + totalFiles + ".jpg").exists())
+            	{
                     jo = new JSONObject();
                     jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
                             + "/api/v1.0/complaint/" + jsonObj.getString("crn")
                             + "/downloadSupportDocument");
-                    jo.put("fileNo", i);
+                    jo.put("fileNo", totalFiles);
                     jo.put("type", "complaint");
-                    jo.put("destPath", path + "/photo_" + i + ".jpg");
-                    SQLiteHelper.getInstance().execSQL(
-                            "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
-                                    + jo.toString() + "', 'waiting', 'download', 0)");
-                }
+                    jo.put("isThumbnail", true);
+                    jo.put("destPath", path + "/thumb_photo_" + totalFiles + ".jpg");
+            	}
+                /*SQLiteHelper.getInstance().execSQL(
+                        "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
+                                + jo.toString() + "', 'waiting', 'download', 0)");*/
+               //}
             }
+            
+            if(jo!=null){ downloadThumbImages.put(jo); }
+            
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+    
+    
+    class ImageDownloaderTask extends AsyncTask<JSONArray, Void, String> {
+    	
+    	private boolean isPagination=false;
+    	private ProgressBar loader=null;
+    	
+    	public ImageDownloaderTask(ProgressBar loader, boolean isPagination) {
+			// TODO Auto-generated constructor stub
+    		this.isPagination=isPagination;
+    		this.loader=loader;
+    		//this.mDialog = new ProgressDialog(context);
+		}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		super.onPreExecute();
+    		loader.setVisibility(View.VISIBLE);
+            /*mDialog.setMessage("Loading...");
+            mDialog.setCancelable(false);
+            mDialog.show();*/
+    	}
+
+        @Override
+        protected String doInBackground(JSONArray... params) {
+            downloadBitmap(params[0]);
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String downloadedImagePath) {
+        	
+        	if(loader!=null)
+        	{
+        	   loader.setVisibility(View.GONE);
+        	}
+            _displayListView(isPagination);
+            
+        }
+        
+        private String generateDownloadImageURL(String downImgURL, List<NameValuePair> params)
+        {
+        	try {
+                if(!downImgURL.endsWith("?")){
+                	downImgURL += "?";
+                }
+                String paramString = URLEncodedUtils.format(params, "utf-8");
+                downImgURL += paramString;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        	return downImgURL;
+        }
+        
+        private String downloadBitmap(JSONArray jsonarry) {
+        	HttpURLConnection con = null;
+        	
+            try {
+            	String accessToken = AndroidLibrary.getInstance().getSession()
+                        .getString("access_token", "");
+            	
+            	String requestMethod = "GET";
+            	
+            	for(int i=0; i<jsonarry.length(); i++)
+            	{
+            		JSONObject jobj=jsonarry.getJSONObject(i);
+	            	
+	            	String url = jobj.getString("url");
+	            	String filePath = jobj.getString("destPath");
+	            	
+	            	List<NameValuePair> params=new LinkedList<NameValuePair>();
+	            	if (jobj.getString("type").equals("complaint")) {
+	            	   params.add(new BasicNameValuePair("fileNo", jobj.getString("fileNo")));
+	                }
+	                if(!jobj.isNull("isThumbnail"))
+	                {
+                  	   params.add(new BasicNameValuePair("isThumbnail", String.valueOf(jobj.getBoolean("isThumbnail"))));
+	                }
+	                params.add(new BasicNameValuePair("access_token", accessToken));
+	            	
+	                if (url.startsWith("https://")) {
+	    			   new SSLTrustManager();
+	    			   con = (HttpsURLConnection) new URL(generateDownloadImageURL(url, params)).openConnection();
+	    			}
+	    			else
+	    			{
+	    			   con = (HttpURLConnection) new URL(generateDownloadImageURL(url, params)).openConnection();
+	    			}
+	                
+	                con.setRequestMethod(requestMethod);
+	                con.setUseCaches(false);
+	                con.setDoInput(true);
+	
+	                InputStream inputStream = con.getInputStream();
+	                if (inputStream != null) {
+	                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+	                    saveImage(bitmap, filePath);
+	                }
+            	}
+            	return "SUCCESS";
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.w(TAG, "Error downloading image from server!");
+            } finally {
+                con.disconnect();
+            }
+            return null;
+        }
+        
+        
+        private void saveImage(Bitmap image, String filePath) {
+            File pictureFile = new File(filePath);
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                image.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }  
+        }
+    }
+    
 
     /**
      * Function used to check whether the key value exist in the given json object.If the key exists
@@ -170,6 +326,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
      *            => name of the key to check
      * @return string
      */
+    
     private String _getValue(JSONObject jo, String key) {
         String result = "";
         try {
@@ -221,25 +378,26 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         item.setDetails(_getValue(jo, "detail"));
                         item.setComplaintId(_getValue(jo, "crn"));
                         item.setStatus(jo.getString("status"));
+                        
                         StorageManager sm = new StorageManager();
                         Object[] obj = sm.getStorageInfo();
                         String complaintFolderName = obj[0].toString()
                                 + "/egovernments/complaints/" + jo.getString("crn");
                         File complaintFolder = new File(complaintFolderName);
-                        if (!complaintFolder.exists()) {
-                            if (jo.getInt("supportDocsSize") == 0) {
-                                item.setImagePath(complaintFolderName + File.separator
-                                        + "photo_complaint_type.jpg");
-                            } else {
-                                item.setImagePath(complaintFolderName + File.separator + "photo_"
-                                        + jo.getInt("supportDocsSize") + ".jpg");
-                            }
-                            sm.mkdirs(complaintFolderName);
-                            _addDownloadJobs(complaintFolderName, jo);
+                        if (jo.getInt("supportDocsSize") == 0) {
+                            item.setImagePath(complaintFolderName + File.separator
+                                    + "thumb_photo_complaint_type.jpg");
                         } else {
-                            item.setImagePath(complaintFolderName + File.separator + "photo_"
-                                    + complaintFolder.listFiles().length + ".jpg");
+                            item.setImagePath(complaintFolderName + File.separator + "thumb_photo_"
+                                    + jo.getInt("supportDocsSize") + ".jpg");
                         }
+                        
+                        if (!complaintFolder.exists()) {   
+                            sm.mkdirs(complaintFolderName);
+                        }
+                        
+                        _addDownloadJobs(complaintFolderName, jo);
+                        
                         listItem.add(item);
                     }
 
@@ -256,8 +414,19 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         item = new Complaint();
                         listItem.add(item);
                     }
-                    ServiceController.getInstance().startJobs();
-                    _displayListView(pagination.equals("true"));
+                    
+                    if(downloadThumbImages.length()>0)
+                    {
+                      new ImageDownloaderTask(getProgressBar() , pagination.equals("true")).execute(downloadThumbImages);
+                    }
+                    else
+                    {
+                      _displayListView(pagination.equals("true"));
+                    }
+                    
+                    //ServiceController.getInstance().startJobs();
+                    //_displayListView(pagination.equals("true"));
+
                 } else if (listItem.size() == 0) {
                     ((TextView) getActivity().findViewById(R.id.user_errMsg))
                             .setVisibility(View.VISIBLE);
@@ -279,6 +448,12 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                 _showMsg(msg);
             }
         }
+    }
+    
+    private ProgressBar getProgressBar()
+    {
+    	ProgressBar pb=(ProgressBar)getActivity().findViewById(R.id.imagelistloader);
+    	return pb;
     }
 
     /**

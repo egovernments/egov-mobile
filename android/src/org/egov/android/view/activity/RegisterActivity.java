@@ -31,27 +31,58 @@
 
 package org.egov.android.view.activity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
-import org.egov.android.controller.ApiController;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.common.JSONUtil;
+import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.model.User;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class RegisterActivity extends BaseActivity {
+	private JSONArray jsoncitiesarry=new JSONArray();
+	SharedPreferences sharedpreferences;
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -64,7 +95,174 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
 
         ((Button) findViewById(R.id.register_doRegister)).setOnClickListener(this);
+        Spinner citydropdown = (Spinner) findViewById(R.id.citydropdown);
+        
+        if(isInternetAvailable())
+        {
+        	new getCitiesFromURL(RegisterActivity.this, citydropdown).execute(AndroidLibrary.getInstance().getConfig()
+					.getString("app.citiesJsonUrl"));
+        }
+        else
+        {
+        	Toast.makeText(getApplicationContext(), "No Internet Connection!", Toast.LENGTH_LONG).show();
+        	this.finish();
+        }
+        
+        sharedpreferences = getApplicationContext().getSharedPreferences("eGovPreference", 0); // 0 - for private mode
+        
     }
+    
+    /**
+     * internet connection test function
+     */
+    public boolean isInternetAvailable()
+    {
+    	ConnectivityManager connectivity = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        boolean available = false;
+        if (netInfo.isConnected()) {
+            available = true;
+        } else {
+            netInfo = connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            available = netInfo.isConnected();
+        }
+        return available;
+    }
+    
+    /**
+     * async task for getting cities list from httprequest
+     */
+    
+    class getCitiesFromURL extends AsyncTask<String, Void, String>
+    {
+    	
+    	ProgressDialog mDialog = null;
+    	Spinner citydropdown=null;
+    	Context context=null;
+    	
+    	public getCitiesFromURL(Context context, Spinner citydropdown) {
+			// TODO Auto-generated constructor stub
+    		this.context=context;
+    		this.citydropdown=citydropdown;
+		}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		super.onPreExecute();
+    		mDialog=new ProgressDialog(context);
+    		mDialog.setMessage("Please wait...");
+            mDialog.setCancelable(false);
+            mDialog.show();
+    	}
+    	
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return getJSON(params[0]);
+		}
+    	
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			
+			if(mDialog!=null)
+			{
+				mDialog.dismiss();
+			}
+			
+			try {
+				if(!result.equals("ERROR"))
+				{
+				 jsoncitiesarry=new JSONArray(result);
+				 loadCitiesFromJsonArray(citydropdown);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				Toast.makeText(context, "Something went wrong in application!", Toast.LENGTH_LONG).show();
+			}
+			
+		}
+    	
+    	
+    }
+    
+    
+    /**
+     * load spinner from jsonarray
+     * @throws JSONException 
+     */
+    
+    
+    public void loadCitiesFromJsonArray(Spinner dropdown) throws JSONException
+    {
+    	
+    	List<String> spinnerArray =  new ArrayList<String>();
+    	
+    	//default option
+    	spinnerArray.add("Select City");
+    	
+    	//sort cities a to z
+    	jsoncitiesarry = JSONUtil.sort(jsoncitiesarry, new Comparator(){
+    		   public int compare(Object a, Object b){
+    		      JSONObject    ja = (JSONObject)a;
+    		      JSONObject    jb = (JSONObject)b;
+    		      return ja.optString("city_name", "").toLowerCase().compareTo(jb.optString("city_name", "").toLowerCase());
+    		   }
+    	});
+    	
+    	for(int i=0; i<jsoncitiesarry.length(); i++)
+    	{
+    		JSONObject city=jsoncitiesarry.getJSONObject(i);
+    		spinnerArray.add(city.getString("city_name"));
+    	}
+    	
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+           this, android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropdown.setAdapter(adapter);
+
+    }
+    
+    
+    /**
+     * Get cities list json from app config url
+     */
+    
+    public String getJSON(String address){
+    	StringBuilder builder = new StringBuilder();
+    	HttpClient client = new DefaultHttpClient();
+    	HttpGet httpGet = new HttpGet(address);
+    	try{
+    		
+    		HttpParams params=client.getParams();
+    		HttpConnectionParams.setConnectionTimeout(params, (60*1000));
+    		HttpResponse response = client.execute(httpGet);
+    		StatusLine statusLine = response.getStatusLine();
+    		int statusCode = statusLine.getStatusCode();
+    		if(statusCode == 200){
+    			HttpEntity entity = response.getEntity();
+    			InputStream content = entity.getContent();
+    			BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+    			String line;
+    			while((line = reader.readLine()) != null){
+    				builder.append(line);
+    			}
+    		} else {
+    			Log.e(RegisterActivity.class.toString(),"Failedet JSON object");
+    		}
+    	}catch(ClientProtocolException e){
+    		e.printStackTrace();
+    		return "ERROR";
+    	} catch (IOException e){
+    		e.printStackTrace();
+    		return "ERROR";
+    	}
+    	return builder.toString();
+    }
+    
 
     /**
      * Event triggered when clicking on the item having click listener. When user clicks on save
@@ -94,6 +292,7 @@ public class RegisterActivity extends BaseActivity {
         String confirm_password = ((EditText) findViewById(R.id.register_confirm_password))
                 .getText().toString().trim();
         String deviceId = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+        Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
 
         if (isEmpty(name)) {
             showMessage(getMessage(R.string.name_empty));
@@ -131,7 +330,11 @@ public class RegisterActivity extends BaseActivity {
         } else if (!password.equals(confirm_password)) {
             showMessage(getMessage(R.string.password_match));
             return;
+        } else if (citySelectedIdx == 0) {
+            showMessage(getMessage(R.string.city_selection_empty));
+            return;
         }
+        
 
         User user = new User();
         user.setName(name);
@@ -140,7 +343,20 @@ public class RegisterActivity extends BaseActivity {
         user.setPassword(password);
         user.setConfirmPassword(confirm_password);
         user.setDeviceId(deviceId);
-        ApiController.getInstance().register(this, user);
+        
+        try {
+			ApiController.getInstance().register(this, user, getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(RegisterActivity.this, "Error Occured While Registering!", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+        
+    }
+    
+    private String getValidURL(String url)
+    {
+       return (url.endsWith("/")? url: url+"/");
     }
 
     private boolean _isValidPassword(String password) {
@@ -187,9 +403,15 @@ public class RegisterActivity extends BaseActivity {
         super.onResponse(event);
         String msg = event.getData().getApiStatus().getMessage();
         String status = event.getData().getApiStatus().getStatus();
-        showMessage(msg);
+        
         if (status.equalsIgnoreCase("success")) {
             try {
+            	
+                Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
+            	Editor editor = sharedpreferences.edit();
+            	editor.putString("api.baseUrl", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+            	editor.commit();
+            	
                 JSONObject jo = new JSONObject(event.getData().getResponse().toString());
                 Intent intent = new Intent(this, AccountActivationActivity.class);
                 intent.putExtra("username", jo.getString("userName"));
@@ -200,6 +422,11 @@ public class RegisterActivity extends BaseActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            showMessage(msg);
+        }
+        else
+        {
+        	showMessage("This Mobile No or Email Address Already Registered!");
         }
     }
 }

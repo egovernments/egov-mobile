@@ -61,13 +61,17 @@ public class SlidingTabAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        switch (i) {
-            case 0:
-                return new AllComplaintActivity();
-            case 1:
-                return new UserComplaintActivity();
-        }
-        return null;
+        
+    	/** one tab handling **/
+        return new UserComplaintActivity();
+        
+        /** remove comment when Two tabs handling **/
+        /*switch (i) {
+        case 0:
+            return new AllComplaintActivity();
+        case 1:
+            return new UserComplaintActivity();
+        }*/
     }
 
     @Override

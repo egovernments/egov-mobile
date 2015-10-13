@@ -129,17 +129,19 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
             holder.name.setText(data.getCreatedBy());
             holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
         } else {
-            holder.name.setVisibility(View.GONE);
+        	holder.name.setText(data.getComplaintId());
+            //holder.name.setVisibility(View.GONE);
         }
+        
         File file = new File(data.getImagePath());
 
         if (file.exists()) {
-            holder.image.setImageBitmap(_getBitmapImage(data.getImagePath()));
+            holder.image.setImageBitmap(  _getBitmapImage(data.getImagePath()));
         } else {
             StorageManager sm = new StorageManager();
             Object[] obj = sm.getStorageInfo();
             String complaintImagePath = obj[0].toString() + "/egovernments/complaints/"
-                    + data.getComplaintId() + File.separator + "photo_complaint_type.jpg";
+                    + data.getComplaintId() + File.separator + "thumb_photo_complaint_type.jpg";
             File complaintTypeImage = new File(complaintImagePath);
             if (complaintTypeImage.exists()) {
                 holder.image.setImageBitmap(_getBitmapImage(complaintImagePath));
@@ -147,6 +149,12 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
                 holder.image.setImageResource(R.drawable.complaint);
             }
         }
+                
+        /*if (holder.image != null) {
+        	holder.image.setImageBitmap(null);
+			new ImageDownloaderTask(holder.image).execute(data.getThumbImageURL(), "GET");
+        }*/
+        
         holder.description.setText(data.getDetails());
         holder.date.setText((data.getCreatedDate().equals("")) ? "" : getActualTime(data
                 .getCreatedDate()));
@@ -174,7 +182,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
+        options.inSampleSize = 2;
         return BitmapFactory.decodeFile(path, options);
     }
 
@@ -271,4 +279,6 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
             iListener.actionPerformed("LOAD_MORE", 0);
         }
     }
+    
+    
 }
