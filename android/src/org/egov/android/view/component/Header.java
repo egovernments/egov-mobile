@@ -123,7 +123,7 @@ public class Header extends RelativeLayout implements OnClickListener {
         SparseArray<Object> sia = new SparseArray<Object>();
         sia.put(ACTION_SEARCH, R.drawable.header_search_icon);
         sia.put(ACTION_SETTING, R.drawable.setting_white);
-        sia.put(ACTION_ADD_COMPLAINT, R.drawable.add_icon);
+        sia.put(ACTION_ADD_COMPLAINT, R.drawable.ic_add_white_24dp);
         sia.put(ACTION_REFRESH, R.drawable.refresh_icon);
 
         int size = sia.size();
