@@ -109,7 +109,7 @@ public class RegisterActivity extends BaseActivity {
         }
         
         sharedpreferences = getApplicationContext().getSharedPreferences("eGovPreference", 0); // 0 - for private mode
-        
+        showPasswordConstraintMessage();
     }
     
     /**
@@ -316,13 +316,7 @@ public class RegisterActivity extends BaseActivity {
             showMessage(getMessage(R.string.password_empty));
             return;
         } else if (!_isValidPassword(password)) {
-            Toast toast = Toast
-                    .makeText(
-                            this,
-                            "Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet,number and special character except \'& < > # % \" ' / \\' and space",
-                            2000);
-            toast.setGravity(Gravity.TOP, 0, 120);
-            toast.show();
+        	showPasswordConstraintMessage();
             return;
         } else if (isEmpty(confirm_password.toString())) {
             showMessage(getMessage(R.string.confirm_password_empty));
@@ -352,6 +346,17 @@ public class RegisterActivity extends BaseActivity {
 			e.printStackTrace();
 		}
         
+    }
+    
+    private void showPasswordConstraintMessage()
+    {
+    	Toast toast = Toast
+                .makeText(
+                        this,
+                        "Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet,number and special character except \'& < > # % \" ' / \\' and space",
+                        2000);
+        toast.setGravity(Gravity.TOP, 0, 120);
+        toast.show();
     }
     
     private String getValidURL(String url)
