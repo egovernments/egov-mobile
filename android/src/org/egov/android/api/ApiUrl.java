@@ -75,7 +75,7 @@ public enum ApiUrl implements IApiUrl {
     ADD_COMPLAINT("api/v1.0/complaint/create", true),
 
     GET_COMPLAINT_DETAIL("api/v1.0/complaint", true),
-
+    
     GET_LOCATION_BY_NAME("api/v1.0/complaint/getLocation", true),
 
     GET_SEARCH_COMPLAINTS("api/v1.0/complaint/search", true),

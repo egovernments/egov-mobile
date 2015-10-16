@@ -126,6 +126,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		imageCntainer = (LinearLayout) findViewById(R.id.complaint_image_container);
 
 		((Button) findViewById(R.id.status_summary)).setOnClickListener(this);
+		((Button) findViewById(R.id.viewcomments)).setOnClickListener(this);
 		((Button) findViewById(R.id.complaint_changeStatus))
 				.setOnClickListener(this);
 
@@ -199,6 +200,11 @@ public class ComplaintDetailActivity extends BaseActivity {
 			break;
 		case R.id.complaint_changeStatus:
 			_changeStatus();
+			break;
+		case R.id.viewcomments:
+			Intent opencomments = new Intent(this, ComplaintCommentsActivity.class);
+			opencomments.putExtra("complaintId", id);
+			startActivity(opencomments);
 			break;
 		}
 	}

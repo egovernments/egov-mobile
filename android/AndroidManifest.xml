@@ -133,6 +133,15 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
+        
+         <activity
+            android:name="org.egov.android.view.activity.ComplaintCommentsActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+        
         <activity
             android:name="org.egov.android.view.activity.PhotoViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

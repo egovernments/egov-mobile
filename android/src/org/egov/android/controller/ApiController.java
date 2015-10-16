@@ -250,6 +250,21 @@ public class ApiController {
         apiMethod.setExtraParam(id + "/detail");
         _createApiClient(apiMethod, listener, false).call();
     }
+    
+    
+    /**
+     * This function is used to get complaint's comments history. we have sent
+     * the complaint id.
+     * 
+     * @param listener
+     * @param id
+     *            => complaint id
+     */
+    public void getComplaintCommentsHistory(IApiListener listener, String id) {
+        ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT_DETAIL);
+        apiMethod.setExtraParam(id + "/complaintHistory");
+        _createApiClient(apiMethod, listener, false).call();
+    }
 
     /**
      * This function is used to get complaint status. To get complaint status we have to pass the
