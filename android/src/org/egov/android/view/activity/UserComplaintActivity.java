@@ -151,7 +151,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
             int totalFiles = jsonObj.getInt("supportDocsSize");
             if (totalFiles == 0) {
             	
-            	if(!new File(path + "/thumb_photo_complaint_type.jpg").exists())
+            	if(!new File(path + "/.thumb_photo_complaint_type.jpg").exists())
             	{
 	                jo = new JSONObject();
 	                jo.put("url",
@@ -159,7 +159,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
 	                                + "/pgr/resources/images/complaintType/"
 	                                + jsonObj.getString("complaintTypeImage"));
 	                jo.put("type", "complaintType");
-	                jo.put("destPath", path + "/thumb_photo_complaint_type.jpg");
+	                jo.put("destPath", path + "/.thumb_photo_complaint_type.jpg");
 	                jo.put("isThumbnail", true);
             	}
                 /*SQLiteHelper.getInstance().execSQL(
@@ -167,7 +167,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                                 + jo.toString() + "', 'waiting', 'download', 0)");*/
             } else {
                 //for (int i = 1; i <= totalFiles; i++) {
-            	if(!new File(path + "/thumb_photo_" + totalFiles + ".jpg").exists())
+            	if(!new File(path + "/.thumb_photo_" + totalFiles + ".jpg").exists())
             	{
                     jo = new JSONObject();
                     jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
@@ -176,7 +176,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                     jo.put("fileNo", totalFiles);
                     jo.put("type", "complaint");
                     jo.put("isThumbnail", true);
-                    jo.put("destPath", path + "/thumb_photo_" + totalFiles + ".jpg");
+                    jo.put("destPath", path + "/.thumb_photo_" + totalFiles + ".jpg");
             	}
                 /*SQLiteHelper.getInstance().execSQL(
                         "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
@@ -386,9 +386,9 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         File complaintFolder = new File(complaintFolderName);
                         if (jo.getInt("supportDocsSize") == 0) {
                             item.setImagePath(complaintFolderName + File.separator
-                                    + "thumb_photo_complaint_type.jpg");
+                                    + ".thumb_photo_complaint_type.jpg");
                         } else {
-                            item.setImagePath(complaintFolderName + File.separator + "thumb_photo_"
+                            item.setImagePath(complaintFolderName + File.separator + ".thumb_photo_"
                                     + jo.getInt("supportDocsSize") + ".jpg");
                         }
                         

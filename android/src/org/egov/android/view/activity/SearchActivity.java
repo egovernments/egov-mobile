@@ -138,13 +138,13 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
         JSONObject jo = null;
         try {
         	
-        	if(!new File(path + "/thumb_photo_" + crn + ".jpg").exists())
+        	if(!new File(path + "/.thumb_photo_" + crn + ".jpg").exists())
         	{
 	            jo = new JSONObject();
 	            jo.put("url", AndroidLibrary.getInstance().getConfig().getString("api.baseUrl")
 	                    + "/api/v1.0/complaint/" + crn + "/downloadSupportDocument");
 	            jo.put("type", "complaintSearch");
-	            jo.put("destPath", path + "/thumb_photo_" + crn + ".jpg");
+	            jo.put("destPath", path + "/.thumb_photo_" + crn + ".jpg");
 	            jo.put("isThumbnail", true);
 	            /*SQLiteHelper.getInstance().execSQL(
 	                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
@@ -320,7 +320,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
                         item.setStatus(statusObj.getString("name"));
                         String complaintFolderName = obj[0].toString()
                                 + "/egovernments/search/complaints/" + complaintNo;
-                        item.setImagePath(complaintFolderName + File.separator + "thumb_photo_"
+                        item.setImagePath(complaintFolderName + File.separator + ".thumb_photo_"
                                 + complaintNo + ".jpg");
                         if(!new File(complaintFolderName).exists())
                         {

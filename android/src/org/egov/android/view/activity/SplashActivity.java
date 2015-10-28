@@ -31,15 +31,21 @@
 
 package org.egov.android.view.activity;
 
+import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.data.SQLiteHelper;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 public class SplashActivity extends BaseActivity implements Runnable {
 
+	
+	
     /**
      * To set the layout for the SplashActivity this screen appears for 2000 milliseconds. Create a
      * table named 'jobs' to handle upload and download jobs.
@@ -48,6 +54,22 @@ public class SplashActivity extends BaseActivity implements Runnable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        
+        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+		String baseServerURL = sharedPreference.getString("api.baseUrl", null);
+		
+		Log.v("org.egov.android", "Is Multicity support? "+ AndroidLibrary.getInstance().getConfig().get("api.multicities", true));
+		
+		if(baseServerURL == null && 
+			AndroidLibrary.getInstance().getConfig().get("api.multicities", "true").equals("false"))
+		{
+			Log.v("org.egov.android", "CONDITION WORKED :)!");
+			Editor editor = sharedPreference.edit();
+        	editor.putString("api.baseUrl", (String)AndroidLibrary.getInstance().getConfig().get("api.baseUrl", ""));
+        	editor.commit();
+		}
+		
+        
         SQLiteHelper
                 .getInstance()
                 .execSQL(

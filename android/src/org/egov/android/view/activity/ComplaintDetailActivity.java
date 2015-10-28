@@ -308,7 +308,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 				Log.d("EGOV_JOB", "File path" + complaintFolderName
 						+ File.separator + listOfFiles[i].getName());
 				if (listOfFiles[i].getName().equalsIgnoreCase(
-						"thumb_photo_complaint_type.jpg")
+						".thumb_photo_complaint_type.jpg")
 						|| listOfFiles[i].getName().startsWith("photo_")) {
 					continue;
 				}
@@ -378,7 +378,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		JSONObject jo = null;
 		try {
 			for (int i = 1; i <= totalFiles; i++) {
-				if (!new File(complaintFolderName + "/thumb_photo_" + i
+				if (!new File(complaintFolderName + "/.thumb_photo_" + i
 						+ ".jpg").exists()) {
 					jo = new JSONObject();
 					jo.put("url", AndroidLibrary.getInstance().getConfig()
@@ -389,7 +389,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 					jo.put("fileNo", i);
 					jo.put("type", "complaint");
 					jo.put("isThumbnail", true);
-					jo.put("destPath", complaintFolderName + "/thumb_photo_"
+					jo.put("destPath", complaintFolderName + "/.thumb_photo_"
 							+ i + ".jpg");
 					downloadThumbImages.put(jo);
 				}

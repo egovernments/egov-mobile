@@ -117,8 +117,16 @@ public class LoginActivity extends BaseActivity {
 		else
 		{
 			((LinearLayout)findViewById(R.id.logincitydropdownc)).setVisibility(View.GONE);
-			((Button)findViewById(R.id.login_register)).setVisibility(View.GONE);
+			/*((Button)findViewById(R.id.login_register)).setVisibility(View.GONE);*/
 		}
+    }
+    
+    @Override
+    protected void onResume() {
+    	// TODO Auto-generated method stub
+    	super.onResume();
+    	sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+		baseServerURL = sharedPreference.getString("api.baseUrl", null);
     }
     
     

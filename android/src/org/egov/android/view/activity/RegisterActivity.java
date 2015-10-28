@@ -61,8 +61,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -77,12 +79,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 public class RegisterActivity extends BaseActivity {
 	private JSONArray jsoncitiesarry=new JSONArray();
 	SharedPreferences sharedpreferences;
+	String baseServerURL="";
+	Boolean isMulticity=false;
 
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
@@ -95,20 +100,30 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
 
         ((Button) findViewById(R.id.register_doRegister)).setOnClickListener(this);
-        Spinner citydropdown = (Spinner) findViewById(R.id.citydropdown);
+        sharedpreferences = getApplicationContext().getSharedPreferences("eGovPreference", 0); // 0 - for private mode
         
-        if(isInternetAvailable())
-        {
-        	new getCitiesFromURL(RegisterActivity.this, citydropdown).execute(AndroidLibrary.getInstance().getConfig()
-					.getString("app.citiesJsonUrl"));
-        }
+        if(AndroidLibrary.getInstance().getConfig().get("api.multicities", "false").equals("true"))
+    	{
+        	    isMulticity=true;
+                Spinner citydropdown = (Spinner) findViewById(R.id.citydropdown);
+		        if(isInternetAvailable())
+		        {
+		        	new getCitiesFromURL(RegisterActivity.this, citydropdown).execute(AndroidLibrary.getInstance().getConfig()
+							.getString("app.citiesJsonUrl"));
+		        }
+		        else
+		        {
+		        	Toast.makeText(getApplicationContext(), "No Internet Connection!", Toast.LENGTH_LONG).show();
+		        	this.finish();
+		        }
+    	}
         else
         {
-        	Toast.makeText(getApplicationContext(), "No Internet Connection!", Toast.LENGTH_LONG).show();
-        	this.finish();
+        	((LinearLayout)findViewById(R.id.citydropdowncontainer)).setVisibility(View.GONE);
+     		baseServerURL = sharedpreferences.getString("api.baseUrl", null);
         }
         
-        sharedpreferences = getApplicationContext().getSharedPreferences("eGovPreference", 0); // 0 - for private mode
+        
         showPasswordConstraintMessage();
     }
     
@@ -339,7 +354,14 @@ public class RegisterActivity extends BaseActivity {
         user.setDeviceId(deviceId);
         
         try {
-			ApiController.getInstance().register(this, user, getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+        	if(isMulticity)
+        	{
+			    ApiController.getInstance().register(this, user, getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+        	}
+        	else
+        	{
+        		ApiController.getInstance().register(this, user, baseServerURL);	
+        	}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			Toast.makeText(RegisterActivity.this, "Error Occured While Registering!", Toast.LENGTH_SHORT).show();
@@ -350,13 +372,13 @@ public class RegisterActivity extends BaseActivity {
     
     private void showPasswordConstraintMessage()
     {
-    	Toast toast = Toast
-                .makeText(
-                        this,
-                        "Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet,number and special character except \'& < > # % \" ' / \\' and space",
-                        2000);
-        toast.setGravity(Gravity.TOP, 0, 120);
-        toast.show();
+    	new AlertDialog.Builder(RegisterActivity.this)
+        .setMessage("Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except \'& < > # % \" ' / \\' and space")
+        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+                
+            }
+         }).show();
     }
     
     private String getValidURL(String url)
@@ -412,10 +434,13 @@ public class RegisterActivity extends BaseActivity {
         if (status.equalsIgnoreCase("success")) {
             try {
             	
-                Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
-            	Editor editor = sharedpreferences.edit();
-            	editor.putString("api.baseUrl", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
-            	editor.commit();
+            	if(isMulticity)
+            	{
+	                Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
+	            	Editor editor = sharedpreferences.edit();
+	            	editor.putString("api.baseUrl", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+	            	editor.commit();
+            	}
             	
                 JSONObject jo = new JSONObject(event.getData().getResponse().toString());
                 Intent intent = new Intent(this, AccountActivationActivity.class);

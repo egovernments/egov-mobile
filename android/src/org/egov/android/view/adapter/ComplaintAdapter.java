@@ -141,7 +141,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
             StorageManager sm = new StorageManager();
             Object[] obj = sm.getStorageInfo();
             String complaintImagePath = obj[0].toString() + "/egovernments/complaints/"
-                    + data.getComplaintId() + File.separator + "thumb_photo_complaint_type.jpg";
+                    + data.getComplaintId() + File.separator + ".thumb_photo_complaint_type.jpg";
             File complaintTypeImage = new File(complaintImagePath);
             if (complaintTypeImage.exists()) {
                 holder.image.setImageBitmap(_getBitmapImage(complaintImagePath));
