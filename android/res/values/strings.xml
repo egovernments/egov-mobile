@@ -78,8 +78,10 @@ Powered by eGovernments Foundation </string>
     <string name="send_btn">Send</string>
     <string name="verify_otp_btn">Verify OTP</string>
     <string name="save_btn">Save</string>
+    <string name="post_message">Post Your Message</string>
+    <string name="change_status">Change Complaint Status</string>
     <string name="status_summary_btn">Status Summary</string>
-    <string name="viewcommentsbtn">View Comments</string>
+    <string name="viewcommentsbtn">View More Messages</string>
     <string name="change_picture_btn">Change Picture</string>
     <string name="save_change_btn">Save Changes</string>
 

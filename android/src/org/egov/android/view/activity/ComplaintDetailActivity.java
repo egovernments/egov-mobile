@@ -38,10 +38,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -51,10 +55,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
+import org.egov.android.api.IApiListener;
 import org.egov.android.api.SSLTrustManager;
 import org.egov.android.common.StorageManager;
 import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
+import org.egov.android.listener.IEventDispatcher;
 import org.egov.android.service.GeoLocation;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,21 +76,26 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ComplaintDetailActivity extends BaseActivity {
 
-	private String id = "";
+	private String complaintId = "";
 	private Spinner statusSpinner;
 	private LinearLayout imageCntainer = null;
 	private String complaintTypeName = "";
@@ -94,6 +105,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 	private String complaintFolderName = "";
 	private boolean isComplaintDetail = true;
 	private JSONArray downloadThumbImages = new JSONArray();
+	private JSONArray complaintComments=new JSONArray();
 
 	/**
 	 * It is used to initialize an activity. An Activity is an application
@@ -127,10 +139,10 @@ public class ComplaintDetailActivity extends BaseActivity {
 
 		((Button) findViewById(R.id.status_summary)).setOnClickListener(this);
 		((Button) findViewById(R.id.viewcomments)).setOnClickListener(this);
-		((Button) findViewById(R.id.complaint_changeStatus))
-				.setOnClickListener(this);
+		final Button changestatus=(Button) findViewById(R.id.complaint_changeStatus);
+		changestatus.setOnClickListener(this);
 
-		id = getIntent().getExtras().getString("complaintId");
+		complaintId = getIntent().getExtras().getString("complaintId");
 		String name = getIntent().getExtras().getString("name");
 		String status = getIntent().getExtras().getString("complaint_status");
 
@@ -138,17 +150,42 @@ public class ComplaintDetailActivity extends BaseActivity {
 			((LinearLayout) findViewById(R.id.action_container))
 					.setVisibility(View.VISIBLE);
 		}
+		
+		
+		statusSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int pos, long arg3) {
+				// TODO Auto-generated method stub
+				if(pos==1)
+				{
+					changestatus.setText(getApplicationContext().getResources().getString(R.string.change_status));
+				}
+				else
+				{
+					changestatus.setText(getApplicationContext().getResources().getString(R.string.post_message));
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 
 		StorageManager sm = new StorageManager();
 		Object[] obj = sm.getStorageInfo();
 		complaintFolderName = obj[0].toString() + "/egovernments/complaints/"
-				+ id;
+				+ complaintId;
 		isComplaintDetail = true;
 		new GeoLocation(this);
 		if (!GeoLocation.getGpsStatus()) {
 			_showSettingsAlert();
 		}
-		ApiController.getInstance().getComplaintDetail(this, id);
+		ApiController.getInstance().getComplaintDetail(this, complaintId);
 	}
 
 	/**
@@ -191,7 +228,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		switch (v.getId()) {
 		case R.id.status_summary:
 			Intent intent = new Intent(this, StatusSummaryActivity.class);
-			intent.putExtra("complaintId", id);
+			intent.putExtra("complaintId", complaintId);
 			intent.putExtra("complaintTypeName", complaintTypeName);
 			intent.putExtra("status", complaintStatus);
 			intent.putExtra("created_date", createdDate);
@@ -203,7 +240,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 			break;
 		case R.id.viewcomments:
 			Intent opencomments = new Intent(this, ComplaintCommentsActivity.class);
-			opencomments.putExtra("complaintId", id);
+			opencomments.putExtra("comments", complaintComments.toString());
 			startActivity(opencomments);
 			break;
 		}
@@ -230,8 +267,16 @@ public class ComplaintDetailActivity extends BaseActivity {
 				.getSelectedItem().toString());
 		String message = ((EditText) findViewById(R.id.message)).getText()
 				.toString();
-		ApiController.getInstance().complaintChangeStatus(this, id,
+		
+		if(message.trim().length() == 0 && pos == 0)
+		{
+			Toast.makeText(ComplaintDetailActivity.this, "Please, type your message!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		ApiController.getInstance().complaintChangeStatus(this, complaintId,
 				status.toUpperCase(), message);
+		
 	}
 
 	/**
@@ -280,7 +325,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 								ComplaintDetailActivity.this,
 								PhotoViewerActivity.class);
 						photo_viewer.putExtra("path", complaintFolderName);
-						photo_viewer.putExtra("complaintId", id);
+						photo_viewer.putExtra("complaintId", complaintId);
 						photo_viewer.putExtra("imageId", v.getId());
 						startActivity(photo_viewer);
 					}
@@ -339,7 +384,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 					jo.put("url", AndroidLibrary.getInstance().getConfig()
 							.getString("api.baseUrl")
 							+ "/api/v1.0/complaint/"
-							+ id
+							+ complaintId
 							+ "/downloadSupportDocument");
 					jo.put("fileNo", i);
 					jo.put("type", "complaint");
@@ -498,6 +543,8 @@ public class ComplaintDetailActivity extends BaseActivity {
 					lastModifiedDate = _getValue(jo, "lastModifiedDate");
 					complaintTypeName = _getValue(jo, "complaintTypeName");
 
+					new GetComplaintComments().loadComments();
+					
 					((TextView) findViewById(R.id.crn)).setText(_getValue(jo,
 							"crn"));
 					((TextView) findViewById(R.id.complaintType))
@@ -577,4 +624,86 @@ public class ComplaintDetailActivity extends BaseActivity {
 		}
 		return result;
 	}
+	
+	//Recent Comments Loading Class
+	public class GetComplaintComments implements IApiListener
+	{
+
+		public void loadComments()
+		{
+			ApiController.getInstance().getComplaintCommentsHistory(this, complaintId);
+		}
+
+		@Override
+		public void onResponse(Event<ApiResponse> event) {
+			// TODO Auto-generated method stub
+			String status = event.getData().getApiStatus().getStatus();
+			String msg = event.getData().getApiStatus().getMessage();
+			if (status.equalsIgnoreCase("success")) {
+				
+				try {
+					JSONObject jo = new JSONObject(event.getData().getResponse().toString());
+					complaintComments=jo.getJSONArray("comments");
+					LinearLayout recentmsgtemplate=(LinearLayout)findViewById(R.id.recentmessages);
+					for(int i=0; i<(complaintComments.length() > 2 ? 2 : complaintComments.length());i++)
+					{
+						JSONObject commentobj=complaintComments.getJSONObject(i);
+						
+						DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
+						String timeagotext=commentobj.getString("date");
+						try {
+						    Date date = format.parse(commentobj.getString("date"));
+						    timeagotext = (String) DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS);
+						} catch (java.text.ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						View child = getLayoutInflater().inflate(R.layout.recent_message_template, null);
+						
+						String currentUserName=AndroidLibrary.getInstance().getSession().getString("user_name", "");
+						
+						((TextView)child.findViewById(R.id.messagetext)).setText(commentobj.getString("comments"));
+						((TextView)child.findViewById(R.id.messagetime)).setText(timeagotext);
+						((TextView)child.findViewById(R.id.messagestatus)).setText(commentobj.getString("status"));
+						
+						TextView citizentextv=(TextView)child.findViewById(R.id.messageusername);
+						citizentextv.setText((currentUserName.equals(commentobj.getString("updatedBy"))?"Me":commentobj.getString("updatedBy")));						
+						citizentextv.setTextColor(ComplaintDetailActivity.this.getResources().getColor((commentobj.getString("updatedUserType").equals("CITIZEN")? R.color.darkblue: R.color.darkred)));
+						
+						if((i+1) == (complaintComments.length() > 2 ? 2 : complaintComments.length()))
+						{
+							((LinearLayout)child.findViewById(R.id.messagetemplatelineseparator)).setVisibility(View.GONE);
+						}
+						recentmsgtemplate.addView(child);
+					}
+					
+					((LinearLayout)findViewById(R.id.commentsprogressview)).setVisibility(View.GONE);
+					
+					if(complaintComments.length() > 2)
+					{
+					  ((LinearLayout)findViewById(R.id.viewmorebtncontainer)).setVisibility(View.VISIBLE);
+					}
+					
+					recentmsgtemplate.setVisibility(View.VISIBLE);
+					//Toast.makeText(ComplaintDetailActivity.this, "Server Respond!", Toast.LENGTH_LONG).show();
+				}
+				catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			} else {
+				if (msg.matches(".*Invalid access token.*")) {
+					showMessage("Session expired");
+					startLoginActivity();
+				} else {
+					showMessage(msg);
+				}
+			}
+		}
+		
+	}
+	
+	
 }

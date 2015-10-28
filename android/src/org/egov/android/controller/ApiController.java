@@ -31,7 +31,6 @@
 
 package org.egov.android.controller;
 
-import org.egov.android.AndroidLibrary;
 import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiMethod;
 import org.egov.android.api.ApiUrl;
@@ -120,8 +119,7 @@ public class ApiController {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.FORGOT_PASSWORD, forgotServerBaseURL);
         apiMethod.setMethod(RequestMethod.POST);
         apiMethod.addParameter("identity", identity);
-        apiMethod.addParameter("redirectURL",
-                AndroidLibrary.getInstance().getConfig().getString("api.baseUrl"));
+        apiMethod.addParameter("redirectURL", forgotServerBaseURL);
         _createApiClient(apiMethod, listener, false).call();
     }
 
@@ -263,7 +261,7 @@ public class ApiController {
     public void getComplaintCommentsHistory(IApiListener listener, String id) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_COMPLAINT_DETAIL);
         apiMethod.setExtraParam(id + "/complaintHistory");
-        _createApiClient(apiMethod, listener, false).call();
+        _createApiClient(apiMethod, listener, false, false).call();
     }
 
     /**

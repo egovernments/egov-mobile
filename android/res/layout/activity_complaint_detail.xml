@@ -242,9 +242,59 @@
                         </HorizontalScrollView>
                         
                         <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="#ededed"
+                                android:orientation="vertical"
+                                android:padding="10dp" >
+
+                           <org.egov.android.view.component.EGovTextView
+                               android:layout_width="match_parent"
+                               android:layout_height="wrap_content"
+                               android:text="Recent Messages"
+                               android:textColor="@color/black" />
+                       </LinearLayout>
+                       
+                        
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/viewMargin"
+                            android:orientation="vertical"
+                            android:id="@+id/commentsprogressview"
+                            android:gravity="center">
+                        
+                          <ProgressBar 
+                              android:id="@+id/progresscomments"
+                              android:layout_width="wrap_content" 
+                              android:layout_height="wrap_content"
+                              />
+                           <org.egov.android.view.component.EGovTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="Loading"
+                                    android:textColor="@color/dark_gray" />
+                        
+                        </LinearLayout>
+                        
+                        <LinearLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_margin="@dimen/viewMargin"
+                         android:id="@+id/recentmessages"
+                         android:visibility="gone"
+                         android:orientation="vertical">
+                       </LinearLayout>
+                       
+                        
+                        
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/viewMargin"
+                            android:visibility="gone"
+                            android:id="@+id/viewmorebtncontainer"
                             android:orientation="horizontal" >
                         
                         <org.egov.android.view.component.EGovButton
@@ -349,7 +399,7 @@
                                 android:id="@+id/complaint_changeStatus"
                                 style="@style/ButtonStyle"
                                 android:layout_margin="10dp"
-                                android:text="@string/save_btn" />
+                                android:text="@string/post_message" />
                         </LinearLayout>
                     </LinearLayout>
                 </ScrollView>

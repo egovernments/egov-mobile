@@ -82,11 +82,12 @@
 
                                 <ImageView
                                     android:id="@+id/image_container"
-                                    android:layout_width="fill_parent"
+                                    android:layout_width="match_parent"
                                     android:layout_height="200dp"
                                     android:paddingBottom="5dp"
                                     android:paddingTop="5dp"
-                                    android:scaleType="fitXY"
+                                    android:scaleType="fitCenter"
+                                    android:background="#e3e3e3"
                                     android:src="@drawable/default_image" />
                             </LinearLayout>
 

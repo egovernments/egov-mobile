@@ -144,9 +144,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
         if (!GeoLocation.getGpsStatus()) {
-            _showSettingsAlert();
+          _showSettingsAlert();
         }
-        _getCurrentLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude());
+        else
+        {
+         _getCurrentLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude());
+        }
     }
 
     /**
