@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.egovernments.egov">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="22" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+
+    <application
+        android:name=".application.EGovApp"
+        android:allowBackup="false"
+        android:icon="@drawable/egov"
+        android:label="eGovernments"
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBUXMcf50iTY1ekEJyFU-a27s03ZjLaVGs" />
+
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="eGovernments"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:label="Create An Account"
+            android:parentActivityName=".activities.LoginActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.LoginActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.GrievanceActivity"
+            android:label="Grievances"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.HomeActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.PropertyActivity"
+            android:label="Property Tax"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.HomeActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.PropertyDetailsActivity"
+            android:label="Property Tax"
+            android:parentActivityName=".activities.PropertyActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.PropertyActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.NewGrievanceActivity"
+            android:label="Grievances"
+            android:parentActivityName=".activities.GrievanceActivity"
+            android:theme="@style/AppTheme"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GrievanceActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.NewPropertyActivity"
+            android:label="Property Tax"
+            android:parentActivityName=".activities.PropertyActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.PropertyActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.NewPropertyDetailsActivity"
+            android:label="Property Tax"
+            android:parentActivityName=".activities.NewPropertyActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.NewPropertyActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.GreivanceDetailsActivity"
+            android:label="Grievances"
+            android:parentActivityName=".activities.GrievanceActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GrievanceActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.AccountActivationActivity"
+            android:label="Verify Account"
+            android:parentActivityName=".activities.LoginActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.LoginActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.ProfileEditActivity"
+            android:label="Profile"
+            android:parentActivityName=".activities.ProfileActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.ProfileActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:label="Profile"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.HomeActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.NotificationsActivity"
+            android:label="Notifications"
+            android:parentActivityName=".activities.HomeActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.HomeActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.HomeActivity"
+            android:label="Home"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".activities.BaseActivity"
+            android:label="Home"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:label="Account Recovery"
+            android:parentActivityName=".activities.LoginActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.LoginActivity" />
+        </activity>
+
+        <service android:name=".network.UpdateService" />
+
+    </application>
+
+</manifest>

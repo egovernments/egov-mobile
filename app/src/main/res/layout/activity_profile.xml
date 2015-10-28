@@ -1,0 +1,203 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/profile_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:background="@color/button_material_light"
+                android:scaleType="fitCenter"
+                android:src="@drawable/profile" />
+
+            <LinearLayout
+                android:id="@+id/profileLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/profile_image"
+                android:layout_margin="8dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+
+                <TextView
+                    android:id="@+id/profile_name_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profilename_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_phoneno_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profilephone_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_phoneno"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+
+                <TextView
+                    android:id="@+id/profile_altphoneno_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profilealtphone_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_altphoneno"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_email_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profileemail_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_gender_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profilegender_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_dateofbirth_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profileDOB_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_dateofbirth"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_aadhaarcardno_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profileaadhaar_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_aadhaarcardno"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_PANcardno_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/profilepan_label"
+                    android:textSize="@dimen/field_labelsize" />
+
+                <TextView
+                    android:id="@+id/profile_PANcardno"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dataLabelColor"
+                    android:textSize="@dimen/data_labelsize" />
+
+            </LinearLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/profile_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/profileLayout"
+                android:layout_alignRight="@+id/profileLayout"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="212dp"
+                android:src="@drawable/ic_mode_edit_white_24dp" />
+
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/profile_editcompat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/profileLayout"
+                android:layout_alignRight="@+id/profileLayout"
+                android:layout_marginEnd="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="212dp"
+                android:src="@drawable/ic_mode_edit_white_24dp"
+                android:visibility="gone"
+                fab:fab_colorNormal="@color/colorAccent"
+                fab:fab_colorPressed="@color/colorPrimary"
+                fab:fab_colorRipple="#000" />
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/profile_placeholder"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp" />
+</RelativeLayout>
+
