@@ -59,4 +59,12 @@
     <string name="area_label">Area*</string>
     <string name="gallery_label">Gallery</string>
     <string name="camera_label">Camera</string>
+    <string name="details_type_label">Type</string>
+    <string name="history_label">History</string>
+    <string name="processing_label">Processing</string>
+    <string name="completed_label">Completed</string>
+    <string name="regected_label">Rejected</string>
+    <string name="update_grievance_label">Update grievance</string>
+    <string name="comment_label">Comment</string>
+    <string name="action_label">Action</string>
 </resources>

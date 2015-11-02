@@ -130,6 +130,9 @@ public class UpdateService extends Service {
     }
 
     private void updateProfile() {
+
+        ProfileActivity.profile = null;
+
         if (sessionManager.getAccessToken() != null) {
             ApiController.getAPI().getProfile(sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
                 @Override

@@ -29,7 +29,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,12 +47,14 @@ import com.egovernments.egov.R;
 import com.egovernments.egov.helper.NoFilterAdapter;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.models.Complaint;
+import com.egovernments.egov.models.GrievanceCreateAPIResponse;
 import com.egovernments.egov.models.GrievanceLocation;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
 import com.egovernments.egov.models.GrievanceType;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
+import com.egovernments.egov.network.UploadService;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,12 +63,12 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit.Callback;
@@ -110,14 +111,17 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     private int uploadCount = 0;
 
+    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
+
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
 
     private ViewPager viewPager;
 
     private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
 
-    //TODO wait for latlng api calls to be fixed
-    //TODO add image uploading
+    private File cacheDir;
+
+    //TODO wait for lat, lng api calls to be fixed
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,11 +131,12 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         sessionManager = new SessionManager(getApplicationContext());
 
-        final FloatingActionButton pictureAddbutton = (FloatingActionButton) findViewById(R.id.picture_add);
-        final com.melnykov.fab.FloatingActionButton pictureAddbuttoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.picture_addcompat);
+        cacheDir = this.getExternalCacheDir() == null ? this.getCacheDir() : this.getExternalCacheDir();
+
+        final FloatingActionButton pictureAddButton = (FloatingActionButton) findViewById(R.id.picture_add);
+        final com.melnykov.fab.FloatingActionButton pictureAddButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.picture_addcompat);
 
         NiceSupportMapFragment niceSupportMapFragment = (NiceSupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.complaint_map);
-        final GoogleMap googleMap = niceSupportMapFragment.getMap();
         niceSupportMapFragment.getMapAsync(this);
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -233,10 +238,18 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                       @Override
                                                       public void onClick(View v) {
 
-                                                          int complaintTypeID = grievanceTypes.get(dropdown.getSelectedItemPosition()).getId();
+                                                          int complaintTypeID = grievanceTypes.get(dropdown.getSelectedItemPosition() - 1).getId();
                                                           String complaintDetails = details.getText().toString().trim();
-                                                          double lat = marker.getPosition().latitude;
-                                                          double lng = marker.getPosition().longitude;
+
+                                                          double lat;
+                                                          double lng;
+                                                          if (marker != null) {
+                                                              lat = marker.getPosition().latitude;
+                                                              lng = marker.getPosition().longitude;
+                                                          } else {
+                                                              lat = 0;
+                                                              lng = 0;
+                                                          }
                                                           String landmarkDetails = landmark.getText().toString().trim();
 
                                                           if (locationID == 0 && (lat == 0 && lng == 0)) {
@@ -273,6 +286,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                     dialog = new Dialog(NewGrievanceActivity.this);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialog.setContentView(R.layout.dialog_upload);
+                    dialog.setCanceledOnTouchOutside(true);
 
 
                     dialog.findViewById(R.id.from_gallery).setOnClickListener(new View.OnClickListener() {
@@ -306,12 +320,12 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         };
 
         if (Build.VERSION.SDK_INT >= 21) {
-            pictureAddbutton.setOnClickListener(onClickListener);
+            pictureAddButton.setOnClickListener(onClickListener);
 
         } else {
-            pictureAddbutton.setVisibility(View.GONE);
-            pictureAddbuttoncompat.setVisibility(View.VISIBLE);
-            pictureAddbuttoncompat.setOnClickListener(onClickListener);
+            pictureAddButton.setVisibility(View.GONE);
+            pictureAddButtonCompat.setVisibility(View.VISIBLE);
+            pictureAddButtonCompat.setOnClickListener(onClickListener);
         }
 
     }
@@ -319,12 +333,8 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     private void fromCamera() {
 
-        File cacheDir = this.getExternalCacheDir();
-        if (cacheDir == null) {
-            // Fall back to using the internal cache directory
-            cacheDir = this.getCacheDir();
-        }
-        File file = new File(cacheDir, "POST_IMAGE_" + (uriArrayList.size()) + ".jpg");
+
+        File file = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -338,17 +348,15 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
-            File cacheDir = this.getExternalCacheDir();
-            if (cacheDir == null) {
-                // Fall back to using the internal cache directory
-                cacheDir = this.getCacheDir();
-            }
-
-            uriArrayList.add(Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + (uriArrayList.size()) + ".jpg")));
+            uriArrayList.add(Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg")));
 
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
-            grievanceImagePagerAdapter.addImage();
+            grievanceImagePagerAdapter.notifyDataSetChanged();
+
+            uploadCount++;
+
+            imageID.remove(0);
 
             viewPager.setCurrentItem(uriArrayList.size());
 
@@ -359,7 +367,11 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
             uriArrayList.add(data.getData());
 
-            grievanceImagePagerAdapter.addImage();
+            grievanceImagePagerAdapter.notifyDataSetChanged();
+
+            uploadCount++;
+
+            imageID.remove(0);
 
             viewPager.setCurrentItem(uriArrayList.size());
 
@@ -432,16 +444,24 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         Complaint complaint = new Complaint(locationId, lat, lng, details, complaintTypeId, landmarkDetails);
 
-        ApiController.getAPI().createComplaint(complaint, sessionManager.getAccessToken(), new Callback<JsonObject>() {
+        ApiController.getAPI().createComplaint(complaint, sessionManager.getAccessToken(), new Callback<GrievanceCreateAPIResponse>() {
             @Override
-            public void success(JsonObject jsonObject, Response response) {
+            public void success(GrievanceCreateAPIResponse grievanceCreateAPIResponse, Response response) {
 
                 Toast.makeText(NewGrievanceActivity.this, "Grievance successfully registered", Toast.LENGTH_SHORT).show();
 
                 progressDialog.dismiss();
 
                 Intent intent = new Intent();
-                setResult(2, intent);
+                setResult(RESULT_OK, intent);
+
+                if (uploadCount != 0) {
+                    Intent intent1 = new Intent(NewGrievanceActivity.this, UploadService.class);
+                    intent1.putParcelableArrayListExtra(UploadService.URI_LIST, uriArrayList);
+                    intent1.putExtra(UploadService.COMPLAINT_NO, grievanceCreateAPIResponse.getResult().getCrn());
+                    startService(intent1);
+                }
+
                 finish();
 
 
@@ -461,20 +481,13 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
 
     public interface RemoveImageInterface {
-        void removeFragmentImage(int position, UploadImageFragment removefrag);
+        void removeFragmentImage(int position, UploadImageFragment fragment);
     }
 
     private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
 
         public GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
-        }
-
-        public void addImage() {
-
-            this.notifyDataSetChanged();
-            uploadCount++;
-            Log.w("ADDED ARRAY LIST IS ->", uriArrayList.toString());
         }
 
         @Override
@@ -486,7 +499,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         @Override
         public Fragment getItem(int position) {
             Bundle args = new Bundle();
-            args.putString("uri", uriArrayList.get(position).toString());
+            args.putString("uri", (uriArrayList.get(position)).toString());
             args.putInt("pos", position);
             UploadImageFragment fragment = new UploadImageFragment(this, uriArrayList.get(position));
             fragment.setArguments(args);
@@ -499,14 +512,14 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
 
         @Override
-        public void removeFragmentImage(int position, UploadImageFragment removefrg) {
+        public void removeFragmentImage(int position, UploadImageFragment fragment) {
 
-            getSupportFragmentManager().beginTransaction().remove(removefrg).commit();
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
             uriArrayList.remove(position);
             uploadCount--;
 
-            Log.w("Called item--------", "" + position);
-            Log.w("ARRAY LIST IS ->", uriArrayList.toString());
+            imageID.add(String.valueOf(position + 1));
 
             this.notifyDataSetChanged();
 
@@ -554,16 +567,20 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                 ThumbImage = ThumbnailUtils
                         .extractThumbnail(MediaStore.Images.Media.getBitmap
                                 (getActivity().getContentResolver(),
-                                        Uri.parse(arg.getString("uri"))), 100, 100);
+                                        Uri.parse(arg.getString("uri"))), 1280, 720);
             } catch (IOException e) {
 
-                Toast.makeText(getActivity(), "An error occurred retrieving this image", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
 
+
+            if (ThumbImage != null) {
+                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
+            } else {
+                Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT).show();
             }
 
             imageView.setImageBitmap(ThumbImage);
-
-            Log.w("Uri called", arg.getString("uri"));
 
             fragmentPosition = arg.getInt("pos");
 

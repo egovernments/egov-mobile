@@ -48,32 +48,15 @@ public class Grievance implements Serializable {
     @Expose
     private Integer supportDocsSize;
 
-    /**
-     * @return The detail
-     */
-    public String getDetail() {
-        return detail;
-    }
-
-    /**
-     * @param detail The detail
-     */
-    public void setDetail(String detail) {
-        this.detail = detail;
-    }
-
-    /**
-     * @return The crn
-     */
     public String getCrn() {
         return crn;
     }
 
     /**
-     * @param crn The crn
+     * @return The detail
      */
-    public void setCrn(String crn) {
-        this.crn = crn;
+    public String getDetail() {
+        return detail;
     }
 
     /**
@@ -84,24 +67,10 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param status The status
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    /**
      * @return The lastModifiedBy
      */
     public String getLastModifiedBy() {
         return lastModifiedBy;
-    }
-
-    /**
-     * @param lastModifiedBy The lastModifiedBy
-     */
-    public void setLastModifiedBy(String lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
     }
 
     /**
@@ -112,24 +81,10 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param lastModifiedDate The lastModifiedDate
-     */
-    public void setLastModifiedDate(String lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    /**
      * @return The complainantName
      */
     public String getComplainantName() {
         return complainantName;
-    }
-
-    /**
-     * @param complainantName The complainantName
-     */
-    public void setComplainantName(String complainantName) {
-        this.complainantName = complainantName;
     }
 
     /**
@@ -140,24 +95,10 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param locationName The locationName
-     */
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-
-    /**
      * @return The complaintTypeId
      */
     public Integer getComplaintTypeId() {
         return complaintTypeId;
-    }
-
-    /**
-     * @param complaintTypeId The complaintTypeId
-     */
-    public void setComplaintTypeId(Integer complaintTypeId) {
-        this.complaintTypeId = complaintTypeId;
     }
 
     /**
@@ -168,24 +109,10 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param complaintTypeName The complaintTypeName
-     */
-    public void setComplaintTypeName(String complaintTypeName) {
-        this.complaintTypeName = complaintTypeName;
-    }
-
-    /**
      * @return The complaintTypeImage
      */
     public String getComplaintTypeImage() {
         return complaintTypeImage;
-    }
-
-    /**
-     * @param complaintTypeImage The complaintTypeImage
-     */
-    public void setComplaintTypeImage(String complaintTypeImage) {
-        this.complaintTypeImage = complaintTypeImage;
     }
 
     /**
@@ -196,13 +123,6 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param landmarkDetails The landmarkDetails
-     */
-    public void setLandmarkDetails(String landmarkDetails) {
-        this.landmarkDetails = landmarkDetails;
-    }
-
-    /**
      * @return The createdDate
      */
     public String getCreatedDate() {
@@ -210,24 +130,10 @@ public class Grievance implements Serializable {
     }
 
     /**
-     * @param createdDate The createdDate
-     */
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    /**
      * @return The supportDocsSize
      */
     public Integer getSupportDocsSize() {
         return supportDocsSize;
-    }
-
-    /**
-     * @param supportDocsSize The supportDocsSize
-     */
-    public void setSupportDocsSize(Integer supportDocsSize) {
-        this.supportDocsSize = supportDocsSize;
     }
 
 }

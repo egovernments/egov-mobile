@@ -143,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, "Please enter a valid email ID", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
         } else if (!isValidPassword(password)) {
-            Toast.makeText(RegisterActivity.this, "Password must be 8-32 characters long, comtaining at least one uppercase and one lowercase letter, and one number or special character excluding '& < > # % \" ' / \\' and space", Toast.LENGTH_LONG).show();
+            Toast.makeText(RegisterActivity.this, "Password must be 8-32 characters long, containing at least one uppercase and one lowercase letter, and one number or special character excluding '& < > # % \" ' / \\' and space", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
         } else if (!password.equals(confirmpassword)) {
             Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_LONG).show();
@@ -151,14 +151,14 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
 
 
-            ApiController.getAPI().RegisterUser(new User(email, phoneno, name, password, deviceID, deviceType, deviceOS), new Callback<JsonObject>() {
+            ApiController.getAPI().registerUser(new User(email, phoneno, name, password, deviceID, deviceType, deviceOS), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
 
                     Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
 
 
-                    ApiController.getAPI().SendOTP(phoneno, new Callback<JsonObject>() {
+                    ApiController.getAPI().sendOTP(phoneno, new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 

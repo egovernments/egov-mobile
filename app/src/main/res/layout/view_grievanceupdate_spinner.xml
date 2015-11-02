@@ -8,7 +8,7 @@
     android:drawablePadding="5dp"
     android:drawableRight="@drawable/ic_keyboard_arrow_down_black_24dp"
     android:gravity="center_vertical"
-    android:hint="@string/type_label"
+    android:hint="@string/action_label"
     android:paddingEnd="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"

@@ -30,24 +30,24 @@ public class ProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        final FloatingActionButton profileEditbutton = (FloatingActionButton) findViewById(R.id.profile_edit);
-        final com.melnykov.fab.FloatingActionButton profileEditbuttoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
+        final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
+        final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
-                intent.putExtra(ProfileEditActivity.PROFILEEDIT_CONTENT, profile);
+                intent.putExtra(ProfileEditActivity.PROFILE_EDIT_CONTENT, profile);
                 startActivity(intent);
             }
         };
 
         if (Build.VERSION.SDK_INT >= 21) {
-            profileEditbutton.setOnClickListener(onClickListener);
+            profileEditButton.setOnClickListener(onClickListener);
         } else {
-            profileEditbutton.setVisibility(View.GONE);
-            profileEditbuttoncompat.setVisibility(View.VISIBLE);
-            profileEditbuttoncompat.setOnClickListener(onClickListener);
+            profileEditButton.setVisibility(View.GONE);
+            profileEditButtonCompat.setVisibility(View.VISIBLE);
+            profileEditButtonCompat.setOnClickListener(onClickListener);
         }
         if (profile != null)
             updateProfile();
@@ -65,8 +65,8 @@ public class ProfileActivity extends BaseActivity {
 
         final TextView name = (TextView) findViewById(R.id.profile_name);
         final TextView emailId = (TextView) findViewById(R.id.profile_email);
-        final TextView mobileno = (TextView) findViewById(R.id.profile_phoneno);
-        final TextView altmobileno = (TextView) findViewById(R.id.profile_altphoneno);
+        final TextView mobileNo = (TextView) findViewById(R.id.profile_phoneno);
+        final TextView altMobileNo = (TextView) findViewById(R.id.profile_altphoneno);
         final TextView dob = (TextView) findViewById(R.id.profile_dateofbirth);
         final TextView aadhaar = (TextView) findViewById(R.id.profile_aadhaarcardno);
         final TextView pan = (TextView) findViewById(R.id.profile_PANcardno);
@@ -74,10 +74,11 @@ public class ProfileActivity extends BaseActivity {
 
         name.setText(profile.getName());
         emailId.setText(profile.getEmailId());
-        mobileno.setText(profile.getMobileNumber());
-        altmobileno.setText(profile.getAltContactNumber());
+        mobileNo.setText(profile.getMobileNumber());
+        altMobileNo.setText(profile.getAltContactNumber());
         if (profile.getDob() != null) {
             try {
+                //noinspection SpellCheckingInspection
                 dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -115,6 +116,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
 
+    @SuppressWarnings("unused")
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
         updateProfile();
     }

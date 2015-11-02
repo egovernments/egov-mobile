@@ -11,10 +11,10 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.PropertyAdapter;
 import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Property;
-import com.egovernments.egov.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class PropertyActivity extends BaseActivity {
             public void onItemClicked(View view, int position) {
 
                 Intent intent = new Intent(PropertyActivity.this, PropertyDetailsActivity.class);
-                intent.putExtra(PropertyDetailsActivity.PROPERTYITEM, properties.get(position));
+                intent.putExtra(PropertyDetailsActivity.PROPERTY_ITEM, properties.get(position));
                 startActivity(intent);
 
             }
@@ -56,7 +56,7 @@ public class PropertyActivity extends BaseActivity {
         progressBar.setVisibility(View.GONE);
 
         FloatingActionButton newPropertyButton = (FloatingActionButton) findViewById(R.id.list_fab);
-        com.melnykov.fab.FloatingActionButton newPropertybuttoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
+        com.melnykov.fab.FloatingActionButton newPropertyButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -71,8 +71,8 @@ public class PropertyActivity extends BaseActivity {
             newPropertyButton.setOnClickListener(onClickListener);
         } else {
             newPropertyButton.setVisibility(View.GONE);
-            newPropertybuttoncompat.setVisibility(View.VISIBLE);
-            newPropertybuttoncompat.setOnClickListener(onClickListener);
+            newPropertyButtonCompat.setVisibility(View.VISIBLE);
+            newPropertyButtonCompat.setOnClickListener(onClickListener);
         }
 
 

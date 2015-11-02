@@ -85,10 +85,10 @@
 
         <activity
             android:name=".activities.NewGrievanceActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Grievances"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -116,10 +116,11 @@
         </activity>
 
         <activity
-            android:name=".activities.GreivanceDetailsActivity"
+            android:name=".activities.GrievanceDetailsActivity"
             android:label="Grievances"
             android:parentActivityName=".activities.GrievanceActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
@@ -187,6 +188,8 @@
         </activity>
 
         <service android:name=".network.UpdateService" />
+
+        <service android:name=".network.UploadService" />
 
     </application>
 

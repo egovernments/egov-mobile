@@ -6,9 +6,6 @@ public class ApiUrl {
     public final static String api_baseUrl = "https://phoenix-qa.egovernments.org/api/v1.0";
     public final static String login_baseUrl = "https://phoenix-qa.egovernments.org/api";
 
-    //Calls to picasso do not inherit entire URLs from here, will need to be changed manually
-    //Redirect URL parameter of calls to CITIZEN_PASSWORD_RECOVER must be changed manually
-
     /**
      * Grievance
      */
@@ -31,6 +28,8 @@ public class ApiUrl {
     public final static String COMPLAINT_SEARCH = "/complaint/search";
 
     public final static String COMPLAINT_DETAIL = "/complaint/{complaintNo}/detail";
+
+    public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
 
     public final static String COMPLAINT_STATUS = "/complaint/{complaintNo}/status";
 

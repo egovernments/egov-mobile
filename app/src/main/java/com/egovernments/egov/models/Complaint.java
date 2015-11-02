@@ -23,47 +23,24 @@ public class Complaint {
         return locationId;
     }
 
-    public void setLocationId(int locationId) {
-        this.locationId = locationId;
-    }
-
     public double getLat() {
         return lat;
     }
 
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
 
     public double getLng() {
         return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
     }
 
     public String getDetails() {
         return details;
     }
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
     public int getComplaintTypeId() {
         return complaintTypeId;
     }
 
-    public void setComplaintTypeId(int complaintTypeId) {
-        this.complaintTypeId = complaintTypeId;
-    }
-
     public String getLandmarkDetails() {
         return landmarkDetails;
-    }
-
-    public void setLandmarkDetails(String landmarkDetails) {
-        this.landmarkDetails = landmarkDetails;
     }
 }

@@ -1,6 +1,7 @@
 package com.egovernments.egov.application;
 
 import android.app.Application;
+import android.net.Uri;
 
 import com.egovernments.egov.network.SSLTrustManager;
 import com.squareup.okhttp.Cache;
@@ -42,9 +43,19 @@ public class EGovApp extends Application {
         client.setProtocols(Collections.singletonList(Protocol.HTTP_1_1));
         client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
 
-        Picasso picasso = new Picasso.Builder(this)
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
+        Picasso picasso = builder
                 .downloader(new OkHttpDownloader(client))
                 .build();
+
+        picasso.setLoggingEnabled(true);
 
         Picasso.setSingletonInstance(picasso);
 

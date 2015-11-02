@@ -32,7 +32,7 @@ public class LoginActivity extends Activity {
     private ProgressBar progressBar;
 
     private FloatingActionButton loginButton;
-    private com.melnykov.fab.FloatingActionButton loginbuttoncompat;
+    private com.melnykov.fab.FloatingActionButton loginButtonCompat;
     private TextView forgotLabel;
     private Button signupButton;
 
@@ -61,7 +61,7 @@ public class LoginActivity extends Activity {
 
 
         loginButton = (FloatingActionButton) findViewById(R.id.signin_submit);
-        loginbuttoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.signin_submit_compat);
+        loginButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.signin_submit_compat);
 
         forgotLabel = (TextView) findViewById(R.id.signin_forgot);
         signupButton = (Button) findViewById(R.id.signin_register);
@@ -81,7 +81,7 @@ public class LoginActivity extends Activity {
 
                 progressBar.setVisibility(View.VISIBLE);
                 loginButton.setVisibility(View.GONE);
-                loginbuttoncompat.setVisibility(View.GONE);
+                loginButtonCompat.setVisibility(View.GONE);
                 forgotLabel.setVisibility(View.INVISIBLE);
                 signupButton.setVisibility(View.INVISIBLE);
 
@@ -97,8 +97,8 @@ public class LoginActivity extends Activity {
         } else {
 
             loginButton.setVisibility(View.GONE);
-            loginbuttoncompat.setVisibility(View.VISIBLE);
-            loginbuttoncompat.setOnClickListener(onClickListener);
+            loginButtonCompat.setVisibility(View.VISIBLE);
+            loginButtonCompat.setOnClickListener(onClickListener);
 
         }
 
@@ -150,7 +150,7 @@ public class LoginActivity extends Activity {
             if (Build.VERSION.SDK_INT >= 21) {
                 loginButton.setVisibility(View.VISIBLE);
             } else
-                loginbuttoncompat.setVisibility(View.VISIBLE);
+                loginButtonCompat.setVisibility(View.VISIBLE);
 
         } else {
             ApiController.getLoginAPI().Login(username, "read write", password, "password", new Callback<JsonObject>() {
@@ -193,7 +193,7 @@ public class LoginActivity extends Activity {
                     if (Build.VERSION.SDK_INT >= 21) {
                         loginButton.setVisibility(View.VISIBLE);
                     } else
-                        loginbuttoncompat.setVisibility(View.VISIBLE);
+                        loginButtonCompat.setVisibility(View.VISIBLE);
 
                 }
             });

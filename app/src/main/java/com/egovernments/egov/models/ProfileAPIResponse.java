@@ -11,21 +11,10 @@ public class ProfileAPIResponse {
     private Profile profile;
 
     /**
-     * 
-     * @return
-     *     The profile
+     * @return The profile
      */
     public Profile getProfile() {
         return profile;
-    }
-
-    /**
-     * 
-     * @param profile
-     *     The profile
-     */
-    public void setProfile(Profile profile) {
-        this.profile = profile;
     }
 
 }

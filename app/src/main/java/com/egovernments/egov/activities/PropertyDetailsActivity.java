@@ -13,13 +13,13 @@ import com.egovernments.egov.R;
 
 public class PropertyDetailsActivity extends BaseActivity {
 
-    public static final String PROPERTYITEM ="PropertyItem";
+    public static final String PROPERTY_ITEM ="PropertyItem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_property_details);
-        Property property = (Property) getIntent().getSerializableExtra(PROPERTYITEM);
+        Property property = (Property) getIntent().getSerializableExtra(PROPERTY_ITEM);
 
         TextView propertyName = (TextView) findViewById(R.id.property_name);
         TextView propertyAddress = (TextView) findViewById(R.id.property_address);
@@ -32,7 +32,7 @@ public class PropertyDetailsActivity extends BaseActivity {
         propertyTax.setText(property.getPropertyTax());
 
         FloatingActionButton propertyFab = (FloatingActionButton) findViewById(R.id.property_fab);
-        com.melnykov.fab.FloatingActionButton propertyFabcompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.property_fabcompat);
+        com.melnykov.fab.FloatingActionButton propertyFabCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.property_fabcompat);
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -46,9 +46,9 @@ public class PropertyDetailsActivity extends BaseActivity {
             propertyFab.setOnClickListener(onClickListener);
         } else {
             propertyFab.setVisibility(View.GONE);
-            propertyFabcompat.setVisibility(View.VISIBLE);
+            propertyFabCompat.setVisibility(View.VISIBLE);
 
-            propertyFabcompat.setOnClickListener(onClickListener);
+            propertyFabCompat.setOnClickListener(onClickListener);
         }
     }
 }

@@ -145,6 +145,7 @@
                     android:background="@drawable/top_edittext"
                     android:prompt="@string/complainttype_label" />
 
+
                 <TextView
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
@@ -212,7 +213,6 @@
                         android:gravity="center_vertical"
                         android:hint="@string/additionaldetails_label"
                         android:inputType="textMultiLine"
-                        android:minHeight="40dp"
                         android:paddingEnd="10dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"

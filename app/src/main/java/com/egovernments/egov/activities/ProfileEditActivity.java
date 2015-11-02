@@ -19,12 +19,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.egovernments.egov.R;
-import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.events.ProfileUpdatedEvent;
+import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
+import com.egovernments.egov.network.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,14 +56,14 @@ public class ProfileEditActivity extends BaseActivity {
 
     private String date_of_birth;
 
-    public static final String PROFILEEDIT_CONTENT = "profile";
+    public static final String PROFILE_EDIT_CONTENT = "profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
 
-        Profile profile = (Profile) getIntent().getSerializableExtra(PROFILEEDIT_CONTENT);
+        Profile profile = (Profile) getIntent().getSerializableExtra(PROFILE_EDIT_CONTENT);
 
         sessionManager = new SessionManager(getApplicationContext());
 
@@ -93,6 +94,7 @@ public class ProfileEditActivity extends BaseActivity {
             date_of_birth = profile.getDob();
             if (!(profile.getDob() == null)) {
                 try {
+                    //noinspection SpellCheckingInspection
                     profileDOB.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -145,18 +147,18 @@ public class ProfileEditActivity extends BaseActivity {
             });
         }
 
-        FloatingActionButton profileEditpicturebutton = (FloatingActionButton) findViewById(R.id.editprofile_changeimage);
-        com.melnykov.fab.FloatingActionButton profileEditpicturebuttoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.editprofile_changeimagecompat);
+        FloatingActionButton profileEditPictureButton = (FloatingActionButton) findViewById(R.id.editprofile_changeimage);
+        com.melnykov.fab.FloatingActionButton profileEditPictureButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.editprofile_changeimagecompat);
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-//            profileEditpicturebutton.setOnClickListener(onClickListener);
+//            profileEditPictureButton.setOnClickListener(onClickListener);
 
         } else {
 
-            profileEditpicturebutton.setVisibility(View.GONE);
-            profileEditpicturebuttoncompat.setVisibility(View.VISIBLE);
-//            profileEditbuttoncompat.setOnClickListener(onClickListener);
+            profileEditPictureButton.setVisibility(View.GONE);
+            profileEditPictureButtonCompat.setVisibility(View.VISIBLE);
+//            profileEditButtonCompat.setOnClickListener(onClickListener);
 
         }
 
@@ -255,6 +257,8 @@ public class ProfileEditActivity extends BaseActivity {
                     Intent intent = new Intent(ProfileEditActivity.this, ProfileActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    startService(new Intent(ProfileEditActivity.this, UpdateService.class)
+                            .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE));
                     finish();
                 }
 

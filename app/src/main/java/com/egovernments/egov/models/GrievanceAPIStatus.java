@@ -24,24 +24,10 @@ public class GrievanceAPIStatus {
     }
 
     /**
-     * @param hasNextPage The hasNextPage
-     */
-    public void setHasNextPage(String hasNextPage) {
-        this.hasNextPage = hasNextPage;
-    }
-
-    /**
      * @return The type
      */
     public String getType() {
         return type;
-    }
-
-    /**
-     * @param type The type
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**
@@ -50,12 +36,4 @@ public class GrievanceAPIStatus {
     public String getMessage() {
         return message;
     }
-
-    /**
-     * @param message The message
-     */
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
 }

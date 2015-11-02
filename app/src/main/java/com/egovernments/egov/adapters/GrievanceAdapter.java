@@ -39,7 +39,6 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private SessionManager sessionManager;
 
     private final int VIEW_ITEM = 1;
-    private final int VIEW_PROG = 0;
 
     public GrievanceAdapter(Context context, List<Grievance> grievanceList, CardViewOnClickListener.OnItemClickCallback onItemClickCallback) {
         this.grievanceList = grievanceList;
@@ -84,7 +83,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .load(url)
                         .noFade()
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .error(R.drawable.complaint_default_grey)
+                        .error(R.drawable.complaint_default)
                         .into(((GrievanceViewHolder) viewHolder).complaintImage, new Callback() {
                             @Override
                             public void onSuccess() {
@@ -102,7 +101,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         });
             }
 
-            ((GrievanceViewHolder) viewHolder).complaintcardview.setOnClickListener(new CardViewOnClickListener(i, onItemClickCallback));
+            ((GrievanceViewHolder) viewHolder).complaintCardView.setOnClickListener(new CardViewOnClickListener(i, onItemClickCallback));
             ((GrievanceViewHolder) viewHolder).complaintNo.setText("Grievance No.: " + ci.getCrn());
             ((GrievanceViewHolder) viewHolder).complaintStatus.setImageDrawable(getStatusIcon(ci.getStatus()));
         } else {
@@ -127,21 +126,27 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return new ProgressViewHolder(v);
     }
 
-    //TODO find out different complaint stasuseses
-
     private Drawable getStatusIcon(String status) {
         Drawable drawable;
 
         switch (status) {
-            case "REGISTERED":
+            case "REJECTED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_cancel_white_24dp);
                 drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                 return drawable;
-            case "Under review":
+            case "REGISTERED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 return drawable;
-            case "Solved":
+            case "FORWARDED":
+                drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
+                return drawable;
+            case "PROCESSING":
+                drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
+                return drawable;
+            case "COMPLETED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
                 drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
                 return drawable;
@@ -182,7 +187,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        return grievanceList.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+        return grievanceList.get(position) != null ? VIEW_ITEM : 0;
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
@@ -203,11 +208,11 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private TextView complaintLocation;
         private TextView complaintNo;
         private ImageView complaintStatus;
-        private CardView complaintcardview;
+        private CardView complaintCardView;
 
         public GrievanceViewHolder(View v) {
             super(v);
-            complaintcardview = (CardView) v.findViewById(R.id.complaint_card);
+            complaintCardView = (CardView) v.findViewById(R.id.complaint_card);
             complaintType = (TextView) v.findViewById(R.id.complaint_type);
             complaintDate = (TextView) v.findViewById(R.id.complaint_date);
             complaintImage = (ImageView) v.findViewById(R.id.complaint_image);

@@ -21,32 +21,16 @@ public class Property implements Serializable {
         return propertyName;
     }
 
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
     public String getPropertyAddress() {
         return propertyAddress;
-    }
-
-    public void setPropertyAddress(String propertyAddress) {
-        this.propertyAddress = propertyAddress;
     }
 
     public String getPropertyOwner() {
         return propertyOwner;
     }
 
-    public void setPropertyOwner(String propertyOwner) {
-        this.propertyOwner = propertyOwner;
-    }
-
     public String getPropertyTax() {
         return propertyTax;
-    }
-
-    public void setPropertyTax(String propertyTax) {
-        this.propertyTax = propertyTax;
     }
 
 }

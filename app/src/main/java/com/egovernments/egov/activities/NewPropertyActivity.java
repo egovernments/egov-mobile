@@ -38,7 +38,7 @@ public class NewPropertyActivity extends BaseActivity {
             public void onItemClicked(View view, int position) {
 
                 Intent intent = new Intent(NewPropertyActivity.this, NewPropertyDetailsActivity.class);
-                intent.putExtra(PropertyDetailsActivity.PROPERTYITEM, propertyList.get(position));
+                intent.putExtra(PropertyDetailsActivity.PROPERTY_ITEM, propertyList.get(position));
                 startActivity(intent);
 
             }
@@ -50,7 +50,7 @@ public class NewPropertyActivity extends BaseActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                    propertyList.add(new Property("A Place", "Nearby, Yolo Swaggins road, mg street,Bangalore, 532048", "The People", "Rs. 1456378"));
+                    propertyList.add(new Property("A Place", "Nearby, Some road, mg street,Bangalore, 532048", "The People", "Rs. 1456378"));
                     recList.setAdapter(new PropertyAdapter(propertyList, onItemClickCallback));
                     return true;
                 }

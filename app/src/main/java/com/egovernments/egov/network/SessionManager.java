@@ -12,13 +12,13 @@ public class SessionManager {
 
     private static final String PREF_NAME = "CredentialsPref";
 
-    public static final String IS_LOGGEDIN = "IsLoggedIn";
+    public static final String IS_LOGGED_IN = "IsLoggedIn";
 
     public static final String KEY_PASSWORD = "password";
 
     public static final String KEY_USERNAME = "username";
 
-    public static final String KEY_ACCESSTOKEN = "access_token";
+    public static final String KEY_ACCESS_TOKEN = "access_token";
 
 
     public SessionManager(Context context) {
@@ -29,10 +29,10 @@ public class SessionManager {
 
     public void loginUser(String password, String email, String accessToken) {
 
-        editor.putBoolean(IS_LOGGEDIN, true);
+        editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(KEY_PASSWORD, password);
         editor.putString(KEY_USERNAME, email);
-        editor.putString(KEY_ACCESSTOKEN, accessToken);
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
 
         editor.commit();
     }
@@ -43,7 +43,7 @@ public class SessionManager {
     }
 
     public boolean isLoggedIn() {
-        return pref.getBoolean(IS_LOGGEDIN, false);
+        return pref.getBoolean(IS_LOGGED_IN, false);
     }
 
     public String getPassword() {
@@ -55,14 +55,14 @@ public class SessionManager {
     }
 
     public String getAccessToken() {
-        String access_token = pref.getString(KEY_ACCESSTOKEN, null);
+        String access_token = pref.getString(KEY_ACCESS_TOKEN, null);
         if (access_token != null)
             return access_token.substring(1, access_token.length() - 1);
         return null;
     }
 
     public void invalidateAccessToken() {
-        editor.putString(KEY_ACCESSTOKEN, null);
+        editor.putString(KEY_ACCESS_TOKEN, null);
     }
 
 }

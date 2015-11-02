@@ -8,14 +8,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.GrievanceAdapter;
-import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.events.GrievancesUpdatedEvent;
+import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.network.UpdateService;
 
@@ -115,8 +114,8 @@ public class GrievanceActivity extends BaseActivity {
             @Override
             public void onItemClicked(View view, int position) {
 
-                Intent intent = new Intent(GrievanceActivity.this, GreivanceDetailsActivity.class);
-                intent.putExtra(GreivanceDetailsActivity.GRIEVANCEITEM, grievanceList.get(position));
+                Intent intent = new Intent(GrievanceActivity.this, GrievanceDetailsActivity.class);
+                intent.putExtra(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
                 startActivity(intent);
 
             }
@@ -130,8 +129,8 @@ public class GrievanceActivity extends BaseActivity {
         }
 
 
-        FloatingActionButton newComplaintbutton = (FloatingActionButton) findViewById(R.id.list_fab);
-        com.melnykov.fab.FloatingActionButton newComplaintButtoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
+        FloatingActionButton newComplaintButton = (FloatingActionButton) findViewById(R.id.list_fab);
+        com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -144,27 +143,28 @@ public class GrievanceActivity extends BaseActivity {
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-            newComplaintbutton.setOnClickListener(onClickListener);
+            newComplaintButton.setOnClickListener(onClickListener);
         } else {
-            newComplaintbutton.setVisibility(View.GONE);
-            newComplaintButtoncompat.setVisibility(View.VISIBLE);
+            newComplaintButton.setVisibility(View.GONE);
+            newComplaintButtonCompat.setVisibility(View.VISIBLE);
 
-            newComplaintButtoncompat.setOnClickListener(onClickListener);
+            newComplaintButtonCompat.setOnClickListener(onClickListener);
 
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 2) {
-                progressBar.setVisibility(View.GONE);
-                pageNo = 1;
-                Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-                intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
-                startService(intent);
-                grievanceAdapter = null;
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+            progressBar.setVisibility(View.GONE);
+            pageNo = 1;
+            Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
+            intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
+            startService(intent);
+            grievanceAdapter = null;
         }
 
     }
@@ -181,10 +181,10 @@ public class GrievanceActivity extends BaseActivity {
         super.onStop();
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
 
         if (grievanceAdapter == null) {
-            Log.v("Invalidated list", "----------------------------------------------------------------------------------------------");
             pageLoaded = 1;
             previousTotal = 0;
             progressBar.setVisibility(View.GONE);

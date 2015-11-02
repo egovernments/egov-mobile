@@ -9,7 +9,7 @@ import java.util.List;
 
 
 /**
- * Adapter used on autocompletetextview to prevent results from being cut off
+ * Adapter used on autocompleteTextView to prevent results from being cut off
  **/
 
 public class NoFilterAdapter<T> extends ArrayAdapter<T> {

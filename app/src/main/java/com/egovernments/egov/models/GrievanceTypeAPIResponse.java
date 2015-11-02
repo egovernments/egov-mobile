@@ -14,21 +14,10 @@ public class GrievanceTypeAPIResponse {
     private List<GrievanceType> grievanceType = new ArrayList<>();
 
     /**
-     * 
-     * @return
-     *     The complaintType
+     * @return The complaintType
      */
     public List<GrievanceType> getGrievanceType() {
         return grievanceType;
-    }
-
-    /**
-     * 
-     * @param grievanceType
-     *     The complaintType
-     */
-    public void setGrievanceType(List<GrievanceType> grievanceType) {
-        this.grievanceType = grievanceType;
     }
 
 }

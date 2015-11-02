@@ -79,7 +79,7 @@ public class AccountActivationActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ApiController.getAPI().SendOTP(username, new Callback<JsonObject>() {
+                ApiController.getAPI().sendOTP(username, new Callback<JsonObject>() {
                     @Override
                     public void success(JsonObject jsonObject, Response response) {
                         Toast.makeText(AccountActivationActivity.this, "OTP Resent", Toast.LENGTH_SHORT).show();
@@ -126,7 +126,7 @@ public class AccountActivationActivity extends AppCompatActivity {
     private void submit(String activationCode) {
 
         if (!activationCode.isEmpty()) {
-            ApiController.getAPI().Activate(username, activationCode, new Callback<JsonObject>() {
+            ApiController.getAPI().activate(username, activationCode, new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
                     Toast.makeText(AccountActivationActivity.this, "Account activated", Toast.LENGTH_SHORT).show();

@@ -19,7 +19,7 @@ public class NewPropertyDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_property_details);
-        Property property = (Property) getIntent().getSerializableExtra(PropertyDetailsActivity.PROPERTYITEM);
+        Property property = (Property) getIntent().getSerializableExtra(PropertyDetailsActivity.PROPERTY_ITEM);
 
 
         TextView propertyName = (TextView) findViewById(R.id.searchdetails_property_name);
@@ -32,7 +32,7 @@ public class NewPropertyDetailsActivity extends BaseActivity {
 
 
 FloatingActionButton searchDetailsFab = (FloatingActionButton) findViewById(R.id.searchdetails_property_fab);
-com.melnykov.fab.FloatingActionButton searchDetailsFabcompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.searchdetails_property_fabcompat);
+com.melnykov.fab.FloatingActionButton searchDetailsFabCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.searchdetails_property_fabcompat);
 
 View.OnClickListener onClickListener = new View.OnClickListener() {
     @Override
@@ -50,8 +50,8 @@ if (Build.VERSION.SDK_INT >= 21) {
         searchDetailsFab.setOnClickListener(onClickListener);
         } else {
         searchDetailsFab.setVisibility(View.GONE);
-        searchDetailsFabcompat.setVisibility(View.VISIBLE);
-        searchDetailsFabcompat.setOnClickListener(onClickListener);
+        searchDetailsFabCompat.setVisibility(View.VISIBLE);
+        searchDetailsFabCompat.setOnClickListener(onClickListener);
         }
         }
         }

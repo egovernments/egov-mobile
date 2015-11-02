@@ -19,6 +19,7 @@ public class BadgeUpdater {
         }
         badge.setCount(count);
         icon.mutate();
+        //noinspection ConstantConditions
         if(badge==null)
         {
             Toast.makeText(context, "Is NULL :(", Toast.LENGTH_LONG).show();

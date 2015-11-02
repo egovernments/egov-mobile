@@ -30,7 +30,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private FloatingActionButton sendButton;
-    private com.melnykov.fab.FloatingActionButton sendButtoncompat;
+    private com.melnykov.fab.FloatingActionButton sendButtonCompat;
 
 
     @Override
@@ -57,7 +57,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     phone = phone_edittext.toString().trim();
                     progressBar.setVisibility(View.VISIBLE);
                     sendButton.setVisibility(View.GONE);
-                    sendButtoncompat.setVisibility(View.GONE);
+                    sendButtonCompat.setVisibility(View.GONE);
                     submit(phone);
                     return true;
                 }
@@ -67,7 +67,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
 
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
-        sendButtoncompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
+        sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -77,7 +77,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 phone = phone_edittext.getText().toString().trim();
                 progressBar.setVisibility(View.VISIBLE);
                 sendButton.setVisibility(View.GONE);
-                sendButtoncompat.setVisibility(View.GONE);
+                sendButtonCompat.setVisibility(View.GONE);
                 submit(phone);
 
 
@@ -93,9 +93,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         } else
 
         {
-            sendButtoncompat.setVisibility(View.VISIBLE);
+            sendButtonCompat.setVisibility(View.VISIBLE);
             sendButton.setVisibility(View.GONE);
-            sendButtoncompat.setOnClickListener(onClickListener);
+            sendButtonCompat.setOnClickListener(onClickListener);
         }
 
     }
@@ -109,7 +109,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         } else if (phone.length() != 10) {
             Toast.makeText(this, "Mobile number must be 10 digits", Toast.LENGTH_SHORT).show();
         } else {
-            ApiController.getAPI().Recover(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
+            ApiController.getAPI().recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
@@ -141,7 +141,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 21) {
             sendButton.setVisibility(View.VISIBLE);
         } else {
-            sendButtoncompat.setVisibility(View.VISIBLE);
+            sendButtonCompat.setVisibility(View.VISIBLE);
         }
 
 

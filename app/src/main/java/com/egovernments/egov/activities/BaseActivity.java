@@ -109,9 +109,9 @@ public class BaseActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         fillList();
 
-        BaseAdapter navadapter = new NavAdapter(arrayList);
+        BaseAdapter navAdapter = new NavAdapter(arrayList);
 
-        lv.setAdapter(navadapter);
+        lv.setAdapter(navAdapter);
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -156,7 +156,7 @@ public class BaseActivity extends AppCompatActivity {
 
                     case 9:
                         progressDialog.show();
-                        ApiController.getAPI().Logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                        ApiController.getAPI().logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
@@ -235,7 +235,7 @@ public class BaseActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= 21) {
 
-//        Update LayerDrawable's BadgeDrawable
+//        Update LayerDrawable BadgeDrawable
             BadgeUpdater.setBadgeCount(this, icon, NotificationsActivity.getCount());
         }
 
