@@ -42,6 +42,7 @@ import org.egov.android.model.Complaint;
 import org.egov.android.model.User;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 public class ApiController {
 
@@ -296,7 +297,7 @@ public class ApiController {
         apiMethod.setMethod(RequestMethod.PUT);
         apiMethod.setQueryType("json");
         apiMethod.setExtraParam(id + "/updateStatus");
-        if(!status.isEmpty())
+        if(!TextUtils.isEmpty(status))
         {
          apiMethod.addParameter("action", status);
         }

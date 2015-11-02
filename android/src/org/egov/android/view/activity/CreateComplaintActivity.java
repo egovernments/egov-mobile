@@ -38,11 +38,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
+import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.api.ApiUrl;
 import org.egov.android.api.IApiUrl;
@@ -52,7 +56,6 @@ import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.model.Complaint;
-import org.egov.android.service.GeoLocation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,12 +63,19 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -74,6 +84,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,7 +120,14 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     private static final int FROM_GALLERY = 2000;
     private static final int GET_LOCATION = 3000;
     ArrayList<String> imageUrl = new ArrayList<String>();
+    LocationManager locationManager;
+    ProgressDialog progressDialog;
+    private boolean isCurrentLocation=true;
+    int gpsTimeOutSec;
+    Timer gpsTimeOutTimer=new Timer();
+	private final static String TAG = CreateComplaintActivity.class.getName();
 
+    
     /**
      * It is used to initialize an activity. An Activity is an application component that provides a
      * screen with which users can interact in order to do something, To initialize the
@@ -123,8 +141,11 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_complaint);
+        
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        progressDialog=new ProgressDialog(CreateComplaintActivity.this);
+        progressDialog.setCancelable(false);
 
-        new GeoLocation(this);
         Bundle bundle = getIntent().getExtras();
         complaintTypeId = bundle.getInt("complaintTypeId");
         ((TextView) findViewById(R.id.complaint_type)).setText(bundle
@@ -143,13 +164,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         assetPath = obj[0].toString() + "/egovernments/complaints";
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
-        if (!GeoLocation.getGpsStatus()) {
+        if (!getGpsStatus()) {
           _showSettingsAlert();
         }
-        else
-        {
-         _getCurrentLocation(GeoLocation.getLatitude(), GeoLocation.getLongitude());
-        }
+        
     }
 
     /**
@@ -191,10 +209,22 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 _addComplaint();
                 break;
             case R.id.complaint_location_icon:
-                Intent intent = new Intent(this, MapActivity.class);
-                intent.putExtra("latitude", latitude);
-                intent.putExtra("longitude", longitute);
-                startActivityForResult(intent, GET_LOCATION);
+            	if(isCurrentLocation && getGpsStatus() && (latitude==0.0f && longitute ==0.0f))
+            	{
+            		progressDialog.setMessage("Please, wait...");
+            		progressDialog.show();
+            		gpsTimeOutSec=30;//12 sec timeout
+            		scheduleTimerTask();
+            		
+            	}
+            	else
+            	{
+            		Intent intent = new Intent(this, MapActivity.class);
+                    intent.putExtra("latitude", latitude);
+                    intent.putExtra("longitude", longitute);
+                    startActivityForResult(intent, GET_LOCATION);
+            	}
+                
                 break;
             case R.id.add_photo:
                 _openDialog();
@@ -213,6 +243,50 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         }
     }
 
+    public class gpsTimeOutTask extends TimerTask
+    {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			if(latitude!=0.0f && longitute!=0.0f)
+			{
+				if(progressDialog.isShowing())
+				{
+					progressDialog.dismiss();
+				}
+				startMapActivitity();
+			}
+			else if(gpsTimeOutSec > 0)
+			{
+			  gpsTimeOutSec--;
+			  scheduleTimerTask();
+			}
+			else
+			{
+				if(progressDialog.isShowing())
+				{
+					progressDialog.dismiss();
+				}
+				startMapActivitity();
+			}
+		}
+    }
+    
+    private void scheduleTimerTask()
+    {
+    	gpsTimeOutTimer=new Timer();
+    	gpsTimeOutTimer.schedule(new gpsTimeOutTask(), 1000);
+    }
+    
+    private void startMapActivitity()
+    {
+    	Intent intent = new Intent(CreateComplaintActivity.this, MapActivity.class);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitute);
+        startActivityForResult(intent, GET_LOCATION);
+    }
+    
     /**
      * Function called when clicking on add photo. Used to show the options where to pick the image,
      * i.e, from gallery or camera
@@ -442,6 +516,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             if (attrLONGITUDEREf.equals("E")) {
                 lng = convertToDegree(attrLONGITUDE);
             }
+            isCurrentLocation=false;
             _getCurrentLocation(lat, lng);
         } catch (IOException e) {
             e.printStackTrace();
@@ -449,10 +524,20 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     private void _getCurrentLocation(double lat, double lng) {
-        latitude = lat;
-        longitute = lng;
-        String cityName = GeoLocation.getCurrentLocation(lat, lng);
-        location.setText(cityName);
+       if(location.getText().toString().trim().length()==0 && isCurrentLocation)
+       {
+    	 latitude = lat;
+         longitute = lng;
+         String cityName = getCurrentLocation(lat, lng);
+         location.setText(cityName);
+       }
+       else
+       {
+    	   latitude = lat;
+           longitute = lng;
+           String cityName = getCurrentLocation(lat, lng);
+           location.setText(cityName);
+       }
     }
 
     private Float convertToDegree(String stringDMS) {
@@ -741,4 +826,135 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             e.printStackTrace();
         }
     }
+    
+    private final LocationListener gpsLocationListener =new LocationListener(){
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            switch (status) {
+            case LocationProvider.AVAILABLE:
+                Log.d(TAG,"GPS available again\n");
+                break;
+            case LocationProvider.OUT_OF_SERVICE:
+            	Log.d(TAG,"GPS out of service\n");
+                break;
+            case LocationProvider.TEMPORARILY_UNAVAILABLE:
+            	Log.d(TAG,"GPS temporarily unavailable\n");
+                break;
+            }
+        }
+
+        public void onProviderEnabled(String provider) {
+        	Log.d(TAG,"GPS Provider Enabled\n");
+        }
+
+        public void onProviderDisabled(String provider) {
+        	Log.d(TAG,"GPS Provider Disabled\n");
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+        	Log.d(TAG,"New gps location: "
+                    + String.format("%9.6f", location.getLatitude()) + ", "
+                    + String.format("%9.6f", location.getLongitude()) + "\n");
+        	_getCurrentLocation(location.getLatitude(), location.getLongitude());
+        	locationManager.removeUpdates(this);
+        }
+
+    };
+    
+    private final LocationListener networkLocationListener = new LocationListener(){
+
+        public void onStatusChanged(String provider, int status, Bundle extras){
+            switch (status) {
+            case LocationProvider.AVAILABLE:
+            	Log.d(TAG,"Network location available again\n");
+                break;
+            case LocationProvider.OUT_OF_SERVICE:
+            	Log.d(TAG,"Network location out of service\n");
+                break;
+            case LocationProvider.TEMPORARILY_UNAVAILABLE:
+            	Log.d(TAG,"Network location temporarily unavailable\n");
+                break;
+            }
+        }
+
+        public void onProviderEnabled(String provider) {
+        	Log.d(TAG,"Network Provider Enabled\n");
+        }
+
+        public void onProviderDisabled(String provider) {
+        	Log.d(TAG,"Network Provider Disabled\n");
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+        	Log.d(TAG,"New network location: "
+                    + String.format("%9.6f", location.getLatitude()) + ", "
+                    + String.format("%9.6f", location.getLongitude()) + "\n");
+        	_getCurrentLocation(location.getLatitude(), location.getLongitude());
+        	locationManager.removeUpdates(this);
+        	
+        }
+    };
+    
+    public String getCurrentLocation(double lat, double lng) {
+
+        String cityName = "";
+
+        if (lat == 0 && lng == 0) {
+            return "";
+        }
+
+        Geocoder geocoder = new Geocoder(CreateComplaintActivity.this, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(lat, lng, 1);
+            if (addresses.size() > 0) {
+                Address address = addresses.get(0);
+                cityName=address.getThoroughfare();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return cityName;
+    }
+    
+    public boolean getGpsStatus() {
+    	boolean gpsStatus=false;
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            gpsStatus = false;
+        } else {
+            gpsStatus = true;
+        }
+        return gpsStatus;
+    }
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	if(isCurrentLocation)
+    	{
+	    	locationManager.requestLocationUpdates(
+	                LocationManager.NETWORK_PROVIDER, 0, 0,
+	                networkLocationListener);
+	        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+	                0, 0, gpsLocationListener);
+    	}
+    	
+    };
+    
+    @Override
+    protected void onPause() {
+    	// TODO Auto-generated method stub
+    	super.onPause();
+    	locationManager.removeUpdates(networkLocationListener);
+        locationManager.removeUpdates(gpsLocationListener);
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	// TODO Auto-generated method stub
+    	super.onDestroy();
+    }
+    
 }

@@ -52,6 +52,7 @@ import org.egov.android.api.SSLTrustManager;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 /**
@@ -198,7 +199,7 @@ public class Downloader extends AsyncTask<Void, Integer, byte[]> {
                     }
                     param += (param.length() == 0) ? p : "&" + p;
                 }
-                if (!param.isEmpty()) {
+                if (!TextUtils.isEmpty(param)) {
                     url = url + "?" + param;
                 }
             }
