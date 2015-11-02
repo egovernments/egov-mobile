@@ -456,7 +456,7 @@ public class RegisterActivity extends BaseActivity {
         }
         else
         {
-        	showMessage("This Mobile No or Email Address Already Registered!");
+        	showMessage(msg);
         }
     }
 }
