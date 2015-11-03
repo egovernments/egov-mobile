@@ -31,20 +31,30 @@
 
 package org.egov.android.view.activity;
 
+import java.util.Date;
+
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
+import org.egov.android.common.JSONUtil;
 import org.egov.android.data.SQLiteHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SplashActivity extends BaseActivity implements Runnable {
 
 	
+	SharedPreferences sharedPreference;
+	boolean isMultiCity;
 	
     /**
      * To set the layout for the SplashActivity this screen appears for 2000 milliseconds. Create a
@@ -55,20 +65,39 @@ public class SplashActivity extends BaseActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         
-        SharedPreferences sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+        sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
 		String baseServerURL = sharedPreference.getString("api.baseUrl", null);
+		isMultiCity=AndroidLibrary.getInstance().getConfig().get("api.multicities", "false").equals("true");
 		
-		Log.v("org.egov.android", "Is Multicity support? "+ AndroidLibrary.getInstance().getConfig().get("api.multicities", true));
+		Log.v(SplashActivity.class.getName(), "Is Multicity support? "+ isMultiCity);
 		
 		if(baseServerURL == null && 
-			AndroidLibrary.getInstance().getConfig().get("api.multicities", "true").equals("false"))
+			!isMultiCity)
 		{
-			Log.v("org.egov.android", "CONDITION WORKED :)!");
-			Editor editor = sharedPreference.edit();
-        	editor.putString("api.baseUrl", (String)AndroidLibrary.getInstance().getConfig().get("api.baseUrl", ""));
-        	editor.commit();
+			new getBaseServerURL().execute((String)AndroidLibrary.getInstance().getConfig().get("api.baseUrl", ""));
 		}
-		
+		else
+		{
+			if(baseServerURL != null)
+			{
+				Long lasturlupdationtime=sharedPreference.getLong("urlupdatetime", 0);
+				Integer timeOutDays=AndroidLibrary.getInstance().getConfig().getInt("app.timeoutdays");
+				
+				lasturlupdationtime=lasturlupdationtime+(timeOutDays*24*60*60*1000);
+								
+				if(lasturlupdationtime < new Date().getTime())
+				{
+					if(isMultiCity)
+					{
+						new getBaseServerURL().execute((String)AndroidLibrary.getInstance().getConfig().get("app.citiesJsonUrl", ""));
+					}
+					else
+					{
+						new getBaseServerURL().execute((String)AndroidLibrary.getInstance().getConfig().get("api.baseUrl", ""));	
+					}
+				}
+			}
+		}
         
         SQLiteHelper
                 .getInstance()
@@ -80,7 +109,79 @@ public class SplashActivity extends BaseActivity implements Runnable {
                         "CREATE TABLE IF NOT EXISTS tbl_jobs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, data TEXT, status TEXT, type TEXT, triedCount INTEGER, timeStamp DATETIME DEFAULT (datetime('now','localtime')), UNIQUE(data) ON CONFLICT REPLACE)");
         new Handler().postDelayed(this, 2000);
     }
+    
+    private String getValidURL(String url)
+    {
+       return (url.endsWith("/")? url: url+"/");
+    }
+    
+    public void setOrRefreshBaseURL(SharedPreferences sharedPreference, JSONObject cityJSON) throws JSONException
+    {
+		Editor editor = sharedPreference.edit();
+	    editor.putString("api.baseUrl", getValidURL(cityJSON.getString("url")));
+	    editor.putLong("urlupdatetime", new Date().getTime());
+	    editor.commit();
+    }
 
+    public class getBaseServerURL extends AsyncTask<String, Integer, String>
+    {
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		super.onPreExecute();
+    	}
+    	
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return JSONUtil.getJSON(params[0]);
+		}
+    	
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			Log.d(SplashActivity.class.getName(), result);
+			try {
+				
+				
+	    		if(result.startsWith("ERROR"))
+	    		{
+	    			Toast.makeText(getApplicationContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
+	    			return;
+	    		}
+	    		
+	    		if(isMultiCity)
+	    		{
+	    			JSONArray cities_array=new JSONArray(result);
+	    			Integer citycode=sharedPreference.getInt("api.citycode", 0);
+	    			for(int i=0;i<cities_array.length();i++)
+	    			{
+	    				JSONObject city=cities_array.getJSONObject(i);
+	    				if(city.getInt("city_code") == citycode)
+	    				{
+	    					setOrRefreshBaseURL(sharedPreference, city);
+	    					return;
+	    				}
+	    			}
+	    			
+	    		}else
+	    		{
+	    			setOrRefreshBaseURL(sharedPreference, new JSONObject(result));
+	    		}
+	    		
+	    		
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+    }
+    
     /**
      * After 2000 milliseconds check the access_token in session. If the access_token is empty then
      * move to login page else move to complaints list page.
@@ -95,4 +196,6 @@ public class SplashActivity extends BaseActivity implements Runnable {
         }
         finish();
     }
+    
+    
 }

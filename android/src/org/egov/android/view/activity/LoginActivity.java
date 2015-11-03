@@ -31,23 +31,10 @@
 
 package org.egov.android.view.activity;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
@@ -67,7 +54,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -160,7 +146,10 @@ public class LoginActivity extends BaseActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return getJSON(params[0]);
+			/**
+		     * Get cities list json from app config url
+		     */
+			return JSONUtil.getJSON(params[0]);
 		}
     	
 		@Override
@@ -169,7 +158,7 @@ public class LoginActivity extends BaseActivity {
 			super.onPostExecute(result);
 			
 			try {
-				if(!result.equals("ERROR"))
+				if(!result.startsWith("ERROR"))
 				{
 				  //sort cities a to z
 			      jsoncitiesarry = JSONUtil.sort(new JSONArray(result), new Comparator(){
@@ -225,44 +214,6 @@ public class LoginActivity extends BaseActivity {
 
     }
     
-    
-    /**
-     * Get cities list json from app config url
-     */
-    
-    public String getJSON(String address){
-    	StringBuilder builder = new StringBuilder();
-    	HttpClient client = new DefaultHttpClient();
-    	HttpGet httpGet = new HttpGet(address);
-    	try{
-    		
-    		HttpParams params=client.getParams();
-    		HttpConnectionParams.setConnectionTimeout(params, (60*1000));
-    		HttpResponse response = client.execute(httpGet);
-    		StatusLine statusLine = response.getStatusLine();
-    		int statusCode = statusLine.getStatusCode();
-    		if(statusCode == 200){
-    			HttpEntity entity = response.getEntity();
-    			InputStream content = entity.getContent();
-    			BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-    			String line;
-    			while((line = reader.readLine()) != null){
-    				builder.append(line);
-    			}
-    		} else {
-    			Log.e(RegisterActivity.class.toString(),"Failedet JSON object");
-    		}
-    	}catch(ClientProtocolException e){
-    		e.printStackTrace();
-    		return "ERROR";
-    	} catch (IOException e){
-    		e.printStackTrace();
-    		return "ERROR";
-    	}
-    	return builder.toString();
-    }
-    
-    
 
     /**
      * Event triggered when clicking on the item having click listener. When clicking on login
@@ -293,7 +244,7 @@ public class LoginActivity extends BaseActivity {
             	   break;
             	}
 				try {
-					startActivity(new Intent(this, ForgotPasswordActivity.class).putExtra("baseServerURL", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url"))));
+				   startActivity(new Intent(this, ForgotPasswordActivity.class).putExtra("baseServerURL", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url"))));
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -367,6 +318,7 @@ public class LoginActivity extends BaseActivity {
 	            	Integer citySelectedIdx = citydropdown.getSelectedItemPosition();
 	            	Editor editor = sharedPreference.edit();
 	            	editor.putString("api.baseUrl", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+	            	editor.putInt("api.citycode", jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getInt("city_code"));
 	            	editor.commit();
             	}
             	

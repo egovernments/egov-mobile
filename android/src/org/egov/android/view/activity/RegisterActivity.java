@@ -74,7 +74,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -439,6 +438,7 @@ public class RegisterActivity extends BaseActivity {
 	                Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
 	            	Editor editor = sharedpreferences.edit();
 	            	editor.putString("api.baseUrl", getValidURL(jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getString("url")));
+	            	editor.putInt("api.citycode", jsoncitiesarry.getJSONObject((citySelectedIdx-1)).getInt("city_code"));
 	            	editor.commit();
             	}
             	

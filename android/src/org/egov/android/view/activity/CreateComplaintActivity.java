@@ -46,7 +46,6 @@ import java.util.regex.Pattern;
 
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
-import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.api.ApiUrl;
 import org.egov.android.api.IApiUrl;
