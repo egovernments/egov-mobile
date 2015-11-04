@@ -8,6 +8,9 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -34,8 +37,9 @@
         <activity
             android:name=".activities.LoginActivity"
             android:label="eGovernments"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -47,7 +51,7 @@
             android:label="Create An Account"
             android:parentActivityName=".activities.LoginActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.egovernments.egov.activities.LoginActivity" />
@@ -89,7 +93,7 @@
             android:label="Grievances"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
@@ -120,7 +124,7 @@
             android:label="Grievances"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
@@ -130,8 +134,9 @@
             android:name=".activities.AccountActivationActivity"
             android:label="Verify Account"
             android:parentActivityName=".activities.LoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.egovernments.egov.activities.LoginActivity" />
@@ -181,7 +186,9 @@
             android:name=".activities.ForgotPasswordActivity"
             android:label="Account Recovery"
             android:parentActivityName=".activities.LoginActivity"
-            android:theme="@style/AppTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.egovernments.egov.activities.LoginActivity" />

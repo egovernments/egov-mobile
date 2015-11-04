@@ -63,7 +63,7 @@
     <string name="history_label">History</string>
     <string name="processing_label">Processing</string>
     <string name="completed_label">Completed</string>
-    <string name="regected_label">Rejected</string>
+    <string name="rejected_label">Rejected</string>
     <string name="update_grievance_label">Update grievance</string>
     <string name="comment_label">Comment</string>
     <string name="action_label">Action</string>

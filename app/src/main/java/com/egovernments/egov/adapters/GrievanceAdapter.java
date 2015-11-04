@@ -83,7 +83,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         .load(url)
                         .noFade()
                         .networkPolicy(NetworkPolicy.OFFLINE)
-                        .error(R.drawable.complaint_default)
+                        .error(R.drawable.broken_icon)
                         .into(((GrievanceViewHolder) viewHolder).complaintImage, new Callback() {
                             @Override
                             public void onSuccess() {
@@ -95,7 +95,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                 Picasso.with(contextWeakReference.get())
                                         .load(url)
                                         .noFade()
-                                        .error(R.drawable.complaint_default)
+                                        .error(R.drawable.broken_icon)
                                         .into(((GrievanceViewHolder) viewHolder).complaintImage);
                             }
                         });
@@ -160,28 +160,18 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
         Calendar now = Calendar.getInstance();
-        int difference;
-
-        difference = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
-        if (difference > 1)
-            return (difference + " years ago");
-        else if (difference == 1)
-            return (difference + " year ago");
-
-        difference = now.get(Calendar.MONTH) - calendar.get(Calendar.MONTH);
-        if (difference > 1)
-            return (difference + " months ago");
-        else if (difference == 1)
-            return (difference + " month ago");
-
-        difference = now.get(Calendar.DAY_OF_MONTH) - calendar.get(Calendar.DAY_OF_MONTH);
-        if (difference == 1)
-            return (difference + " day ago");
+        int difference = Math.abs(now.get(Calendar.DAY_OF_YEAR) - calendar.get(Calendar.DAY_OF_YEAR));
 
         if (difference == 0)
-            return ("Today");
+            return "Today";
 
-        return difference + " days ago";
+        if (difference <= 30)
+            return difference + " days ago";
+
+        if (difference <= 365)
+            return difference + "months ago";
+
+        return difference + "years ago";
 
     }
 

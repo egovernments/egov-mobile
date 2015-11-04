@@ -1,213 +1,238 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="50dp">
 
-        <ImageView
-            android:id="@+id/details_defaultimage"
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/complaint_default"
-            android:visibility="gone" />
+            android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/details_imageslayout"
-            android:layout_width="match_parent"
-            android:layout_height="200dp">
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/details_complaint_image"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
-
-            <com.viewpagerindicator.LinePageIndicator
-                android:id="@+id/indicator"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"
-                app:lineWidth="30dp"
-                app:selectedColor="@color/colorAccent"
-                app:strokeWidth="4dp" />
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
 
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/details_defaultimage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/complaint_default"
+                    android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:orientation="vertical"
-            android:padding="10dp">
+                <RelativeLayout
+                    android:id="@+id/details_imageslayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp">
 
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/details_complaint_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
 
-            <TextView
-                android:id="@+id/details_complaintNo_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/complaintID_label"
-                android:textSize="@dimen/field_labelSize" />
+                    <com.viewpagerindicator.LinePageIndicator
+                        android:id="@+id/indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="10dp"
+                        app:lineWidth="30dp"
+                        app:selectedColor="@color/colorAccent"
+                        app:strokeWidth="4dp" />
 
-            <TextView
-                android:id="@+id/details_complaintNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
+                </RelativeLayout>
 
-            <TextView
-                android:id="@+id/details_complaint_date_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/date_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="4"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_type_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/details_type_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_details_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/additionaldetails_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_location_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/location_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_status_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/status_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/details_complaint_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:textSize="@dimen/data_labelSize" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/history_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <ListView
-                android:id="@+id/grievance_comments"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                tools:ignore="NestedScrolling" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="@string/update_grievance_label"
-                android:textSize="@dimen/field_labelSize" />
-
-            <Spinner
-                android:id="@+id/update_action"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/top_edittext"
-                android:prompt="@string/complainttype_label" />
-
-            <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#BFffffff"
-                android:gravity="center_horizontal"
-                android:paddingTop="5dp" />
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/middle_edittext"
-                android:paddingTop="5dp">
-
-                <EditText
-                    android:id="@+id/update_comment"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:hint="@string/comment_label"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:paddingEnd="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingStart="10dp"
-                    android:textColorHint="#a8a5a5"
-                    android:textSize="15sp" />
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-            </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/grievance_update_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
-                android:text="@string/submit_label"
-                android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/details_complaintNo_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/complaintID_label"
+                        android:textSize="@dimen/field_labelSize" />
 
-        </LinearLayout>
+                    <TextView
+                        android:id="@+id/details_complaintNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
 
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/details_complaint_date_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/date_label"
+                        android:textSize="@dimen/field_labelSize" />
 
-</ScrollView>
+                    <TextView
+                        android:id="@+id/details_complaint_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="4"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_type_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/details_type_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_details_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/additionaldetails_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_location_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/location_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_status_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/status_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="@dimen/data_labelSize" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/history_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <ListView
+                        android:id="@+id/grievance_comments"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        tools:ignore="NestedScrolling" />
+
+                    <LinearLayout
+                        android:id="@+id/update_grievance_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/update_grievance_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <Spinner
+                            android:id="@+id/update_action"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/top_edittext"
+                            android:prompt="@string/complainttype_label" />
+
+                        <TextView
+                            style="?android:attr/listSeparatorTextViewStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#BFffffff"
+                            android:gravity="center_horizontal"
+                            android:paddingTop="5dp" />
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/middle_edittext"
+                            android:paddingTop="5dp">
+
+                            <EditText
+                                android:id="@+id/update_comment"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:hint="@string/comment_label"
+                                android:imeOptions="actionNext"
+                                android:inputType="text"
+                                android:paddingEnd="10dp"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp"
+                                android:paddingStart="10dp"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/grievance_update_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        android:text="@string/submit_label"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>

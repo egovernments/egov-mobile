@@ -3,6 +3,7 @@ package com.egovernments.egov.network;
 
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
+import com.egovernments.egov.helper.UriPathHelper;
 import com.google.gson.JsonObject;
 
 import java.io.File;
@@ -65,12 +67,12 @@ public class UploadService extends Service {
         return "image/jpeg";
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
+    public static String getRealPathFromURI(Uri contentUri, Context context) {
         try {
             String[] strings = {MediaStore.Images.Media.DATA};
             String s = null;
 
-            Cursor cursor = getContentResolver().query(contentUri, strings, null, null, null);
+            Cursor cursor = context.getContentResolver().query(contentUri, strings, null, null, null);
             int column_index;
             if (cursor != null) {
                 column_index = cursor
@@ -90,7 +92,6 @@ public class UploadService extends Service {
 
     }
 
-
     private void uploadImage(final Uri uri, final String complaintNo) {
 
         String mimeType = getMimeType(uri);
@@ -98,7 +99,11 @@ public class UploadService extends Service {
         File imgFile = new File(uri.getPath());
 
         if (!imgFile.exists()) {
-            imgFile = new File(getRealPathFromURI(uri));
+            try {
+                imgFile = new File(UriPathHelper.getRealPathFromURI(uri, this));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         TypedFile typedFile = new TypedFile(mimeType, imgFile);

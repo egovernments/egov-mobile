@@ -1,208 +1,213 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/view_toolbar" />
+    android:layout_height="match_parent"
+    android:background="@drawable/signin_background">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_below="@+id/toolbar">
+        android:background="@color/blackoverlay">
 
-        <ImageView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/signin_background" />
+            android:layout_height="match_parent">
 
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/view_toolbar" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/blackoverlay"
-            android:clipToPadding="false">
-
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:paddingBottom="60dp"
-                android:paddingEnd="20dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingStart="20dp"
-                android:paddingTop="20dp">
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/toolbar"
+                android:layout_marginBottom="50dp">
 
-                <ImageView
-                    android:id="@+id/signuplogo"
-                    android:layout_width="280dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="40dp"
-                    android:contentDescription="@string/logostring"
-                    android:padding="20dp"
-                    android:src="@drawable/egovlogo" />
-
-                <Spinner
-                    android:id="@+id/signup_city"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@drawable/top_edittext" />
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false">
 
-                <TextView
-                    style="?android:attr/listSeparatorTextViewStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#BFffffff"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="5dp" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="5dp"
-                    android:background="@drawable/middle_edittext">
-
-                    <EditText
-                        android:id="@+id/signup_name"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:drawableLeft="@drawable/ic_person_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_person_black_24dp"
-                        android:ems="10"
-                        android:hint="@string/fullname_label"
-                        android:imeOptions="actionNext"
-                        android:inputType="textPersonName"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColorHint="#a8a5a5"
-                        android:textSize="15sp" />
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingBottom="60dp"
+                        android:paddingEnd="20dp"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:paddingStart="20dp"
+                        android:paddingTop="20dp">
 
-                </android.support.design.widget.TextInputLayout>
+                        <ImageView
+                            android:id="@+id/signuplogo"
+                            android:layout_width="280dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="40dp"
+                            android:contentDescription="@string/logostring"
+                            android:padding="20dp"
+                            android:src="@drawable/egovlogo" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/middle_edittext">
+                        <Spinner
+                            android:id="@+id/signup_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/top_edittext" />
 
-                    <EditText
-                        android:id="@+id/signup_phoneno"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:drawableLeft="@drawable/ic_call_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_call_black_24dp"
-                        android:ems="10"
-                        android:hint="@string/phone_label"
-                        android:imeOptions="actionNext"
-                        android:inputType="phone"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColorHint="#a8a5a5"
-                        android:textSize="15sp" />
+                        <TextView
+                            style="?android:attr/listSeparatorTextViewStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#BFffffff"
+                            android:gravity="center_horizontal"
+                            android:paddingTop="5dp" />
 
-                </android.support.design.widget.TextInputLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/middle_edittext"
+                            android:paddingTop="5dp">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/middle_edittext">
+                            <EditText
+                                android:id="@+id/signup_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:drawableLeft="@drawable/ic_person_black_24dp"
+                                android:drawablePadding="5dp"
+                                android:drawableStart="@drawable/ic_person_black_24dp"
+                                android:ems="10"
+                                android:hint="@string/fullname_label"
+                                android:imeOptions="actionNext"
+                                android:inputType="textPersonName"
+                                android:paddingEnd="10dp"
+                                android:paddingStart="10dp"
+                                android:singleLine="true"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
 
-                    <EditText
-                        android:id="@+id/signup_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:drawableLeft="@drawable/ic_mail_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_mail_black_24dp"
-                        android:ems="10"
-                        android:hint="@string/email_label"
-                        android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColorHint="#a8a5a5"
-                        android:textSize="15sp" />
+                        </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/middle_edittext">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/middle_edittext">
+                            <EditText
+                                android:id="@+id/signup_phoneno"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:drawableLeft="@drawable/ic_call_black_24dp"
+                                android:drawablePadding="5dp"
+                                android:drawableStart="@drawable/ic_call_black_24dp"
+                                android:ems="10"
+                                android:hint="@string/phone_label"
+                                android:imeOptions="actionNext"
+                                android:inputType="phone"
+                                android:paddingEnd="10dp"
+                                android:paddingStart="10dp"
+                                android:singleLine="true"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
 
-                    <EditText
-                        android:id="@+id/signup_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_vpn_key_black_24dp"
-                        android:ems="10"
-                        android:hint="@string/password_label"
-                        android:imeOptions="actionNext"
-                        android:inputType="textPassword"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColorHint="#a8a5a5"
-                        android:textSize="15sp" />
+                        </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/middle_edittext">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bottom_edittext">
+                            <EditText
+                                android:id="@+id/signup_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:drawableLeft="@drawable/ic_mail_black_24dp"
+                                android:drawablePadding="5dp"
+                                android:drawableStart="@drawable/ic_mail_black_24dp"
+                                android:ems="10"
+                                android:hint="@string/email_label"
+                                android:imeOptions="actionNext"
+                                android:inputType="textEmailAddress"
+                                android:paddingEnd="10dp"
+                                android:paddingStart="10dp"
+                                android:singleLine="true"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
 
-                    <EditText
-                        android:id="@+id/signup_confirmpassword"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_horizontal"
-                        android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_vpn_key_black_24dp"
-                        android:ems="10"
-                        android:hint="@string/passwordconfirm_label"
-                        android:imeOptions="actionDone"
-                        android:inputType="textPassword"
-                        android:paddingEnd="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColorHint="#a8a5a5"
-                        android:textSize="15sp" />
+                        </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/middle_edittext">
+
+                            <EditText
+                                android:id="@+id/signup_password"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
+                                android:drawablePadding="5dp"
+                                android:drawableStart="@drawable/ic_vpn_key_black_24dp"
+                                android:ems="10"
+                                android:hint="@string/password_label"
+                                android:imeOptions="actionNext"
+                                android:inputType="textPassword"
+                                android:paddingEnd="10dp"
+                                android:paddingStart="10dp"
+                                android:singleLine="true"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bottom_edittext">
+
+                            <EditText
+                                android:id="@+id/signup_confirmpassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center_horizontal"
+                                android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
+                                android:drawablePadding="5dp"
+                                android:drawableStart="@drawable/ic_vpn_key_black_24dp"
+                                android:ems="10"
+                                android:hint="@string/passwordconfirm_label"
+                                android:imeOptions="actionDone"
+                                android:inputType="textPassword"
+                                android:paddingEnd="10dp"
+                                android:paddingStart="10dp"
+                                android:singleLine="true"
+                                android:textColorHint="#a8a5a5"
+                                android:textSize="15sp" />
+
+                        </android.support.design.widget.TextInputLayout>
 
 
-            </LinearLayout>
+                    </LinearLayout>
 
-        </ScrollView>
+                </ScrollView>
+
+            </FrameLayout>
+
+            <Button
+                android:id="@+id/signup_register"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorAccent"
+                android:text="@string/registerbutton_label"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
 
     </FrameLayout>
 
-
-    <Button
-        android:id="@+id/signup_register"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorAccent"
-        android:text="@string/registerbutton_label"
-        android:textColor="@android:color/white" />
-
-
-</RelativeLayout>
+</FrameLayout>

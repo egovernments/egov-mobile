@@ -194,6 +194,9 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                         if (jsonObject != null)
                             Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(RegisterActivity.this, "An error occured", Toast.LENGTH_LONG).show();
+
                     } else
                         Toast.makeText(RegisterActivity.this, "You are not connected to the internet", Toast.LENGTH_LONG).show();
 

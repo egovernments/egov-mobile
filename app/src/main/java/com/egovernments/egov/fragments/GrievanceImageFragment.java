@@ -39,7 +39,7 @@ public class GrievanceImageFragment extends Fragment {
         Picasso.with(getActivity())
                 .load(url)
                 .networkPolicy(NetworkPolicy.OFFLINE)
-                .error(R.drawable.complaint_default_grey)
+                .error(R.drawable.broken_icon)
                 .into(imageView, new Callback() {
                     @Override
                     public void onSuccess() {
@@ -50,7 +50,7 @@ public class GrievanceImageFragment extends Fragment {
                     public void onError() {
                         Picasso.with(getActivity())
                                 .load(url)
-                                .error(R.drawable.complaint_default_grey)
+                                .error(R.drawable.broken_icon)
                                 .into(imageView);
                     }
                 });

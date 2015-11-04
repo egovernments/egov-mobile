@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -26,6 +27,7 @@ import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResult;
+import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.network.ApiController;
 import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
@@ -67,12 +69,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         Button updateButton = (Button) findViewById(R.id.grievance_update_button);
 
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.update_grievance_layout);
+
         updateComment = (EditText) findViewById(R.id.update_comment);
 
         listView = (ListView) findViewById(R.id.grievance_comments);
 
         final Spinner spinner = (Spinner) findViewById(R.id.update_action);
-        ArrayList<String> strings = new ArrayList<>(Arrays.asList("Update", "Withdraw"));
+        ArrayList<String> strings = new ArrayList<>(Arrays.asList("Update", "Withdrawn"));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, strings);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
@@ -107,6 +111,11 @@ public class GrievanceDetailsActivity extends BaseActivity {
         complaintNo.setText(grievance.getCrn());
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
+        if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
+
+            linearLayout.setVisibility(View.GONE);
+        }
+
         listView.setOnTouchListener(new View.OnTouchListener() {
             // Setting on Touch Listener for handling the touch inside ScrollView
             @Override
@@ -136,10 +145,15 @@ public class GrievanceDetailsActivity extends BaseActivity {
             }
         });
 
-        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 isSelected = true;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -155,8 +169,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
                 } else if (action.equals("Update") && comment.isEmpty()) {
                     Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                 } else {
+
+                    if (action.equals("Update")) {
+                        action = grievance.getStatus();
+                    } else if (action.equals("Withdrawn")) {
+                        action = "COMPLETED";
+                    }
                     ApiController.getAPI()
-                            .updateGrievance(grievance.getCrn(), action, comment, sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                            .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
                                 @Override
                                 public void success(JsonObject jsonObject, Response response) {
 
@@ -172,8 +192,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                                 }
                             });
-                }
 
+                }
             }
         });
 
@@ -187,7 +207,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         if (s.equals("COMPLETED"))
             return R.string.completed_label;
         if (s.equals("REJECTED"))
-            return R.string.regected_label;
+            return R.string.rejected_label;
 
         return 0;
     }

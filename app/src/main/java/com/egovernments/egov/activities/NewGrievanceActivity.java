@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -46,6 +47,7 @@ import com.NYXDigital.NiceSupportMapFragment;
 import com.egovernments.egov.R;
 import com.egovernments.egov.helper.NoFilterAdapter;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
+import com.egovernments.egov.helper.UriPathHelper;
 import com.egovernments.egov.models.Complaint;
 import com.egovernments.egov.models.GrievanceCreateAPIResponse;
 import com.egovernments.egov.models.GrievanceLocation;
@@ -121,6 +123,8 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     private File cacheDir;
 
+    private GoogleMap googleMap;
+
     //TODO wait for lat, lng api calls to be fixed
 
     @Override
@@ -137,6 +141,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         final com.melnykov.fab.FloatingActionButton pictureAddButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.picture_addcompat);
 
         NiceSupportMapFragment niceSupportMapFragment = (NiceSupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.complaint_map);
+        googleMap = niceSupportMapFragment.getMap();
         niceSupportMapFragment.getMapAsync(this);
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -348,7 +353,8 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
-            uriArrayList.add(Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg")));
+            Uri uri = Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg"));
+            uriArrayList.add(uri);
 
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
@@ -356,9 +362,39 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
             uploadCount++;
 
+//            try {
+//                String s = UriPathHelper.getRealPathFromURI(uri, this);
+//                ExifInterface exifInterface = new ExifInterface(s);
+//
+//                double lat;
+//                double lng;
+//                try {
+//                    lat = Double.parseDouble(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+//                    lng = Double.parseDouble(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+//                } catch (Exception e) {
+//                    lat = 0;
+//                    lng = 0;
+//                }
+//
+//                if (lat != 0 && lng != 0) {
+//                    LatLng latLng = new LatLng(lat, lng);
+//                    if (marker != null) {
+//                        marker.remove();
+//                    }
+//                    marker = googleMap.addMarker(new MarkerOptions().position(latLng));
+//
+//                    CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+//                    googleMap.animateCamera(location);
+//
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
             imageID.remove(0);
 
             viewPager.setCurrentItem(uriArrayList.size());
+
 
         }
 

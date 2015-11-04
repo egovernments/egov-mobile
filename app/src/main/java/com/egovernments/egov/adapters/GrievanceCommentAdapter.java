@@ -68,7 +68,7 @@ public class GrievanceCommentAdapter extends BaseAdapter {
         grievanceCommentViewHolder.commentText.setText(grievanceComment.getComments());
         grievanceCommentViewHolder.commentDate.setText(grievanceComment.getDate());
         grievanceCommentViewHolder.commentStatus.setText(resolveStatus(grievanceComment.getStatus()));
-        if (grievanceComment.getUpdatedUserType().equals("EMPLOYEE"))
+        if (grievanceComment.getUsertype().equals("EMPLOYEE"))
             grievanceCommentViewHolder.commentName.setTextColor(Color.RED);
 
         return view;
@@ -82,7 +82,7 @@ public class GrievanceCommentAdapter extends BaseAdapter {
         if (s.equals("COMPLETED"))
             return R.string.completed_label;
         if (s.equals("REJECTED"))
-            return R.string.regected_label;
+            return R.string.rejected_label;
 
         return 0;
     }

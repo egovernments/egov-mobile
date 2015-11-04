@@ -7,6 +7,7 @@ import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceCreateAPIResponse;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
+import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.egovernments.egov.models.User;
@@ -36,6 +37,7 @@ public class ApiController {
 
     private final static OkHttpClient client = SSLTrustManager.createClient();
 
+    //TODO proper error handling
 
     public static APIInterface getAPI() {
         if (APIInterface == null) {
@@ -97,10 +99,9 @@ public class ApiController {
                          @Query(value = "fileNo", encodeName = false) String fileNo,
                          Callback<JsonObject> jsonObjectCallback);
 
-        @POST(ApiUrl.COMPLAINT_UPDATE_STATUS)
+        @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
         void updateGrievance(@Path(value = "complaintNo", encode = false) String complaintNo,
-                             @Field("action") String action,
-                             @Field("comment") String comment,
+                             @Body GrievanceUpdate grievanceUpdate,
                              @Query(value = "access_token", encodeValue = false) String access_token,
                              Callback<JsonObject> jsonObjectCallback);
 
