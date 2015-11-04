@@ -146,13 +146,13 @@
 
                             <LinearLayout style="@style/FormRow" >
 
-                                <AutoCompleteTextView
+                                <org.egov.android.view.component.EGovAutoCompleteTextView
                                     android:id="@+id/complaint_location"
                                     style="@style/FormRow.EditText"
                                     android:completionThreshold="3"
                                     android:hint="*Use the map icon or Type complaint area"
                                     android:singleLine="true" >
-                                </AutoCompleteTextView>
+                                </org.egov.android.view.component.EGovAutoCompleteTextView>
 
                                 <ImageView
                                     android:id="@+id/complaint_location_icon"

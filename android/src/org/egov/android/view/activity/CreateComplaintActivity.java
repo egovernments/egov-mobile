@@ -55,6 +55,7 @@ import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.model.Complaint;
+import org.egov.android.view.component.EGovAutoCompleteTextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -124,6 +125,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     private boolean isCurrentLocation=true;
     int gpsTimeOutSec;
     Timer gpsTimeOutTimer=new Timer();
+    ArrayAdapter<String> locationadapter;
 	private final static String TAG = CreateComplaintActivity.class.getName();
 
     
@@ -154,9 +156,13 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         ((ImageView) findViewById(R.id.add_photo)).setOnClickListener(this);
         ((Button) findViewById(R.id.complaint_doComplaint)).setOnClickListener(this);
 
-        location = (AutoCompleteTextView) findViewById(R.id.complaint_location);
+        location = (EGovAutoCompleteTextView) findViewById(R.id.complaint_location);
         location.addTextChangedListener(this);
         location.setOnItemClickListener(this);
+        locationadapter = new ArrayAdapter<String>(this,
+                android.R.layout.select_dialog_item);
+        location.setAdapter(locationadapter);
+        location.setThreshold(3);
 
         StorageManager sm = new StorageManager();
         Object[] obj = sm.getStorageInfo();
@@ -653,17 +659,34 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      * 
      * @param list
      */
-    private void setSpinnerData(List<JSONObject> list) {
-        ArrayList<String> item = new ArrayList<String>();
+    private void setSpinnerData(final List<JSONObject> list) {
+        final ArrayList<String> item = new ArrayList<String>();
         try {
             for (int i = 0; i < list.size(); i++) {
                 item.add(list.get(i).getString("name"));
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.select_dialog_item, item);
-            location.setAdapter(adapter);
-            location.setThreshold(3);
-            location.setTag(item);
+            //location.setTag(item);
+            
+            // do the http requests you have in the queryWebService method and when it's time to update the data:
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    locationadapter.clear();
+                    // add the data
+                    for (int i = 0; i < list.size(); i++) {
+                        //item.add(list.get(i).getString("name"));
+                    	try {
+							locationadapter.add(list.get(i).getString("name"));
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    }
+                    // trigger a filter on the AutoCompleteTextView to show the popup with the results 
+                    locationadapter.getFilter().filter(location.getText(), location);
+                }
+            });
+            
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -803,7 +826,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.length() == 3) {
+    	isCurrentLocation=false;
+        if (s.length() > 2) {
             ApiController.getInstance().getLocationByName(this, s.toString());
         }
         if (s.length() == 0) {
