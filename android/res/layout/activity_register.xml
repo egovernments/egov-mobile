@@ -80,7 +80,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/register_name"
                             style="@style/FormRow.EditText"
-                            android:hint="Name"
+                            android:hint="Name*"
                             android:singleLine="true" />
                         
                     </LinearLayout>
@@ -90,7 +90,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/register_phone"
                             style="@style/FormRow.EditText"
-                            android:hint="Phone Number"
+                            android:hint="Mobile Number*"
                             android:inputType="number"
                             android:singleLine="true" />
                     </LinearLayout>
@@ -109,7 +109,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/register_password"
                             style="@style/FormRow.EditText"
-                            android:hint="Password"
+                            android:hint="Password*"
                             android:inputType="textPassword"
                             android:singleLine="true" />
                     </LinearLayout>
@@ -119,7 +119,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/register_confirm_password"
                             style="@style/FormRow.EditText"
-                            android:hint="Confirm Password"
+                            android:hint="Confirm Password*"
                             android:inputType="textPassword"
                             android:singleLine="true" />
                     </LinearLayout>

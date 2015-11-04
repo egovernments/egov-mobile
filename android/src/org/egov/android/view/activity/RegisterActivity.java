@@ -320,10 +320,10 @@ public class RegisterActivity extends BaseActivity {
         } else if (phone.length() != 10) {
             showMessage(getMessage(R.string.phone_number_length));
             return;
-        } else if (isEmpty(email)) {
+        }/* else if (isEmpty(email)) {
             showMessage(getMessage(R.string.email_empty));
             return;
-        } else if (!_isValidEmail(email)) {
+        }*/ else if (!isEmpty(email) && !_isValidEmail(email)) {
             showMessage(getMessage(R.string.invalid_email));
             return;
         } else if (isEmpty(password)) {
@@ -444,10 +444,12 @@ public class RegisterActivity extends BaseActivity {
             	
                 JSONObject jo = new JSONObject(event.getData().getResponse().toString());
                 Intent intent = new Intent(this, AccountActivationActivity.class);
+                
                 intent.putExtra("username", jo.getString("userName"));
                 intent.putExtra("password", ((EditText) findViewById(R.id.register_password))
                         .getText().toString().trim());
                 startActivity(intent);
+                finish();
                 _clearAllText();
             } catch (JSONException e) {
                 e.printStackTrace();
