@@ -183,7 +183,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 
         StorageManager sm = new StorageManager();
         Object[] obj = sm.getStorageInfo();
-        assetPath = obj[0].toString() + "/egovernments/complaints";
+        assetPath = obj[0].toString() + "/"+getString(R.string.app_name)+"/complaints";
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
         if (!getGpsStatus()) {

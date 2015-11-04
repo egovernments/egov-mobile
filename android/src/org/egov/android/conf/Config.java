@@ -35,9 +35,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.egov.android.R;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 /**
  * This is to read the egov.conf file. Get the values like database name, database version, cache
@@ -84,7 +85,7 @@ public class Config {
     public String getString(String key) {
     	if(key.equals("api.baseUrl"))
     	{
-    		SharedPreferences pref = appContext.getSharedPreferences("eGovPreference", 0);
+    		SharedPreferences pref = appContext.getSharedPreferences(appContext.getString(R.string.app_name), 0);
     		String value=pref.getString(key, null);
     		if(value!=null)
     		{

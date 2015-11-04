@@ -99,7 +99,7 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
 
         ((Button) findViewById(R.id.register_doRegister)).setOnClickListener(this);
-        sharedpreferences = getApplicationContext().getSharedPreferences("eGovPreference", 0); // 0 - for private mode
+        sharedpreferences = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0); // 0 - for private mode
         
         if(AndroidLibrary.getInstance().getConfig().get("api.multicities", "false").equals("true"))
     	{

@@ -65,7 +65,7 @@ public class SplashActivity extends BaseActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         
-        sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+        sharedPreference = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0);
 		String baseServerURL = sharedPreference.getString("api.baseUrl", null);
 		isMultiCity=AndroidLibrary.getInstance().getConfig().get("api.multicities", "false").equals("true");
 		

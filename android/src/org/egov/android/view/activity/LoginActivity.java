@@ -89,7 +89,7 @@ public class LoginActivity extends BaseActivity {
 
         getSession().edit().putInt("api_level", Build.VERSION.SDK_INT).commit();
         
-        sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+        sharedPreference = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0);
 		baseServerURL = sharedPreference.getString("api.baseUrl", null);
         
 		citydropdown=(Spinner) findViewById(R.id.logincitydropdown);
@@ -111,7 +111,7 @@ public class LoginActivity extends BaseActivity {
     protected void onResume() {
     	// TODO Auto-generated method stub
     	super.onResume();
-    	sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+    	sharedPreference = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0);
 		baseServerURL = sharedPreference.getString("api.baseUrl", null);
     }
     

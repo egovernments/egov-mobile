@@ -71,7 +71,7 @@ public class AccountActivationActivity extends BaseActivity {
         password = getIntent().getExtras().getString("password");
         ((Button) findViewById(R.id.verify_otp)).setOnClickListener(this);
         ((TextView) findViewById(R.id.resend_otp)).setOnClickListener(this);
-        sharedPreference = getApplicationContext().getSharedPreferences("eGovPreference", 0);
+        sharedPreference = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0);
 		baseServerURL = sharedPreference.getString("api.baseUrl", null);
     }
 

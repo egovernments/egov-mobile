@@ -149,6 +149,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
 	            /*SQLiteHelper.getInstance().execSQL(
 	                    "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('" + jo.toString()
 	                            + "', 'waiting', 'download', 0)");*/
+	            Log.d("org.egov.android", jo.getString("url"));
 	            downloadThumbImages.put(jo);
         	}
             

@@ -286,7 +286,7 @@ public class AllComplaintActivity extends Fragment implements IApiListener, OnIt
                         StorageManager sm = new StorageManager();
                         Object[] obj = sm.getStorageInfo();
                         String complaintFolderName = obj[0].toString()
-                                + "/egovernments/complaints/" + jo.getString("crn");
+                                + "/"+ getString(R.string.app_name) +"/complaints/" + jo.getString("crn");
 
                         File complaintFolder = new File(complaintFolderName);
                         if (!complaintFolder.exists()) {

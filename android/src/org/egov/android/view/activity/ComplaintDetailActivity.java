@@ -178,7 +178,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 
 		StorageManager sm = new StorageManager();
 		Object[] obj = sm.getStorageInfo();
-		complaintFolderName = obj[0].toString() + "/egovernments/complaints/"
+		complaintFolderName = obj[0].toString() + "/"+getString(R.string.app_name)+"/complaints/"
 				+ complaintId;
 		isComplaintDetail = true;
 		new GeoLocation(this);
