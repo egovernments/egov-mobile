@@ -67,7 +67,7 @@ Powered by eGovernments Foundation </string>
     <string name="logout_message">Are you sure you want to logout?</string>
     <string name="file_type">File type must be jpg or png or bmp</string>
     <string name="file_size">File size must be less than 2MB</string>
-    <string name="file_upload_count">Maximum number of file upload is five</string>
+    <string name="file_upload_count">Maximum number of file upload is </string>
     <string name="sdcard_space_not_sufficient">There is no sufficient space in your sdcard</string>
     <string name="search_empty">Please enter search keyword</string>
     <string name="search_length">Type atleast three character</string>

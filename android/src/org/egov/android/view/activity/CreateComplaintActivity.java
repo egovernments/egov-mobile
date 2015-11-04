@@ -89,6 +89,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -123,10 +124,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     LocationManager locationManager;
     ProgressDialog progressDialog;
     private boolean isCurrentLocation=true;
+    private boolean isValueFromSuggestion=false;
     int gpsTimeOutSec;
     Timer gpsTimeOutTimer=new Timer();
     ArrayAdapter<String> locationadapter;
 	private final static String TAG = CreateComplaintActivity.class.getName();
+
 
     
     /**
@@ -160,9 +163,23 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         location.addTextChangedListener(this);
         location.setOnItemClickListener(this);
         locationadapter = new ArrayAdapter<String>(this,
-                android.R.layout.select_dialog_item);
+                android.R.layout.simple_spinner_dropdown_item);
         location.setAdapter(locationadapter);
         location.setThreshold(3);
+        
+        location.setOnFocusChangeListener(new OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				if(hasFocus && latitude > 0){
+					location.setText("");
+					isCurrentLocation=false;
+					latitude=0;
+					longitute=0;
+				}
+			}
+		});
+        
 
         StorageManager sm = new StorageManager();
         Object[] obj = sm.getStorageInfo();
@@ -172,6 +189,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         if (!getGpsStatus()) {
           _showSettingsAlert();
         }
+       
         
     }
 
@@ -489,7 +507,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             showMessage(getMessage(R.string.file_size));
         } else if (getConfig().getInt("upload.file.limit") <= file_upload_limit) {
             _deleteFile(imagePath);
-            showMessage(getMessage(R.string.file_upload_count));
+            showMessage(getMessage(R.string.file_upload_count) + file_upload_limit);
         } else {
             file_upload_limit++;
             _addImageView(imagePath);
@@ -665,7 +683,6 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             for (int i = 0; i < list.size(); i++) {
                 item.add(list.get(i).getString("name"));
             }
-            //location.setTag(item);
             
             // do the http requests you have in the queryWebService method and when it's time to update the data:
             runOnUiThread(new Runnable() {
@@ -674,7 +691,6 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                     locationadapter.clear();
                     // add the data
                     for (int i = 0; i < list.size(); i++) {
-                        //item.add(list.get(i).getString("name"));
                     	try {
 							locationadapter.add(list.get(i).getString("name"));
 						} catch (JSONException e) {
@@ -683,6 +699,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 						}
                     }
                     // trigger a filter on the AutoCompleteTextView to show the popup with the results 
+                    locationadapter.notifyDataSetChanged();
                     locationadapter.getFilter().filter(location.getText(), location);
                 }
             });
@@ -826,15 +843,28 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
+    	Log.d(CreateComplaintActivity.class.getName(), "Completion -> "+location.isPerformingCompletion());
     	isCurrentLocation=false;
-        if (s.length() > 2) {
-            ApiController.getInstance().getLocationByName(this, s.toString());
-        }
+    	autoSuggestionHandler.removeCallbacks(autoSuggestionRunnable);
+    	autoSuggestionHandler.postDelayed(autoSuggestionRunnable, 500);
         if (s.length() == 0) {
             latitude = 0;
             longitute = 0;
         }
     }
+    
+    
+    Handler autoSuggestionHandler = new Handler();
+    Runnable autoSuggestionRunnable = new Runnable() {
+        public void run() {
+        	 if (location.getText().length() > 2) {
+        		//call web service
+             	ApiController.getInstance().getLocationByName(CreateComplaintActivity.this, location.getText().toString());
+             }
+            
+        }
+    };
+    
 
     /**
      * Event triggered when clicking on any location from the list.
