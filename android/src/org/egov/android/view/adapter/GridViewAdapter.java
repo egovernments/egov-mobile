@@ -76,7 +76,6 @@ public class GridViewAdapter extends BaseAdapter {
 
             holder = new ViewHolder();
             holder.imageTitle = (TextView) convertView.findViewById(R.id.text);
-            holder.image = (ImageView) convertView.findViewById(R.id.image);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -84,13 +83,13 @@ public class GridViewAdapter extends BaseAdapter {
 
         ComplaintType cat = item.get(position);
         holder.imageTitle.setText(cat.getName());
-        File file = new File(cat.getImagePath());
+        /*File file = new File(cat.getImagePath());
 
         if (file.exists()) {
             holder.image.setImageBitmap(_getBitmapImage(cat.getImagePath()));
         } else {
             holder.image.setImageResource(R.drawable.default_category);
-        }
+        }*/
         return convertView;
     }
 
@@ -116,7 +115,7 @@ public class GridViewAdapter extends BaseAdapter {
      */
     static class ViewHolder {
         TextView imageTitle;
-        ImageView image;
+        //ImageView image;
     }
 
     @Override

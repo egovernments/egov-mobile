@@ -176,16 +176,18 @@ public class FreqComplaintTypeActivity extends BaseActivity implements OnItemCli
                         cat = new ComplaintType();
                         cat.setName(jo.getString("name"));
                         cat.setId(jo.getInt("id"));
-                        StorageManager sm = new StorageManager();
+                        listItem.add(cat);
+                        
+                        /*StorageManager sm = new StorageManager();
                         Object[] obj = sm.getStorageInfo();
                         String folderName = obj[0].toString() + "/egovernments/complaint_type";
                         cat.setImagePath(folderName + File.separator + jo.getString("typeImage"));
-                        listItem.add(cat);
+                        
                         sm.mkdirs(folderName);
                         if (!new File(folderName + File.separator + jo.getString("typeImage"))
                                 .exists()) {
                             _addDownloadJobs(folderName, jo);
-                        }
+                        }*/
                     }
 
                     ServiceController.getInstance().startJobs();

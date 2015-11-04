@@ -385,18 +385,19 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                                 + "/egovernments/complaints/" + jo.getString("crn");
                         File complaintFolder = new File(complaintFolderName);
                         if (jo.getInt("supportDocsSize") == 0) {
-                            item.setImagePath(complaintFolderName + File.separator
-                                    + ".thumb_photo_complaint_type.jpg");
+                            /*item.setImagePath(complaintFolderName + File.separator
+                                    + ".thumb_photo_complaint_type.jpg");*/
+                        	item.setImagePath("");
+                            
                         } else {
                             item.setImagePath(complaintFolderName + File.separator + ".thumb_photo_"
                                     + jo.getInt("supportDocsSize") + ".jpg");
+                            _addDownloadJobs(complaintFolderName, jo);
                         }
                         
                         if (!complaintFolder.exists()) {   
                             sm.mkdirs(complaintFolderName);
                         }
-                        
-                        _addDownloadJobs(complaintFolderName, jo);
                         
                         listItem.add(item);
                     }

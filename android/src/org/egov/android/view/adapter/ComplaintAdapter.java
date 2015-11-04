@@ -134,26 +134,16 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         }
         
         File file = new File(data.getImagePath());
-
-        if (file.exists()) {
-            holder.image.setImageBitmap(  _getBitmapImage(data.getImagePath()));
-        } else {
-            StorageManager sm = new StorageManager();
-            Object[] obj = sm.getStorageInfo();
-            String complaintImagePath = obj[0].toString() + "/egovernments/complaints/"
-                    + data.getComplaintId() + File.separator + ".thumb_photo_complaint_type.jpg";
-            File complaintTypeImage = new File(complaintImagePath);
-            if (complaintTypeImage.exists()) {
-                holder.image.setImageBitmap(_getBitmapImage(complaintImagePath));
-            } else {
-                holder.image.setImageResource(R.drawable.complaint);
-            }
+        if(data.getImagePath().length()>0)
+        {
+	        if (file.exists()) {
+	            holder.image.setImageBitmap(  _getBitmapImage(data.getImagePath()));
+	        }
         }
-                
-        /*if (holder.image != null) {
-        	holder.image.setImageBitmap(null);
-			new ImageDownloaderTask(holder.image).execute(data.getThumbImageURL(), "GET");
-        }*/
+        else
+        {
+        	holder.image.setImageDrawable(activity.getResources().getDrawable(R.drawable.default_image));
+        }
         
         holder.description.setText(data.getDetails());
         holder.date.setText((data.getCreatedDate().equals("")) ? "" : getActualTime(data

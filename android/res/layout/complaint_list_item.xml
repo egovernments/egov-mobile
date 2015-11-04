@@ -38,15 +38,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="5dp" >
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_border"
+        android:padding="15dp"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -68,7 +69,8 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:src="@drawable/default_image" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,29 +98,23 @@
 
         <org.egov.android.view.component.EGovTextView
             android:id="@+id/description"
+            android:paddingTop="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp" />
+            android:ellipsize="end"
+			android:singleLine="true"
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingTop="6dp" >
+            android:paddingTop="10dp">
 
             <org.egov.android.view.component.EGovTextView
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Status"
+                android:text="STATUS : "
                 android:textColor="@color/dark_gray" />
-
-            <org.egov.android.view.component.EGovTextView
-                android:layout_width="10dp"
-                android:layout_height="wrap_content"
-                android:text=":"
-                android:textColor="@color/text" />
 
             <org.egov.android.view.component.EGovTextView
                 android:id="@+id/complaint_status"
