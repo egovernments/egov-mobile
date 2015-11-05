@@ -685,15 +685,28 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
        {
     	 latitude = lat;
          longitute = lng;
-         String cityName = getCurrentLocation(lat, lng);
-         location.setText(cityName);
+         final String cityName = getCurrentLocation(lat, lng);
+         runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				location.setText(cityName);
+			}
+		});
        }
        else
        {
     	   latitude = lat;
            longitute = lng;
-           String cityName = getCurrentLocation(lat, lng);
-           location.setText(cityName);
+           final String cityName = getCurrentLocation(lat, lng);
+           runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					location.setText(cityName);
+				}
+		   });
        }
     }
 
@@ -875,7 +888,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                     File f1 = new File(assetPath + File.separator + "current");
                     File f2 = new File(assetPath + File.separator + result.getString("crn"));
                     f1.renameTo(f2);
-                    _addUploadJobs(result.getString("crn"));
+                    /*_addUploadJobs(result.getString("crn"));*/
                     Intent intent = new Intent(this, ComplaintActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
@@ -958,7 +971,14 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         complaint.setLatitude(latitude);
         complaint.setLongitute(longitute);
         
-        ApiController.getInstance().addComplaint(this, complaint);
+        File f1 = new File(assetPath + File.separator + "current");
+        File[] listOfFiles = new File[] {};
+
+        if (f1.exists()) {
+            listOfFiles = f1.listFiles();
+        }
+        
+        ApiController.getInstance().addComplaint(this, complaint, listOfFiles);
     }
 
     @Override

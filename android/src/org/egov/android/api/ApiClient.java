@@ -47,6 +47,7 @@ import java.util.zip.GZIPInputStream;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.egov.android.R;
+import org.egov.android.common.MultipartUtility;
 import org.egov.android.common.ReflectionUtil;
 import org.egov.android.data.cache.Cache;
 import org.egov.android.listener.Event;
@@ -232,6 +233,32 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements
 			}
 			Log.d(TAG, "===================" + url);
 
+			
+			if(apiMethod.isMultiPart())
+			{
+				MultipartUtility multipart = new MultipartUtility(url, "UTF-8");
+	             
+	            multipart.addHeaderField("Connection", "Keep-Alive");
+	            multipart.addHeaderField("ENCTYPE", "multipart/form-data");
+	            
+	            Log.d(TAG, "Params : " + apiMethod.getPostParameter());
+	            
+	            multipart.addFormField("json_complaint", apiMethod.getPostParameter());
+	             
+	            for(int fidx=0;fidx<apiMethod.getUploadDocs().length;fidx++)
+	            {
+	            	multipart.addFilePart("files", apiMethod.getUploadDocs()[fidx]);
+	            }
+	 
+	            List<String> response = multipart.finish();
+	            StringBuffer sb = new StringBuffer();
+	            for (String line : response) {
+	            	Log.d(TAG, line);
+	            	sb.append(line);
+	            }
+	            return new ApiResponse(sb.toString(), this.apiMethod, "live");
+			}
+			
 			
 			/* Protocal Switch Condition Whether sending https request or http request */
 			if (url.startsWith("https://")) {

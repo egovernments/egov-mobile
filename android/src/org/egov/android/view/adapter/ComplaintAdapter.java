@@ -172,7 +172,7 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
      */
     private Bitmap _getBitmapImage(String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;
+        options.inSampleSize = 1;
         return BitmapFactory.decodeFile(path, options);
     }
 

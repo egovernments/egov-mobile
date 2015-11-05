@@ -31,6 +31,7 @@
 
 package org.egov.android.api;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -50,6 +51,8 @@ public class ApiMethod {
     private String queryType = "x-www-form-urlencoded";
     private String extraParam = null;
     private String serverBaseURL=null;
+    private boolean isMultiPart=false;
+    private File[] uploadDocs;
 
     public ApiMethod() {
         this(null);
@@ -285,4 +288,21 @@ public class ApiMethod {
     public void setExtraParam(String extraParam) {
         this.extraParam = extraParam;
     }
+
+	public boolean isMultiPart() {
+		return isMultiPart;
+	}
+
+	public void setMultiPart(boolean isMultiPart) {
+		this.isMultiPart = isMultiPart;
+	}
+
+	public File[] getUploadDocs() {
+		return uploadDocs;
+	}
+
+	public void setUploadDocs(File[] uploadDocs) {
+		this.uploadDocs = uploadDocs;
+	}
+    
 }

@@ -87,6 +87,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -302,7 +303,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 			}
 	    });
 		
-		for (int i = 0; i < listOfFiles.length; i++) {
+		for (int i = (listOfFiles.length-1); i >= 0 ; i--) {
 			
 			if (listOfFiles[i].isFile()) {
 				Log.d("EGOV_JOB", "File path" + complaintFolderName
@@ -331,10 +332,12 @@ public class ComplaintDetailActivity extends BaseActivity {
 					}
 				});
 				LinearLayout.LayoutParams inner_container_params = new LinearLayout.LayoutParams(
-						_dpToPix(80), _dpToPix(80));
-
+						_dpToPix(90), _dpToPix(90));
+				inner_container_params.setMargins(0, 0, 10, 0);
 				image.setLayoutParams(inner_container_params);
-				image.setPadding(0, 0, 5, 0);
+				image.setPadding(2, 2, 2, 2);
+				image.setBackgroundDrawable(getResources().getDrawable(R.drawable.edittext_border));
+				image.setScaleType(ScaleType.CENTER_INSIDE);
 				imageCntainer.addView(image);
 			}
 		}

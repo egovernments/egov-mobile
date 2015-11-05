@@ -31,6 +31,8 @@
 
 package org.egov.android.controller;
 
+import java.io.File;
+
 import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiMethod;
 import org.egov.android.api.ApiUrl;
@@ -327,9 +329,10 @@ public class ApiController {
      * @param listener
      * @param complaint
      */
-    public void addComplaint(IApiListener listener, Complaint complaint) {
+    public void addComplaint(IApiListener listener, Complaint complaint, File[] uploadImages) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.ADD_COMPLAINT);
         apiMethod.setMethod(RequestMethod.POST);
+        apiMethod.setMultiPart(true);
         apiMethod.setQueryType("json");
         if (complaint.getLatitude() == 0 && complaint.getLongitute() == 0) {
             apiMethod.addParameter("locationId", complaint.getLocationId());
@@ -340,6 +343,8 @@ public class ApiController {
         apiMethod.addParameter("details", complaint.getDetails());
         apiMethod.addParameter("complaintTypeId", complaint.getComplaintTypeId());
         apiMethod.addParameter("landmarkDetails", complaint.getLandmarkDetails());
+        apiMethod.setUploadDocs(uploadImages);
+        
         _createApiClient(apiMethod, listener, false).call();
     }
 
