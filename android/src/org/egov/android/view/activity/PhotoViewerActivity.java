@@ -69,7 +69,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 public class PhotoViewerActivity extends FragmentActivity {
 	private static final String TAG = PhotoViewerActivity.class.getName();
@@ -168,7 +167,6 @@ public class PhotoViewerActivity extends FragmentActivity {
 
         private Bitmap _getBitmapImage(String path) {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 4;
             return BitmapFactory.decodeFile(path, options);
         }
         

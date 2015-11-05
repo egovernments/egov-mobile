@@ -290,7 +290,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 			return;
 		}
 		File[] listOfFiles = folder.listFiles();
-		ImageView image;
+		
 		int imageidx=0;
 		
 		Arrays.sort(listOfFiles, new Comparator<File>()
@@ -307,12 +307,12 @@ public class ComplaintDetailActivity extends BaseActivity {
 			if (listOfFiles[i].isFile()) {
 				Log.d("EGOV_JOB", "File path" + complaintFolderName
 						+ File.separator + listOfFiles[i].getName());
-				if (listOfFiles[i].getName().equalsIgnoreCase(
-						".thumb_photo_complaint_type.jpg")
-						|| listOfFiles[i].getName().startsWith("photo_")) {
+				
+				if (listOfFiles[i].getName().startsWith("photo_")) {
 					continue;
 				}
-				image = new ImageView(this);
+								
+				ImageView image = new ImageView(this);
 				Bitmap bmp = _getBitmapImage(complaintFolderName
 						+ File.separator + listOfFiles[i].getName());
 				image.setImageBitmap(bmp);
@@ -350,7 +350,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 	 */
 	private Bitmap _getBitmapImage(String path) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 2;
+		options.inSampleSize = 1;
 		return BitmapFactory.decodeFile(path, options);
 	}
 

@@ -151,7 +151,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
             int totalFiles = jsonObj.getInt("supportDocsSize");
             if (totalFiles == 0) {
             	
-            	if(!new File(path + "/.thumb_photo_complaint_type.jpg").exists())
+            	/*if(!new File(path + "/.thumb_photo_complaint_type.jpg").exists())
             	{
 	                jo = new JSONObject();
 	                jo.put("url",
@@ -161,7 +161,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
 	                jo.put("type", "complaintType");
 	                jo.put("destPath", path + "/.thumb_photo_complaint_type.jpg");
 	                jo.put("isThumbnail", true);
-            	}
+            	}*/
                 /*SQLiteHelper.getInstance().execSQL(
                         "INSERT INTO tbl_jobs(data, status, type, triedCount) values ('"
                                 + jo.toString() + "', 'waiting', 'download', 0)");*/
