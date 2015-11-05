@@ -96,7 +96,14 @@ public class CommentsAdapter extends BaseAdapter {
 			
 			String currentUserName=AndroidLibrary.getInstance().getSession().getString("user_name", "");
 			commentview.txtviewuser.setText((currentUserName.equals(commentobj.getString("updatedBy"))?"Me":commentobj.getString("updatedBy")));
-			commentview.txtviewmessage.setText(commentobj.getString("comments"));
+			if(!commentobj.getString("comments").equals(""))
+			{
+				commentview.txtviewmessage.setText(commentobj.getString("comments"));
+			}
+			else
+			{
+				commentview.txtviewmessage.setVisibility(View.GONE);
+			}
 			commentview.txtviewtime.setText(timeagotext);
 			commentview.txtviewstatus.setText(commentobj.getString("status"));
 			float density=Resources.getSystem().getDisplayMetrics().density;

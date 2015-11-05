@@ -643,7 +643,20 @@ public class ComplaintDetailActivity extends BaseActivity {
 				
 				try {
 					JSONObject jo = new JSONObject(event.getData().getResponse().toString());
-					complaintComments=jo.getJSONArray("comments");
+					JSONArray commentsresp=jo.getJSONArray("comments");
+					
+					//remove unnecessary comments from array
+					for(int idx=0; idx<commentsresp.length(); idx++)
+					{
+						JSONObject commentobj=commentsresp.getJSONObject(idx);
+						if(commentobj.getString("status").toLowerCase().equals("registered") && commentobj.getString("comments").equals(""))
+						{
+							continue;
+						}
+						complaintComments.put(commentobj);
+					}
+					
+					
 					LinearLayout recentmsgtemplate=(LinearLayout)findViewById(R.id.recentmessages);
 					for(int i=0; i<(complaintComments.length() > 2 ? 2 : complaintComments.length());i++)
 					{
@@ -663,7 +676,15 @@ public class ComplaintDetailActivity extends BaseActivity {
 						
 						String currentUserName=AndroidLibrary.getInstance().getSession().getString("user_name", "");
 						
-						((TextView)child.findViewById(R.id.messagetext)).setText(commentobj.getString("comments"));
+						TextView messagetv=(TextView)child.findViewById(R.id.messagetext);
+						if(!commentobj.getString("comments").equals(""))
+						{
+							messagetv.setText(commentobj.getString("comments"));
+						}
+						else
+						{
+							messagetv.setVisibility(View.GONE);
+						}
 						((TextView)child.findViewById(R.id.messagetime)).setText(timeagotext);
 						((TextView)child.findViewById(R.id.messagestatus)).setText(commentobj.getString("status"));
 						
