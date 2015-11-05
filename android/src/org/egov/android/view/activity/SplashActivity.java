@@ -31,6 +31,7 @@
 
 package org.egov.android.view.activity;
 
+import java.net.InetAddress;
 import java.util.Date;
 
 import org.egov.android.AndroidLibrary;
@@ -96,6 +97,14 @@ public class SplashActivity extends BaseActivity implements Runnable {
 						new getBaseServerURL().execute((String)AndroidLibrary.getInstance().getConfig().get("api.baseUrl", ""));	
 					}
 				}
+				else
+				{
+					new Handler().postDelayed(this, 3000);
+				}
+			}
+			else
+			{
+				new Handler().postDelayed(this, 3000);
 			}
 		}
         
@@ -107,7 +116,7 @@ public class SplashActivity extends BaseActivity implements Runnable {
                 .getInstance()
                 .execSQL(
                         "CREATE TABLE IF NOT EXISTS tbl_jobs (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, data TEXT, status TEXT, type TEXT, triedCount INTEGER, timeStamp DATETIME DEFAULT (datetime('now','localtime')), UNIQUE(data) ON CONFLICT REPLACE)");
-        new Handler().postDelayed(this, 2000);
+        
     }
     
     private String getValidURL(String url)
@@ -121,6 +130,7 @@ public class SplashActivity extends BaseActivity implements Runnable {
 	    editor.putString("api.baseUrl", getValidURL(cityJSON.getString("url")));
 	    editor.putLong("urlupdatetime", new Date().getTime());
 	    editor.commit();
+	    new Handler().postDelayed(SplashActivity.this, 3000);
     }
 
     public class getBaseServerURL extends AsyncTask<String, Integer, String>
@@ -135,20 +145,32 @@ public class SplashActivity extends BaseActivity implements Runnable {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return JSONUtil.getJSON(params[0]);
+			if(isInternetAvailable())
+			{
+				return JSONUtil.getJSON(params[0]);
+			}
+			return null;
 		}
     	
 		@Override
 		protected void onPostExecute(String result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			Log.d(SplashActivity.class.getName(), result);
 			try {
 				
+				if(result == null)
+				{
+					Toast.makeText(getApplicationContext(), "Please, Check your internet connection!", Toast.LENGTH_LONG).show();
+					finish();
+					return;
+				}
+				
+				Log.d(SplashActivity.class.getName(), result);
 				
 	    		if(result.startsWith("ERROR"))
 	    		{
 	    			Toast.makeText(getApplicationContext(), "Something went wrong!", Toast.LENGTH_LONG).show();
+	    			finish();
 	    			return;
 	    		}
 	    		
@@ -197,5 +219,19 @@ public class SplashActivity extends BaseActivity implements Runnable {
         finish();
     }
     
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            if (ipAddr.equals("")) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
     
 }
