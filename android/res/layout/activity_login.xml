@@ -45,12 +45,11 @@
             android:id="@+id/header"
             style="@style/Header"
             android:layout_width="match_parent"
-            app:actionButton=""
-            app:title="Login" />
+            app:title="MyRMC" />
 
         <org.egov.android.view.component.Body
             style="@style/Body"
-            android:layout_margin="@dimen/viewMargin" >
+            android:layout_margin="@dimen/viewMargin">
 
             <ScrollView
                 android:layout_width="fill_parent"
@@ -82,7 +81,7 @@
                         <org.egov.android.view.component.EGovEditText
                             android:id="@+id/login_email"
                             style="@style/FormRow.EditText"
-                            android:hint="Email/Phone"
+                            android:hint="Mobile # / Username"
                             android:singleLine="true" />
                     </LinearLayout>
 
@@ -115,6 +114,15 @@
                         style="@style/ButtonStyle"
                         android:layout_marginTop="30dp"
                         android:text="@string/register_btn" />
+                    
+                    <TextView
+				        android:id="@+id/textView2"
+				        android:layout_width="match_parent"
+				        android:layout_height="wrap_content"
+				        android:text="Powered by eGovernments Foundation"
+				        android:layout_marginTop="15dp"
+				        android:gravity="center"
+				        android:textSize="12sp" />
                 </LinearLayout>
             </ScrollView>
         </org.egov.android.view.component.Body>

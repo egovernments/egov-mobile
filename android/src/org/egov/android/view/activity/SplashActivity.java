@@ -33,7 +33,6 @@ package org.egov.android.view.activity;
 
 import java.net.InetAddress;
 import java.util.Date;
-
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.common.JSONUtil;
@@ -41,7 +40,6 @@ import org.egov.android.data.SQLiteHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -49,6 +47,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 public class SplashActivity extends BaseActivity implements Runnable {
@@ -135,11 +135,13 @@ public class SplashActivity extends BaseActivity implements Runnable {
 
     public class getBaseServerURL extends AsyncTask<String, Integer, String>
     {
-    	
+    	ProgressBar loadSpinner;
     	@Override
     	protected void onPreExecute() {
     		// TODO Auto-generated method stub
     		super.onPreExecute();
+    		loadSpinner=(ProgressBar)findViewById(R.id.splashprogress);
+    		loadSpinner.setVisibility(View.VISIBLE);
     	}
     	
 		@Override

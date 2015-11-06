@@ -40,7 +40,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -60,7 +59,9 @@ import org.egov.android.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -80,6 +81,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegisterActivity extends BaseActivity {
@@ -99,6 +101,8 @@ public class RegisterActivity extends BaseActivity {
         setContentView(R.layout.activity_register);
 
         ((Button) findViewById(R.id.register_doRegister)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btngotit)).setOnClickListener(this);
+        
         sharedpreferences = getApplicationContext().getSharedPreferences(getString(R.string.app_name), 0); // 0 - for private mode
         
         if(AndroidLibrary.getInstance().getConfig().get("api.multicities", "false").equals("true"))
@@ -122,8 +126,17 @@ public class RegisterActivity extends BaseActivity {
      		baseServerURL = sharedpreferences.getString("api.baseUrl", null);
         }
         
-        
-        showPasswordConstraintMessage();
+        LinearLayout viewpwd=(LinearLayout)findViewById(R.id.passwordmsgcontainer);
+
+        if(!sharedpreferences.getBoolean("register.pwdinfo", false))
+        {
+           ((TextView)findViewById(R.id.passwordmsg)).setText("Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except \'& < > # % \" ' / \\' and space");
+           viewpwd.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+           viewpwd.setVisibility(View.GONE);
+        }
     }
     
     /**
@@ -289,8 +302,40 @@ public class RegisterActivity extends BaseActivity {
             case R.id.register_doRegister:
                 _register();
                 break;
+            case R.id.btngotit:
+            	_hidePasswordMessage();
+            	break;
         }
     }
+    
+    @SuppressLint("NewApi")
+	private void _hidePasswordMessage()
+    {
+    	final LinearLayout viewpwd=(LinearLayout)findViewById(R.id.passwordmsgcontainer);
+    	if(AndroidLibrary.getInstance().getSession().getInt("api_level", 0) >= 12)
+    	{
+	    	viewpwd.animate()
+	        .translationY(0)
+	        .alpha(0.0f)
+	        .setListener(new AnimatorListenerAdapter() {
+	            @Override
+	            public void onAnimationEnd(Animator animation) {
+	                super.onAnimationEnd(animation);
+	                viewpwd.setVisibility(View.GONE);
+	                Editor editor = sharedpreferences.edit();
+	            	editor.putBoolean("register.pwdinfo", true);
+	            	editor.commit();
+	            }
+	        });
+    	}
+    	else
+    	{
+    		viewpwd.setVisibility(View.GONE);
+    	}
+    
+    
+    }
+    
 
     /**
      * Function called when clicking on save button. Check the empty field validation and show the

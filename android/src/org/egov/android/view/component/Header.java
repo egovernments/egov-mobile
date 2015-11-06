@@ -59,6 +59,8 @@ public class Header extends RelativeLayout implements OnClickListener {
     public final static int ACTION_ADD_COMPLAINT = 4;
 
     public final static int ACTION_REFRESH = 16;
+    
+    public final static int ACTION_EGOV = 42;
 
     private OnClickListener actionListener = null;
     /**
@@ -107,11 +109,26 @@ public class Header extends RelativeLayout implements OnClickListener {
         ((TextView) findViewById(R.id.hdr_title)).setText(a.getString(R.styleable.Header_title));
 
         int action = a.getInt(R.styleable.Header_actionButton, 0);
+        
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        llp.setMargins(0, 0, 0, 0);
+        
+       /* ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) ((TextView) findViewById(R.id.hdr_title))
+                .getLayoutParams();
+
+        mlp.setMargins(0, 0, 0, 0);*/
+        
+        ((TextView) findViewById(R.id.hdr_title)).setPadding(0, 0, dpToPixel(5), 0);
 
         int id = action & ((int) Math.pow(2, 0));
         LinearLayout rootView = (LinearLayout) this.getChildAt(0);
         if (id == 1) {
             rootView.addView(this._getImageView(ACTION_BACK, R.drawable.back_icon), 0);
+            ((ImageView) findViewById(R.id.titlebarlogo)).setPadding(0, 0, 0, 0);
+            ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams)((ImageView) findViewById(R.id.titlebarlogo))
+                    .getLayoutParams();
+            mlp.setMargins(0, 0, 0, 0);
+            ((TextView) findViewById(R.id.hdr_title)).setPadding(dpToPixel(10), 0, 0, 0);
         }
 
         rootView = (LinearLayout) this.getChildAt(1);
@@ -133,6 +150,7 @@ public class Header extends RelativeLayout implements OnClickListener {
                 rootView.addView(this._getImageView(id, Integer.valueOf(sia.get(id).toString())), 0);
             }
         }
+        
     }
 
     /**

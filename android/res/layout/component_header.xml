@@ -41,13 +41,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:paddingBottom="5dp" >
+        android:gravity="center_vertical|left"
+        android:padding="2dp" >
+        
+        <ImageView android:id="@+id/titlebarlogo" android:layout_width="50dp" android:layout_height="match_parent"
+           android:src="@drawable/applogo" android:layout_gravity="left" android:layout_marginLeft="5dp"/>
 
         <org.egov.android.view.component.EGovTextView
             android:id="@+id/hdr_title"
+            android:layout_width="wrap_content"
             style="@style/Header.Text"
             android:textSize="18sp" />
+        
+       
+        
     </LinearLayout>
 
     <LinearLayout
