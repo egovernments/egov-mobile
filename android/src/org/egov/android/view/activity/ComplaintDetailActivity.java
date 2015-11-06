@@ -115,13 +115,14 @@ public class ComplaintDetailActivity extends BaseActivity {
 	 * listener to the status summary button and change status button. call the
 	 * complaint detail api
 	 */
+	
+	String[] statusDrop = { "Select", "Withdrawn" };
+	String[] statusReopen = { "Select", "Reopen" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_complaint_detail);
-
-		String[] items = { "Select", "Withdrawn" };
 
 		int apiLevel = AndroidLibrary.getInstance().getSession()
 				.getInt("api_level", 0);
@@ -131,10 +132,6 @@ public class ComplaintDetailActivity extends BaseActivity {
 			statusSpinner = (Spinner) findViewById(R.id.status_normal_spinner);
 		}
 		statusSpinner.setVisibility(View.VISIBLE);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, items);
-		dataAdapter.setDropDownViewResource(R.layout.custom_spinner_list_item);
-		statusSpinner.setAdapter(dataAdapter);
 
 		imageCntainer = (LinearLayout) findViewById(R.id.complaint_image_container);
 
@@ -188,6 +185,16 @@ public class ComplaintDetailActivity extends BaseActivity {
 		}
 		ApiController.getInstance().getComplaintDetail(this, complaintId);
 	}
+	
+	
+	public void setSpinnerStatus(String[] statuses)
+	{
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, statuses);
+		dataAdapter.setDropDownViewResource(R.layout.custom_spinner_list_item);
+		statusSpinner.setAdapter(dataAdapter);
+	}
+	
 
 	/**
 	 * Function called if the user didn't enable GPS/Location in their device.
@@ -266,6 +273,10 @@ public class ComplaintDetailActivity extends BaseActivity {
 
 		String status = (pos == 0 ? complaintStatus : statusSpinner
 				.getSelectedItem().toString());
+		
+		status = (status.toLowerCase().equals("reopen")? "Reopened":status); 
+				
+		
 		String message = ((EditText) findViewById(R.id.message)).getText()
 				.toString();
 		
@@ -545,6 +556,15 @@ public class ComplaintDetailActivity extends BaseActivity {
 					createdDate = _getValue(jo, "createdDate");
 					lastModifiedDate = _getValue(jo, "lastModifiedDate");
 					complaintTypeName = _getValue(jo, "complaintTypeName");
+					
+					if(complaintStatus.toUpperCase().equals("COMPLETED"))
+					{
+						setSpinnerStatus(statusReopen);
+					}
+					else
+					{
+						setSpinnerStatus(statusDrop);
+					}
 
 					new GetComplaintComments().loadComments();
 					
