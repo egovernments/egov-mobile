@@ -72,7 +72,7 @@ public class BaseActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing request");
+        progressDialog.setMessage(getString(R.string.processing_msg));
         progressDialog.setCancelable(false);
 
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
@@ -97,7 +97,7 @@ public class BaseActivity extends AppCompatActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
-                actionBar.setTitle("Menu");
+                actionBar.setTitle(R.string.menu_label);
             }
         };
 
@@ -126,7 +126,7 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, GrievanceActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                        if (!getTitle().toString().equals("Home"))
+                        if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
                         break;
 
@@ -134,7 +134,7 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, PropertyActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                        if (!getTitle().toString().equals("Home"))
+                        if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
                         break;
 
@@ -142,7 +142,7 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                        if (!getTitle().toString().equals("Home"))
+                        if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
                         break;
 
@@ -150,7 +150,7 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, NotificationsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
-                        if (!getTitle().toString().equals("Home"))
+                        if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
                         break;
 
@@ -160,7 +160,7 @@ public class BaseActivity extends AppCompatActivity {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
-                                Toast.makeText(BaseActivity.this, "You have been logged out", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
 
                                 sessionManager.logoutUser();
 
@@ -186,7 +186,7 @@ public class BaseActivity extends AppCompatActivity {
                                     if (jsonObject != null) {
                                         String s = jsonObject.get("error").toString().trim();
                                         if (s.contains("invalid_token")) {
-                                            Toast.makeText(BaseActivity.this, "You have been logged out", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
 
                                             sessionManager.logoutUser();
 
@@ -198,7 +198,7 @@ public class BaseActivity extends AppCompatActivity {
 
                                     }
                                 } else {
-                                    Toast.makeText(BaseActivity.this, "Unable to access the internet", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(BaseActivity.this, R.string.no_connection_msg, Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
                                 }
                             }
@@ -213,16 +213,16 @@ public class BaseActivity extends AppCompatActivity {
 
     private void fillList() {
 
-        arrayList.add(new NavItem(R.drawable.ic_feedback_black_24dp, "Grievances"));
-        arrayList.add(new NavItem(R.drawable.ic_home_black_24dp, "Property Tax"));
-        arrayList.add(new NavItem(R.drawable.ic_location_city_black_24dp, "Building Plans"));
-        arrayList.add(new NavItem(R.drawable.ic_accessibility_black_24dp, "Births and Deaths"));
-        arrayList.add(new NavItem(R.drawable.ic_business_black_24dp, "Advertisements"));
-        arrayList.add(new NavItem(R.drawable.ic_account_balance_black_24dp, "Shops"));
-        arrayList.add(new NavItem(R.drawable.ic_person_black_24dp, "My Profile"));
-        arrayList.add(new NavItem(R.drawable.ic_notifications_black_24dp, "Notifications"));
-        arrayList.add(new NavItem(R.drawable.ic_settings_black_24dp, "Settings"));
-        arrayList.add(new NavItem(R.drawable.ic_backspace_black_24dp, "Logout"));
+        arrayList.add(new NavItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
+        arrayList.add(new NavItem(R.drawable.ic_home_black_24dp, getString(R.string.propertytax_label)));
+        arrayList.add(new NavItem(R.drawable.ic_location_city_black_24dp, getString(R.string.buildingplans_label)));
+        arrayList.add(new NavItem(R.drawable.ic_accessibility_black_24dp, getString(R.string.births_deaths_label)));
+        arrayList.add(new NavItem(R.drawable.ic_business_black_24dp, getString(R.string.ads_label)));
+        arrayList.add(new NavItem(R.drawable.ic_account_balance_black_24dp, getString(R.string.shops_label)));
+        arrayList.add(new NavItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
+        arrayList.add(new NavItem(R.drawable.ic_notifications_black_24dp, getString(R.string.notifs_label)));
+        arrayList.add(new NavItem(R.drawable.ic_settings_black_24dp, getString(R.string.settings_label)));
+        arrayList.add(new NavItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
 
     }
 

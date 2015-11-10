@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 public class UriPathHelper {
 
     public static String getRealPathFromURI(Uri contentUri, Context context) {
+
         try {
             String[] strings = {MediaStore.Images.Media.DATA};
             String s = null;
@@ -29,7 +30,7 @@ public class UriPathHelper {
             return contentUri.getPath();
         }
 
-        return null;
+        return contentUri.getPath();
 
     }
 }

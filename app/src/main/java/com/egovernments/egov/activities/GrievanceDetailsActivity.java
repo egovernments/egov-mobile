@@ -1,6 +1,7 @@
 package com.egovernments.egov.activities;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -54,6 +55,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     private boolean isSelected = false;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +83,11 @@ public class GrievanceDetailsActivity extends BaseActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, strings);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+
+        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Processing request");
+        progressDialog.setCancelable(false);
 
         ImageView default_image = (ImageView) findViewById(R.id.details_defaultimage);
         RelativeLayout imageLayout = (RelativeLayout) findViewById(R.id.details_imageslayout);
@@ -166,33 +174,58 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                 if (!isSelected) {
                     Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT).show();
-                } else if (action.equals("Update") && comment.isEmpty()) {
-                    Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                 } else {
+                    if (action.equals("Update") && comment.isEmpty()) {
+                        Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                    if (action.equals("Update")) {
-                        action = grievance.getStatus();
-                    } else if (action.equals("Withdrawn")) {
-                        action = "COMPLETED";
+                        if (action.equals("Update")) {
+                            action = grievance.getStatus();
+                        } else if (action.equals("Withdrawn")) {
+                            action = "COMPLETED";
+                        }
+
+                        progressDialog.show();
+
+                        ApiController.getAPI()
+                                .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                                    @Override
+                                    public void success(JsonObject jsonObject, Response response) {
+
+                                        Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+
+                                        ApiController.getAPI().getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
+                                            @Override
+                                            public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
+
+                                                GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
+
+                                                listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
+
+                                            }
+
+                                            @Override
+                                            public void failure(RetrofitError error) {
+
+                                                Toast.makeText(GrievanceDetailsActivity.this, "Could not retrieve comments", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        });
+
+
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError error) {
+
+                                        Toast.makeText(GrievanceDetailsActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+
+                                    }
+                                });
+
                     }
-                    ApiController.getAPI()
-                            .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
-                                @Override
-                                public void success(JsonObject jsonObject, Response response) {
-
-                                    Toast.makeText(GrievanceDetailsActivity.this, "Grievance updated", Toast.LENGTH_SHORT).show();
-
-
-                                }
-
-                                @Override
-                                public void failure(RetrofitError error) {
-
-                                    Toast.makeText(GrievanceDetailsActivity.this, "An error occurred", Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
-
                 }
             }
         });

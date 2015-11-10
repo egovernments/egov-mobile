@@ -53,7 +53,7 @@ public class LoginActivity extends Activity {
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
             } else {
-                Toast.makeText(LoginActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.session_expiry_message, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -129,6 +129,12 @@ public class LoginActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
+                    progressBar.setVisibility(View.VISIBLE);
+                    loginButton.setVisibility(View.GONE);
+                    loginButtonCompat.setVisibility(View.GONE);
+                    forgotLabel.setVisibility(View.INVISIBLE);
+                    signupButton.setVisibility(View.INVISIBLE);
+
                     username = username_edittext.getText().toString().trim();
                     password = password_edittext.getText().toString().trim();
                     login(username, password);
@@ -142,7 +148,7 @@ public class LoginActivity extends Activity {
     private void login(final String username, final String password) {
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Please enter both username and password", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_LONG).show();
             progressBar.setVisibility(View.GONE);
             forgotLabel.setVisibility(View.VISIBLE);
             signupButton.setVisibility(View.VISIBLE);

@@ -23,7 +23,7 @@
         android:name=".application.EGovApp"
         android:allowBackup="false"
         android:icon="@drawable/egov"
-        android:label="eGovernments"
+        android:label="@string/egov_label"
         android:theme="@style/AppTheme">
 
         <meta-data
@@ -36,7 +36,7 @@
 
         <activity
             android:name=".activities.LoginActivity"
-            android:label="eGovernments"
+            android:label="@string/egov_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan|stateHidden">
@@ -48,7 +48,7 @@
 
         <activity
             android:name=".activities.RegisterActivity"
-            android:label="Create An Account"
+            android:label="@string/createaccount_label"
             android:parentActivityName=".activities.LoginActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -59,7 +59,7 @@
 
         <activity
             android:name=".activities.GrievanceActivity"
-            android:label="Grievances"
+            android:label="@string/grievances_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -69,7 +69,7 @@
 
         <activity
             android:name=".activities.PropertyActivity"
-            android:label="Property Tax"
+            android:label="@string/propertytax_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -79,7 +79,7 @@
 
         <activity
             android:name=".activities.PropertyDetailsActivity"
-            android:label="Property Tax"
+            android:label="@string/propertytax_label"
             android:parentActivityName=".activities.PropertyActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -90,7 +90,7 @@
         <activity
             android:name=".activities.NewGrievanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Grievances"
+            android:label="@string/grievances_label"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -101,7 +101,7 @@
 
         <activity
             android:name=".activities.NewPropertyActivity"
-            android:label="Property Tax"
+            android:label="@string/propertytax_label"
             android:parentActivityName=".activities.PropertyActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -111,7 +111,7 @@
 
         <activity
             android:name=".activities.NewPropertyDetailsActivity"
-            android:label="Property Tax"
+            android:label="@string/propertytax_label"
             android:parentActivityName=".activities.NewPropertyActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -121,7 +121,7 @@
 
         <activity
             android:name=".activities.GrievanceDetailsActivity"
-            android:label="Grievances"
+            android:label="@string/grievances_label"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -132,7 +132,7 @@
 
         <activity
             android:name=".activities.AccountActivationActivity"
-            android:label="Verify Account"
+            android:label="@string/verify_account_label"
             android:parentActivityName=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
@@ -144,7 +144,7 @@
 
         <activity
             android:name=".activities.ProfileEditActivity"
-            android:label="Profile"
+            android:label="@string/profile_label"
             android:parentActivityName=".activities.ProfileActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -154,7 +154,7 @@
 
         <activity
             android:name=".activities.ProfileActivity"
-            android:label="Profile"
+            android:label="@string/profile_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -164,7 +164,7 @@
 
         <activity
             android:name=".activities.NotificationsActivity"
-            android:label="Notifications"
+            android:label="@string/notifications_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -174,17 +174,17 @@
 
         <activity
             android:name=".activities.HomeActivity"
-            android:label="Home"
+            android:label="@string/home_label"
             android:theme="@style/AppTheme" />
 
         <activity
             android:name=".activities.BaseActivity"
-            android:label="Home"
+            android:label="@string/home_label"
             android:theme="@style/AppTheme" />
 
         <activity
             android:name=".activities.ForgotPasswordActivity"
-            android:label="Account Recovery"
+            android:label="@string/account_recovery_label"
             android:parentActivityName=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"

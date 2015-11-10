@@ -82,13 +82,13 @@ public class AccountActivationActivity extends AppCompatActivity {
                 ApiController.getAPI().sendOTP(username, new Callback<JsonObject>() {
                     @Override
                     public void success(JsonObject jsonObject, Response response) {
-                        Toast.makeText(AccountActivationActivity.this, "OTP Resent", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AccountActivationActivity.this, R.string.otp_resent_msg, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
 
-                        Toast.makeText(AccountActivationActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AccountActivationActivity.this, R.string.no_connection_msg, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -129,7 +129,7 @@ public class AccountActivationActivity extends AppCompatActivity {
             ApiController.getAPI().activate(username, activationCode, new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
-                    Toast.makeText(AccountActivationActivity.this, "Account activated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT).show();
                     ApiController.getLoginAPI().Login(username, "read write", password, "password", new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
@@ -141,7 +141,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                         @Override
                         public void failure(RetrofitError error) {
 
-                            Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred. ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AccountActivationActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(AccountActivationActivity.this, LoginActivity.class));
                         }
                     });

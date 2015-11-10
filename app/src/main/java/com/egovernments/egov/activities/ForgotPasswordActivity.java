@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.R;
+import com.egovernments.egov.network.ApiController;
 import com.google.gson.JsonObject;
 
 import retrofit.Callback;
@@ -103,17 +103,17 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void submit(String phone) {
 
         if (phone.isEmpty()) {
-            Toast.makeText(ForgotPasswordActivity.this, "Please enter your registered phone number", Toast.LENGTH_LONG).show();
+            Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_LONG).show();
 
 
         } else if (phone.length() != 10) {
-            Toast.makeText(this, "Mobile number must be 10 digits", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT).show();
         } else {
             ApiController.getAPI().recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
-                    Toast.makeText(ForgotPasswordActivity.this, "Recovery message sent", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ForgotPasswordActivity.this, R.string.recoverymessage_msg, Toast.LENGTH_SHORT).show();
 
                     startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
                     finish();
@@ -126,10 +126,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     if (error != null) {
                         JsonObject jsonObject = (JsonObject) error.getBody();
                         if (jsonObject != null)
-                            Toast.makeText(ForgotPasswordActivity.this, "No account exists associated with this mobile number", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT).show();
 
                     } else
-                        Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ForgotPasswordActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
 
 
                 }

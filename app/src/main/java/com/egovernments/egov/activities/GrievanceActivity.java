@@ -45,6 +45,8 @@ public class GrievanceActivity extends BaseActivity {
     private boolean loading = true;
     private int visibleThreshold = 5;
 
+    private final int ACTION_UPDATE_REQUIRED = 111;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +118,7 @@ public class GrievanceActivity extends BaseActivity {
 
                 Intent intent = new Intent(GrievanceActivity.this, GrievanceDetailsActivity.class);
                 intent.putExtra(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
-                startActivity(intent);
+                startActivityForResult(intent,ACTION_UPDATE_REQUIRED);
 
             }
         };
@@ -136,7 +138,7 @@ public class GrievanceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                startActivityForResult(new Intent(GrievanceActivity.this, NewGrievanceActivity.class), 2);
+                startActivityForResult(new Intent(GrievanceActivity.this, NewGrievanceActivity.class), ACTION_UPDATE_REQUIRED);
 
             }
         };
@@ -158,7 +160,7 @@ public class GrievanceActivity extends BaseActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 2 && resultCode == RESULT_OK) {
+        if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
             progressBar.setVisibility(View.GONE);
             pageNo = 1;
             Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
