@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -116,7 +117,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     private Dialog dialog = null;
     private String assetPath = "";
     AutoCompleteTextView location;
-    private List<JSONObject> list;
+    private List<JSONObject> json_autosug_list;
+    private List<String> autosug_item_text;
     private double latitude = 0.0;
     private double longitute = 0.0;
     private int complaintTypeId = 0;
@@ -813,35 +815,27 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      * @param list
      */
     private void setSpinnerData(final List<JSONObject> list) {
-        final ArrayList<String> item = new ArrayList<String>();
-        try {
-            for (int i = 0; i < list.size(); i++) {
-                item.add(list.get(i).getString("name"));
-            }
-            
-            // do the http requests you have in the queryWebService method and when it's time to update the data:
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    locationadapter.clear();
-                    // add the data
-                    for (int i = 0; i < list.size(); i++) {
-                    	try {
-							locationadapter.add(list.get(i).getString("name"));
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-                    }
-                    // trigger a filter on the AutoCompleteTextView to show the popup with the results 
-                    locationadapter.notifyDataSetChanged();
-                    locationadapter.getFilter().filter(location.getText(), location);
-                }
-            });
-            
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        // do the http requests you have in the queryWebService method and when it's time to update the data:
+		runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+		        locationadapter.clear();
+		        autosug_item_text=new ArrayList<String>();
+		        // add the data
+		        for (int i = 0; i < list.size(); i++) {
+		        	try {
+		        		autosug_item_text.add(list.get(i).getString("name"));
+						locationadapter.add(list.get(i).getString("name"));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
+		        // trigger a filter on the AutoCompleteTextView to show the popup with the results 
+		        locationadapter.notifyDataSetChanged();
+		        locationadapter.getFilter().filter(location.getText(), location);
+		    }
+		});
     }
 
     /**
@@ -860,12 +854,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 if (url.getUrl().equals(ApiUrl.GET_LOCATION_BY_NAME.getUrl())) {
                     try {
                         JSONArray ja = new JSONArray(event.getData().getResponse().toString());
-                        list = new ArrayList<JSONObject>();
+                        json_autosug_list = new ArrayList<JSONObject>();
                         for (int i = 0; i < ja.length(); i++) {
                             JSONObject jo = ja.getJSONObject(i);
-                            list.add(jo);
+                            json_autosug_list.add(jo);
                         }
-                        setSpinnerData(list);
+                        setSpinnerData(json_autosug_list);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -946,7 +940,15 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         } else if (isEmpty(detail)) {
             showMessage(getMessage(R.string.detail_empty));
             return;
-        } /*else if (isEmpty(landmark)) {
+        } 
+        
+        if(locationId == 0)
+        {
+        	showMessage("Selected location is invalid!");
+        	return;
+        }
+        
+        /*else if (isEmpty(landmark)) {
             showMessage(getMessage(R.string.landmark_empty));
             return;
         }*/ /** Disabled landmark field required validation **/
@@ -987,6 +989,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     public void onTextChanged(CharSequence s, int start, int before, int count) {
     	Log.d(CreateComplaintActivity.class.getName(), "Completion -> "+location.isPerformingCompletion());
     	isCurrentLocation=false;
+    	locationId=0;
     	autoSuggestionHandler.removeCallbacks(autoSuggestionRunnable);
     	autoSuggestionHandler.postDelayed(autoSuggestionRunnable, 500);
         if (s.length() == 0) {
@@ -1012,11 +1015,14 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      * Event triggered when clicking on any location from the list.
      */
     @Override
-    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+    public void onItemClick(AdapterView<?> parent, View arg1, int position, long arg3) {
         try {
             latitude = 0.0;
             longitute = 0.0;
-            locationId = list.get(position).getInt("id");
+            String selected = (String) parent.getItemAtPosition(position);
+            int pos = autosug_item_text.indexOf(selected);
+            Log.d(TAG, "json ->"+json_autosug_list.get(pos).toString());
+            locationId = json_autosug_list.get(pos).getInt("id");
         } catch (JSONException e) {
             e.printStackTrace();
         }
