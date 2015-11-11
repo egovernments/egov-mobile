@@ -31,16 +31,14 @@
 
 package org.egov.android.view.activity;
 
-import java.io.File;
 import java.util.ArrayList;
 
+import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
+import org.egov.android.api.ApiResponse;
 import org.egov.android.api.ApiUrl;
 import org.egov.android.controller.ApiController;
 import org.egov.android.controller.ServiceController;
-import org.egov.android.AndroidLibrary;
-import org.egov.android.api.ApiResponse;
-import org.egov.android.common.StorageManager;
 import org.egov.android.data.SQLiteHelper;
 import org.egov.android.listener.Event;
 import org.egov.android.model.ComplaintType;
