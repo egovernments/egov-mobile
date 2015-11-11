@@ -89,7 +89,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,7 +116,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 	 */
 	
 	String[] statusDrop = { "Select", "Withdrawn" };
-	String[] statusReopen = { "Select", "Reopen" };
+	String[] statusReopen = { "Select", "Reopened" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -272,10 +271,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		 */
 
 		String status = (pos == 0 ? complaintStatus : statusSpinner
-				.getSelectedItem().toString());
-		
-		status = (status.toLowerCase().equals("reopen")? "Reopened":status); 
-				
+				.getSelectedItem().toString());				
 		
 		String message = ((EditText) findViewById(R.id.message)).getText()
 				.toString();
