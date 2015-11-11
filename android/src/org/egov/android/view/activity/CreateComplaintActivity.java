@@ -681,22 +681,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     }
 
     private void _getCurrentLocation(double lat, double lng) {
-       if(location.getText().toString().trim().length()==0 && isCurrentLocation)
-       {
-    	 latitude = lat;
-         longitute = lng;
-         final String cityName = getCurrentLocation(lat, lng);
-         runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				location.setText(cityName);
-			}
-		});
-       }
-       else
-       {
+       
     	   latitude = lat;
            longitute = lng;
            final String cityName = getCurrentLocation(lat, lng);
@@ -704,10 +689,13 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					location.setText(cityName);
+					if(location.getText().toString().trim().length() == 0)
+					{
+						location.setText(cityName);
+					}
 				}
 		   });
-       }
+       
     }
 
     private Float convertToDegree(String stringDMS) {
@@ -1063,7 +1051,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         	Log.d(TAG,"New gps location: "
                     + String.format("%9.6f", location.getLatitude()) + ", "
                     + String.format("%9.6f", location.getLongitude()) + "\n");
-        	_getCurrentLocation(location.getLatitude(), location.getLongitude());
+        	if(isCurrentLocation)
+            {
+        	 _getCurrentLocation(location.getLatitude(), location.getLongitude());
+            }
         	locationManager.removeUpdates(this);
         }
 
@@ -1098,7 +1089,10 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         	Log.d(TAG,"New network location: "
                     + String.format("%9.6f", location.getLatitude()) + ", "
                     + String.format("%9.6f", location.getLongitude()) + "\n");
-        	_getCurrentLocation(location.getLatitude(), location.getLongitude());
+        	if(isCurrentLocation)
+            {
+        	 _getCurrentLocation(location.getLatitude(), location.getLongitude());
+            }
         	locationManager.removeUpdates(this);
         	
         }
