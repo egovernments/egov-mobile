@@ -38,7 +38,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -55,6 +54,7 @@ import org.egov.android.common.StorageManager;
 import org.egov.android.controller.ApiController;
 import org.egov.android.controller.ServiceController;
 import org.egov.android.data.SQLiteHelper;
+import org.egov.android.http.Uploader;
 import org.egov.android.listener.Event;
 import org.egov.android.model.Complaint;
 import org.egov.android.view.component.EGovAutoCompleteTextView;
@@ -84,7 +84,6 @@ import android.location.LocationProvider;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -131,7 +130,6 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
     LocationManager locationManager;
     ProgressDialog progressDialog;
     private boolean isCurrentLocation=true;
-    private boolean isValueFromSuggestion=false;
     int gpsTimeOutSec;
     Timer gpsTimeOutTimer=new Timer();
     ArrayAdapter<String> locationadapter;
@@ -446,10 +444,17 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
  
+        String attrLatitute = null;
+        String attrLatituteRef = null;
+        String attrLONGITUDE=null;
+        String attrLONGITUDEREf=null;
+        
 //      check the rotation of the image and display it properly
         ExifInterface exif;
         try {
             exif = new ExifInterface(fromfilepath);
+            
+            
  
             int orientation = exif.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION, 0);
@@ -465,6 +470,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                 matrix.postRotate(270);
                 Log.d("EXIF", "Exif: " + orientation);
             }
+            
+            attrLatitute = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            attrLatituteRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            attrLONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            attrLONGITUDEREf = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+            
             scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                     scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
                     true);
@@ -478,10 +489,28 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
  
 //          write the compressed bitmap at the destination specified by filename.
             scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            
+            ExifInterface exif2 = new ExifInterface(tofilepath);
+            
+            if(attrLatitute != null)
+            {
+            	exif2.setAttribute(ExifInterface.TAG_GPS_LATITUDE, attrLatitute);
+            	exif2.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, attrLONGITUDE);
+            }
+            
+            if(attrLatituteRef != null)
+            {
+            	exif2.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, attrLatituteRef);
+            	exif2.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, attrLONGITUDEREf);
+            }
+            exif2.saveAttributes();
  
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return tofilepath;
     }
     
@@ -691,7 +720,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					if(location.getText().toString().trim().length() == 0)
+					if(location.getText().toString().trim().length() == 0 || (file_upload_limit ==1 && locationId ==0))
 					{
 						location.setText(cityName);
 					}
