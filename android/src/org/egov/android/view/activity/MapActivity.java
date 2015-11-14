@@ -32,6 +32,7 @@
 package org.egov.android.view.activity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,10 +41,12 @@ import org.egov.android.service.GeoLocation;
 import org.egov.android.view.component.Header;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
@@ -155,19 +158,52 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
     }
 
     /**
-     * Function used to send the location name tapped by the user in the map to the
+     * Class used to send the location name tapped by the user in the map to the
      * CreateComplaintActivity
      */
-    private void _getLocationName() {
-        try {
-            if (latitude == 0 && longitude == 0) {
-                _showMsg(_getMessage(R.string.location_empty));
-                return;
-            }
-            List<Address> addresses;
-            Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses.size() > 0) {
+    
+    class getMapAddress extends AsyncTask<String, Integer, List<Address>>
+    {
+    	
+    	ProgressDialog pdialog;
+    	
+    	public getMapAddress() {
+			// TODO Auto-generated constructor stub
+    		pdialog=new ProgressDialog(MapActivity.this);
+    		pdialog.setMessage("Plase wait...");
+		}
+
+    	@Override
+    	protected void onPreExecute() {
+    		// TODO Auto-generated method stub
+    		super.onPreExecute();
+    		pdialog.show();
+    	}
+    	
+    	
+		@Override
+		protected List<Address> doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			List<Address> addresses=new ArrayList<Address>();
+			try {
+	            if (latitude == 0 && longitude == 0) {
+	                _showMsg(_getMessage(R.string.location_empty));
+	                return addresses;
+	            }
+	            Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+	            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+	            
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+			return addresses;
+		}
+    	
+		@Override
+		protected void onPostExecute(List<Address> addresses) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(addresses);
+			if (addresses.size() > 0) {
                 String cityName = addresses.get(0).getAddressLine(0);
                 Intent intent = new Intent();
                 intent.putExtra("latitude", latitude);
@@ -175,14 +211,15 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
                 intent.putExtra("city_name", cityName);
                 setResult(2, intent);
                 finish();
+                pdialog.dismiss();
             } else {
                 _showMsg(_getMessage(R.string.unknown_location));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		}
+		
     }
-
+    
+    
     /**
      * Function used to get string from string resource using id.
      * 
@@ -216,7 +253,7 @@ public class MapActivity extends BaseFragmentActivity implements OnClickListener
         super.onClick(v);
         switch (v.getId()) {
             case R.id.get_location:
-                _getLocationName();
+                new getMapAddress().execute();
                 break;
             case Header.ACTION_REFRESH:
                 _initilizeMap();

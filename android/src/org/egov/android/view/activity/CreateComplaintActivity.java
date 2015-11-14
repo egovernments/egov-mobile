@@ -971,11 +971,11 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
             return;
         } 
         
-        if(locationId == 0)
+        /*if(locationId == 0)
         {
         	showMessage("Selected location is invalid!");
         	return;
-        }
+        }*/
         
         /*else if (isEmpty(landmark)) {
             showMessage(getMessage(R.string.landmark_empty));
