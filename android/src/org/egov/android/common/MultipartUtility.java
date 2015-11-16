@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -13,10 +14,15 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.egov.android.api.ApiClient;
+import org.egov.android.api.ApiStatus;
 import org.egov.android.api.SSLTrustManager;
+
+import android.util.Log;
  
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
@@ -27,6 +33,7 @@ import org.egov.android.api.SSLTrustManager;
 public class MultipartUtility {
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
+    private final static String TAG = MultipartUtility.class.getName();
     private HttpURLConnection httpConn;
     private String charset;
     private OutputStream outputStream;
@@ -133,16 +140,47 @@ public class MultipartUtility {
      * status OK, otherwise an exception is thrown.
      * @throws IOException
      */
-    public List<String> finish() throws IOException {
-        List<String> response = new ArrayList<String>();
+    public String finish() throws IOException {
  
         writer.append(LINE_FEED).flush();
         writer.append("--" + boundary + "--").append(LINE_FEED);
         writer.close();
+        
+        String response = "";
  
-        // checks server's status code first
-        int status = httpConn.getResponseCode();
-        if (status == HttpURLConnection.HTTP_OK) {
+        // checks server's status code first        
+        InputStream is = null;
+		int status = 0;
+		try {
+			status = httpConn.getResponseCode();
+		} catch (IOException e) {
+			status = httpConn.getResponseCode();
+		}
+		Log.d(TAG, "========status===========" + status);
+		String encoding = httpConn.getContentEncoding() == null ? "" : httpConn
+				.getContentEncoding();
+
+		if (status == 200 || status == 201) {
+			is = encoding.equalsIgnoreCase("gzip") ? new GZIPInputStream(
+					httpConn.getInputStream()) : httpConn.getInputStream();
+		} else {
+			is = encoding.equalsIgnoreCase("gzip") ? new GZIPInputStream(
+					httpConn.getErrorStream()) : httpConn.getErrorStream();
+			ApiStatus.isError = true;
+		}
+
+		InputStreamReader input = new InputStreamReader(is);
+
+		char[] data = new char[1024];
+		int count = 0;
+		StringBuffer sb = new StringBuffer();
+		while ((count = input.read(data)) != -1) {
+			sb.append(data, 0, count);
+		}
+		input.close();
+		response = sb.toString();
+        
+        /*if (status == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     httpConn.getInputStream()));
             String line = null;
@@ -153,7 +191,7 @@ public class MultipartUtility {
             httpConn.disconnect();
         } else {
             throw new IOException("Server returned non-OK status: " + status);
-        }
+        }*/
  
         return response;
     }

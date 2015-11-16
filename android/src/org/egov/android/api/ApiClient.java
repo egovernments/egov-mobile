@@ -249,14 +249,8 @@ public class ApiClient extends AsyncTask<Void, Integer, ApiResponse> implements
 	            {
 	            	multipart.addFilePart("files", apiMethod.getUploadDocs()[fidx]);
 	            }
-	 
-	            List<String> response = multipart.finish();
-	            StringBuffer sb = new StringBuffer();
-	            for (String line : response) {
-	            	Log.d(TAG, line);
-	            	sb.append(line);
-	            }
-	            return new ApiResponse(sb.toString(), this.apiMethod, "live");
+	            
+	            return new ApiResponse(multipart.finish(), this.apiMethod, "live");
 			}
 			
 			
