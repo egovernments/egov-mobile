@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -59,6 +60,7 @@ import org.egov.android.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -74,6 +76,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -137,6 +141,25 @@ public class RegisterActivity extends BaseActivity {
         {
            viewpwd.setVisibility(View.GONE);
         }
+        
+        //name validation
+        ((EditText) findViewById(R.id.register_name)).setFilters(new InputFilter[]{
+        		new InputFilter() {
+					@Override
+        	        public CharSequence filter(CharSequence src, int start,
+        	                int end, Spanned dst, int dstart, int dend) {
+        	            if(src.equals("")){ // for backspace
+        	                return src;
+        	            }
+        	            if(src.toString().matches("[a-zA-Z ]+")){
+        	                return src;
+        	            }
+        	            return "";
+        	        }
+        	    }
+        });
+        
+        
     }
     
     /**
