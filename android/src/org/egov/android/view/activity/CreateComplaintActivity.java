@@ -969,7 +969,12 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         } else if (isEmpty(detail)) {
             showMessage(getMessage(R.string.detail_empty));
             return;
-        } 
+        } else if(detail.trim().length()<10)
+        {
+        	showMessage(getMessage(R.string.detail_length_error));
+        	((EditText) findViewById(R.id.complaint_details)).requestFocus();
+        	return;
+        }
         
         /*if(locationId == 0)
         {

@@ -59,13 +59,13 @@
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="@dimen/viewMargin">
+                    android:layout_height="match_parent">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:layout_margin="@dimen/viewMargin"
                         android:background="#ffffff">
 
                         <LinearLayout
@@ -312,6 +312,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
+                            android:layout_marginBottom="10dp"
                             android:visibility="gone" >
 
                             <LinearLayout
@@ -366,22 +367,8 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
+                                android:orientation="vertical"
                                 android:padding="@dimen/viewMargin" >
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:layout_width="115dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:text="Message"
-                                    android:textColor="@color/dark_gray" />
-
-                                <org.egov.android.view.component.EGovTextView
-                                    android:layout_width="10dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_vertical"
-                                    android:text=":"
-                                    android:textColor="@color/text" />
 
                                 <org.egov.android.view.component.EGovEditText
                                     android:id="@+id/message"
@@ -390,8 +377,9 @@
                                     android:layout_gravity="center_vertical"
                                     android:background="@drawable/edittext_border"
                                     android:gravity="top|left"
-                                    android:inputType="textMultiLine"
-                                    android:lines="3"
+                                    android:minLines="3"
+                                    android:maxLength="400"
+                                    android:hint="Your Message"
                                     android:textColor="@color/text" />
                             </LinearLayout>
 

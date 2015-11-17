@@ -120,6 +120,8 @@
                             android:id="@+id/register_name"
                             style="@style/FormRow.EditText"
                             android:hint="Name*"
+                            android:inputType="textPersonName"
+                            android:maxLength="100"
                             android:singleLine="true" />
                         
                     </LinearLayout>
@@ -131,6 +133,7 @@
                             style="@style/FormRow.EditText"
                             android:hint="Mobile Number*"
                             android:inputType="number"
+                            android:maxLength="10"
                             android:singleLine="true" />
                     </LinearLayout>
 
@@ -140,6 +143,8 @@
                             android:id="@+id/register_email"
                             style="@style/FormRow.EditText"
                             android:hint="Email"
+                            android:inputType="textEmailAddress"
+                            android:maxLength="128"
                             android:singleLine="true" />
                     </LinearLayout>
 
@@ -150,6 +155,7 @@
                             style="@style/FormRow.EditText"
                             android:hint="Password*"
                             android:inputType="textPassword"
+                            android:maxLength="32"
                             android:singleLine="true" />
                     </LinearLayout>
 
@@ -160,6 +166,7 @@
                             style="@style/FormRow.EditText"
                             android:hint="Confirm Password*"
                             android:inputType="textPassword"
+                            android:maxLength="32"
                             android:singleLine="true" />
                     </LinearLayout>
 
