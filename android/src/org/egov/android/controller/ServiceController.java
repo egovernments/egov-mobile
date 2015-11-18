@@ -308,7 +308,7 @@ public class ServiceController implements IHttpClientListener {
     public void onError(byte[] data) {
 
         StorageManager sm = new StorageManager();
-        Object[] obj = sm.getStorageInfo();
+        Object[] obj = sm.getStorageInfo(ctx);
         long totalSize = (Long) obj[2];
         if (jobType.equals("download")
                 && totalSize < AndroidLibrary.getInstance().getConfig().getInt("upload.file.size") * 1024 * 1024) {

@@ -161,7 +161,7 @@ public class EditProfileActivity extends BaseActivity {
         ((RadioGroup) findViewById(R.id.gender)).check(selected_gender);
 
         StorageManager sm = new StorageManager();
-        Object[] obj = sm.getStorageInfo();
+        Object[] obj = sm.getStorageInfo(EditProfileActivity.this);
         profPath = obj[0].toString() + "/egovernments/profile";
         String path = profPath + "/photo_" + mobileNo + ".jpg";
         profileImage = new File(profPath + "/photo_temp_user.jpg");
@@ -346,7 +346,7 @@ public class EditProfileActivity extends BaseActivity {
     private void _validateImageUrl() {
 
         StorageManager sm = new StorageManager();
-        Object[] obj = sm.getStorageInfo();
+        Object[] obj = sm.getStorageInfo(EditProfileActivity.this);
         long totalSize = (Long) obj[2];
 
         String tempPath = profPath + "/photo_temp_user.jpg";

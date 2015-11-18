@@ -293,7 +293,7 @@ public class SearchActivity extends BaseActivity implements OnItemClickListener,
                 downloadThumbImages = new JSONArray();
                 if (ja.length() > 0) {
                     StorageManager sm = new StorageManager();
-                    Object[] obj = sm.getStorageInfo();
+                    Object[] obj = sm.getStorageInfo(SearchActivity.this);
                     ((TextView) findViewById(R.id.search_errMsg)).setVisibility(View.GONE);
                     for (int i = 0; i < ja.length(); i++) {
                         String complaintNo = "";

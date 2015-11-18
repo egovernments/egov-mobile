@@ -187,8 +187,8 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
         
 
         StorageManager sm = new StorageManager();
-        Object[] obj = sm.getStorageInfo();
-        assetPath = obj[0].toString() + "/"+getString(R.string.app_name)+"/complaints";
+        Object[] obj = sm.getStorageInfo(CreateComplaintActivity.this);
+        assetPath = obj[0].toString() +"/complaints";
         _deleteFile(assetPath + File.separator + "current");
         sm.mkdirs(assetPath + File.separator + "current");
         if (!getGpsStatus()) {
@@ -528,7 +528,7 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
                     + photoNo + ".jpg";
             InputStream in = new FileInputStream(path);
             StorageManager sm = new StorageManager();
-            Object[] obj = sm.getStorageInfo();
+            Object[] obj = sm.getStorageInfo(CreateComplaintActivity.this);
             long totalSize = (Long) obj[2];
             if (totalSize < in.toString().length()) {
                 showMessage(getMessage(R.string.sdcard_space_not_sufficient));
@@ -1021,7 +1021,6 @@ public class CreateComplaintActivity extends BaseActivity implements TextWatcher
      */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-    	Log.d(CreateComplaintActivity.class.getName(), "Completion -> "+location.isPerformingCompletion());
     	isCurrentLocation=false;
     	locationId=0;
     	autoSuggestionHandler.removeCallbacks(autoSuggestionRunnable);

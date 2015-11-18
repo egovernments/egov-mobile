@@ -162,7 +162,7 @@ public class ProfileActivity extends BaseActivity {
                 ((TextView) findViewById(R.id.aadhaar)).setText(aadhaarCardNumber);
 
                 StorageManager sm = new StorageManager();
-                Object[] obj = sm.getStorageInfo();
+                Object[] obj = sm.getStorageInfo(ProfileActivity.this);
                 String profPath = obj[0].toString() + "/egovernments/profile";
                 sm.mkdirs(profPath);
                 File imgFile = new File(profPath + "/photo_" + mobileNo + ".jpg");

@@ -105,6 +105,7 @@ public class LoginActivity extends BaseActivity {
 			((LinearLayout)findViewById(R.id.logincitydropdownc)).setVisibility(View.GONE);
 			/*((Button)findViewById(R.id.login_register)).setVisibility(View.GONE);*/
 		}
+				
     }
     
     @Override

@@ -62,9 +62,11 @@ import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.listener.IEventDispatcher;
 import org.egov.android.service.GeoLocation;
+import org.egov.android.view.adapter.CommentsAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -174,8 +176,8 @@ public class ComplaintDetailActivity extends BaseActivity {
 		});
 
 		StorageManager sm = new StorageManager();
-		Object[] obj = sm.getStorageInfo();
-		complaintFolderName = obj[0].toString() + "/"+getString(R.string.app_name)+"/complaints/"
+		Object[] obj = sm.getStorageInfo(ComplaintDetailActivity.this);
+		complaintFolderName = obj[0].toString() +"/complaints/"
 				+ complaintId;
 		isComplaintDetail = true;
 		new GeoLocation(this);
@@ -681,15 +683,12 @@ public class ComplaintDetailActivity extends BaseActivity {
 					{
 						JSONObject commentobj=complaintComments.getJSONObject(i);
 						
-						DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
+						//DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
 						String timeagotext=commentobj.getString("date");
-						try {
-						    Date date = format.parse(commentobj.getString("date"));
-						    timeagotext = (String) DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS);
-						} catch (java.text.ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						//Date date = format.parse(commentobj.getString("date"));
+						//timeagotext = (String) DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS);
+						timeagotext=CommentsAdapter.getActualTime(timeagotext);
+						
 						
 						View child = getLayoutInflater().inflate(R.layout.recent_message_template, null);
 						
@@ -744,6 +743,5 @@ public class ComplaintDetailActivity extends BaseActivity {
 		}
 		
 	}
-	
 	
 }

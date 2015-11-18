@@ -45,12 +45,16 @@ import android.content.Context;
 import android.os.Environment;
 
 public class AppUncaughtException implements UncaughtExceptionHandler {
+	
+	Context ctx;
+	
     /**
      * The constructor of the AppUncaughtException class and we supplied the Context as a parameter.
      * initialize the application context.
      */
 
     public AppUncaughtException(Context context) {
+    	ctx=context;
     }
 
     /**
@@ -78,10 +82,9 @@ public class AppUncaughtException implements UncaughtExceptionHandler {
     private void _writeToFile(String stacktrace, String filename) {
         String path = "";
         StorageManager sm = new StorageManager();
-        Object[] obj = sm.getStorageInfo();
+        Object[] obj = sm.getStorageInfo(ctx);
         if (obj[1].toString().equals(Environment.MEDIA_MOUNTED)) {
             path = obj[0].toString()
-                    + AndroidLibrary.getInstance().getConfig().getString("app.name")
                     + "/assets/log";
             sm.mkdirs(path);
             path += "/" + filename;

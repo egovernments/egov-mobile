@@ -380,9 +380,9 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         item.setStatus(jo.getString("status"));
                         
                         StorageManager sm = new StorageManager();
-                        Object[] obj = sm.getStorageInfo();
+                        Object[] obj = sm.getStorageInfo(UserComplaintActivity.this.getActivity());
                         String complaintFolderName = obj[0].toString()
-                                + "/"+getString(R.string.app_name)+"/complaints/" + jo.getString("crn");
+                                +"/complaints/" + jo.getString("crn");
                         File complaintFolder = new File(complaintFolderName);
                         if (jo.getInt("supportDocsSize") == 0) {
                             /*item.setImagePath(complaintFolderName + File.separator

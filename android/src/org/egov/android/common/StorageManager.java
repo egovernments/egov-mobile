@@ -38,6 +38,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -50,9 +52,25 @@ public class StorageManager {
 
     private static final String TAG = StorageManager.class.getName();
 
-    public Object[] getStorageInfo() {
+    public Object[] getStorageInfo(Context context) {
 
-        String path = this.getExternalStoragePath();
+    	
+    	if(context instanceof Activity)
+    	{
+    		context=context.getApplicationContext();
+    	}
+    	
+    	//get external storage cache dir
+    	File cacheDir=context.getExternalCacheDir();
+    	
+    	//check whether external cache dir is available or not
+    	if(cacheDir == null)
+    	{
+    		//get internal cache dir
+    		cacheDir=context.getCacheDir();
+    	}
+    	
+        String path = cacheDir.getAbsolutePath(); //this.getExternalStoragePath();
 
         Object[] result = new Object[] { "", "", 0, "" };
 

@@ -1,21 +1,16 @@
 package org.egov.android.view.adapter;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-
 import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import org.ocpsoft.prettytime.PrettyTime;
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.ParseException;
-import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class CommentsAdapter extends BaseAdapter {
@@ -84,15 +78,9 @@ public class CommentsAdapter extends BaseAdapter {
 			
 			JSONObject commentobj=comments.getJSONObject(position);
 			
-			DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
+			//DateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
 			String timeagotext=commentobj.getString("date");
-			try {
-			    Date date = format.parse(commentobj.getString("date"));
-			    timeagotext = (String) DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.MINUTE_IN_MILLIS);
-			} catch (java.text.ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			timeagotext=getActualTime(timeagotext);
 			
 			String currentUserName=AndroidLibrary.getInstance().getSession().getString("user_name", "");
 			commentview.txtviewuser.setText((currentUserName.equals(commentobj.getString("updatedBy"))?"Me":commentobj.getString("updatedBy")));
@@ -133,6 +121,49 @@ public class CommentsAdapter extends BaseAdapter {
 		
 		return chatviewrow;
 	}
+	
+	public static String getActualTime(String createdAt) {
+        String dateStart = (createdAt.contains("T")) ? formatdate(createdAt) : createdAt;
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a", Locale.ENGLISH);
+
+        Date d1 = null;
+        Date d2 = new Date();
+
+        try {
+            d1 = format.parse(dateStart);
+            //d2 = format.parse(current_date);
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        long diff = d2.getTime() - d1.getTime();
+        long diffSeconds = diff / 1000 % 60;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        long diffHours = diff / (60 * 60 * 1000);
+        long min = (diffHours * 60) + diffMinutes + (diffSeconds / 60);
+        PrettyTime p = new PrettyTime();
+        String currentTime = p.format(new Date(System.currentTimeMillis() - 1000 * 60 * min));
+        if (currentTime.equalsIgnoreCase("moments from now")) {
+            return currentTime.replaceAll(currentTime, "just now");
+        }
+        if (currentTime.equalsIgnoreCase("moments ago")) {
+            return currentTime.replaceAll(currentTime, "1 minute ago");
+        }
+        return currentTime;
+    }
+	
+	public static String formatdate(String datetime) {
+        String s = datetime;
+        String[] parts = s.split("\\.");
+        String part1 = parts[0];
+        String s1 = part1.replace('T', '\t');
+        String[] parts1 = s1.split("\\t");
+        String date = parts1[0];
+        String time = parts1[1];
+        String newdate = date + " " + time;
+        return newdate;
+    }
+	
 
 	
 	
