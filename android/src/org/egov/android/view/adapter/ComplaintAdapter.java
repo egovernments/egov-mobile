@@ -269,6 +269,9 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
             iListener.actionPerformed("LOAD_MORE", 0);
         }
     }
-    
-    
+
+	public void setPagination(boolean isPagination) {
+		this.isPagination = isPagination;
+	}
+	
 }

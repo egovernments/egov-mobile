@@ -1,6 +1,5 @@
 package org.egov.android.common;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,13 +11,10 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.egov.android.api.ApiClient;
 import org.egov.android.api.ApiStatus;
 import org.egov.android.api.SSLTrustManager;
 

@@ -34,18 +34,15 @@ package org.egov.android.view.activity;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -60,13 +57,11 @@ import org.egov.android.api.SSLTrustManager;
 import org.egov.android.common.StorageManager;
 import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
-import org.egov.android.listener.IEventDispatcher;
 import org.egov.android.service.GeoLocation;
 import org.egov.android.view.adapter.CommentsAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -78,7 +73,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -180,10 +174,6 @@ public class ComplaintDetailActivity extends BaseActivity {
 		complaintFolderName = obj[0].toString() +"/complaints/"
 				+ complaintId;
 		isComplaintDetail = true;
-		new GeoLocation(this);
-		if (!GeoLocation.getGpsStatus()) {
-			_showSettingsAlert();
-		}
 		ApiController.getInstance().getComplaintDetail(this, complaintId);
 	}
 	
@@ -303,16 +293,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		
 		int imageidx=0;
 		
-		Arrays.sort(listOfFiles, new Comparator<File>()
-	    {
-			@Override
-			public int compare(File arg0, File arg1) {
-				// TODO Auto-generated method stub
-				return arg0.getName().compareTo(arg1.getName());
-			}
-	    });
-		
-		for (int i = (listOfFiles.length-1); i >= 0 ; i--) {
+		for (int i = 0; i < listOfFiles.length ; i++) {
 			
 			if (listOfFiles[i].isFile()) {
 				Log.d("EGOV_JOB", "File path" + complaintFolderName
@@ -389,6 +370,22 @@ public class ComplaintDetailActivity extends BaseActivity {
 	private void _addDownloadJobs(int totalFiles) {
 		JSONObject jo = null;
 		try {
+			
+			File complaintDir=new File(complaintFolderName);
+			int hiddenfilecount=0;
+			for(File file: complaintDir.listFiles()) {
+				if(file.isHidden())
+				{
+					hiddenfilecount++;
+				}
+			}
+			
+			//delete old cache images
+			if(totalFiles != hiddenfilecount)
+			{
+				for(File file: complaintDir.listFiles()) file.delete();
+			}
+			
 			for (int i = 1; i <= totalFiles; i++) {
 				if (!new File(complaintFolderName + "/.thumb_photo_" + i
 						+ ".jpg").exists()) {
@@ -576,16 +573,19 @@ public class ComplaintDetailActivity extends BaseActivity {
 							.setText(_getValue(jo, "landmarkDetails"));
 					((TextView) findViewById(R.id.complaintStatus))
 							.setText(complaintStatus.toLowerCase());
-
+					
+					String cityName=null;
+					
+					if(jo.has("lat")) {
+						cityName = GeoLocation.getCurrentLocation(
+								jo.getDouble("lat"), jo.getDouble("lng"));
+					}
+					
 					if (jo.has("locationName")) {
 						((TextView) findViewById(R.id.location))
-								.setText(_getValue(jo, "locationName"));
-					} else {
-						String cityName = GeoLocation.getCurrentLocation(
-								jo.getDouble("lat"), jo.getDouble("lng"));
-						((TextView) findViewById(R.id.location))
-								.setText(cityName);
-					}
+								.setText((cityName == null?_getValue(jo, "locationName") : (cityName + "(" + _getValue(jo, "locationName") +")")) );
+					} 
+					
 					File complaintFolder = new File(complaintFolderName);
 					if (!complaintFolder.exists()) {
 						new StorageManager().mkdirs(complaintFolderName);

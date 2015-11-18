@@ -131,8 +131,15 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private void _displayListView(boolean isPagination) {
         ListView list = (ListView) getActivity().findViewById(R.id.user_complaint_list);
         list.setOnItemClickListener(this);
-        adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, "me", apiLevel, this);
-        list.setAdapter(adapter);
+        if(adapter==null)
+        {
+          adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, "me", apiLevel, this);
+          list.setAdapter(adapter);
+        }
+        else
+        {
+        	adapter.setPagination(isPagination);
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -356,6 +363,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         String pagination = event.getData().getApiStatus().isPagination();
         String msg = event.getData().getApiStatus().getMessage();
         final ListView listView = (ListView) getActivity().findViewById(R.id.user_complaint_list);
+
         if (page == 1) {
             listItem = new ArrayList<Complaint>();
         }
