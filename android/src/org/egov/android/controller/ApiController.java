@@ -294,7 +294,8 @@ public class ApiController {
     public void complaintChangeStatus(IApiListener listener,
                                       String id,
                                       String status,
-                                      String comment) {
+                                      String comment,
+                                      String feedbackoption) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.COMPLAINT_CHANGE_STATUS);
         apiMethod.setMethod(RequestMethod.PUT);
         apiMethod.setQueryType("json");
@@ -302,6 +303,10 @@ public class ApiController {
         if(!TextUtils.isEmpty(status))
         {
          apiMethod.addParameter("action", status);
+        }
+        if(!TextUtils.isEmpty(feedbackoption))
+        {
+         apiMethod.addParameter("feedback", feedbackoption);
         }
         apiMethod.addParameter("comment", comment);
         _createApiClient(apiMethod, listener, false).call();

@@ -88,6 +88,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 
 	private String complaintId = "";
 	private Spinner statusSpinner;
+	private Spinner feedbackSpinner;
 	private LinearLayout imageCntainer = null;
 	private String complaintTypeName = "";
 	private String complaintStatus = "";
@@ -108,6 +109,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 	
 	String[] statusDrop = { "Select", "Withdrawn" };
 	String[] statusReopen = { "Select", "Reopened" };
+	String[] feedbackOptions = { "Unspecified", "Satisfactory", "Unsatisfactory" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +123,9 @@ public class ComplaintDetailActivity extends BaseActivity {
 		} else {
 			statusSpinner = (Spinner) findViewById(R.id.status_normal_spinner);
 		}
+		
+		feedbackSpinner = (Spinner) findViewById(R.id.feedback_spinner);
+		
 		statusSpinner.setVisibility(View.VISIBLE);
 
 		imageCntainer = (LinearLayout) findViewById(R.id.complaint_image_container);
@@ -139,7 +144,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 					.setVisibility(View.VISIBLE);
 		}
 		
-		
+
 		statusSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
@@ -179,6 +184,20 @@ public class ComplaintDetailActivity extends BaseActivity {
 				android.R.layout.simple_spinner_item, statuses);
 		dataAdapter.setDropDownViewResource(R.layout.custom_spinner_list_item);
 		statusSpinner.setAdapter(dataAdapter);
+	}
+	
+	public void showFeedbackSpinner()
+	{
+		((LinearLayout)findViewById(R.id.fbspinnercontainer)).setVisibility(View.VISIBLE);
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, feedbackOptions);
+		dataAdapter.setDropDownViewResource(R.layout.custom_spinner_list_item);
+		feedbackSpinner.setAdapter(dataAdapter);
+	}
+	
+	public void hideFeedbackSpinner()
+	{
+		((LinearLayout)findViewById(R.id.fbspinnercontainer)).setVisibility(View.GONE);
 	}
 	
 
@@ -269,8 +288,15 @@ public class ComplaintDetailActivity extends BaseActivity {
 			return;
 		}
 		
+		String feedbackoption="";
+		
+		if(complaintStatus.toUpperCase().equals("COMPLETED"))
+		{
+			feedbackoption=feedbackSpinner.getSelectedItem().toString().toUpperCase();
+		}
+		
 		ApiController.getInstance().complaintChangeStatus(this, complaintId,
-				status.toUpperCase(), message);
+				status.toUpperCase(), message, feedbackoption);
 		
 	}
 
@@ -550,6 +576,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 					if(complaintStatus.toUpperCase().equals("COMPLETED"))
 					{
 						setSpinnerStatus(statusReopen);
+						showFeedbackSpinner();
 					}
 					else
 					{

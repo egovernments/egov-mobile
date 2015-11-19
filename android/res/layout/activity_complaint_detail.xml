@@ -363,6 +363,38 @@
                                     android:spinnerMode="dropdown"
                                     android:visibility="gone" />
                             </LinearLayout>
+                            
+                            
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:id="@+id/fbspinnercontainer"
+                                android:visibility="gone"
+                                android:padding="@dimen/viewMargin">
+
+                                <org.egov.android.view.component.EGovTextView
+                                    android:layout_width="115dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:text="Feedback"
+                                    android:textColor="@color/dark_gray" />
+
+                                <org.egov.android.view.component.EGovTextView
+                                    android:layout_width="10dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:text=":"
+                                    android:textColor="@color/text" />
+
+                                <Spinner
+                                    android:id="@+id/feedback_spinner"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:spinnerMode="dropdown"
+                                     />
+                                
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
