@@ -34,18 +34,13 @@ package org.egov.android.view.activity;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -574,17 +569,23 @@ public class ComplaintDetailActivity extends BaseActivity {
 					((TextView) findViewById(R.id.complaintStatus))
 							.setText(complaintStatus.toLowerCase());
 					
-					String cityName=null;
+					String location=null;
+					
 					
 					if(jo.has("lat")) {
-						cityName = GeoLocation.getCurrentLocation(
-								jo.getDouble("lat"), jo.getDouble("lng"));
+						location = GeoLocation.getCurrentLocation(jo.getDouble("lat"), jo.getDouble("lng"), ComplaintDetailActivity.this);
+					}
+					else
+					{
+						if(jo.has("childLocationName"))
+						{
+							location=_getValue(jo, "childLocationName");
+						}
+						location=(location == null?_getValue(jo, "locationName") : (location + " - " + _getValue(jo, "locationName")));
 					}
 					
-					if (jo.has("locationName")) {
-						((TextView) findViewById(R.id.location))
-								.setText((cityName == null?_getValue(jo, "locationName") : (cityName + "(" + _getValue(jo, "locationName") +")")) );
-					} 
+					((TextView) findViewById(R.id.location))
+					.setText(location);
 					
 					File complaintFolder = new File(complaintFolderName);
 					if (!complaintFolder.exists()) {

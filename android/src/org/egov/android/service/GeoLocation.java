@@ -182,7 +182,7 @@ public class GeoLocation implements LocationListener {
         }
     }
 
-    public static String getCurrentLocation(double lat, double lng) {
+    public static String getCurrentLocation(double lat, double lng, Context ctx) {
 
         String cityName = "";
 
@@ -190,7 +190,7 @@ public class GeoLocation implements LocationListener {
             return "";
         }
 
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(ctx, Locale.getDefault());
         List<Address> addresses;
         try {
             addresses = geocoder.getFromLocation(lat, lng, 1);
