@@ -282,7 +282,7 @@ public class ComplaintDetailActivity extends BaseActivity {
 		String message = ((EditText) findViewById(R.id.message)).getText()
 				.toString();
 		
-		if(message.trim().length() == 0 && pos == 0)
+		if(message.trim().length() == 0)
 		{
 			Toast.makeText(ComplaintDetailActivity.this, "Please, type your message!", Toast.LENGTH_SHORT).show();
 			return;
