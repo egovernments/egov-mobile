@@ -196,10 +196,10 @@ public class ApiController {
      * @param listener
      * @param page
      */
-    public void getUserComplaints(IApiListener listener, int page) {
+    public void getUserComplaints(IApiListener listener, int page, boolean loadershown) {
         ApiMethod apiMethod = new ApiMethod(ApiUrl.GET_MY_COMPLAINTS);
         apiMethod.setExtraParam(String.valueOf(page) + "/" + String.valueOf(5));
-        _createApiClient(apiMethod, listener, false).call();
+        _createApiClient(apiMethod, listener, false, loadershown).call();
     }
 
     /**

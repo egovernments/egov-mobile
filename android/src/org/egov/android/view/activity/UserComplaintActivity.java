@@ -62,21 +62,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +98,11 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private int apiLevel = 0;
     private int page = 1;
     private JSONArray downloadThumbImages = new JSONArray();
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private Handler handler = new Handler();
+    private boolean isRefresh=false;
+    ListView lvcomplaint;
+    View lvcomplaintloaderview;
 
     /**
      * The onActivityCreated() is called after the onCreateView() method when activity is created.
@@ -99,7 +112,80 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         apiLevel = AndroidLibrary.getInstance().getSession().getInt("api_level", 0);
+        lvcomplaint = (ListView) getActivity().findViewById(R.id.user_complaint_list);
+        //refresh list operations
+        mSwipeRefreshLayout=(SwipeRefreshLayout)getActivity().findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				refreshComplaints();
+			}
+		});
+        
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progressblue, R.color.progressorange, R.color.progressred);
+        
+        lvcomplaintloaderview = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.complaint_list_loader, null, false);
+        //lvcomplaint.addFooterView(lvcomplaintloaderview);
     }
+    
+    private int _dpToPix(float value) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				value, getResources().getDisplayMetrics());
+	}
+    
+    private void refreshComplaints()
+    {
+    	new Handler().postDelayed(new Runnable() {
+	          @Override
+	          public void run() {
+	        	  page=1;
+				  isRefresh=true;
+				  new Handler().postDelayed(new Runnable() {
+			          @Override
+			          public void run() {
+			        	  ApiController.getInstance().getUserComplaints(new IApiListener() {
+							
+							@Override
+							public void onResponse(Event<ApiResponse> event) {
+								// TODO Auto-generated method stub
+								isRefresh=false;
+								String pagination = event.getData().getApiStatus().isPagination();
+								listComplaints(event);
+								if(pagination!=null)
+								{
+									adapter.setListItem(listItem);
+									adapter.notifyDataSetChanged();
+									lvcomplaint.setSelection(0);
+								}
+							}
+						}, page, false);
+			          }
+				  }, 100);
+				  handler.post(refreshing);
+	          }
+	    }, 500);
+    }
+        
+    private final Runnable refreshing = new Runnable(){
+        public void run(){
+            try {
+                // TODO : isRefreshing should be attached to your data request status 
+                if(isRefresh){
+                    // re run the verification after 1 second
+                    handler.postDelayed(this, 1000);   
+                }else{
+                    // stop the animation after the data is fully loaded
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    // TODO : update your list with the new data 
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }   
+        }
+    };
 
     /**
      * This is used to call the api respect to the visible fragment.
@@ -108,7 +194,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && listItem.size() == 0 && !isApiLoaded) {
-            ApiController.getInstance().getUserComplaints(this, page);
+            ApiController.getInstance().getUserComplaints(this, page, true);
         } else if (isVisibleToUser && listItem.size() != 0) {
             adapter.notifyDataSetChanged();
         }
@@ -129,18 +215,19 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
      *            => flag to inform the adapter to show load more button
      */
     private void _displayListView(boolean isPagination) {
-        ListView list = (ListView) getActivity().findViewById(R.id.user_complaint_list);
-        list.setOnItemClickListener(this);
         if(adapter==null)
         {
+          lvcomplaint.setOnItemClickListener(this);
           adapter = new ComplaintAdapter(getActivity(), listItem, isPagination, "me", apiLevel, this);
-          list.setAdapter(adapter);
+          lvcomplaint.setAdapter(adapter);
         }
         else
         {
         	adapter.setPagination(isPagination);
         }
         adapter.notifyDataSetChanged();
+        //lvcomplaintloaderview.setVisibility(View.GONE);
+        //lvcomplaint.setSelectionFromTop(lastviewpos, topOffset);
     }
 
     /**
@@ -215,6 +302,7 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     	protected void onPreExecute() {
     		// TODO Auto-generated method stub
     		super.onPreExecute();
+    		if(loader!=null)
     		loader.setVisibility(View.VISIBLE);
             /*mDialog.setMessage("Loading...");
             mDialog.setCancelable(false);
@@ -359,29 +447,41 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
      */
     @Override
     public void onResponse(Event<ApiResponse> event) {
-        String status = event.getData().getApiStatus().getStatus();
+    	listComplaints(event);
+    }
+    
+    int lastviewpos=0;
+    int topOffset=0;
+    private void listComplaints(Event<ApiResponse> event)
+    {
+    	lastviewpos=lvcomplaint.getFirstVisiblePosition();
+    	//get offset of first visible view
+    	View v = lvcomplaint.getChildAt(0);
+    	topOffset = (v == null) ? 0 : v.getTop();
+    	
+    	String status = event.getData().getApiStatus().getStatus();
         String pagination = event.getData().getApiStatus().isPagination();
         String msg = event.getData().getApiStatus().getMessage();
-        final ListView listView = (ListView) getActivity().findViewById(R.id.user_complaint_list);
 
         if (page == 1) {
             listItem = new ArrayList<Complaint>();
         }
 
         if (status.equalsIgnoreCase("success")) {
-            isApiLoaded = true;
+        	
+        	isApiLoaded = true;
 
             if (listItem.size() > 5) {
                 listItem.remove(listItem.size() - 1);
             }
-
+        	
             try {
                 JSONArray ja = new JSONArray(event.getData().getResponse().toString());
-                Complaint item = null;
+               
                 if (ja.length() > 0) {
                     for (int i = 0; i < ja.length(); i++) {
                         JSONObject jo = ja.getJSONObject(i);
-                        item = new Complaint();
+                        Complaint item = new Complaint();
                         item.setCreatedDate(_getValue(jo, "createdDate"));
                         item.setDetails(_getValue(jo, "detail"));
                         item.setComplaintId(_getValue(jo, "crn"));
@@ -409,28 +509,31 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
                         
                         listItem.add(item);
                     }
-
-                    if (listItem.size() > 5) {
-                        listView.postDelayed(new Runnable() {
+                    
+                    if (listItem.size() > 5 && !isRefresh) {
+                        lvcomplaint.postDelayed(new Runnable() {
                             public void run() {
-                                listView.setStackFromBottom(true);
-                                listView.setSelection(listItem.size() - 8);
+                            	lvcomplaint.setStackFromBottom(true);
+                            	lvcomplaint.setSelectionFromTop(lastviewpos, topOffset);
                             }
-                        }, 0);
+                        }, 100);
                     }
 
                     if (pagination.equals("true")) {
-                        item = new Complaint();
+                    	Complaint item = new Complaint();
                         listItem.add(item);
                     }
                     
                     if(downloadThumbImages.length()>0)
                     {
-                      new ImageDownloaderTask(getProgressBar() , pagination.equals("true")).execute(downloadThumbImages);
+                      new ImageDownloaderTask((!isRefresh?null:getProgressBar()) , pagination.equals("true")).execute(downloadThumbImages);
                     }
                     else
                     {
-                      _displayListView(pagination.equals("true"));
+                      if(!isRefresh)
+                      {
+                        _displayListView(pagination.equals("true"));
+                      }
                     }
                     
                     //ServiceController.getInstance().startJobs();
@@ -498,8 +601,10 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     @Override
     public void actionPerformed(String tag, Object... value) {
         if (tag.equals("LOAD_MORE")) {
+        	lvcomplaint.setSelectionFromTop(lvcomplaint.getFirstVisiblePosition(),lvcomplaint.getChildAt(0).getTop() + 10);
             page = page + 1;
-            ApiController.getInstance().getUserComplaints(this, page);
+            ApiController.getInstance().getUserComplaints(this, page, true);
         }
     }
+    
 }

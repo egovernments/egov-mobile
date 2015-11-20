@@ -37,14 +37,21 @@
     android:layout_height="fill_parent"
     android:background="#EBEBEB" >
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    
     <ListView
         android:id="@+id/user_complaint_list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:divider="@android:color/transparent"
         android:listSelector="@android:color/transparent"
         android:transcriptMode="normal" >
     </ListView>
+    
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <org.egov.android.view.component.EGovTextView
         android:id="@+id/user_errMsg"

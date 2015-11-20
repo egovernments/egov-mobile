@@ -50,6 +50,9 @@
     <color name="light_gray">#DDDDDD</color>
     <color name="darkblue">#3F51B5</color>
     <color name="darkred">#B71C1C</color>
+    <color name="progressorange">#FBBC05</color>
+    <color name="progressred">#EB4E41</color>
+    <color name="progressblue">#4285F4</color>
     
 
 </resources>

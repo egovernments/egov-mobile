@@ -125,39 +125,42 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
         }
 
         Complaint data = listItem.get(position);
-        if (page.equalsIgnoreCase("allcomplaint") || page.equalsIgnoreCase("search")) {
-            holder.name.setText(data.getCreatedBy());
-            holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
-        } else {
-        	holder.name.setText(data.getComplaintId());
-            //holder.name.setVisibility(View.GONE);
-        }
-        
-        File file = new File(data.getImagePath());
-        if(data.getImagePath().length()>0)
-        {
-	        if (file.exists()) {
-	            holder.image.setImageBitmap(  _getBitmapImage(data.getImagePath()));
+     
+	        if (page.equalsIgnoreCase("allcomplaint") || page.equalsIgnoreCase("search")) {
+	            holder.name.setText(data.getCreatedBy());
+	            holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
+	        } else {
+	        	holder.name.setText(data.getComplaintId());
+	            //holder.name.setVisibility(View.GONE);
 	        }
-        }
-        else
-        {
-        	holder.image.setImageDrawable(activity.getResources().getDrawable(R.drawable.default_image));
-        }
-        
-        holder.description.setText(data.getDetails());
-        holder.date.setText((data.getCreatedDate().equals("")) ? "" : getActualTime(data
-                .getCreatedDate()));
-        holder.status.setText(data.getStatus().toLowerCase());
-        holder.loadMore.setTypeface(holder.loadMore.getTypeface(), Typeface.BOLD);
-
+	        
+	        File file = new File(data.getImagePath());
+	        if(data.getImagePath().length()>0)
+	        {
+		        if (file.exists()) {
+		            holder.image.setImageBitmap(  _getBitmapImage(data.getImagePath()));
+		        }
+	        }
+	        else
+	        {
+	        	holder.image.setImageDrawable(activity.getResources().getDrawable(R.drawable.default_image));
+	        }
+	        
+	        holder.description.setText(data.getDetails());
+	        holder.date.setText((data.getCreatedDate().equals("")) ? "" : getActualTime(data
+	                .getCreatedDate()));
+	        holder.status.setText(data.getStatus().toLowerCase());
+	        holder.loadMore.setTypeface(holder.loadMore.getTypeface(), Typeface.BOLD);
+       
         if (getCount() > 5 && (getCount() % 5 == 1) && (position == getCount() - 1) && isPagination) {
             holder.loadMore.setVisibility(View.VISIBLE);
             ((ViewGroup) holder.loadMore.getParent()).getChildAt(0).setVisibility(View.GONE);
         } else {
             holder.loadMore.setVisibility(View.GONE);
             ((ViewGroup) holder.loadMore.getParent()).getChildAt(0).setVisibility(View.VISIBLE);
+            holder.loadMore.setText("SHOW MORE");
         }
+        
         return convertView;
     }
 
@@ -266,12 +269,28 @@ public class ComplaintAdapter extends BaseAdapter implements OnClickListener {
     @Override
     public void onClick(View v) {
         if (iListener != null) {
+        	((TextView)v).setText("LOADING...");
             iListener.actionPerformed("LOAD_MORE", 0);
         }
     }
 
 	public void setPagination(boolean isPagination) {
 		this.isPagination = isPagination;
+	}
+	
+	public boolean isPagination()
+	{
+		return isPagination;
+	}
+	
+	public void setListItem(ArrayList<Complaint> listItem)
+	{
+		this.listItem=listItem;
+	}
+	
+	public void clearAll()
+	{
+		this.listItem.clear();
 	}
 	
 }
