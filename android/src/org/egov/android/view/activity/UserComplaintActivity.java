@@ -78,13 +78,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,7 +99,6 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     private Handler handler = new Handler();
     private boolean isRefresh=false;
     ListView lvcomplaint;
-    View lvcomplaintloaderview;
 
     /**
      * The onActivityCreated() is called after the onCreateView() method when activity is created.
@@ -126,8 +122,6 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         
         mSwipeRefreshLayout.setColorSchemeResources(R.color.progressblue, R.color.progressorange, R.color.progressred);
         
-        lvcomplaintloaderview = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.complaint_list_loader, null, false);
-        //lvcomplaint.addFooterView(lvcomplaintloaderview);
     }
     
     private int _dpToPix(float value) {
@@ -226,8 +220,6 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
         	adapter.setPagination(isPagination);
         }
         adapter.notifyDataSetChanged();
-        //lvcomplaintloaderview.setVisibility(View.GONE);
-        //lvcomplaint.setSelectionFromTop(lastviewpos, topOffset);
     }
 
     /**
@@ -295,7 +287,6 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
 			// TODO Auto-generated constructor stub
     		this.isPagination=isPagination;
     		this.loader=loader;
-    		//this.mDialog = new ProgressDialog(context);
 		}
     	
     	@Override
@@ -304,9 +295,6 @@ public class UserComplaintActivity extends Fragment implements IApiListener, OnI
     		super.onPreExecute();
     		if(loader!=null)
     		loader.setVisibility(View.VISIBLE);
-            /*mDialog.setMessage("Loading...");
-            mDialog.setCancelable(false);
-            mDialog.show();*/
     	}
 
         @Override
