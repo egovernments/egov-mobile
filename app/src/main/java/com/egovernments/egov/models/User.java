@@ -1,6 +1,10 @@
 package com.egovernments.egov.models;
 
 
+/**
+ * POJO class, used by register user API calls
+ **/
+
 public class User {
 
     private String emailId;

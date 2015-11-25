@@ -19,11 +19,17 @@ import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+/**
+ * The OTP verification screen activity
+ **/
+
 
 public class AccountActivationActivity extends AppCompatActivity {
 
@@ -35,7 +41,7 @@ public class AccountActivationActivity extends AppCompatActivity {
 
     private FloatingActionButton activateButton;
     private com.melnykov.fab.FloatingActionButton activateButtonCompat;
-    private Button button;
+    private Button resendButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +49,9 @@ public class AccountActivationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_accountactivation);
 
         progressBar = (ProgressBar) findViewById(R.id.activateprogressBar);
-        button = (Button) findViewById(R.id.activate_resend);
+        resendButton = (Button) findViewById(R.id.activate_resend);
 
+        //Intent extras sent from register activity or from login activity
         username = getIntent().getStringExtra("username");
         password = getIntent().getStringExtra("password");
 
@@ -67,7 +74,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.VISIBLE);
                     activateButton.setVisibility(View.GONE);
                     activateButtonCompat.setVisibility(View.GONE);
-                    button.setVisibility(View.INVISIBLE);
+                    resendButton.setVisibility(View.INVISIBLE);
                     submit(activationCode);
                     return true;
                 }
@@ -76,7 +83,7 @@ public class AccountActivationActivity extends AppCompatActivity {
         });
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        resendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ApiController.getAPI().sendOTP(username, new Callback<JsonObject>() {
@@ -87,8 +94,10 @@ public class AccountActivationActivity extends AppCompatActivity {
 
                     @Override
                     public void failure(RetrofitError error) {
-
-                        Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage() != null)
+                            Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -123,6 +132,7 @@ public class AccountActivationActivity extends AppCompatActivity {
         }
     }
 
+    //Method invokes call to API
     private void submit(String activationCode) {
 
         if (!activationCode.isEmpty()) {
@@ -134,12 +144,15 @@ public class AccountActivationActivity extends AppCompatActivity {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
+                            startService(new Intent(AccountActivationActivity.this, UpdateService.class)
+                                    .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
                             startActivity(new Intent(AccountActivationActivity.this, HomeActivity.class));
                             finish();
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
+
 
                             Toast.makeText(AccountActivationActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(AccountActivationActivity.this, LoginActivity.class));
@@ -150,13 +163,16 @@ public class AccountActivationActivity extends AppCompatActivity {
                 @Override
                 public void failure(RetrofitError error) {
                     if (error != null) {
-
-                        JsonObject jsonObject = (JsonObject) error.getBody();
-                        if (jsonObject != null)
-                            Toast.makeText(AccountActivationActivity.this, "The OTP is incorrect or has expired", Toast.LENGTH_SHORT).show();
-
-                    } else
-                        Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage() != null) {
+                            Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            JsonObject jsonObject = (JsonObject) error.getBody();
+                            if (jsonObject != null)
+                                Toast.makeText(AccountActivationActivity.this, "The OTP is incorrect or has expired", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
                     progressBar.setVisibility(View.GONE);
                     if (Build.VERSION.SDK_INT >= 21) {
@@ -170,7 +186,7 @@ public class AccountActivationActivity extends AppCompatActivity {
             Toast.makeText(AccountActivationActivity.this, "Please enter OTP", Toast.LENGTH_SHORT).show();
 
             progressBar.setVisibility(View.GONE);
-            button.setVisibility(View.VISIBLE);
+            resendButton.setVisibility(View.VISIBLE);
             if (Build.VERSION.SDK_INT >= 21) {
                 activateButton.setVisibility(View.VISIBLE);
             } else {

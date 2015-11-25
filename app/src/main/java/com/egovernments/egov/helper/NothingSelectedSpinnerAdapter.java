@@ -10,10 +10,7 @@ import android.widget.SpinnerAdapter;
 
 /**
  * A modified Spinner that doesn't automatically select the first entry in the list.
- * <p/>
  * Shows the prompt if nothing is selected.
- * <p/>
- * Limitations: does not display prompt if the entry list is empty.
  */
 
 /**

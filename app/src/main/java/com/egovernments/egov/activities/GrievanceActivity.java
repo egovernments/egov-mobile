@@ -22,6 +22,10 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * The activity containing grievance list
+ **/
+
 
 public class GrievanceActivity extends BaseActivity {
 
@@ -37,8 +41,10 @@ public class GrievanceActivity extends BaseActivity {
 
     private android.support.v4.widget.SwipeRefreshLayout swipeRefreshLayout;
 
+    //The currently visible page no.
     private int pageNo = 1;
 
+    //The number of pages which have been loaded
     public static int pageLoaded = 0;
 
     private int previousTotal = 0;
@@ -62,6 +68,7 @@ public class GrievanceActivity extends BaseActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
 
+        //Enables infinite scrolling (pagination)
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             int firstVisibleItem, visibleItemCount, totalItemCount;
@@ -81,11 +88,12 @@ public class GrievanceActivity extends BaseActivity {
 
                     }
                 }
+                // End has been reached
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    // End has been reached
 
-                    // Do something
+
+                    // Fetch further complaints
                     if (pageNo >= pageLoaded) {
                         pageNo++;
                         Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
@@ -98,6 +106,7 @@ public class GrievanceActivity extends BaseActivity {
             }
         });
 
+        //Enables pull to refresh
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.recylerview_refreshlayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -112,6 +121,7 @@ public class GrievanceActivity extends BaseActivity {
         });
 
 
+        //Cardview on click listener
         onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
@@ -123,6 +133,7 @@ public class GrievanceActivity extends BaseActivity {
             }
         };
 
+        //Checks if the update service has fetched complaints before setting up list
         if (grievanceList != null) {
             pageLoaded++;
             progressBar.setVisibility(View.GONE);
@@ -138,6 +149,7 @@ public class GrievanceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
+                //Activity refreshes if NewGrievanceActivity finishes with success
                 startActivityForResult(new Intent(GrievanceActivity.this, NewGrievanceActivity.class), ACTION_UPDATE_REQUIRED);
 
             }
@@ -155,6 +167,7 @@ public class GrievanceActivity extends BaseActivity {
         }
     }
 
+    //Handles result when NewGrievanceActivity finishes
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -171,21 +184,25 @@ public class GrievanceActivity extends BaseActivity {
 
     }
 
+    //Subscribes the activity to events
     @Override
     protected void onStart() {
         EventBus.getDefault().register(this);
         super.onStart();
     }
 
+    //Unsubscribes the activity to events
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
+    //Updates the complaint list when subscribed and a GrievancesUpdatedEvent is posted by the UpdateService
     @SuppressWarnings("unused")
     public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
 
+        //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {
             pageLoaded = 1;
             previousTotal = 0;

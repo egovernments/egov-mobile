@@ -45,6 +45,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * Displays the details of a complaint when clicked in GrievanceActivity recycler view
+ **/
+
 public class GrievanceDetailsActivity extends BaseActivity {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
@@ -69,9 +73,9 @@ public class GrievanceDetailsActivity extends BaseActivity {
         TextView complaintType = (TextView) findViewById(R.id.details_complaint_type);
         TextView complaintDetails = (TextView) findViewById(R.id.details_complaint_details);
         TextView complaintStatus = (TextView) findViewById(R.id.details_complaint_status);
-        complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
         TextView complaintNo = (TextView) findViewById(R.id.details_complaintNo);
         TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
+        complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
 
         Button updateButton = (Button) findViewById(R.id.grievance_update_button);
 
@@ -90,9 +94,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
         progressDialog.setMessage("Processing request");
         progressDialog.setCancelable(false);
 
+        //The default image when complaint has no uploaded images
         ImageView default_image = (ImageView) findViewById(R.id.details_defaultimage);
+        //The layout for uploaded images
         RelativeLayout imageLayout = (RelativeLayout) findViewById(R.id.details_imageslayout);
 
+        //If no uploaded images
         if (grievance.getSupportDocsSize() == 0) {
             default_image.setVisibility(View.VISIBLE);
             imageLayout.setVisibility(View.GONE);
@@ -104,7 +111,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
             linePageIndicator.setViewPager(viewPager);
         }
 
-
+        //Parses complaint date into a more readable format
         try {
             //noinspection SpellCheckingInspection
             complaintDate.setText(new SimpleDateFormat("EEEE, d MMMM, yyyy", Locale.ENGLISH)
@@ -117,8 +124,9 @@ public class GrievanceDetailsActivity extends BaseActivity {
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
 
+        //If grievance has lat/lng values, location name is null
         if (grievance.getLat() == null)
-            complaintLocation.setText(grievance.getChildLocationName() + " " + grievance.getLocationName());
+            complaintLocation.setText(grievance.getChildLocationName() + " - " + grievance.getLocationName());
         else {
             getAddress(grievance.getLat(), grievance.getLng());
         }
@@ -126,6 +134,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         complaintNo.setText(grievance.getCrn());
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
+        //Display feedback spinner
         if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
@@ -135,12 +144,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
             commentBoxLabel.setText("Feedback");
 
             feedbackSpinner.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, feedbackoptions);
+            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackoptions);
             feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+            feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
 
 
-        } else {
+        }
+        //Display default spinners
+        else {
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_open);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -172,13 +183,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
             @Override
             public void failure(RetrofitError error) {
-
-                try {
+                if (error.getLocalizedMessage() != null)
                     Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
+                else
                     Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
-                }
             }
+
         });
 
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +205,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
                 if (action == null) {
                     Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (action.equals("Update") && comment.isEmpty()) {
+                    if ((action.equals("Update") || action.equals("Re-open")) && comment.isEmpty()) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
                         {
@@ -206,11 +216,11 @@ public class GrievanceDetailsActivity extends BaseActivity {
                             case "Update":
                                 action = grievance.getStatus();
                                 break;
-                            case "Withdrawn":
+                            case "Withdraw":
                                 action = "COMPLETED";
                                 break;
                             case "Re-open":
-                                action = "REGISTERED";
+                                action = "REOPENED";
                                 break;
                         }
 
@@ -235,12 +245,10 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                                     @Override
                                     public void failure(RetrofitError error) {
-
-                                        try {
+                                        if (error.getLocalizedMessage() != null)
                                             Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                        } catch (Exception e) {
+                                        else
                                             Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
-                                        }
                                     }
                                 });
 
@@ -250,11 +258,10 @@ public class GrievanceDetailsActivity extends BaseActivity {
                             @Override
                             public void failure(RetrofitError error) {
 
-                                try {
+                                if (error.getLocalizedMessage() != null)
                                     Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                } catch (Exception e) {
-                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
-                                }
+                                else
+                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
 
                             }
@@ -267,19 +274,25 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     }
 
+    //Converts status parameters from server to a more readable form. Probably unnecessary but whatevs
     private int resolveStatus(String s) {
         if (s.equals("REGISTERED"))
             return R.string.registered_info;
-        if (s.equals("PROCESSING") || s.equals("FORWARDED"))
+        if (s.equals("PROCESSING"))
             return R.string.processing_label;
         if (s.equals("COMPLETED"))
             return R.string.completed_label;
+        if (s.equals("FORWARDED"))
+            return R.string.forwarded_label;
         if (s.equals("REJECTED"))
             return R.string.rejected_label;
+        if (s.equals("REOPENED"))
+            return R.string.reopend_label;
 
         return 0;
     }
 
+    //The viewpager custom adapter
     private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
 
         public GrievanceImagePagerAdapter(FragmentManager fm) {
@@ -300,6 +313,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         }
     }
 
+    //If lat/lng is available attempt to resolve it to an address
     private void getAddress(Double lat, Double lng) {
 
         Intent intent = new Intent(this, AddressService.class);
@@ -308,6 +322,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         startService(intent);
     }
 
+    //Handles AddressReadyEvent posted by AddressService on success
     @SuppressWarnings("unused")
     public void onEvent(AddressReadyEvent addressReadyEvent) {
 
@@ -320,12 +335,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     }
 
+    //Subscribes the activity to events
     @Override
     protected void onStart() {
         EventBus.getDefault().register(this);
         super.onStart();
     }
 
+    //Unsubscribes the activity to events
     @Override
     protected void onStop() {
         EventBus.getDefault().unregister(this);

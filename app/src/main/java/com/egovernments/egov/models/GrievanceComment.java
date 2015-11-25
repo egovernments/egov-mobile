@@ -4,7 +4,9 @@ package com.egovernments.egov.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@SuppressWarnings("SpellCheckingInspection")
+/**
+ * POJO class, the comments retrieved by getComplaintHistory
+ **/
 public class GrievanceComment {
 
     @SerializedName("user")

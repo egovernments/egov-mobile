@@ -30,6 +30,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Custom adapter for the grievance activity recycler view
+ **/
+
 public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Grievance> grievanceList;
@@ -72,14 +76,17 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 e.printStackTrace();
             }
 
+            //Location name is null if lat/lng is provided
             if (ci.getLocationName() != null)
-                ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getChildLocationName() + " " + ci.getLocationName());
+                ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getChildLocationName() + " - " + ci.getLocationName());
 
             final String url = ApiUrl.api_baseUrl + "/complaint/" + ci.getCrn() + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
 
             if (ci.getSupportDocsSize() == 0) {
                 ((GrievanceViewHolder) viewHolder).complaintImage.setImageResource(R.drawable.complaint_default);
             } else {
+                //When loading image, first attempt to retrieve from disk or memory before attempting to download.
+                //Still requires internet connection as the plugin attempts to contact the server to see if the image must be revalidated
                 Picasso.with(contextWeakReference.get())
                         .load(url)
                         .networkPolicy(NetworkPolicy.OFFLINE)
@@ -111,6 +118,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+    //Viewholder for the recycler view. Inflates view to be grievance or progress indicator depending on type
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
@@ -127,6 +135,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return new ProgressViewHolder(v);
     }
 
+    //Draws and colors icons for different statuses
     private Drawable getStatusIcon(String status) {
         Drawable drawable;
 
@@ -143,6 +152,9 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 return drawable;
+            case "REOPENED":
+                drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
             case "PROCESSING":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
@@ -157,8 +169,8 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
+    //Resolves numerical date to the form n days/months/years ago
     private String timeDifference(Calendar calendar) {
-
 
         Calendar now = Calendar.getInstance();
         int difference = Math.abs(now.get(Calendar.DAY_OF_YEAR) - calendar.get(Calendar.DAY_OF_YEAR));
@@ -176,11 +188,13 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+    //If the item is null, return the progress indicator, i.e., if user has moved past all list items
     @Override
     public int getItemViewType(int position) {
         return grievanceList.get(position) != null ? VIEW_ITEM : 0;
     }
 
+    //View holder for the progress indicator
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
@@ -191,6 +205,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
+    //Viewholder for the grievance items
     public static class GrievanceViewHolder extends RecyclerView.ViewHolder {
 
         private TextView complaintType;

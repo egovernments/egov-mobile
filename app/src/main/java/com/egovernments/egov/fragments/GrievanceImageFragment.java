@@ -15,6 +15,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+/**
+ * Fragment used by GrievanceDetailsActivity viewpager
+ **/
+
 public class GrievanceImageFragment extends Fragment {
 
     //Default constructor
@@ -61,6 +65,7 @@ public class GrievanceImageFragment extends Fragment {
 
     }
 
+    //Sets up a new fragment instance
     public static Fragment instantiateItem(String access_token, String crn, String fileNo) {
         GrievanceImageFragment grievanceImageFragment = new GrievanceImageFragment();
 

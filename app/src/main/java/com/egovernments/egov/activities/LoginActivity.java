@@ -24,6 +24,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * The login screen activity
+ **/
+
 public class LoginActivity extends Activity {
 
     private String username;
@@ -47,8 +51,11 @@ public class LoginActivity extends Activity {
 
         sessionManager = new SessionManager(getApplicationContext());
 
+        //Checks if session manager believes that the user is logged in.
         if (sessionManager.isLoggedIn()) {
+            //If user is logged in and has a stored access token, immediately login user
             if (sessionManager.getAccessToken() != (null)) {
+                //Start fetching data from server
                 startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
@@ -85,7 +92,7 @@ public class LoginActivity extends Activity {
                 forgotLabel.setVisibility(View.INVISIBLE);
                 signupButton.setVisibility(View.INVISIBLE);
 
-                login(username, password);
+                submit(username, password);
             }
         };
 
@@ -105,7 +112,6 @@ public class LoginActivity extends Activity {
         forgotLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -137,7 +143,7 @@ public class LoginActivity extends Activity {
 
                     username = username_edittext.getText().toString().trim();
                     password = password_edittext.getText().toString().trim();
-                    login(username, password);
+                    submit(username, password);
                     return true;
                 }
                 return false;
@@ -145,7 +151,8 @@ public class LoginActivity extends Activity {
         });
     }
 
-    private void login(final String username, final String password) {
+    //Invokes call to API
+    private void submit(final String username, final String password) {
 
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_LONG).show();
@@ -163,6 +170,7 @@ public class LoginActivity extends Activity {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
+                    //Stores access token in session manager
                     sessionManager.loginUser(password, username, resp.get("access_token").toString());
                     startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
@@ -174,22 +182,28 @@ public class LoginActivity extends Activity {
                 public void failure(RetrofitError error) {
                     JsonObject jsonObject = null;
                     if (error != null) {
-                        try {
-                            jsonObject = (JsonObject) error.getBody();
-                        } catch (Exception e) {
-                            Toast.makeText(LoginActivity.this, R.string.error_no_response, Toast.LENGTH_LONG).show();
-                        }
-                        if (jsonObject != null) {
-                            String errorDescription = jsonObject.get("error_description").toString().trim();
-                            if (errorDescription.contains("Please activate your account")) {
-                                Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
-                                intent.putExtra("username", username);
-                                intent.putExtra("password", password);
-                                startActivity(intent);
+                        if (error.getLocalizedMessage() != null) {
+                            Toast.makeText(LoginActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            try {
+                                jsonObject = (JsonObject) error.getBody();
+                            } catch (Exception e) {
+                                Toast.makeText(LoginActivity.this, R.string.error_no_response, Toast.LENGTH_LONG).show();
+                            }
+                            if (jsonObject != null) {
+                                String errorDescription = jsonObject.get("error_description").toString().trim();
+                                //If user has attempted to log into a yet to be activated account,
+                                // automatically redirect the user to account activation screen
+                                if (errorDescription.contains("Please activate your account")) {
+                                    Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
+                                    intent.putExtra("username", username);
+                                    intent.putExtra("password", password);
+                                    startActivity(intent);
+                                } else
+                                    Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT).show();
                             } else
-                                Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT).show();
-                        } else
-                            Toast.makeText(LoginActivity.this, R.string.error_network, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, R.string.error_network, Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     progressBar.setVisibility(View.GONE);

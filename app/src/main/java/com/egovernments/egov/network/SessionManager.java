@@ -4,6 +4,10 @@ package com.egovernments.egov.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * Stores session data to enable persistent logged in status and to enable seamless renewal of session in background without user input
+ **/
+
 public class SessionManager {
 
     private SharedPreferences pref;
@@ -27,6 +31,7 @@ public class SessionManager {
     }
 
 
+    //When the user is logged in, store data in shared preferences to be used across sessions
     public void loginUser(String password, String email, String accessToken) {
 
         editor.putBoolean(IS_LOGGED_IN, true);
@@ -37,6 +42,7 @@ public class SessionManager {
         editor.commit();
     }
 
+    //Only when user explicitly logs out, clear all data from storage
     public void logoutUser() {
         editor.clear();
         editor.commit();
@@ -57,6 +63,7 @@ public class SessionManager {
     public String getAccessToken() {
         String access_token = pref.getString(KEY_ACCESS_TOKEN, null);
         if (access_token != null)
+            //To remove quotes from string
             return access_token.substring(1, access_token.length() - 1);
         return null;
     }

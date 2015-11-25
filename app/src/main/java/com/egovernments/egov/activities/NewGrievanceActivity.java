@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -52,7 +51,6 @@ import com.egovernments.egov.helper.NoFilterAdapter;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.helper.UriPathHelper;
 import com.egovernments.egov.models.Complaint;
-import com.egovernments.egov.models.GrievanceCreateAPIResponse;
 import com.egovernments.egov.models.GrievanceLocation;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
 import com.egovernments.egov.models.GrievanceType;
@@ -68,6 +66,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
 
 import java.io.File;
@@ -82,6 +81,10 @@ import retrofit.client.Response;
 import retrofit.mime.MultipartTypedOutput;
 import retrofit.mime.TypedFile;
 import retrofit.mime.TypedString;
+
+/**
+ * The Grievance creation page activity
+ **/
 
 
 public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCallback {
@@ -111,11 +114,13 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
     private EditText landmark;
     private EditText details;
 
+    //Codes used to start image picker tasks
     private static final int CAMERA_PHOTO = 111;
     private static final int GALLERY_PHOTO = 222;
 
     private int uploadCount = 0;
 
+    //Used as a crude stack to maintain unique image IDs
     private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
 
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
@@ -173,9 +178,10 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                                                         }
 
+                                                        //When 2 or more characters are entered, API is called to provide a matching location name
                                                         @Override
                                                         public void afterTextChanged(Editable s) {
-                                                            if (s.length() >= 3) {
+                                                            if (s.length() >= 2) {
                                                                 ApiController.getAPI().getComplaintLocation(s.toString(), sessionManager.getAccessToken(), new Callback<GrievanceLocationAPIResponse>() {
                                                                             @Override
                                                                             public void success(GrievanceLocationAPIResponse grievanceLocationAPIResponse, Response response) {
@@ -198,7 +204,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                                                                             @Override
                                                                             public void failure(RetrofitError error) {
-                                                                                Toast.makeText(NewGrievanceActivity.this, "Could not retrieve location. " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(NewGrievanceActivity.this, "Could not retrieve location. " + (error.getLocalizedMessage() == null ? "" : error.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         }
 
@@ -214,6 +220,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 locationID = grievanceLocations.get(position).getId();
+                //Clears marker when a location is selected
                 marker.remove();
                 marker = null;
             }
@@ -225,6 +232,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         dropdown = (Spinner) findViewById(R.id.complaint_type);
 
+        //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
         ApiController.getAPI().getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
                     @Override
                     public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
@@ -280,7 +288,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Toast.makeText(NewGrievanceActivity.this, "Could not retrieve grievance types. " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewGrievanceActivity.this, "Could not retrieve grievance types. " + (error.getLocalizedMessage() == null ? "" : error.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -299,6 +307,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
 
                     dialog.findViewById(R.id.from_gallery).setOnClickListener(new View.OnClickListener() {
+                        //Opens default gallery app
                         @Override
                         public void onClick(View v) {
 
@@ -311,6 +320,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                     });
 
                     dialog.findViewById(R.id.from_camera).setOnClickListener(new View.OnClickListener() {
+                        //Opens default camera app
                         @Override
                         public void onClick(View v) {
 
@@ -340,11 +350,11 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
     }
 
 
+    //Prepares files for camera before starting it
     private void fromCamera() {
 
 
         File file = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         startActivityForResult(intent, CAMERA_PHOTO);
@@ -355,8 +365,10 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         super.onActivityResult(requestCode, resultCode, data);
 
+        //If result is from camera
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
+            //Stores image in app cache
             Uri uri = Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg"));
             uriArrayList.add(uri);
 
@@ -366,6 +378,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
             uploadCount++;
 
+            //Attempts to extract GPS data from image and place marker on map
             try {
                 String s = UriPathHelper.getRealPathFromURI(uri, this);
                 ExifInterface exifInterface = new ExifInterface(s);
@@ -395,6 +408,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                 e.printStackTrace();
             }
 
+            //Crude pop from the crude stack
             imageID.remove(0);
 
             viewPager.setCurrentItem(uriArrayList.size());
@@ -403,6 +417,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
 
 
+        //If result is from gallery
         if (requestCode == GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
 
             uriArrayList.add(data.getData());
@@ -419,6 +434,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     }
 
+    //Performs initial setup of the map
     @Override
     public void onMapReady(final GoogleMap googleMap) {
 
@@ -428,19 +444,21 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
 
+        //Disable map toolbar
         UiSettings uiSettings = googleMap.getUiSettings();
         uiSettings.setMapToolbarEnabled(false);
 
         // Get the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
 
+        //Attempt to get user location
         try {
             myLocation = locationManager.getLastKnownLocation(provider);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
 
-        // set map type
+        // Set map type
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         googleMap.setMyLocationEnabled(true);
@@ -480,8 +498,10 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     }
 
+    //Invokes call to API
     private void submit(Complaint complaint) {
 
+        //Used to upload multiple multipart parts with the same field name
         MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 
         multipartTypedOutput.addPart("json_complaint", new TypedString(new Gson().toJson(complaint)));
@@ -514,9 +534,9 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
 
 
-        ApiController.getAPI().createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<GrievanceCreateAPIResponse>() {
+        ApiController.getAPI().createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<JsonObject>() {
             @Override
-            public void success(GrievanceCreateAPIResponse grievanceCreateAPIResponse, Response response) {
+            public void success(JsonObject jsonObject, Response response) {
 
                 Toast.makeText(NewGrievanceActivity.this, "Grievance successfully registered", Toast.LENGTH_SHORT).show();
 
@@ -533,28 +553,32 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             public void failure(RetrofitError error) {
 
                 progressDialog.dismiss();
-                Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-
+                if (error.getLocalizedMessage() != null)
+                    Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
 
             }
         });
 
     }
 
-
+    //Interface defined to be able to invoke function in fragment class. May be unnecessary
     public interface RemoveImageInterface {
         void removeFragmentImage(int position, UploadImageFragment fragment);
     }
 
+    //Custom adapter for viewpager
     private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
 
         public GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
+
         @Override
         public int getItemPosition(Object object) {
-            // refresh all fragments when data set changed
+            // Returning none cause all fragments to be refreshed when data set changed. Is memory intensive
             return PagerAdapter.POSITION_NONE;
         }
 
@@ -581,6 +605,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             uriArrayList.remove(position);
             uploadCount--;
 
+            //Crude push to crude stack
             imageID.add(String.valueOf(position + 1));
 
             this.notifyDataSetChanged();
@@ -590,6 +615,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
     }
 
+    //The fragments of the viewpager
     public static class UploadImageFragment extends Fragment {
         RemoveImageInterface removeInf = null;
         Integer fragmentPosition = -1;
@@ -598,6 +624,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         public UploadImageFragment() {
         }
+
 
         @SuppressLint("ValidFragment")
         public UploadImageFragment(RemoveImageInterface removeInf, Uri uri) {
@@ -614,12 +641,14 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
             ImageView cancel_button = (ImageView) view.findViewById(R.id.viewpager_cancel);
 
+            //Draws the cancel icon in top right corner
             Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_cancel_white_24dp);
             drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
             cancel_button.setImageDrawable(drawable);
 
             Bundle arg = this.getArguments();
 
+            //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
             Bitmap ThumbImage = null;
             try {
                 ThumbImage = ThumbnailUtils
@@ -657,6 +686,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     }
 
+    //Function converts lat/lng value from exif data to degrees
     private Double convertToDegree(String stringDMS) {
         Double result;
         String[] DMS = stringDMS.split(",", 3);
@@ -683,6 +713,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     }
 
+    //Returns the mime type of file. If it cannot be resolved, assumed to be jpeg
     private String getMimeType(Uri uri) {
         String mimeType;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
@@ -692,31 +723,4 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
         return "image/jpeg";
     }
-
-    public static String getRealPathFromURI(Uri contentUri, Context context) {
-        try {
-            String[] strings = {MediaStore.Images.Media.DATA};
-            String s = null;
-
-            Cursor cursor = context.getContentResolver().query(contentUri, strings, null, null, null);
-            int column_index;
-            if (cursor != null) {
-                column_index = cursor
-                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                s = cursor.getString(column_index);
-                cursor.close();
-            }
-            if (s != null) {
-                return s;
-            }
-        } catch (Exception e) {
-            return contentUri.getPath();
-        }
-
-        return null;
-
-    }
-
-
 }

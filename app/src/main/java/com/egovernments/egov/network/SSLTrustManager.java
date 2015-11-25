@@ -12,6 +12,10 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+/**
+ * Creates certificate validation chain to attempt to validate certificates of unknown server for https requests
+ **/
+
 public class SSLTrustManager {
 
     private static OkHttpClient configureClient(final OkHttpClient client) {

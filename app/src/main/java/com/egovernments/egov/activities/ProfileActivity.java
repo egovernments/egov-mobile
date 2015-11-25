@@ -20,6 +20,10 @@ import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * The profile screen activity
+ **/
+
 public class ProfileActivity extends BaseActivity {
 
     public static Profile profile = null;
@@ -54,6 +58,7 @@ public class ProfileActivity extends BaseActivity {
 
     }
 
+    //Cause the layout items to be refreshed
     private void updateProfile() {
 
 
@@ -103,19 +108,21 @@ public class ProfileActivity extends BaseActivity {
         }
     }
 
+    //Subscribes the activity to events
     @Override
     protected void onStart() {
         EventBus.getDefault().register(this);
         super.onStart();
     }
 
+    //Unsubscribes the activity to events
     @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
-
+    //Updates the profile page when subscribed and a ProfileUpdatedEvent is posted by the UpdateService
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
         updateProfile();

@@ -4,6 +4,10 @@ package com.egovernments.egov.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * POJO class, the status response of getComplaints. Used only for hasNextPage value in pagination of grievance activity recyclerview
+ **/
+
 public class GrievanceAPIStatus {
 
     @SerializedName("hasNextPage")

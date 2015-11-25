@@ -6,6 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * POJO class,Returned by getProfile and used in updateProfile
+ **/
+
 public class Profile implements Serializable {
 
     @SerializedName("name")

@@ -4,6 +4,9 @@ package com.egovernments.egov.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * POJO class, returned by getComplaintType, used in spinner of NewGrievanceActivity
+ **/
 public class GrievanceType {
 
     @SerializedName("name")

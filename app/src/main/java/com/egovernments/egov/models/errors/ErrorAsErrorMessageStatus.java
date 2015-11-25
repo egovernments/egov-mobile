@@ -4,6 +4,10 @@ package com.egovernments.egov.models.errors;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * POJO class of an element of ErrorAsErrorMessage
+ **/
+
 public class ErrorAsErrorMessageStatus {
 
     @SerializedName("type")

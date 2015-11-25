@@ -2,6 +2,9 @@ package com.egovernments.egov.helper;
 
 import android.view.View;
 
+/**
+ * Functions as an OnItemClickListener for recylcerview with cardviews
+ **/
 
 public class CardViewOnClickListener implements View.OnClickListener {
     private int position;
@@ -14,7 +17,7 @@ public class CardViewOnClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(onItemClickCallback!=null) {
+        if (onItemClickCallback != null) {
             onItemClickCallback.onItemClicked(view, position);
         }
     }

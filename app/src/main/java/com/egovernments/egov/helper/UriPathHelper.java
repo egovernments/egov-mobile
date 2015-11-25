@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+/**
+ * Returns the absolute path of a file referred to by a uri
+ **/
+
 public class UriPathHelper {
 
     public static String getRealPathFromURI(Uri contentUri, Context context) {

@@ -14,6 +14,10 @@ import com.egovernments.egov.models.GrievanceComment;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+/**
+ * Custom adapter for the grievance details screen comments
+ **/
+
 public class GrievanceCommentAdapter extends BaseAdapter {
 
     private WeakReference<Context> contextWeakReference;
@@ -77,12 +81,16 @@ public class GrievanceCommentAdapter extends BaseAdapter {
     private int resolveStatus(String s) {
         if (s.equals("REGISTERED"))
             return R.string.registered_info;
-        if (s.equals("PROCESSING") || s.equals("FORWARDED"))
+        if (s.equals("PROCESSING"))
             return R.string.processing_label;
         if (s.equals("COMPLETED"))
             return R.string.completed_label;
+        if (s.equals("FORWARDED"))
+            return R.string.forwarded_label;
         if (s.equals("REJECTED"))
             return R.string.rejected_label;
+        if (s.equals("REOPENED"))
+            return R.string.reopend_label;
 
         return 0;
     }

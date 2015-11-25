@@ -1,7 +1,6 @@
 package com.egovernments.egov.application;
 
 import android.app.Application;
-import android.net.Uri;
 
 import com.egovernments.egov.network.SSLTrustManager;
 import com.squareup.okhttp.Cache;
@@ -16,6 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * Performs setup for some frequently used functions of the app
+ **/
+
 public class EGovApp extends Application {
 
     private final OkHttpClient client = SSLTrustManager.createClient();
@@ -24,6 +27,7 @@ public class EGovApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        //Creates an interceptor to force image caching no matter the server instructions
         Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -34,6 +38,7 @@ public class EGovApp extends Application {
             }
         };
 
+        //Retrieves the app cache directory and sets up a cache for the OkHttpClient
         File cacheDir = this.getExternalCacheDir();
         if (cacheDir == null) {
             // Fall back to using the internal cache directory
@@ -43,19 +48,11 @@ public class EGovApp extends Application {
         client.setProtocols(Collections.singletonList(Protocol.HTTP_1_1));
         client.networkInterceptors().add(REWRITE_CACHE_CONTROL_INTERCEPTOR);
 
+        //Sets up the picasso global singleton instance
         Picasso.Builder builder = new Picasso.Builder(this);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-
         Picasso picasso = builder
                 .downloader(new OkHttpDownloader(client))
                 .build();
-
-        picasso.setLoggingEnabled(true);
 
         Picasso.setSingletonInstance(picasso);
 

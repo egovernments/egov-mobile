@@ -4,6 +4,10 @@ package com.egovernments.egov.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * POJO class, returned by getComplaintLocation in autocompleteTextview of NewGrievanceActivity
+ **/
+
 public class GrievanceLocation {
 
     @SerializedName("name")

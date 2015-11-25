@@ -39,6 +39,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * The profile edit screen activity
+ **/
+
 public class ProfileEditActivity extends BaseActivity {
 
     private EditText profileName;
@@ -193,6 +197,7 @@ public class ProfileEditActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Invokes call to the API
     private void submit() {
 
 
@@ -265,11 +270,11 @@ public class ProfileEditActivity extends BaseActivity {
                 @Override
                 public void failure(RetrofitError error) {
 
-                    try {
+                    if (error.getLocalizedMessage() != null)
                         Toast.makeText(ProfileEditActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
+                    else
                         Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
-                    }
+
                     progressDialog.dismiss();
 
                 }
@@ -278,6 +283,7 @@ public class ProfileEditActivity extends BaseActivity {
         }
     }
 
+    //Matches the email id against the pattern to check if it is of a typical format
     private boolean isValidEmail(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);

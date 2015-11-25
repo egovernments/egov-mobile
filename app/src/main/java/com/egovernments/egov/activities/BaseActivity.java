@@ -35,15 +35,19 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * The activity sets up common features of layout for other activities
+ **/
+
 public class BaseActivity extends AppCompatActivity {
 
     protected LinearLayout fullLayout;
-    protected FrameLayout actContent;
+    protected FrameLayout activityContent;
 
     protected ArrayList<NavItem> arrayList;
     protected DrawerLayout drawerLayout;
     protected ActionBarDrawerToggle actionBarDrawerToggle;
-    protected CharSequence mTitle;
+    protected CharSequence mActionBarTitle;
 
     protected SessionManager sessionManager;
 
@@ -58,13 +62,14 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    //Overridden method will intercept layout passed and inflate it into baselayout.xml
     @Override
     public void setContentView(final int layoutResID) {
 
         fullLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
-        actContent = (FrameLayout) fullLayout.findViewById(R.id.drawer_content);
+        activityContent = (FrameLayout) fullLayout.findViewById(R.id.drawer_content);
 
-        getLayoutInflater().inflate(layoutResID, actContent, true);
+        getLayoutInflater().inflate(layoutResID, activityContent, true);
 
         super.setContentView(fullLayout);
 
@@ -83,7 +88,7 @@ public class BaseActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
 
-        mTitle = actionBar.getTitle();
+        mActionBarTitle = actionBar.getTitle();
 
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
 
@@ -93,7 +98,7 @@ public class BaseActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
 
-                actionBar.setTitle(mTitle);
+                actionBar.setTitle(mActionBarTitle);
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -104,17 +109,17 @@ public class BaseActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
 
-        ListView lv = (ListView) findViewById(R.id.drawer);
+        ListView listView = (ListView) findViewById(R.id.drawer);
 
         arrayList = new ArrayList<>();
         fillList();
 
         BaseAdapter navAdapter = new NavAdapter(arrayList);
 
-        lv.setAdapter(navAdapter);
+        listView.setAdapter(navAdapter);
 
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -177,30 +182,36 @@ public class BaseActivity extends AppCompatActivity {
                                 JsonObject jsonObject = null;
 
                                 if (error != null) {
-                                    try {
-                                        jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (jsonObject != null) {
-                                        String s = jsonObject.get("error").toString().trim();
-                                        if (s.contains("invalid_token")) {
-                                            Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
-
-                                            sessionManager.logoutUser();
-
-                                            Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                                            startActivity(intent);
-                                            progressDialog.dismiss();
-                                            finish();
+                                    if (error.getLocalizedMessage() != null) {
+                                        Toast.makeText(BaseActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        try {
+                                            jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
 
+                                        if (jsonObject != null) {
+                                            String s = jsonObject.get("error").toString().trim();
+                                            if (s.contains("invalid_token")) {
+                                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
+
+                                                sessionManager.logoutUser();
+
+                                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                progressDialog.dismiss();
+                                                finish();
+                                            }
+
+                                        }
                                     }
                                 } else {
                                     Toast.makeText(BaseActivity.this, R.string.no_connection_msg, Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
+
                                 }
+
+                                progressDialog.dismiss();
                             }
                         });
                         break;
@@ -211,6 +222,7 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
+    //Method fills the nav drawer's arraylist
     private void fillList() {
 
         arrayList.add(new NavItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
@@ -226,8 +238,8 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    //To add notification icon to actionbar
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.baselayout_actions, menu);
         MenuItem item = menu.findItem(R.id.badge);
@@ -254,6 +266,7 @@ public class BaseActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //POJO class for nav drawer items
     private class NavItem {
 
         private final int NavIcon;
@@ -274,7 +287,7 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-
+    //Custom adapter for nav drawer
     public class NavAdapter extends BaseAdapter {
         List<NavItem> navItems;
 
@@ -319,6 +332,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    //Allows child classes to access session manager
     protected SessionManager getSessionManager() {
         return sessionManager;
     }

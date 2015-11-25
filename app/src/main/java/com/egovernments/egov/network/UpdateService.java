@@ -24,6 +24,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * Service fetches data from server in background
+ **/
+
 public class UpdateService extends Service {
 
     public static final String KEY_METHOD = "method";
@@ -85,12 +89,15 @@ public class UpdateService extends Service {
                         @Override
                         public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
 
+                            //If the request is a refresh request
                             if (page.equals("1")) {
                                 GrievanceActivity.pageLoaded = 0;
                                 GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
                                 GrievanceActivity.grievanceList.add(null);
                                 EventBus.getDefault().post(new GrievancesUpdatedEvent());
-                            } else {
+                            }
+                            //If the request is a next page request
+                            else {
                                 GrievanceActivity.grievanceList.addAll(GrievanceActivity.grievanceList.size() - 1, grievanceAPIResponse.getResult());
                                 if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
 
@@ -104,19 +111,21 @@ public class UpdateService extends Service {
                         @Override
                         public void failure(RetrofitError error) {
                             JsonObject jsonObject = null;
-                            try {
-                                handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
-                            } catch (Exception e) {
-                                if (error != null) {
+                            if (error != null) {
+                                if (error.getLocalizedMessage() != null)
+                                    handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                                else {
                                     try {
                                         jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
                                     } catch (Exception e1) {
                                         handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
                                     }
                                     if (jsonObject != null) {
+                                        //If failure due to invalid access token, attempt to renew token
                                         String errorDescription = jsonObject.get("error_description").toString().trim();
                                         if (errorDescription.contains("Invalid access token")) {
 
+                                            //Flag counter to prevent multiple executions of the below
                                             if (flag == 1) {
                                                 sessionManager.invalidateAccessToken();
                                                 renewCredentials();
@@ -149,20 +158,22 @@ public class UpdateService extends Service {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    try {
-                        handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
-                    } catch (Exception e) {
-                        JsonObject jsonObject = null;
-                        if (error != null) {
+                    if (error != null) {
+                        if (error.getLocalizedMessage() != null)
+                            handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                        else {
+                            JsonObject jsonObject = null;
                             try {
                                 jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
                             } catch (Exception e1) {
                                 handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
                             }
                             if (jsonObject != null) {
+                                //If failure due to invalid access token, attempt to renew token
                                 String errorDescription = jsonObject.get("error_description").toString().trim();
                                 if (errorDescription.contains("Invalid access token")) {
 
+                                    //Flag counter to prevent multiple executions of the below
                                     if (flag == 1) {
                                         sessionManager.invalidateAccessToken();
                                         renewCredentials();

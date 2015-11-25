@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * POJO class, initial response to getComplaints API calls
+ **/
 
 public class GrievanceAPIResponse {
 

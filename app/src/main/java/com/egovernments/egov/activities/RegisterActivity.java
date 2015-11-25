@@ -187,16 +187,20 @@ public class RegisterActivity extends AppCompatActivity {
                     progressDialog.dismiss();
 
                     if (error != null) {
-                        try {
-                            jsonObject = (JsonObject) error.getBody();
-                        } catch (Exception e) {
-                            Toast.makeText(RegisterActivity.this, "Server is down for maintenance or over capacity", Toast.LENGTH_LONG).show();
-                        }
-                        if (jsonObject != null)
-                            Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_LONG).show();
-                        else
-                            Toast.makeText(RegisterActivity.this, "An error occured", Toast.LENGTH_LONG).show();
+                        if (error.getLocalizedMessage() != null) {
+                            Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            try {
+                                jsonObject = (JsonObject) error.getBody();
+                            } catch (Exception e) {
+                                Toast.makeText(RegisterActivity.this, "Server is down for maintenance or over capacity", Toast.LENGTH_LONG).show();
+                            }
+                            if (jsonObject != null)
+                                Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_LONG).show();
+                            else
+                                Toast.makeText(RegisterActivity.this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
 
+                        }
                     } else
                         Toast.makeText(RegisterActivity.this, "You are not connected to the internet", Toast.LENGTH_LONG).show();
 

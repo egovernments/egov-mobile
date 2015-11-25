@@ -4,6 +4,10 @@ package com.egovernments.egov.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * POJO class, response to getProfile and updateProfiled calls
+ **/
+
 public class ProfileAPIResponse {
 
     @SerializedName("result")

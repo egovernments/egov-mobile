@@ -3,7 +3,6 @@ package com.egovernments.egov.network;
 
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
-import com.egovernments.egov.models.GrievanceCreateAPIResponse;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
 import com.egovernments.egov.models.GrievanceUpdate;
@@ -34,8 +33,7 @@ public class ApiController {
 
     private final static OkHttpClient client = SSLTrustManager.createClient();
 
-    //TODO proper error handling
-
+    //Sets up the API client
     public static APIInterface getAPI() {
         if (APIInterface == null) {
 
@@ -91,7 +89,7 @@ public class ApiController {
         @POST(ApiUrl.COMPLAINT_CREATE)
         void createComplaint(@Body MultipartTypedOutput output,
                              @Query(value = "access_token", encodeValue = false) String access_token,
-                             Callback<GrievanceCreateAPIResponse> grievanceCreateAPIResponseCallback);
+                             Callback<JsonObject> jsonObjectCallback);
 
         @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
         void updateGrievance(@Path(value = "complaintNo", encode = false) String complaintNo,
@@ -127,6 +125,7 @@ public class ApiController {
     }
 
 
+    //Separate interface for login calls as base url differs slightly, and as request interceptor must be set to add header
     public static LoginInterface getLoginAPI() {
         if (loginInterface == null) {
 
@@ -135,7 +134,6 @@ public class ApiController {
             builder.setRequestInterceptor(new RequestInterceptor() {
                 @Override
                 public void intercept(RequestFacade request) {
-                    //noinspection SpellCheckingInspection
                     request.addHeader("Authorization", "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=");
                 }
             });

@@ -7,6 +7,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * POJO class, response to getComplaintLocation in autocompleteTextview of NewGrievanceActivity
+ **/
+
 public class GrievanceLocationAPIResponse {
 
     @SerializedName("result")

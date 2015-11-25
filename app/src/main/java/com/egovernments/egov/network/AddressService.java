@@ -5,7 +5,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,13 +16,14 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * Service resolves lat/lng data to address in background when
+ **/
+
 public class AddressService extends IntentService {
 
-    public static final String RECEIVER = "RECEIVER";
     public static final String LAT = "LAT";
     public static final String LNG = "LNG";
-    public static final String ADDRESS = "ADDRESS";
-    public static final int SUCCESS_RESULT = 111;
 
     public static String addressResult = "";
 
@@ -68,6 +68,7 @@ public class AddressService extends IntentService {
             }
 
             addressResult = TextUtils.join(System.getProperty("line.separator"), addressFragments);
+            //Post event on success so that all relevant subscribers can react
             EventBus.getDefault().post(new AddressReadyEvent());
         }
     }

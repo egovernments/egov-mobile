@@ -13,6 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * Reduces image resolution and color density before upload
+ **/
+
 public class ImageCompressionHelper {
 
     public static String compressImage(String sourceFilePath, String outputFilePath) {
@@ -97,7 +101,6 @@ public class ImageCompressionHelper {
 
             int orientation = exif.getAttributeInt(
                     ExifInterface.TAG_ORIENTATION, 0);
-            Log.d("EXIF", "Exif: " + orientation);
             Matrix matrix = new Matrix();
             if (orientation == 6) {
                 matrix.postRotate(90);
@@ -116,7 +119,7 @@ public class ImageCompressionHelper {
             e.printStackTrace();
         }
 
-        FileOutputStream out = null;
+        FileOutputStream out;
         try {
             out = new FileOutputStream(outputFilePath);
 

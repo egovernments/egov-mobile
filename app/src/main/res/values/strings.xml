@@ -98,4 +98,7 @@
     <string name="grievanceupdated_msg">Grievance updated</string>
     <string name="error_unknown">An unexpected error occured</string>
     <string name="error_network_http_error">HTTP error</string>
+    <string name="feedback_label">Feedback</string>
+    <string name="reopend_label">Re-opened</string>
+    <string name="forwarded_label">Forwarded</string>
 </resources>

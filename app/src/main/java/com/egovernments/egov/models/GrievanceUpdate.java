@@ -8,6 +8,7 @@ public class GrievanceUpdate {
     private String comment;
 
     public GrievanceUpdate(String action, String feedbackOption, String comment) {
+        this.action = action;
         this.feedbackOption = feedbackOption;
         this.comment = comment;
     }

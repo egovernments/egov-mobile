@@ -6,6 +6,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
+/**
+ * POJO class to parse server response to getComplaints
+ **/
+
 public class Grievance implements Serializable {
 
     @SerializedName("detail")

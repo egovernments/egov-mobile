@@ -24,6 +24,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * The password recovery screen activity
+ **/
+
 public class ForgotPasswordActivity extends AppCompatActivity {
 
     private String phone;
@@ -100,6 +104,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     }
 
+    //Invokes call to API
     private void submit(String phone) {
 
         if (phone.isEmpty()) {
@@ -122,12 +127,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                 @Override
                 public void failure(RetrofitError error) {
-
                     if (error != null) {
-                        JsonObject jsonObject = (JsonObject) error.getBody();
-                        if (jsonObject != null)
-                            Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage() != null) {
+                            Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            JsonObject jsonObject = (JsonObject) error.getBody();
+                            if (jsonObject != null)
+                                Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT).show();
 
+                        }
                     } else
                         Toast.makeText(ForgotPasswordActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
 
