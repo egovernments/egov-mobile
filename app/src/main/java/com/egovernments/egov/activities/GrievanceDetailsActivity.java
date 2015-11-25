@@ -31,6 +31,7 @@ import com.egovernments.egov.models.GrievanceCommentAPIResult;
 import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.network.AddressService;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -62,6 +63,10 @@ public class GrievanceDetailsActivity extends BaseActivity {
     private ProgressDialog progressDialog;
 
     private TextView complaintLocation;
+
+    private String action;
+
+    private boolean isUpdate = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +140,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
         //Display feedback spinner
-        if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
+        if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED") || grievance.getStatus().equals("WITHDRAWN")) {
 
             ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -195,7 +200,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                String action = (String) actionsSpinner.getSelectedItem();
+                action = (String) actionsSpinner.getSelectedItem();
                 String comment = updateComment.getText().toString().trim();
                 String feedback = "";
                 if (feedbackSpinner.getVisibility() == View.VISIBLE) {
@@ -214,12 +219,15 @@ public class GrievanceDetailsActivity extends BaseActivity {
                     } else {
                         switch (action) {
                             case "Update":
+                                isUpdate = true;
                                 action = grievance.getStatus();
                                 break;
                             case "Withdraw":
-                                action = "COMPLETED";
+                                isUpdate = false;
+                                action = "WITHDRAWN";
                                 break;
                             case "Re-open":
+                                isUpdate = false;
                                 action = "REOPENED";
                                 break;
                         }
@@ -240,6 +248,16 @@ public class GrievanceDetailsActivity extends BaseActivity {
                                         GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
 
                                         listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
+                                        actionsSpinner.setSelection(0);
+                                        feedbackSpinner.setSelection(0);
+                                        updateComment.getText().clear();
+                                        if (!isUpdate) {
+
+                                            Intent intent = new Intent(GrievanceDetailsActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
+                                            intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
+                                            startService(intent);
+                                            startActivity(new Intent(GrievanceDetailsActivity.this, GrievanceActivity.class));
+                                        }
 
                                     }
 
@@ -284,6 +302,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
             return R.string.completed_label;
         if (s.equals("FORWARDED"))
             return R.string.forwarded_label;
+        if (s.equals("WITHDRAWN"))
+            return R.string.withdrawn_label;
         if (s.equals("REJECTED"))
             return R.string.rejected_label;
         if (s.equals("REOPENED"))

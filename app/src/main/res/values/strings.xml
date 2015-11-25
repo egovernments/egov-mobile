@@ -101,4 +101,5 @@
     <string name="feedback_label">Feedback</string>
     <string name="reopend_label">Re-opened</string>
     <string name="forwarded_label">Forwarded</string>
+    <string name="withdrawn_label">Withdrawn</string>
 </resources>

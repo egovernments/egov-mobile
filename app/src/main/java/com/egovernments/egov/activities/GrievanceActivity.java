@@ -112,11 +112,9 @@ public class GrievanceActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 progressBar.setVisibility(View.GONE);
-                pageNo = 1;
                 Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
                 intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
                 startService(intent);
-                grievanceAdapter = null;
             }
         });
 
@@ -205,6 +203,7 @@ public class GrievanceActivity extends BaseActivity {
         //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {
             pageLoaded = 1;
+            pageNo = 1;
             previousTotal = 0;
             progressBar.setVisibility(View.GONE);
             grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);

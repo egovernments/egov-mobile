@@ -94,6 +94,7 @@ public class UpdateService extends Service {
                                 GrievanceActivity.pageLoaded = 0;
                                 GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
                                 GrievanceActivity.grievanceList.add(null);
+                                GrievanceActivity.grievanceAdapter = null;
                                 EventBus.getDefault().post(new GrievancesUpdatedEvent());
                             }
                             //If the request is a next page request

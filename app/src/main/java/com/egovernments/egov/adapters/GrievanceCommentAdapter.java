@@ -87,6 +87,8 @@ public class GrievanceCommentAdapter extends BaseAdapter {
             return R.string.completed_label;
         if (s.equals("FORWARDED"))
             return R.string.forwarded_label;
+        if (s.equals("WITHDRAWN"))
+            return R.string.withdrawn_label;
         if (s.equals("REJECTED"))
             return R.string.rejected_label;
         if (s.equals("REOPENED"))

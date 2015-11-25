@@ -163,6 +163,10 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
                 drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
                 return drawable;
+            case "WITHDRAWN":
+                drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
+                drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+                return drawable;
         }
         return ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_cancel_white_24dp);
 

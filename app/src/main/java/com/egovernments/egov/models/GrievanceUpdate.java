@@ -4,12 +4,12 @@ package com.egovernments.egov.models;
 public class GrievanceUpdate {
 
     private String action;
-    private String feedbackOption;
+    private String feedback;
     private String comment;
 
-    public GrievanceUpdate(String action, String feedbackOption, String comment) {
+    public GrievanceUpdate(String action, String feedback, String comment) {
         this.action = action;
-        this.feedbackOption = feedbackOption;
+        this.feedback = feedback;
         this.comment = comment;
     }
 }

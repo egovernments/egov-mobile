@@ -181,7 +181,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                         //When 2 or more characters are entered, API is called to provide a matching location name
                                                         @Override
                                                         public void afterTextChanged(Editable s) {
-                                                            if (s.length() >= 2) {
+                                                            if (s.length() >= 3) {
                                                                 ApiController.getAPI().getComplaintLocation(s.toString(), sessionManager.getAccessToken(), new Callback<GrievanceLocationAPIResponse>() {
                                                                             @Override
                                                                             public void success(GrievanceLocationAPIResponse grievanceLocationAPIResponse, Response response) {
