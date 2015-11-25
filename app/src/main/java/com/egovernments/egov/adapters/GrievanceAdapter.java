@@ -72,7 +72,8 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 e.printStackTrace();
             }
 
-            ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getLocationName());
+            if (ci.getLocationName() != null)
+                ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getChildLocationName() + " " + ci.getLocationName());
 
             final String url = ApiUrl.api_baseUrl + "/complaint/" + ci.getCrn() + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
 
@@ -81,8 +82,8 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else {
                 Picasso.with(contextWeakReference.get())
                         .load(url)
-                        .noFade()
                         .networkPolicy(NetworkPolicy.OFFLINE)
+                        .placeholder(R.drawable.placeholder)
                         .error(R.drawable.broken_icon)
                         .into(((GrievanceViewHolder) viewHolder).complaintImage, new Callback() {
                             @Override
@@ -94,7 +95,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                             public void onError() {
                                 Picasso.with(contextWeakReference.get())
                                         .load(url)
-                                        .noFade()
+                                        .placeholder(R.drawable.placeholder)
                                         .error(R.drawable.broken_icon)
                                         .into(((GrievanceViewHolder) viewHolder).complaintImage);
                             }

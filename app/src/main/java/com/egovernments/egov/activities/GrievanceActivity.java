@@ -118,7 +118,7 @@ public class GrievanceActivity extends BaseActivity {
 
                 Intent intent = new Intent(GrievanceActivity.this, GrievanceDetailsActivity.class);
                 intent.putExtra(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
-                startActivityForResult(intent,ACTION_UPDATE_REQUIRED);
+                startActivityForResult(intent, ACTION_UPDATE_REQUIRED);
 
             }
         };
@@ -197,6 +197,7 @@ public class GrievanceActivity extends BaseActivity {
             pageLoaded++;
             grievanceAdapter.notifyDataSetChanged();
         }
+        progressBar.setVisibility(View.GONE);
 
 
     }

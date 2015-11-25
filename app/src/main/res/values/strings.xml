@@ -6,7 +6,7 @@
     <string name="otp_button_label">Resend OTP</string>
     <string name="date_label">Date</string>
     <string name="type_label">Type*</string>
-    <string name="additionaldetails_label">Additional details</string>
+    <string name="additionaldetails_label">Additional details*(10 characters min.)</string>
     <string name="location_label">Location</string>
     <string name="status_label">Status</string>
     <string name="complaintID_label">Complaint ID</string>
@@ -54,7 +54,7 @@
     <string name="gender_male_label">Male</string>
     <string name="profilegender_label">Gender:</string>
     <string name="error_network">The network is not accessible</string>
-    <string name="error_no_response">Server may be down for maintenance or over capacity</string>
+    <string name="error_no_response">Server is not responding</string>
     <string name="landmark_label">Landmark</string>
     <string name="area_label">Area*</string>
     <string name="gallery_label">Gallery</string>
@@ -96,4 +96,6 @@
     <string name="noaccount_msg">No account exists associated with this mobile number</string>
     <string name="recoverymessage_msg">Recovery message sent</string>
     <string name="grievanceupdated_msg">Grievance updated</string>
+    <string name="error_unknown">An unexpected error occured</string>
+    <string name="error_network_http_error">HTTP error</string>
 </resources>

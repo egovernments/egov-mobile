@@ -104,19 +104,23 @@ public class UpdateService extends Service {
                         @Override
                         public void failure(RetrofitError error) {
                             JsonObject jsonObject = null;
-                            if (error != null) {
-                                try {
-                                    jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                                } catch (Exception e) {
-                                    handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
-                                }
-                                if (jsonObject != null) {
-                                    String errorDescription = jsonObject.get("error_description").toString().trim();
-                                    if (errorDescription.contains("Invalid access token")) {
+                            try {
+                                handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                            } catch (Exception e) {
+                                if (error != null) {
+                                    try {
+                                        jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
+                                    } catch (Exception e1) {
+                                        handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
+                                    }
+                                    if (jsonObject != null) {
+                                        String errorDescription = jsonObject.get("error_description").toString().trim();
+                                        if (errorDescription.contains("Invalid access token")) {
 
-                                        if (flag == 1) {
-                                            sessionManager.invalidateAccessToken();
-                                            renewCredentials();
+                                            if (flag == 1) {
+                                                sessionManager.invalidateAccessToken();
+                                                renewCredentials();
+                                            }
                                         }
                                     }
                                 }
@@ -145,25 +149,29 @@ public class UpdateService extends Service {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    JsonObject jsonObject = null;
-                    if (error != null) {
-                        try {
-                            jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                        } catch (Exception e) {
-                            handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
-                        }
-                        if (jsonObject != null) {
-                            String errorDescription = jsonObject.get("error_description").toString().trim();
-                            if (errorDescription.contains("Invalid access token")) {
+                    try {
+                        handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                    } catch (Exception e) {
+                        JsonObject jsonObject = null;
+                        if (error != null) {
+                            try {
+                                jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
+                            } catch (Exception e1) {
+                                handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
+                            }
+                            if (jsonObject != null) {
+                                String errorDescription = jsonObject.get("error_description").toString().trim();
+                                if (errorDescription.contains("Invalid access token")) {
 
-                                if (flag == 1) {
-                                    sessionManager.invalidateAccessToken();
-                                    renewCredentials();
+                                    if (flag == 1) {
+                                        sessionManager.invalidateAccessToken();
+                                        renewCredentials();
+                                    }
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
             });
         }

@@ -195,8 +195,7 @@
         </activity>
 
         <service android:name=".network.UpdateService" />
-
-        <service android:name=".network.UploadService" />
+        <service android:name=".network.AddressService" />
 
     </application>
 

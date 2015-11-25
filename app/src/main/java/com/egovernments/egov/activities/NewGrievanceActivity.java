@@ -5,8 +5,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -45,6 +47,7 @@ import android.widget.Toast;
 
 import com.NYXDigital.NiceSupportMapFragment;
 import com.egovernments.egov.R;
+import com.egovernments.egov.helper.ImageCompressionHelper;
 import com.egovernments.egov.helper.NoFilterAdapter;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.helper.UriPathHelper;
@@ -56,7 +59,6 @@ import com.egovernments.egov.models.GrievanceType;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
-import com.egovernments.egov.network.UploadService;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,6 +67,7 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.viewpagerindicator.LinePageIndicator;
 
 import java.io.File;
@@ -76,6 +79,9 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.MultipartTypedOutput;
+import retrofit.mime.TypedFile;
+import retrofit.mime.TypedString;
 
 
 public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCallback {
@@ -105,10 +111,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
     private EditText landmark;
     private EditText details;
 
-    private Boolean selected;
-
     private static final int CAMERA_PHOTO = 111;
-
     private static final int GALLERY_PHOTO = 222;
 
     private int uploadCount = 0;
@@ -124,8 +127,6 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
     private File cacheDir;
 
     private GoogleMap googleMap;
-
-    //TODO wait for lat, lng api calls to be fixed
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +198,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                                                                             @Override
                                                                             public void failure(RetrofitError error) {
-
+                                                                                Toast.makeText(NewGrievanceActivity.this, "Could not retrieve location. " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                                                             }
                                                                         }
 
@@ -208,14 +209,13 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         );
 
-        selected = false;
-
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 locationID = grievanceLocations.get(position).getId();
-                selected = true;
+                marker.remove();
+                marker = null;
             }
         });
 
@@ -243,27 +243,30 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                       @Override
                                                       public void onClick(View v) {
 
-                                                          int complaintTypeID = grievanceTypes.get(dropdown.getSelectedItemPosition() - 1).getId();
                                                           String complaintDetails = details.getText().toString().trim();
-
                                                           double lat;
                                                           double lng;
-                                                          if (marker != null) {
-                                                              lat = marker.getPosition().latitude;
-                                                              lng = marker.getPosition().longitude;
-                                                          } else {
-                                                              lat = 0;
-                                                              lng = 0;
-                                                          }
                                                           String landmarkDetails = landmark.getText().toString().trim();
 
-                                                          if (locationID == 0 && (lat == 0 && lng == 0)) {
+                                                          if (locationID == 0 && (marker == null)) {
                                                               Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_LONG).show();
-                                                          } else if (!selected) {
+                                                          } else if (dropdown.getSelectedItem() == null) {
                                                               Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_LONG).show();
+                                                          } else if (complaintDetails.isEmpty() || complaintDetails.length() < 10) {
+                                                              Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_LONG).show();
                                                           } else {
-                                                              progressDialog.show();
-                                                              submit(locationID, lat, lng, complaintDetails, complaintTypeID, landmarkDetails);
+
+                                                              int complaintTypeID = grievanceTypes.get(dropdown.getSelectedItemPosition() - 1).getId();
+
+                                                              if (marker != null) {
+                                                                  lat = marker.getPosition().latitude;
+                                                                  lng = marker.getPosition().longitude;
+                                                                  progressDialog.show();
+                                                                  submit(new Complaint(lat, lng, complaintDetails, complaintTypeID, landmarkDetails));
+                                                              } else {
+                                                                  progressDialog.show();
+                                                                  submit(new Complaint(locationID, complaintDetails, complaintTypeID, landmarkDetails));
+                                                              }
                                                           }
 
 
@@ -277,11 +280,12 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Toast.makeText(NewGrievanceActivity.this, "Could not retrieve grievance types.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewGrievanceActivity.this, "Could not retrieve grievance types. " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
         );
+
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -476,11 +480,41 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     }
 
-    private void submit(int locationId, double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
+    private void submit(Complaint complaint) {
 
-        Complaint complaint = new Complaint(locationId, lat, lng, details, complaintTypeId, landmarkDetails);
+        MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 
-        ApiController.getAPI().createComplaint(complaint, sessionManager.getAccessToken(), new Callback<GrievanceCreateAPIResponse>() {
+        multipartTypedOutput.addPart("json_complaint", new TypedString(new Gson().toJson(complaint)));
+
+        if (uploadCount != 0) {
+            for (Uri uri : uriArrayList) {
+
+                String mimeType = getMimeType(uri);
+
+                String path;
+
+                File imgFile = new File(uri.getPath());
+                path = uri.getPath();
+
+                if (!imgFile.exists()) {
+                    try {
+                        imgFile = new File(UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this));
+                        path = UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                path = ImageCompressionHelper.compressImage(path, path);
+
+                multipartTypedOutput.addPart("files", new TypedFile(mimeType, new File(path)));
+
+            }
+
+        }
+
+
+        ApiController.getAPI().createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<GrievanceCreateAPIResponse>() {
             @Override
             public void success(GrievanceCreateAPIResponse grievanceCreateAPIResponse, Response response) {
 
@@ -490,14 +524,6 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
-
-                if (uploadCount != 0) {
-                    Intent intent1 = new Intent(NewGrievanceActivity.this, UploadService.class);
-                    intent1.putParcelableArrayListExtra(UploadService.URI_LIST, uriArrayList);
-                    intent1.putExtra(UploadService.COMPLAINT_NO, grievanceCreateAPIResponse.getResult().getCrn());
-                    startService(intent1);
-                }
-
                 finish();
 
 
@@ -507,7 +533,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             public void failure(RetrofitError error) {
 
                 progressDialog.dismiss();
-                Toast.makeText(NewGrievanceActivity.this, "An error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
 
 
             }
@@ -654,6 +680,41 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
         return result;
 
+
+    }
+
+    private String getMimeType(Uri uri) {
+        String mimeType;
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            ContentResolver contentResolver = NewGrievanceActivity.this.getContentResolver();
+            mimeType = contentResolver.getType(uri);
+            return mimeType;
+        }
+        return "image/jpeg";
+    }
+
+    public static String getRealPathFromURI(Uri contentUri, Context context) {
+        try {
+            String[] strings = {MediaStore.Images.Media.DATA};
+            String s = null;
+
+            Cursor cursor = context.getContentResolver().query(contentUri, strings, null, null, null);
+            int column_index;
+            if (cursor != null) {
+                column_index = cursor
+                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                s = cursor.getString(column_index);
+                cursor.close();
+            }
+            if (s != null) {
+                return s;
+            }
+        } catch (Exception e) {
+            return contentUri.getPath();
+        }
+
+        return null;
 
     }
 

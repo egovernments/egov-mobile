@@ -265,7 +265,11 @@ public class ProfileEditActivity extends BaseActivity {
                 @Override
                 public void failure(RetrofitError error) {
 
-                    Toast.makeText(ProfileEditActivity.this, "An error occurred", Toast.LENGTH_SHORT).show();
+                    try {
+                        Toast.makeText(ProfileEditActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                    }
                     progressDialog.dismiss();
 
                 }

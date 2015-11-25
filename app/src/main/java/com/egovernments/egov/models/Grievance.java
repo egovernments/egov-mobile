@@ -29,6 +29,9 @@ public class Grievance implements Serializable {
     @SerializedName("locationName")
     @Expose
     private String locationName;
+    @SerializedName("childLocationName")
+    @Expose
+    private String childLocationName;
     @SerializedName("complaintTypeId")
     @Expose
     private Integer complaintTypeId;
@@ -47,6 +50,12 @@ public class Grievance implements Serializable {
     @SerializedName("supportDocsSize")
     @Expose
     private Integer supportDocsSize;
+    @SerializedName("lat")
+    @Expose
+    private Double lat;
+    @SerializedName("lng")
+    @Expose
+    private Double lng;
 
     public String getCrn() {
         return crn;
@@ -136,4 +145,15 @@ public class Grievance implements Serializable {
         return supportDocsSize;
     }
 
+    public String getChildLocationName() {
+        return childLocationName;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
 }

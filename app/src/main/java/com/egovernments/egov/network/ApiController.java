@@ -1,7 +1,6 @@
 package com.egovernments.egov.network;
 
 
-import com.egovernments.egov.models.Complaint;
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceCreateAPIResponse;
@@ -22,13 +21,11 @@ import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
-import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.PUT;
-import retrofit.http.Part;
 import retrofit.http.Path;
 import retrofit.http.Query;
-import retrofit.mime.TypedFile;
+import retrofit.mime.MultipartTypedOutput;
 
 public class ApiController {
 
@@ -42,7 +39,12 @@ public class ApiController {
     public static APIInterface getAPI() {
         if (APIInterface == null) {
 
-            RestAdapter restAdapter = new RestAdapter.Builder().setClient(new OkClient(client)).setEndpoint(ApiUrl.api_baseUrl).build();
+            RestAdapter restAdapter = new RestAdapter
+                    .Builder()
+                    .setClient(new OkClient(client))
+                    .setEndpoint(ApiUrl.api_baseUrl)
+                    .setErrorHandler(new CustomErrorHandler())
+                    .build();
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
             APIInterface = restAdapter.create(APIInterface.class);
         }
@@ -87,17 +89,9 @@ public class ApiController {
                                   Callback<GrievanceLocationAPIResponse> grievanceLocationAPIResponseCallback);
 
         @POST(ApiUrl.COMPLAINT_CREATE)
-        void createComplaint(@Body Complaint complaint,
+        void createComplaint(@Body MultipartTypedOutput output,
                              @Query(value = "access_token", encodeValue = false) String access_token,
                              Callback<GrievanceCreateAPIResponse> grievanceCreateAPIResponseCallback);
-
-        @Multipart
-        @POST(ApiUrl.COMPLAINT_UPLOAD_SUPPORT_DOCUMENT)
-        void uploadImage(@Part("files") TypedFile typedFile,
-                         @Path(value = "complaintNo", encode = false) String complaintNo,
-                         @Query(value = "access_token", encodeValue = false) String access_token,
-                         @Query(value = "fileNo", encodeName = false) String fileNo,
-                         Callback<JsonObject> jsonObjectCallback);
 
         @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
         void updateGrievance(@Path(value = "complaintNo", encode = false) String complaintNo,

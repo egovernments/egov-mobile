@@ -88,7 +88,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                     @Override
                     public void failure(RetrofitError error) {
 
-                        Toast.makeText(AccountActivationActivity.this, R.string.no_connection_msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -141,7 +141,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                         @Override
                         public void failure(RetrofitError error) {
 
-                            Toast.makeText(AccountActivationActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AccountActivationActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(AccountActivationActivity.this, LoginActivity.class));
                         }
                     });

@@ -10,7 +10,16 @@ public class Complaint {
     private int complaintTypeId;
     private String landmarkDetails;
 
-    public Complaint(int locationId, double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
+    public Complaint(double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
+        this.locationId = locationId;
+        this.lat = lat;
+        this.lng = lng;
+        this.details = details;
+        this.complaintTypeId = complaintTypeId;
+        this.landmarkDetails = landmarkDetails;
+    }
+
+    public Complaint(int locationId, String details, int complaintTypeId, String landmarkDetails) {
         this.locationId = locationId;
         this.lat = lat;
         this.lng = lng;

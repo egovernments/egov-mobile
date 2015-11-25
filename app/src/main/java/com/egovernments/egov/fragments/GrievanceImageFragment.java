@@ -38,6 +38,7 @@ public class GrievanceImageFragment extends Fragment {
 
         Picasso.with(getActivity())
                 .load(url)
+                .placeholder(R.drawable.placeholder)
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .error(R.drawable.broken_icon)
                 .into(imageView, new Callback() {
@@ -50,6 +51,7 @@ public class GrievanceImageFragment extends Fragment {
                     public void onError() {
                         Picasso.with(getActivity())
                                 .load(url)
+                                .placeholder(R.drawable.placeholder)
                                 .error(R.drawable.broken_icon)
                                 .into(imageView);
                     }

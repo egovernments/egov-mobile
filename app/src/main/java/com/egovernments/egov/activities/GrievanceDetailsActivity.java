@@ -2,6 +2,7 @@ package com.egovernments.egov.activities;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,12 +10,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -23,12 +22,14 @@ import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.GrievanceCommentAdapter;
+import com.egovernments.egov.events.AddressReadyEvent;
 import com.egovernments.egov.fragments.GrievanceImageFragment;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResult;
 import com.egovernments.egov.models.GrievanceUpdate;
+import com.egovernments.egov.network.AddressService;
 import com.egovernments.egov.network.ApiController;
 import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -53,9 +55,9 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     private EditText updateComment;
 
-    private boolean isSelected = false;
-
     private ProgressDialog progressDialog;
+
+    private TextView complaintLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,22 +69,21 @@ public class GrievanceDetailsActivity extends BaseActivity {
         TextView complaintType = (TextView) findViewById(R.id.details_complaint_type);
         TextView complaintDetails = (TextView) findViewById(R.id.details_complaint_details);
         TextView complaintStatus = (TextView) findViewById(R.id.details_complaint_status);
-        TextView complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
+        complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
         TextView complaintNo = (TextView) findViewById(R.id.details_complaintNo);
+        TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
 
         Button updateButton = (Button) findViewById(R.id.grievance_update_button);
-
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.update_grievance_layout);
 
         updateComment = (EditText) findViewById(R.id.update_comment);
 
         listView = (ListView) findViewById(R.id.grievance_comments);
 
-        final Spinner spinner = (Spinner) findViewById(R.id.update_action);
-        ArrayList<String> strings = new ArrayList<>(Arrays.asList("Update", "Withdrawn"));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, strings);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+        final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
+        final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
+        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Update", "Withdraw"));
+        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Update", "Re-open"));
+        ArrayList<String> feedbackoptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -115,13 +116,37 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
-        complaintLocation.setText(grievance.getLocationName());
+
+        if (grievance.getLat() == null)
+            complaintLocation.setText(grievance.getChildLocationName() + " " + grievance.getLocationName());
+        else {
+            getAddress(grievance.getLat(), grievance.getLng());
+        }
+
         complaintNo.setText(grievance.getCrn());
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
         if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
 
-            linearLayout.setVisibility(View.GONE);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+
+            commentBoxLabel.setText("Feedback");
+
+            feedbackSpinner.setVisibility(View.VISIBLE);
+            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, feedbackoptions);
+            feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+
+
+        } else {
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_open);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+
+            commentBoxLabel.setText("Update grievance");
         }
 
         listView.setOnTouchListener(new View.OnTouchListener() {
@@ -148,20 +173,11 @@ public class GrievanceDetailsActivity extends BaseActivity {
             @Override
             public void failure(RetrofitError error) {
 
-                Toast.makeText(GrievanceDetailsActivity.this, "Could not retrieve comments", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                isSelected = true;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+                try {
+                    Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -169,61 +185,80 @@ public class GrievanceDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                String action = (String) spinner.getSelectedItem();
+                String action = (String) actionsSpinner.getSelectedItem();
                 String comment = updateComment.getText().toString().trim();
+                String feedback = "";
+                if (feedbackSpinner.getVisibility() == View.VISIBLE) {
+                    feedback = (String) feedbackSpinner.getSelectedItem();
+                }
 
-                if (!isSelected) {
+                if (action == null) {
                     Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT).show();
                 } else {
                     if (action.equals("Update") && comment.isEmpty()) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
+                    } else if (feedback == null) {
+                        {
+                            Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-
-                        if (action.equals("Update")) {
-                            action = grievance.getStatus();
-                        } else if (action.equals("Withdrawn")) {
-                            action = "COMPLETED";
+                        switch (action) {
+                            case "Update":
+                                action = grievance.getStatus();
+                                break;
+                            case "Withdrawn":
+                                action = "COMPLETED";
+                                break;
+                            case "Re-open":
+                                action = "REGISTERED";
+                                break;
                         }
 
                         progressDialog.show();
 
-                        ApiController.getAPI()
-                                .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                        ApiController.getAPI().updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                            @Override
+                            public void success(JsonObject jsonObject, Response response) {
+
+                                Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT).show();
+                                progressDialog.dismiss();
+
+                                ApiController.getAPI().getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
                                     @Override
-                                    public void success(JsonObject jsonObject, Response response) {
+                                    public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
 
-                                        Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
+                                        GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
 
-                                        ApiController.getAPI().getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
-                                            @Override
-                                            public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
-
-                                                GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
-
-                                                listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
-
-                                            }
-
-                                            @Override
-                                            public void failure(RetrofitError error) {
-
-                                                Toast.makeText(GrievanceDetailsActivity.this, "Could not retrieve comments", Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        });
-
+                                        listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
 
                                     }
 
                                     @Override
                                     public void failure(RetrofitError error) {
 
-                                        Toast.makeText(GrievanceDetailsActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-
+                                        try {
+                                            Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
+
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+
+                                try {
+                                    Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                                }
+                                progressDialog.dismiss();
+
+                            }
+                        });
 
                     }
                 }
@@ -263,5 +298,37 @@ public class GrievanceDetailsActivity extends BaseActivity {
         public int getCount() {
             return grievance.getSupportDocsSize();
         }
+    }
+
+    private void getAddress(Double lat, Double lng) {
+
+        Intent intent = new Intent(this, AddressService.class);
+        intent.putExtra(AddressService.LAT, lat);
+        intent.putExtra(AddressService.LNG, lng);
+        startService(intent);
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(AddressReadyEvent addressReadyEvent) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                complaintLocation.setText(AddressService.addressResult);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }
