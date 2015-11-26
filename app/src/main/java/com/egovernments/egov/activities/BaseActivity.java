@@ -182,7 +182,7 @@ public class BaseActivity extends AppCompatActivity {
                                 JsonObject jsonObject = null;
 
                                 if (error != null) {
-                                    if (error.getLocalizedMessage() != null) {
+                                    if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized")) {
                                         Toast.makeText(BaseActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                     } else {
                                         try {
@@ -207,7 +207,7 @@ public class BaseActivity extends AppCompatActivity {
                                         }
                                     }
                                 } else {
-                                    Toast.makeText(BaseActivity.this, R.string.no_connection_msg, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(BaseActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
 
                                 }
 

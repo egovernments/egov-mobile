@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.GrievanceAdapter;
 import com.egovernments.egov.events.GrievancesUpdatedEvent;
+import com.egovernments.egov.events.UpdateFailedEvent;
 import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.network.UpdateService;
@@ -215,6 +216,13 @@ public class GrievanceActivity extends BaseActivity {
         }
         progressBar.setVisibility(View.GONE);
 
+
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(UpdateFailedEvent updateFailedEvent) {
+        swipeRefreshLayout.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
 
     }
 }

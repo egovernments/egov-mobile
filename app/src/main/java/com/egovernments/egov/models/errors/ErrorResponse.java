@@ -8,11 +8,11 @@ package com.egovernments.egov.models.errors;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ErrorAsErrorMessage {
+public class ErrorResponse {
 
     @SerializedName("status")
     @Expose
-    private ErrorAsErrorMessageStatus errorStatus;
+    private ErrorMessage errorStatus;
     @SerializedName("result")
     @Expose
     private String result;
@@ -20,7 +20,7 @@ public class ErrorAsErrorMessage {
     /**
      * @return The errorStatus
      */
-    public ErrorAsErrorMessageStatus getErrorStatus() {
+    public ErrorMessage getErrorStatus() {
         return errorStatus;
     }
 

@@ -1,7 +1,7 @@
 package com.egovernments.egov.network;
 
 
-import com.egovernments.egov.models.errors.ErrorAsErrorMessage;
+import com.egovernments.egov.models.errors.ErrorResponse;
 
 import java.net.SocketTimeoutException;
 
@@ -11,7 +11,7 @@ import retrofit.client.Response;
 public class CustomErrorHandler implements retrofit.ErrorHandler {
 
     String errorDescription;
-    ErrorAsErrorMessage errorMessage;
+    ErrorResponse errorMessage;
 
     @Override
     public Throwable handleError(RetrofitError cause) {
@@ -34,7 +34,7 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                 switch (response.getStatus()) {
                     case 400:
                         try {
-                            errorMessage = (ErrorAsErrorMessage) cause.getBodyAs(ErrorAsErrorMessage.class);
+                            errorMessage = (ErrorResponse) cause.getBodyAs(ErrorResponse.class);
                         } catch (Exception e) {
                             return cause;
                         }
@@ -52,24 +52,7 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                         break;
 
                     case 401:
-                        try {
-                            errorMessage = (ErrorAsErrorMessage) cause.getBodyAs(ErrorAsErrorMessage.class);
-                        } catch (Exception e) {
-                            return cause;
-                        }
-                        try {
-                            if (errorMessage != null) {
-                                errorDescription = errorMessage.getErrorStatus().getMessage();
-                            }
-                        } catch (Exception e) {
-                            try {
-                                return cause;
-                            } catch (Exception e1) {
-                                errorDescription = "An unexpected error occurred";
-                            }
-                        }
-                        break;
-
+                        return cause;
                     case 404:
                         errorDescription = "Server may be down for maintenance";
                         break;
@@ -79,12 +62,18 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                     case 504:
                         errorDescription = "The connection timed out while waiting for a response";
                         break;
+
+                    default:
+                        return cause;
                 }
                 break;
 
             case UNEXPECTED:
                 errorDescription = "An unexpected error occurred";
                 break;
+
+            default:
+                return cause;
         }
 
         return new Exception(errorDescription);

@@ -5,10 +5,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * POJO class of an element of ErrorAsErrorMessage
+ * POJO class of an element of ErrorResponse
  **/
 
-public class ErrorAsErrorMessageStatus {
+public class ErrorMessage {
 
     @SerializedName("type")
     @Expose

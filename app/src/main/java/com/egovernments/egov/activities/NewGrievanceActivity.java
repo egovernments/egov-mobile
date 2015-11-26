@@ -518,7 +518,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                 if (!imgFile.exists()) {
                     try {
-                        imgFile = new File(UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this));
+                        new File(UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this));
                         path = UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this);
                     } catch (Exception e) {
                         e.printStackTrace();

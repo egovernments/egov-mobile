@@ -83,7 +83,9 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final String url = ApiUrl.api_baseUrl + "/complaint/" + ci.getCrn() + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
 
             if (ci.getSupportDocsSize() == 0) {
-                ((GrievanceViewHolder) viewHolder).complaintImage.setImageResource(R.drawable.complaint_default);
+                Picasso.with(contextWeakReference.get())
+                        .load(R.drawable.complaint_default)
+                        .into(((GrievanceViewHolder) viewHolder).complaintImage);
             } else {
                 //When loading image, first attempt to retrieve from disk or memory before attempting to download.
                 //Still requires internet connection as the plugin attempts to contact the server to see if the image must be revalidated

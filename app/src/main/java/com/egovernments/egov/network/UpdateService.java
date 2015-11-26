@@ -15,6 +15,7 @@ import com.egovernments.egov.activities.NotificationsActivity;
 import com.egovernments.egov.activities.ProfileActivity;
 import com.egovernments.egov.events.GrievancesUpdatedEvent;
 import com.egovernments.egov.events.ProfileUpdatedEvent;
+import com.egovernments.egov.events.UpdateFailedEvent;
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.google.gson.JsonObject;
@@ -113,7 +114,7 @@ public class UpdateService extends Service {
                         public void failure(RetrofitError error) {
                             JsonObject jsonObject = null;
                             if (error != null) {
-                                if (error.getLocalizedMessage() != null)
+                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized"))
                                     handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
                                 else {
                                     try {
@@ -128,6 +129,7 @@ public class UpdateService extends Service {
 
                                             //Flag counter to prevent multiple executions of the below
                                             if (flag == 1) {
+                                                flag = 0;
                                                 sessionManager.invalidateAccessToken();
                                                 renewCredentials();
                                             }
@@ -135,6 +137,7 @@ public class UpdateService extends Service {
                                     }
                                 }
                             }
+                            EventBus.getDefault().post(new UpdateFailedEvent());
                         }
                     }
 
@@ -160,7 +163,7 @@ public class UpdateService extends Service {
                 @Override
                 public void failure(RetrofitError error) {
                     if (error != null) {
-                        if (error.getLocalizedMessage() != null)
+                        if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized"))
                             handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
                         else {
                             JsonObject jsonObject = null;
@@ -176,6 +179,7 @@ public class UpdateService extends Service {
 
                                     //Flag counter to prevent multiple executions of the below
                                     if (flag == 1) {
+                                        flag = 0;
                                         sessionManager.invalidateAccessToken();
                                         renewCredentials();
                                     }

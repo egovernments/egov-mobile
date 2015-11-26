@@ -7,14 +7,14 @@ package com.egovernments.egov.network;
 
 public class ApiUrl {
 
-//    public final static String api_baseUrl = "https://phoenix-qa.egovernments.org/api/v1.0";
-//    public final static String login_baseUrl = "https://phoenix-qa.egovernments.org/api";
+    public final static String api_baseUrl = "https://phoenix-qa.egovernments.org/api/v1.0";
+    public final static String login_baseUrl = "https://phoenix-qa.egovernments.org/api";
 
-    public final static String api_baseUrl = "http://172.16.2.44:9080/api/v1.0";
-    public final static String login_baseUrl = "http://172.16.2.44:9080/api";
+//    public final static String api_baseUrl = "http://172.16.2.44:9080/api/v1.0";
+//    public final static String login_baseUrl = "http://172.16.2.44:9080/api";
 
     /**
-     * Grievance
+     * Grievances
      */
     public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
 

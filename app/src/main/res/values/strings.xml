@@ -64,13 +64,11 @@
     <string name="processing_label">Processing</string>
     <string name="completed_label">Completed</string>
     <string name="rejected_label">Rejected</string>
-    <string name="update_grievance_label">Update grievance</string>
     <string name="comment_label">Comment</string>
     <string name="action_label">Action</string>
     <string name="login_field_empty_prompt">Please enter both username and password</string>
     <string name="session_expiry_message">Session expired</string>
     <string name="otp_resent_msg">OTP Resent</string>
-    <string name="no_connection_msg">You are not connected to the internet</string>
     <string name="account_activated_msg">Account activated</string>
     <string name="unexpected_error">An unexpected error occurred</string>
     <string name="processing_msg">Processing request</string>
@@ -96,8 +94,6 @@
     <string name="noaccount_msg">No account exists associated with this mobile number</string>
     <string name="recoverymessage_msg">Recovery message sent</string>
     <string name="grievanceupdated_msg">Grievance updated</string>
-    <string name="error_unknown">An unexpected error occured</string>
-    <string name="error_network_http_error">HTTP error</string>
     <string name="feedback_label">Feedback</string>
     <string name="reopend_label">Re-opened</string>
     <string name="forwarded_label">Forwarded</string>
