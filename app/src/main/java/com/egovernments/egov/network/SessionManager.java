@@ -4,6 +4,8 @@ package com.egovernments.egov.network;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Calendar;
+
 /**
  * Stores session data to enable persistent logged in status and to enable seamless renewal of session in background without user input
  **/
@@ -13,6 +15,10 @@ public class SessionManager {
     private SharedPreferences pref;
 
     private SharedPreferences.Editor editor;
+
+    private static final String BASE_URL = "Base URL";
+
+    private static final String URL_CREATED_TIME = "Url timeout";
 
     private static final String PREF_NAME = "CredentialsPref";
 
@@ -70,6 +76,25 @@ public class SessionManager {
 
     public void invalidateAccessToken() {
         editor.putString(KEY_ACCESS_TOKEN, null);
+    }
+
+    public void setBaseURL(String url) {
+
+        if (!url.substring(url.length() - 1).equals("/")) {
+            editor.putString(BASE_URL, url + "/");
+        } else
+            editor.putString(BASE_URL, url);
+
+        editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+        editor.commit();
+    }
+
+    public String getBaseURL() {
+        return pref.getString(BASE_URL, null);
+    }
+
+    public int getUrlAge() {
+        return Calendar.getInstance().get(Calendar.MILLISECOND) - pref.getInt(URL_CREATED_TIME, 6);
     }
 
 }

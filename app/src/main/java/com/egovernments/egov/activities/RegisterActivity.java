@@ -151,14 +151,14 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
 
 
-            ApiController.getAPI().registerUser(new User(email, phoneno, name, password, deviceID, deviceType, deviceOS), new Callback<JsonObject>() {
+            ApiController.getAPI(RegisterActivity.this).registerUser(new User(email, phoneno, name, password, deviceID, deviceType, deviceOS), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
 
                     Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT).show();
 
 
-                    ApiController.getAPI().sendOTP(phoneno, new Callback<JsonObject>() {
+                    ApiController.getAPI(RegisterActivity.this).sendOTP(phoneno, new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
@@ -193,16 +193,16 @@ public class RegisterActivity extends AppCompatActivity {
                             try {
                                 jsonObject = (JsonObject) error.getBody();
                             } catch (Exception e) {
-                                Toast.makeText(RegisterActivity.this, "Server is down for maintenance or over capacity", Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
                             }
                             if (jsonObject != null)
                                 Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_LONG).show();
                             else
-                                Toast.makeText(RegisterActivity.this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
+                                Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_LONG).show();
 
                         }
                     } else
-                        Toast.makeText(RegisterActivity.this, "You are not connected to the internet", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_LONG).show();
 
                 }
             });

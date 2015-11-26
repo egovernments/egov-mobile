@@ -161,7 +161,7 @@ public class BaseActivity extends AppCompatActivity {
 
                     case 9:
                         progressDialog.show();
-                        ApiController.getAPI().logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                        ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
@@ -179,39 +179,14 @@ public class BaseActivity extends AppCompatActivity {
                             @Override
                             public void failure(RetrofitError error) {
 
-                                JsonObject jsonObject = null;
+                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
 
-                                if (error != null) {
-                                    if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized")) {
-                                        Toast.makeText(BaseActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        try {
-                                            jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
+                                sessionManager.logoutUser();
 
-                                        if (jsonObject != null) {
-                                            String s = jsonObject.get("error").toString().trim();
-                                            if (s.contains("invalid_token")) {
-                                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
-
-                                                sessionManager.logoutUser();
-
-                                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                progressDialog.dismiss();
-                                                finish();
-                                            }
-
-                                        }
-                                    }
-                                } else {
-                                    Toast.makeText(BaseActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
-
-                                }
-
+                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                                startActivity(intent);
                                 progressDialog.dismiss();
+                                finish();
                             }
                         });
                         break;

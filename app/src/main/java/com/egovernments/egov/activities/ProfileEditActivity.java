@@ -248,7 +248,7 @@ public class ProfileEditActivity extends BaseActivity {
         } else {
             Profile update_profile = new Profile(name, emailId, mobileNumber, mobileNumber, altContactNumber, gender, panCard, dob, aadhaarCard);
 
-            ApiController.getAPI().updateProfile(update_profile, sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
+            ApiController.getAPI(ProfileEditActivity.this).updateProfile(update_profile, sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
                 @Override
                 public void success(ProfileAPIResponse profileAPIResponse, Response response) {
 
@@ -271,9 +271,14 @@ public class ProfileEditActivity extends BaseActivity {
                 public void failure(RetrofitError error) {
 
                     if (error.getLocalizedMessage() != null)
-                        Toast.makeText(ProfileEditActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage().equals("Invalid access token")) {
+                            Toast.makeText(ProfileEditActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                            sessionManager.logoutUser();
+                            startActivity(new Intent(ProfileEditActivity.this, LoginActivity.class));
+                        } else
+                            Toast.makeText(ProfileEditActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     else
-                        Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
 
                     progressDialog.dismiss();
 

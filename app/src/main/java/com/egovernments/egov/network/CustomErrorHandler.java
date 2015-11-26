@@ -2,6 +2,7 @@ package com.egovernments.egov.network;
 
 
 import com.egovernments.egov.models.errors.ErrorResponse;
+import com.google.gson.JsonObject;
 
 import java.net.SocketTimeoutException;
 
@@ -52,7 +53,23 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                         break;
 
                     case 401:
-                        return cause;
+                        JsonObject jsonObject = null;
+                        try {
+                            jsonObject = (JsonObject) cause.getBodyAs(JsonObject.class);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        if (jsonObject != null) {
+                            //If failure due to invalid access token, attempt to renew token
+                            String message = jsonObject.get("error_description").toString().trim();
+                            if (message.contains("Invalid access token")) {
+
+                                errorDescription = "Invalid access token";
+
+                            } else return cause;
+                        } else return cause;
+                        break;
+
                     case 404:
                         errorDescription = "Server may be down for maintenance";
                         break;

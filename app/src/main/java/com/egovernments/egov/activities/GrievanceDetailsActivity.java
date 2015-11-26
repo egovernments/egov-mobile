@@ -175,7 +175,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
             }
         });
 
-        ApiController.getAPI().getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
+        ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
             @Override
             public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
 
@@ -189,7 +189,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
             @Override
             public void failure(RetrofitError error) {
                 if (error.getLocalizedMessage() != null)
-                    Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    if (error.getLocalizedMessage().equals("Invalid access token")) {
+                        Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                        sessionManager.logoutUser();
+                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
+                    } else
+                        Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
             }
@@ -234,14 +239,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                         progressDialog.show();
 
-                        ApiController.getAPI().updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                        ApiController.getAPI(GrievanceDetailsActivity.this).updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
                                 Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
 
-                                ApiController.getAPI().getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
+                                ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
                                     @Override
                                     public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
 
@@ -264,7 +269,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
                                     @Override
                                     public void failure(RetrofitError error) {
                                         if (error.getLocalizedMessage() != null)
-                                            Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                            if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                                Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                                sessionManager.logoutUser();
+                                                startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
+                                            } else
+                                                Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                         else
                                             Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
                                     }
@@ -277,9 +287,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
                             public void failure(RetrofitError error) {
 
                                 if (error.getLocalizedMessage() != null)
-                                    Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                    if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                        Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                        sessionManager.logoutUser();
+                                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
+                                    } else
+                                        Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                 else
-                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
                                 progressDialog.dismiss();
 
                             }

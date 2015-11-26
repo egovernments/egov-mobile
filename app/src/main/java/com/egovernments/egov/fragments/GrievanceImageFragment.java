@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.egovernments.egov.R;
-import com.egovernments.egov.network.ApiUrl;
+import com.egovernments.egov.network.SessionManager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -34,8 +34,9 @@ public class GrievanceImageFragment extends Fragment {
 
         Bundle arg = this.getArguments();
 
-        final String url = ApiUrl.api_baseUrl
-                + "/complaint/"
+        SessionManager sessionManager = new SessionManager(getActivity());
+
+        final String url = sessionManager.getBaseURL() + "api/v1.0/complaint/"
                 + arg.getString("crn") + "/downloadSupportDocument?access_token="
                 + arg.getString("access_token") + "&fileNo="
                 + arg.getString("fileNo");

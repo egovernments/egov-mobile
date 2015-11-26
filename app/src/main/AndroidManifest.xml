@@ -37,15 +37,22 @@
             android:value="AIzaSyBUXMcf50iTY1ekEJyFU-a27s03ZjLaVGs" />
 
         <activity
+            android:name=".activities.SplashScreenActivity"
+            android:label="@string/egov_label"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".activities.LoginActivity"
             android:label="@string/egov_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan|stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity

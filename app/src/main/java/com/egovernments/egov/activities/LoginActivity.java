@@ -166,7 +166,7 @@ public class LoginActivity extends Activity {
                 loginButtonCompat.setVisibility(View.VISIBLE);
 
         } else {
-            ApiController.getLoginAPI().Login(username, "read write", password, "password", new Callback<JsonObject>() {
+            ApiController.getLoginAPI(LoginActivity.this).Login(username, "read write", password, "password", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
@@ -188,7 +188,7 @@ public class LoginActivity extends Activity {
                             try {
                                 jsonObject = (JsonObject) error.getBody();
                             } catch (Exception e) {
-                                Toast.makeText(LoginActivity.this, R.string.error_no_response, Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
                             }
                             if (jsonObject != null) {
                                 String errorDescription = jsonObject.get("error_description").toString().trim();
@@ -202,7 +202,7 @@ public class LoginActivity extends Activity {
                                 } else
                                     Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT).show();
                             } else
-                                Toast.makeText(LoginActivity.this, R.string.error_network, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
                         }
                     }
 

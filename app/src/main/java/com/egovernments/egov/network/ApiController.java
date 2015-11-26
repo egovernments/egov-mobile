@@ -1,6 +1,8 @@
 package com.egovernments.egov.network;
 
 
+import android.content.Context;
+
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
@@ -10,7 +12,12 @@ import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.egovernments.egov.models.User;
 import com.google.gson.JsonObject;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -29,18 +36,33 @@ import retrofit.mime.MultipartTypedOutput;
 public class ApiController {
 
     private static LoginInterface loginInterface = null;
+
     private static APIInterface APIInterface = null;
 
     private final static OkHttpClient client = SSLTrustManager.createClient();
 
+    private static SessionManager sessionManager;
+
+    public static String getCityURL(String url) throws IOException {
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+
+    }
+
     //Sets up the API client
-    public static APIInterface getAPI() {
+    public static APIInterface getAPI(Context context) {
+        sessionManager = new SessionManager(context);
         if (APIInterface == null) {
 
             RestAdapter restAdapter = new RestAdapter
                     .Builder()
                     .setClient(new OkClient(client))
-                    .setEndpoint(ApiUrl.api_baseUrl)
+                    .setEndpoint(sessionManager.getBaseURL() + "api/v1.0")
                     .setErrorHandler(new CustomErrorHandler())
                     .build();
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
@@ -126,10 +148,13 @@ public class ApiController {
 
 
     //Separate interface for login calls as base url differs slightly, and as request interceptor must be set to add header
-    public static LoginInterface getLoginAPI() {
+    public static LoginInterface getLoginAPI(Context context) {
         if (loginInterface == null) {
 
-            RestAdapter.Builder builder = new RestAdapter.Builder().setClient(new OkClient(client)).setEndpoint(ApiUrl.login_baseUrl);
+            sessionManager = new SessionManager(context);
+            RestAdapter.Builder builder = new RestAdapter.Builder()
+                    .setClient(new OkClient(client))
+                    .setEndpoint(sessionManager.getBaseURL() + "api");
 
             builder.setRequestInterceptor(new RequestInterceptor() {
                 @Override

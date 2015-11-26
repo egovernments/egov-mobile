@@ -182,7 +182,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                         @Override
                                                         public void afterTextChanged(Editable s) {
                                                             if (s.length() >= 3) {
-                                                                ApiController.getAPI().getComplaintLocation(s.toString(), sessionManager.getAccessToken(), new Callback<GrievanceLocationAPIResponse>() {
+                                                                ApiController.getAPI(NewGrievanceActivity.this).getComplaintLocation(s.toString(), sessionManager.getAccessToken(), new Callback<GrievanceLocationAPIResponse>() {
                                                                             @Override
                                                                             public void success(GrievanceLocationAPIResponse grievanceLocationAPIResponse, Response response) {
                                                                                 grievanceLocations = new ArrayList<>();
@@ -204,7 +204,16 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                                                                             @Override
                                                                             public void failure(RetrofitError error) {
-                                                                                Toast.makeText(NewGrievanceActivity.this, "Could not retrieve location. " + (error.getLocalizedMessage() == null ? "" : error.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
+                                                                                if (error.getLocalizedMessage() != null)
+                                                                                    if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                                                                        Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                                                                        sessionManager.logoutUser();
+                                                                                        startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
+                                                                                    } else
+                                                                                        Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                                                                                else
+                                                                                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving location", Toast.LENGTH_SHORT).show();
+
                                                                             }
                                                                         }
 
@@ -233,7 +242,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         dropdown = (Spinner) findViewById(R.id.complaint_type);
 
         //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
-        ApiController.getAPI().getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
+        ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
                     @Override
                     public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
                         grievanceTypes = grievanceTypeAPIResponse.getGrievanceType();
@@ -288,7 +297,15 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Toast.makeText(NewGrievanceActivity.this, "Could not retrieve grievance types. " + (error.getLocalizedMessage() == null ? "" : error.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage() != null)
+                            if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                sessionManager.logoutUser();
+                                startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
+                            } else
+                                Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -534,7 +551,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         }
 
 
-        ApiController.getAPI().createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<JsonObject>() {
+        ApiController.getAPI(NewGrievanceActivity.this).createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
 
@@ -554,9 +571,14 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                 progressDialog.dismiss();
                 if (error.getLocalizedMessage() != null)
-                    Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    if (error.getLocalizedMessage().equals("Invalid access token")) {
+                        Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                        sessionManager.logoutUser();
+                        startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
+                    } else
+                        Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
 
             }
         });

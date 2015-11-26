@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.egovernments.egov.R;
 import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
-import com.egovernments.egov.network.ApiUrl;
 import com.egovernments.egov.network.SessionManager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -80,7 +79,10 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if (ci.getLocationName() != null)
                 ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getChildLocationName() + " - " + ci.getLocationName());
 
-            final String url = ApiUrl.api_baseUrl + "/complaint/" + ci.getCrn() + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
+            final String url = sessionManager.getBaseURL()
+                    + "api/v1.0/complaint/"
+                    + ci.getCrn()
+                    + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
 
             if (ci.getSupportDocsSize() == 0) {
                 Picasso.with(contextWeakReference.get())

@@ -114,7 +114,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         } else if (phone.length() != 10) {
             Toast.makeText(this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT).show();
         } else {
-            ApiController.getAPI().recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
+            ApiController.getAPI(ForgotPasswordActivity.this).recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
@@ -137,7 +137,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                         }
                     } else
-                        Toast.makeText(ForgotPasswordActivity.this, R.string.unexpected_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
 
 
                 }

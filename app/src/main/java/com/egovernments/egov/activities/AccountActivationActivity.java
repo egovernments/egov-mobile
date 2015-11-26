@@ -22,6 +22,8 @@ import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -86,7 +88,7 @@ public class AccountActivationActivity extends AppCompatActivity {
         resendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ApiController.getAPI().sendOTP(username, new Callback<JsonObject>() {
+                ApiController.getAPI(AccountActivationActivity.this).sendOTP(username, new Callback<JsonObject>() {
                     @Override
                     public void success(JsonObject jsonObject, Response response) {
                         Toast.makeText(AccountActivationActivity.this, R.string.otp_resent_msg, Toast.LENGTH_SHORT).show();
@@ -97,7 +99,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                         if (error.getLocalizedMessage() != null)
                             Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         else
-                            Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -111,6 +113,11 @@ public class AccountActivationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                try {
+                    getBaseContext().getAssets().open("properties.conf");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 activationCode = code_edittext.getText().toString().trim();
                 progressBar.setVisibility(View.VISIBLE);
                 activateButton.setVisibility(View.GONE);
@@ -136,11 +143,11 @@ public class AccountActivationActivity extends AppCompatActivity {
     private void submit(String activationCode) {
 
         if (!activationCode.isEmpty()) {
-            ApiController.getAPI().activate(username, activationCode, new Callback<JsonObject>() {
+            ApiController.getAPI(AccountActivationActivity.this).activate(username, activationCode, new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
                     Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT).show();
-                    ApiController.getLoginAPI().Login(username, "read write", password, "password", new Callback<JsonObject>() {
+                    ApiController.getLoginAPI(AccountActivationActivity.this).Login(username, "read write", password, "password", new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
@@ -152,7 +159,6 @@ public class AccountActivationActivity extends AppCompatActivity {
 
                         @Override
                         public void failure(RetrofitError error) {
-
 
                             Toast.makeText(AccountActivationActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(AccountActivationActivity.this, LoginActivity.class));
@@ -170,7 +176,7 @@ public class AccountActivationActivity extends AppCompatActivity {
                             if (jsonObject != null)
                                 Toast.makeText(AccountActivationActivity.this, "The OTP is incorrect or has expired", Toast.LENGTH_SHORT).show();
                             else
-                                Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
                         }
                     }
 

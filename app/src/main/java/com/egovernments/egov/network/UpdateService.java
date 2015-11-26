@@ -86,7 +86,7 @@ public class UpdateService extends Service {
     private void updateComplaints(final String page) {
 
         if (sessionManager.getAccessToken() != null) {
-            ApiController.getAPI().getMyComplaints(page, "10", sessionManager.getAccessToken(), new Callback<GrievanceAPIResponse>() {
+            ApiController.getAPI(UpdateService.this).getMyComplaints(page, "10", sessionManager.getAccessToken(), new Callback<GrievanceAPIResponse>() {
                         @Override
                         public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
 
@@ -112,32 +112,20 @@ public class UpdateService extends Service {
 
                         @Override
                         public void failure(RetrofitError error) {
-                            JsonObject jsonObject = null;
                             if (error != null) {
-                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized"))
+                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
                                     handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
                                 else {
-                                    try {
-                                        jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                                    } catch (Exception e1) {
-                                        handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
+                                    //Flag counter to prevent multiple executions of the below
+                                    if (flag == 1) {
+                                        sessionManager.invalidateAccessToken();
+                                        renewCredentials();
                                     }
-                                    if (jsonObject != null) {
-                                        //If failure due to invalid access token, attempt to renew token
-                                        String errorDescription = jsonObject.get("error_description").toString().trim();
-                                        if (errorDescription.contains("Invalid access token")) {
 
-                                            //Flag counter to prevent multiple executions of the below
-                                            if (flag == 1) {
-                                                flag = 0;
-                                                sessionManager.invalidateAccessToken();
-                                                renewCredentials();
-                                            }
-                                        }
-                                    }
                                 }
                             }
                             EventBus.getDefault().post(new UpdateFailedEvent());
+
                         }
                     }
 
@@ -151,7 +139,7 @@ public class UpdateService extends Service {
         ProfileActivity.profile = null;
 
         if (sessionManager.getAccessToken() != null) {
-            ApiController.getAPI().getProfile(sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
+            ApiController.getAPI(UpdateService.this).getProfile(sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
                 @Override
                 public void success(ProfileAPIResponse profileAPIResponse, Response response) {
 
@@ -163,39 +151,27 @@ public class UpdateService extends Service {
                 @Override
                 public void failure(RetrofitError error) {
                     if (error != null) {
-                        if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("401 Unauthorized"))
+                        if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
                             handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
                         else {
-                            JsonObject jsonObject = null;
-                            try {
-                                jsonObject = (JsonObject) error.getBodyAs(JsonObject.class);
-                            } catch (Exception e1) {
-                                handler.post(new ToastRunnable("Update failed. Server is down for maintenance or over capacity"));
+                            //Flag counter to prevent multiple executions of the below
+                            if (flag == 1) {
+                                sessionManager.invalidateAccessToken();
+                                renewCredentials();
                             }
-                            if (jsonObject != null) {
-                                //If failure due to invalid access token, attempt to renew token
-                                String errorDescription = jsonObject.get("error_description").toString().trim();
-                                if (errorDescription.contains("Invalid access token")) {
 
-                                    //Flag counter to prevent multiple executions of the below
-                                    if (flag == 1) {
-                                        flag = 0;
-                                        sessionManager.invalidateAccessToken();
-                                        renewCredentials();
-                                    }
-                                }
-                            }
                         }
-
                     }
+
                 }
+
             });
         }
     }
 
     private void renewCredentials() {
 
-        ApiController.getLoginAPI().Login(sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
+        ApiController.getLoginAPI(UpdateService.this).Login(sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
                 sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString());
