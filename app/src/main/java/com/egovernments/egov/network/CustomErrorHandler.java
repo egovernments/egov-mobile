@@ -50,7 +50,7 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                                 errorDescription = "An unexpected error occurred";
                             }
                         }
-                        break;
+                        return cause;
 
                     case 401:
                         JsonObject jsonObject = null;

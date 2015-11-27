@@ -52,6 +52,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
+        sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
+
         final EditText phone_edittext = (EditText) findViewById(R.id.forgotpassword_edittext);
         phone_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -68,10 +71,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
-        sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
-        sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -120,6 +119,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                     Toast.makeText(ForgotPasswordActivity.this, R.string.recoverymessage_msg, Toast.LENGTH_SHORT).show();
 
+                    progressBar.setVisibility(View.GONE);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        sendButton.setVisibility(View.VISIBLE);
+                    } else {
+                        sendButtonCompat.setVisibility(View.VISIBLE);
+                    }
+
                     startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
                     finish();
 
@@ -139,17 +145,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     } else
                         Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
 
+                    progressBar.setVisibility(View.GONE);
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        sendButton.setVisibility(View.VISIBLE);
+                    } else {
+                        sendButtonCompat.setVisibility(View.VISIBLE);
+                    }
 
                 }
             });
 
-        }
-
-        progressBar.setVisibility(View.GONE);
-        if (Build.VERSION.SDK_INT >= 21) {
-            sendButton.setVisibility(View.VISIBLE);
-        } else {
-            sendButtonCompat.setVisibility(View.VISIBLE);
         }
 
 

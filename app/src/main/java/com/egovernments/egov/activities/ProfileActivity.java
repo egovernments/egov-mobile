@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.egovernments.egov.R;
 import com.egovernments.egov.events.ProfileUpdatedEvent;
 import com.egovernments.egov.models.Profile;
+import com.egovernments.egov.network.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +30,9 @@ public class ProfileActivity extends BaseActivity {
 
     public static Profile profile = null;
 
+    private ProgressBar progressBar;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,8 @@ public class ProfileActivity extends BaseActivity {
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
         final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
+
+        progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -56,6 +63,16 @@ public class ProfileActivity extends BaseActivity {
         if (profile != null)
             updateProfile();
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.profile_refreshlayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                progressBar.setVisibility(View.GONE);
+                Intent intent = new Intent(ProfileActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE);
+                startService(intent);
+            }
+        });
+
     }
 
     //Cause the layout items to be refreshed
@@ -63,7 +80,6 @@ public class ProfileActivity extends BaseActivity {
 
 
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.profile_data);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
 
         relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
@@ -83,7 +99,6 @@ public class ProfileActivity extends BaseActivity {
         altMobileNo.setText(profile.getAltContactNumber());
         if (profile.getDob() != null) {
             try {
-                //noinspection SpellCheckingInspection
                 dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -126,6 +141,7 @@ public class ProfileActivity extends BaseActivity {
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
         updateProfile();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 }

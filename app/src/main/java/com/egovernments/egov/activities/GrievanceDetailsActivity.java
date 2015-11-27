@@ -54,7 +54,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
 
-    private Grievance grievance;
+    private static Grievance grievance;
 
     private ListView listView;
 
@@ -66,7 +66,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     private String action;
 
-    private boolean isUpdate = false;
+    private boolean isComment = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +90,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
         final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
-        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Update", "Withdraw"));
-        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Update", "Re-open"));
+        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Comment", "Withdraw"));
+        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Comment", "Re-open"));
         ArrayList<String> feedbackoptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -215,7 +215,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
                 if (action == null) {
                     Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT).show();
                 } else {
-                    if ((action.equals("Update") || action.equals("Re-open")) && comment.isEmpty()) {
+                    if ((action.equals("Comment") || action.equals("Re-open")) && comment.isEmpty()) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
                         {
@@ -223,16 +223,16 @@ public class GrievanceDetailsActivity extends BaseActivity {
                         }
                     } else {
                         switch (action) {
-                            case "Update":
-                                isUpdate = true;
+                            case "Comment":
+                                isComment = true;
                                 action = grievance.getStatus();
                                 break;
                             case "Withdraw":
-                                isUpdate = false;
+                                isComment = false;
                                 action = "WITHDRAWN";
                                 break;
                             case "Re-open":
-                                isUpdate = false;
+                                isComment = false;
                                 action = "REOPENED";
                                 break;
                         }
@@ -256,7 +256,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
                                         actionsSpinner.setSelection(0);
                                         feedbackSpinner.setSelection(0);
                                         updateComment.getText().clear();
-                                        if (!isUpdate) {
+                                        if (!isComment) {
 
                                             Intent intent = new Intent(GrievanceDetailsActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
                                             intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
@@ -327,8 +327,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
         return 0;
     }
 
+    public static Grievance getGrievance(){
+        return grievance;
+    }
+
     //The viewpager custom adapter
-    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
+    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter{
 
         public GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -337,7 +341,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             if (grievance.getSupportDocsSize() != 0)
-                return GrievanceImageFragment.instantiateItem(getSessionManager().getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
+                return GrievanceImageFragment.instantiateItem(position,getSessionManager().getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
 
             return null;
         }

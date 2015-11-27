@@ -6,7 +6,7 @@
     <string name="otp_button_label">Resend OTP</string>
     <string name="date_label">Date</string>
     <string name="type_label">Type*</string>
-    <string name="additionaldetails_label">Additional details*(10 characters min.)</string>
+    <string name="additionaldetails_label">Additional details* (10 characters min.)</string>
     <string name="location_label">Location</string>
     <string name="status_label">Status</string>
     <string name="complaintID_label">Complaint ID</string>
@@ -27,7 +27,7 @@
     <string name="owner_label">Owner</string>
     <string name="tax_label">Tax</string>
     <string name="profilename_label">Name:</string>
-    <string name="profilephone_label">Phone no.:</string>
+    <string name="profilephone_label">Phone no. :</string>
     <string name="profilealtphone_label">Alternate phone no.:</string>
     <string name="profileemail_label">Email ID:</string>
     <string name="profileDOB_label">Date of birth:</string>
@@ -53,8 +53,6 @@
     <string name="gender_female_label">Female</string>
     <string name="gender_male_label">Male</string>
     <string name="profilegender_label">Gender:</string>
-    <string name="error_network">The network is not accessible</string>
-    <string name="error_no_response">Server is not responding</string>
     <string name="landmark_label">Landmark</string>
     <string name="area_label">Area*</string>
     <string name="gallery_label">Gallery</string>
@@ -70,7 +68,6 @@
     <string name="session_expiry_message">Session expired</string>
     <string name="otp_resent_msg">OTP Resent</string>
     <string name="account_activated_msg">Account activated</string>
-    <string name="unexpected_error">An unexpected error occurred</string>
     <string name="processing_msg">Processing request</string>
     <string name="menu_label">Menu</string>
     <string name="home_label">Home</string>
@@ -98,4 +95,8 @@
     <string name="reopend_label">Re-opened</string>
     <string name="forwarded_label">Forwarded</string>
     <string name="withdrawn_label">Withdrawn</string>
+    <string name="newgrievance_label">New Grievance</string>
+    <string name="grievancedetails_label">Grievance Details</string>
+    <string name="editprofile_label">Edit Profile</string>
+    <string name="loading_label">Loading...</string>
 </resources>

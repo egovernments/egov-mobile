@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.egovernments.egov.R;
@@ -25,16 +26,24 @@ public class SplashScreenActivity extends Activity {
      **/
     private final int SPLASH_DISPLAY_LENGTH = 1000;
 
+    private final int FINISH_TIMEOUT = 3000;
+
     private ConfigManager configManager;
 
     private Thread timerThread;
 
+    private Handler handler;
+
     private SessionManager sessionManager;
+
+    private String url;
 
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_splashscreen);
+
+        handler = new Handler();
 
         timerThread = new Thread() {
             public void run() {
@@ -43,14 +52,11 @@ public class SplashScreenActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                     finish();
                 }
             }
         };
-
-        sessionManager = new SessionManager(this);
 
         try {
             InputStream inputStream = getAssets().open("egov.conf");
@@ -60,15 +66,16 @@ public class SplashScreenActivity extends Activity {
             e.printStackTrace();
         }
 
-        int x = sessionManager.getUrlAge();
-        int y = Integer.valueOf(configManager.getString("app.timeoutdays"));
+        sessionManager = new SessionManager(SplashScreenActivity.this);
 
-        if (x > y) {
-
-            new GetCityTask().execute();
-
-        } else {
+        if (sessionManager.getUrlLocation() != null) {
             timerThread.start();
+        } else {
+            if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays"))) {
+                new GetCityTask().execute();
+            } else {
+                timerThread.start();
+            }
         }
     }
 
@@ -80,14 +87,36 @@ public class SplashScreenActivity extends Activity {
             try {
                 String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
                 JSONObject jsonObject = new JSONObject(response);
-                sessionManager.setBaseURL(jsonObject.get("url").toString());
+                sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString());
                 timerThread.start();
             } catch (IOException e) {
-                Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. The app will now close. Please ensure you are connected to the internet on next start.", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. The app will now close. Please ensure you are connected to the internet on next start.", Toast.LENGTH_LONG).show();
+                    }
+                });
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, FINISH_TIMEOUT);
             } catch (JSONException e) {
-                Toast.makeText(SplashScreenActivity.this, "The application may not be available in your area", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SplashScreenActivity.this, "The application may not be available in your area", Toast.LENGTH_LONG).show();
+                    }
+                });
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, FINISH_TIMEOUT);
             }
 
             return null;

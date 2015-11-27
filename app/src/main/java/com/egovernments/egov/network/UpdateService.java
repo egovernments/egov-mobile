@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.Toast;
 
 import com.egovernments.egov.activities.GrievanceActivity;
@@ -114,7 +113,7 @@ public class UpdateService extends Service {
                         public void failure(RetrofitError error) {
                             if (error != null) {
                                 if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                                    handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                                    handler.post(new ToastRunnable("Failed to fetch grievances. " + error.getLocalizedMessage()));
                                 else {
                                     //Flag counter to prevent multiple executions of the below
                                     if (flag == 1) {
@@ -152,7 +151,7 @@ public class UpdateService extends Service {
                 public void failure(RetrofitError error) {
                     if (error != null) {
                         if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                            handler.post(new ToastRunnable("Update failed. " + error.getLocalizedMessage()));
+                            handler.post(new ToastRunnable("Failed to fetch profile. " + error.getLocalizedMessage()));
                         else {
                             //Flag counter to prevent multiple executions of the below
                             if (flag == 1) {
@@ -196,10 +195,7 @@ public class UpdateService extends Service {
 
         @Override
         public void run() {
-            Toast toast = Toast.makeText(UpdateService.this.getApplicationContext(), mText, Toast.LENGTH_SHORT);
-            View view = toast.getView();
-            view.setBackgroundResource(android.R.drawable.toast_frame);
-            toast.show();
+            Toast.makeText(UpdateService.this.getApplicationContext(), mText, Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -20,6 +20,8 @@ public class SessionManager {
 
     private static final String URL_CREATED_TIME = "Url timeout";
 
+    private static final String URL_LOCATION = "Url location";
+
     private static final String PREF_NAME = "CredentialsPref";
 
     public static final String IS_LOGGED_IN = "IsLoggedIn";
@@ -78,7 +80,7 @@ public class SessionManager {
         editor.putString(KEY_ACCESS_TOKEN, null);
     }
 
-    public void setBaseURL(String url) {
+    public void setBaseURL(String url, String location) {
 
         if (!url.substring(url.length() - 1).equals("/")) {
             editor.putString(BASE_URL, url + "/");
@@ -86,6 +88,7 @@ public class SessionManager {
             editor.putString(BASE_URL, url);
 
         editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+        editor.putString(URL_LOCATION, location);
         editor.commit();
     }
 
@@ -94,7 +97,11 @@ public class SessionManager {
     }
 
     public int getUrlAge() {
-        return Calendar.getInstance().get(Calendar.MILLISECOND) - pref.getInt(URL_CREATED_TIME, 6);
+        return Math.abs(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) - pref.getInt(URL_CREATED_TIME, 6));
+    }
+
+    public String getUrlLocation() {
+        return pref.getString(URL_LOCATION, null);
     }
 
 }

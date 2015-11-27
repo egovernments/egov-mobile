@@ -3,6 +3,8 @@ package com.egovernments.egov.network;
 
 import android.content.Context;
 
+import com.egovernments.egov.models.City;
+import com.egovernments.egov.models.CityList;
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
@@ -11,13 +13,16 @@ import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.egovernments.egov.models.User;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.squareup.okhttp.MediaType;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -51,6 +56,21 @@ public class ApiController {
 
         Response response = client.newCall(request).execute();
         return response.body().string();
+
+    }
+
+    public static List<City> getAllCitiesURL(String url) throws IOException {
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful())
+            throw new IOException();
+        Type type = new TypeToken<List<City>>() {
+        }.getType();
+        return new Gson().fromJson(response.body().charStream(), type);
 
     }
 

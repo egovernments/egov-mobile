@@ -169,7 +169,7 @@ public class BaseActivity extends AppCompatActivity {
 
                                 sessionManager.logoutUser();
 
-                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 progressDialog.dismiss();
                                 finish();

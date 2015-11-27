@@ -13,7 +13,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/blackoverlay">
+            android:background="@color/blackOverlay">
 
             <LinearLayout
                 android:id="@+id/linearLayout"

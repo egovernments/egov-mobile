@@ -1,6 +1,7 @@
 package com.egovernments.egov.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.egovernments.egov.R;
+import com.egovernments.egov.activities.GrievanceDetailsActivity;
+import com.egovernments.egov.activities.ImageViewerActivity;
 import com.egovernments.egov.network.SessionManager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -32,7 +35,7 @@ public class GrievanceImageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_grievance_image, container, false);
         final ImageView imageView = (ImageView) view.findViewById(R.id.image_viewpager_item);
 
-        Bundle arg = this.getArguments();
+        final Bundle arg = this.getArguments();
 
         SessionManager sessionManager = new SessionManager(getActivity());
 
@@ -40,6 +43,16 @@ public class GrievanceImageFragment extends Fragment {
                 + arg.getString("crn") + "/downloadSupportDocument?access_token="
                 + arg.getString("access_token") + "&fileNo="
                 + arg.getString("fileNo");
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
+                intent.putExtra(ImageViewerActivity.POSITION, arg.getInt("position"));
+                intent.putExtra(ImageViewerActivity.COMPLAINT, GrievanceDetailsActivity.getGrievance());
+                startActivity(intent);
+            }
+        });
 
         Picasso.with(getActivity())
                 .load(url)
@@ -67,7 +80,7 @@ public class GrievanceImageFragment extends Fragment {
     }
 
     //Sets up a new fragment instance
-    public static Fragment instantiateItem(String access_token, String crn, String fileNo) {
+    public static Fragment instantiateItem(int position, String access_token, String crn, String fileNo) {
         GrievanceImageFragment grievanceImageFragment = new GrievanceImageFragment();
 
         Bundle args = new Bundle();
@@ -75,6 +88,7 @@ public class GrievanceImageFragment extends Fragment {
         args.putString("crn", crn);
         args.putString("fileNo", fileNo);
         args.putString("type", "download");
+        args.putInt("position", position);
         grievanceImageFragment.setArguments(args);
 
         return grievanceImageFragment;

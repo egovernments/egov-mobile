@@ -52,8 +52,7 @@
             android:label="@string/egov_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan|stateHidden">
-        </activity>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <activity
             android:name=".activities.RegisterActivity"
@@ -99,7 +98,7 @@
         <activity
             android:name=".activities.NewGrievanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/grievances_label"
+            android:label="@string/newgrievance_label"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -130,7 +129,7 @@
 
         <activity
             android:name=".activities.GrievanceDetailsActivity"
-            android:label="@string/grievances_label"
+            android:label="@string/grievancedetails_label"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
@@ -163,7 +162,7 @@
 
         <activity
             android:name=".activities.ProfileActivity"
-            android:label="@string/profile_label"
+            android:label="@string/editprofile_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -203,7 +202,17 @@
                 android:value="com.egovernments.egov.activities.LoginActivity" />
         </activity>
 
+        <activity
+            android:name=".activities.ImageViewerActivity"
+            android:parentActivityName=".activities.GrievanceDetailsActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.egovernments.egov.activities.GrievanceDetailsActivity" />
+        </activity>
+
         <service android:name=".network.UpdateService" />
+
         <service android:name=".network.AddressService" />
 
     </application>

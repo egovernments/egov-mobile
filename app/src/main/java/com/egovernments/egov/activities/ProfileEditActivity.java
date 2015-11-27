@@ -4,9 +4,7 @@ package com.egovernments.egov.activities;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,11 +69,11 @@ public class ProfileEditActivity extends BaseActivity {
 
         sessionManager = new SessionManager(getApplicationContext());
 
-        Spinner dropdown = (Spinner) findViewById(R.id.editprofile_municipality);
-        String[] items = new String[]{"Bangalore", "Chennai", "Hyderabad"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.view_register_spinner, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropdown.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_register_spinner, this));
+//        Spinner dropdown = (Spinner) findViewById(R.id.editprofile_municipality);
+//        String[] items = new String[]{"Bangalore", "Chennai", "Hyderabad"};
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.view_register_spinner, items);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        dropdown.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_register_spinner, this));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -151,20 +149,6 @@ public class ProfileEditActivity extends BaseActivity {
             });
         }
 
-        FloatingActionButton profileEditPictureButton = (FloatingActionButton) findViewById(R.id.editprofile_changeimage);
-        com.melnykov.fab.FloatingActionButton profileEditPictureButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.editprofile_changeimagecompat);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-
-//            profileEditPictureButton.setOnClickListener(onClickListener);
-
-        } else {
-
-            profileEditPictureButton.setVisibility(View.GONE);
-            profileEditPictureButtonCompat.setVisibility(View.VISIBLE);
-//            profileEditButtonCompat.setOnClickListener(onClickListener);
-
-        }
 
     }
 

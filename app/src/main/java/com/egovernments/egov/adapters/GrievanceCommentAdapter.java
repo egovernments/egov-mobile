@@ -68,12 +68,14 @@ public class GrievanceCommentAdapter extends BaseAdapter {
         }
         GrievanceComment grievanceComment = (GrievanceComment) getItem(position);
 
-        grievanceCommentViewHolder.commentName.setText(grievanceComment.getUser());
+        grievanceCommentViewHolder.commentName.setText(grievanceComment.getUpdatedBy());
         grievanceCommentViewHolder.commentText.setText(grievanceComment.getComments());
         grievanceCommentViewHolder.commentDate.setText(grievanceComment.getDate());
         grievanceCommentViewHolder.commentStatus.setText(resolveStatus(grievanceComment.getStatus()));
-        if (grievanceComment.getUsertype().equals("EMPLOYEE"))
+        if (grievanceComment.getUpdatedUserType().equals("EMPLOYEE"))
             grievanceCommentViewHolder.commentName.setTextColor(Color.RED);
+        else if (grievanceComment.getUpdatedUserType().equals("CITIZEN"))
+            grievanceCommentViewHolder.commentName.setTextColor(Color.BLUE);
 
         return view;
     }
