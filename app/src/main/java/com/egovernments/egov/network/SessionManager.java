@@ -22,6 +22,8 @@ public class SessionManager {
 
     private static final String URL_LOCATION = "Url location";
 
+    private static final String URL_LOCATION_CODE = "Url location code";
+
     private static final String PREF_NAME = "CredentialsPref";
 
     public static final String IS_LOGGED_IN = "IsLoggedIn";
@@ -80,15 +82,16 @@ public class SessionManager {
         editor.putString(KEY_ACCESS_TOKEN, null);
     }
 
-    public void setBaseURL(String url, String location) {
+    public void setBaseURL(String url, String location, int code) {
 
-        if (!url.substring(url.length() - 1).equals("/")) {
-            editor.putString(BASE_URL, url + "/");
+        if (url.substring(url.length() - 1).equals("/")) {
+            editor.putString(BASE_URL, url.substring(0, url.length() - 1));
         } else
             editor.putString(BASE_URL, url);
 
         editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
         editor.putString(URL_LOCATION, location);
+        editor.putInt(URL_LOCATION_CODE, code);
         editor.commit();
     }
 
@@ -97,11 +100,16 @@ public class SessionManager {
     }
 
     public int getUrlAge() {
-        return Math.abs(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) - pref.getInt(URL_CREATED_TIME, 6));
+        return Math.abs(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) - pref.getInt(URL_CREATED_TIME, 100));
     }
 
     public String getUrlLocation() {
         return pref.getString(URL_LOCATION, null);
     }
+
+    public int getUrlLocationCode() {
+        return pref.getInt(URL_LOCATION_CODE, 0);
+    }
+
 
 }

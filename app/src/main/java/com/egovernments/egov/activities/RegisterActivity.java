@@ -43,7 +43,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-//TODO add multi city support,viz., storing city name and fetching url
+//TODO action bar back not working
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -73,6 +73,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private int check = 0;
 
+    private int code;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,12 +82,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         spinner = (Spinner) findViewById(R.id.signup_city);
 
@@ -102,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
         final EditText password_edittext = (EditText) findViewById(R.id.signup_password);
         final EditText confirmpassword_edittext = (EditText) findViewById(R.id.signup_confirmpassword);
 
-        autoCompleteTextView = (CustomAutoCompleteTextView) findViewById(R.id.register_spinner_placeholder_textview);
+        autoCompleteTextView = (CustomAutoCompleteTextView) findViewById(R.id.register_spinner_autocomplete);
         autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,7 +182,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void submit(final String name, final String email, final String phoneno, final String password, final String confirmpassword) {
 
         if (url == null || name.isEmpty() || email.isEmpty() || phoneno.isEmpty() || password.isEmpty() || confirmpassword.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
         } else if (phoneno.length() != 10) {
             Toast.makeText(RegisterActivity.this, "Phone no. must be 10 digits", Toast.LENGTH_SHORT).show();
@@ -190,14 +191,14 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, "Please enter a valid email ID", Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
         } else if (!isValidPassword(password)) {
-            Toast.makeText(RegisterActivity.this, "Password must be 8-32 characters long, containing at least one uppercase and one lowercase letter, and one number or special character excluding '& < > # % \" ' / \\' and space", Toast.LENGTH_LONG).show();
+            Toast.makeText(RegisterActivity.this, "Password must be 8-32 characters long, containing at least one uppercase letter, one lowercase letter, and one number or special character excluding '& < > # % \" ' / \\' and space", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
         } else if (!password.equals(confirmpassword)) {
             Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
         } else {
 
-//            sessionManager.setBaseURL(url, cityName);
+            sessionManager.setBaseURL(url, cityName, code);
             User user = new User(email, phoneno, name, password, deviceID, deviceType, deviceOS);
             ApiController.getAPI(RegisterActivity.this).registerUser(user, new Callback<JsonObject>() {
                 @Override
@@ -248,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
                             progressDialog.dismiss();
 
                             if (error != null) {
-                                if (error.getLocalizedMessage() != null) {
+                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
                                     Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                                 } else {
                                     try {
@@ -284,7 +285,6 @@ public class RegisterActivity extends AppCompatActivity {
                 for (int i = 0; i < cityList.size(); i++) {
                     cities.add(cityList.get(i).getCityName());
                 }
-                cities.add("phoenix");
 
                 handler.post(new Runnable() {
                     @Override
@@ -299,6 +299,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (check > 1) {
                                     url = cityList.get(position - 1).getUrl();
                                     cityName = cityList.get(position - 1).getCityName();
+                                    code = cityList.get(position - 1).getCityCode();
                                     autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
                                     autoCompleteTextView.dismissDropDown();
                                 }
@@ -333,6 +334,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     if (s.equals(city.getCityName())) {
                                         url = city.getUrl();
                                         cityName = city.getCityName();
+                                        code = city.getCityCode();
                                     }
 
                                 }

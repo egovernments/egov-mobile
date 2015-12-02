@@ -6,59 +6,53 @@ package com.egovernments.egov.network;
  **/
 
 public class ApiUrl {
-
-    //    public static String api_baseUrl = "https://phoenix-qa.egovernments.org/api/v1.0";
-//    public static String login_baseUrl = "https://phoenix-qa.egovernments.org/api";
-//    public static String api_baseUrl = "http://172.16.2.44:9080//api/v1.0";
-//    public static String login_baseUrl = "http://172.16.2.44:9080//api";
-
     /**
      * Grievances
      */
-    public final static String COMPLAINT_GET_TYPES = "/complaint/getAllTypes";
+    public final static String COMPLAINT_GET_TYPES = "/api/v1.0/complaint/getAllTypes";
 
-    public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/complaint/getFrequentlyFiledTypes";
+    public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/api/v1.0/complaint/getFrequentlyFiledTypes";
 
-    public final static String COMPLAINT_CREATE = "/complaint/create";
+    public final static String COMPLAINT_CREATE = "/api/v1.0/complaint/create";
 
-    public final static String COMPLAINT_UPLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/uploadSupportDocument";
+    public final static String COMPLAINT_UPLOAD_SUPPORT_DOCUMENT = "/api/v1.0/complaint/{complaintNo}/uploadSupportDocument";
 
-    public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/complaint/{complaintNo}/downloadSupportDocument";
+    public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/api/v1.0/complaint/{complaintNo}/downloadSupportDocument";
 
-    public final static String COMPLAINT_GET_LOCATION_BY_NAME = "/complaint/getLocation";
+    public final static String COMPLAINT_GET_LOCATION_BY_NAME = "/api/v1.0/complaint/getLocation";
 
-    public final static String COMPLAINT_LATEST = "/complaint/latest/{page}/{pageSize}";
+    public final static String COMPLAINT_LATEST = "/api/v1.0/complaint/latest/{page}/{pageSize}";
 
-    public final static String COMPLAINT_NEARBY = "/complaint/nearby/{page}/{pageSize}";
+    public final static String COMPLAINT_NEARBY = "/api/v1.0/complaint/nearby/{page}/{pageSize}";
 
-    public final static String COMPLAINT_SEARCH = "/complaint/search";
+    public final static String COMPLAINT_SEARCH = "/api/v1.0/complaint/search";
 
-    public final static String COMPLAINT_DETAIL = "/complaint/{complaintNo}/detail";
+    public final static String COMPLAINT_DETAIL = "/api/v1.0/complaint/{complaintNo}/detail";
 
-    public final static String COMPLAINT_HISTORY = "/complaint/{complaintNo}/complaintHistory";
+    public final static String COMPLAINT_HISTORY = "/api/v1.0/complaint/{complaintNo}/complaintHistory";
 
-    public final static String COMPLAINT_STATUS = "/complaint/{complaintNo}/status";
+    public final static String COMPLAINT_STATUS = "/api/v1.0/complaint/{complaintNo}/status";
 
-    public final static String COMPLAINT_UPDATE_STATUS = "/complaint/{complaintNo}/updateStatus";
+    public final static String COMPLAINT_UPDATE_STATUS = "/api/v1.0/complaint/{complaintNo}/updateStatus";
 
     /**
      * Citizen
      */
-    public final static String CITIZEN_REGISTER = "/createCitizen";
+    public final static String CITIZEN_REGISTER = "/api/v1.0/createCitizen";
 
-    public final static String CITIZEN_ACTIVATE = "/activateCitizen";
+    public final static String CITIZEN_ACTIVATE = "/api/v1.0/activateCitizen";
 
-    public final static String CITIZEN_LOGIN = "/oauth/token";
+    public final static String CITIZEN_LOGIN = "/api/oauth/token";
 
-    public final static String CITIZEN_PASSWORD_RECOVER = "/recoverPassword";
+    public final static String CITIZEN_PASSWORD_RECOVER = "/api/v1.0/recoverPassword";
 
-    public final static String CITIZEN_GET_PROFILE = "/citizen/getProfile";
+    public final static String CITIZEN_GET_PROFILE = "/api/v1.0/citizen/getProfile";
 
-    public final static String CITIZEN_UPDATE_PROFILE = "/citizen/updateProfile";
+    public final static String CITIZEN_UPDATE_PROFILE = "/api/v1.0/citizen/updateProfile";
 
-    public final static String CITIZEN_LOGOUT = "/citizen/logout";
+    public final static String CITIZEN_LOGOUT = "/api/v1.0/citizen/logout";
 
-    public final static String CITIZEN_GET_MY_COMPLAINT = "/citizen/getMyComplaint/{page}/{pageSize}";
+    public final static String CITIZEN_GET_MY_COMPLAINT = "/api/v1.0/citizen/getMyComplaint/{page}/{pageSize}";
 
-    public final static String CITIZEN_SEND_OTP = "/sendOTP";
+    public final static String CITIZEN_SEND_OTP = "/api/v1.0/sendOTP";
 }

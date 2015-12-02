@@ -56,6 +56,7 @@ import com.egovernments.egov.models.GrievanceLocation;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
 import com.egovernments.egov.models.GrievanceType;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
+import com.egovernments.egov.models.errors.ErrorResponse;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
 import com.google.android.gms.maps.CameraUpdate;
@@ -638,6 +639,13 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                         Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
                         sessionManager.logoutUser();
                         startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
+                    } else if (error.getLocalizedMessage().contains("400")) {
+                        try {
+                            ErrorResponse errorResponse = (ErrorResponse) error.getBodyAs(ErrorResponse.class);
+                            Toast.makeText(NewGrievanceActivity.this, errorResponse.getErrorStatus().getMessage(), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                        }
                     } else
                         Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 else

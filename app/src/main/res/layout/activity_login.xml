@@ -34,29 +34,73 @@
                     android:padding="20dp"
                     android:src="@drawable/egovlogo" />
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/signin_city"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/top_edittext"
+                        android:dropDownVerticalOffset="-10dp"
+                        android:focusable="false"
+                        android:spinnerMode="dropdown"
+                        android:visibility="invisible" />
+
+                    <com.egovernments.egov.helper.CustomAutoCompleteTextView
+                        android:id="@+id/login_spinner_autocomplete"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/top_edittext"
+                        android:drawableLeft="@drawable/ic_location_city_black_24dp"
+                        android:drawablePadding="5dp"
+                        android:drawableStart="@drawable/ic_location_city_black_24dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/loading_label"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="#000"
+                        android:textColorHint="#a8a5a5"
+                        android:textSize="15sp" />
+
+                </FrameLayout>
+
+                <TextView
+                    style="?android:attr/listSeparatorTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dividerColor"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp" />
+
                 <EditText
                     android:id="@+id/signin_username"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/top_edittext"
+                    android:background="@drawable/middle_edittext"
                     android:drawableLeft="@drawable/ic_person_black_24dp"
                     android:drawablePadding="5dp"
                     android:drawableStart="@drawable/ic_person_black_24dp"
                     android:hint="@string/login_username"
                     android:imeOptions="actionNext"
                     android:paddingEnd="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:paddingStart="10dp"
                     android:singleLine="true"
                     android:textColorHint="#a8a5a5"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/line"
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#BFffffff"
+                    android:background="@color/dividerColor"
                     android:gravity="center_horizontal"
                     android:paddingTop="5dp" />
 
@@ -75,6 +119,8 @@
                     android:imeOptions="actionDone"
                     android:inputType="textPassword"
                     android:paddingEnd="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:paddingStart="10dp"
                     android:textColorHint="#a8a5a5"
                     android:textSize="15sp" />

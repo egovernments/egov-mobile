@@ -152,7 +152,7 @@
 
         <activity
             android:name=".activities.ProfileEditActivity"
-            android:label="@string/profile_label"
+            android:label="@string/editprofile_label"
             android:parentActivityName=".activities.ProfileActivity"
             android:theme="@style/AppTheme">
             <meta-data
@@ -162,7 +162,7 @@
 
         <activity
             android:name=".activities.ProfileActivity"
-            android:label="@string/editprofile_label"
+            android:label="@string/profile_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data

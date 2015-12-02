@@ -4,7 +4,6 @@ package com.egovernments.egov.network;
 import android.content.Context;
 
 import com.egovernments.egov.models.City;
-import com.egovernments.egov.models.CityList;
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.GrievanceCommentAPIResponse;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
@@ -48,16 +47,16 @@ public class ApiController {
 
     private static SessionManager sessionManager;
 
-    public static String getCityURL(String url) throws IOException {
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
-        Response response = client.newCall(request).execute();
-        return response.body().string();
-
-    }
+//    public static String getCityURL(String url) throws IOException {
+//
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .build();
+//
+//        Response response = client.newCall(request).execute();
+//        return response.body().string();
+//
+//    }
 
     public static List<City> getAllCitiesURL(String url) throws IOException {
 
@@ -82,7 +81,7 @@ public class ApiController {
             RestAdapter restAdapter = new RestAdapter
                     .Builder()
                     .setClient(new OkClient(client))
-                    .setEndpoint(sessionManager.getBaseURL() + "api/v1.0")
+                    .setEndpoint(sessionManager.getBaseURL())
                     .setErrorHandler(new CustomErrorHandler())
                     .build();
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
@@ -174,7 +173,7 @@ public class ApiController {
             sessionManager = new SessionManager(context);
             RestAdapter.Builder builder = new RestAdapter.Builder()
                     .setClient(new OkClient(client))
-                    .setEndpoint(sessionManager.getBaseURL() + "api");
+                    .setEndpoint(sessionManager.getBaseURL());
 
             builder.setRequestInterceptor(new RequestInterceptor() {
                 @Override
@@ -193,7 +192,11 @@ public class ApiController {
 
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGIN)
-        void Login(@Field("username") String username, @Field("scope") String scope, @Field("password") String password, @Field("grant_type") String grant_type, Callback<JsonObject> jsonObjectCallback);
+        void login(@Field("username") String username,
+                   @Field("scope") String scope,
+                   @Field("password") String password,
+                   @Field("grant_type") String grant_type,
+                   Callback<JsonObject> jsonObjectCallback);
 
     }
 

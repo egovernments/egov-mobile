@@ -12,16 +12,15 @@ public class City {
     @SerializedName("url")
     @Expose
     private String url;
+    @SerializedName("city_code")
+    @Expose
+    private int cityCode;
 
     /**
      * @return The cityName
      */
     public String getCityName() {
         return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
     }
 
     /**
@@ -31,4 +30,7 @@ public class City {
         return url;
     }
 
+    public int getCityCode() {
+        return cityCode;
+    }
 }

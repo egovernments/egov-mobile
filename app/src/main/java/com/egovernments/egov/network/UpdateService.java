@@ -170,7 +170,7 @@ public class UpdateService extends Service {
 
     private void renewCredentials() {
 
-        ApiController.getLoginAPI(UpdateService.this).Login(sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
+        ApiController.getLoginAPI(UpdateService.this).login(sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
                 sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString());

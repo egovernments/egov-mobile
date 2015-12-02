@@ -15,8 +15,7 @@
             <RelativeLayout
                 android:id="@+id/profile_data"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/profile_image"
@@ -194,7 +193,9 @@
 
 
             </RelativeLayout>
+
         </ScrollView>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
@@ -204,5 +205,6 @@
         android:layout_height="56dp"
         android:layout_centerInParent="true"
         android:layout_margin="20dp" />
+
 </RelativeLayout>
 

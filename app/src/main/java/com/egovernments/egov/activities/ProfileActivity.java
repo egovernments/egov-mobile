@@ -81,7 +81,6 @@ public class ProfileActivity extends BaseActivity {
 
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.profile_data);
 
-        relativeLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
         final TextView name = (TextView) findViewById(R.id.profile_name);

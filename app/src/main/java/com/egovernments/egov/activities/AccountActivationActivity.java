@@ -19,10 +19,9 @@ import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.SessionManager;
 import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -45,10 +44,14 @@ public class AccountActivationActivity extends AppCompatActivity {
     private com.melnykov.fab.FloatingActionButton activateButtonCompat;
     private Button resendButton;
 
+    private SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accountactivation);
+
+        sessionManager = new SessionManager(this);
 
         progressBar = (ProgressBar) findViewById(R.id.activateprogressBar);
         resendButton = (Button) findViewById(R.id.activate_resend);
@@ -113,11 +116,7 @@ public class AccountActivationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                try {
-                    getBaseContext().getAssets().open("properties.conf");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 activationCode = code_edittext.getText().toString().trim();
                 progressBar.setVisibility(View.VISIBLE);
                 activateButton.setVisibility(View.GONE);
@@ -143,14 +142,15 @@ public class AccountActivationActivity extends AppCompatActivity {
     private void submit(String activationCode) {
 
         if (!activationCode.isEmpty()) {
-            ApiController.getAPI(AccountActivationActivity.this).activate(username, activationCode, new Callback<JsonObject>() {
+            ApiController.getAPI(AccountActivationActivity.this).activate(username, activationCode.toUpperCase(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
                     Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT).show();
-                    ApiController.getLoginAPI(AccountActivationActivity.this).Login(username, "read write", password, "password", new Callback<JsonObject>() {
+                    ApiController.getLoginAPI(AccountActivationActivity.this).login(username, "read write", password, "password", new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
+                            sessionManager.loginUser(password, username, jsonObject.get("access_token").toString());
                             startService(new Intent(AccountActivationActivity.this, UpdateService.class)
                                     .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
                             startActivity(new Intent(AccountActivationActivity.this, HomeActivity.class));
@@ -168,7 +168,7 @@ public class AccountActivationActivity extends AppCompatActivity {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    if (error != null) {
+                    if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
                         if (error.getLocalizedMessage() != null) {
                             Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         } else {

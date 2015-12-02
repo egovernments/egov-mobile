@@ -133,7 +133,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    if (error != null) {
+                    if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
                         if (error.getLocalizedMessage() != null) {
                             Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         } else {
