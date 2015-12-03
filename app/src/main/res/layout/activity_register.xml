@@ -42,11 +42,12 @@
                         android:src="@drawable/egovlogo" />
 
                     <TextView
+                        android:id="@+id/municipality_change_info"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:layout_marginBottom="10dp"
-                        android:text="Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality."
+                        android:text="@string/register_profile_municipality_info"
                         android:textColor="@android:color/white" />
 
                     <FrameLayout
@@ -93,6 +94,7 @@
                         android:paddingTop="5dp" />
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/signup_name_inputlayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/middle_edittext"

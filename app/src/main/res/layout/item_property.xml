@@ -22,7 +22,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
             android:gravity="center_vertical"
-            android:textColor="@color/primary_text_default_material_light"
+            android:textColor="@color/primaryText"
             android:textSize="18sp"
             android:textStyle="bold" />
 

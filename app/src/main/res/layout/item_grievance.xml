@@ -62,7 +62,7 @@
             android:layout_toRightOf="@+id/complaint_image"
             android:layout_toStartOf="@+id/complaint_status"
             android:gravity="center_vertical"
-            android:textColor="@color/primary_text_default_material_light"
+            android:textColor="@color/primaryText"
             android:textSize="16sp"
             android:textStyle="bold" />
 

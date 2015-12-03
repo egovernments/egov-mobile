@@ -44,7 +44,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="200dp"
                                     android:layout_gravity="center_horizontal"
-                                    android:background="@color/button_material_light"
+                                    android:background="@color/imageBackground"
                                     android:scaleType="center"
                                     android:src="@drawable/ic_photo_black_48dp" />
 

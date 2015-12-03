@@ -61,7 +61,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
 
-                    phone = phone_edittext.toString().trim();
+                    phone = phone_edittext.getText().toString().trim();
                     progressBar.setVisibility(View.VISIBLE);
                     sendButton.setVisibility(View.GONE);
                     sendButtonCompat.setVisibility(View.GONE);
@@ -108,10 +108,21 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         if (phone.isEmpty()) {
             Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_LONG).show();
-
+            progressBar.setVisibility(View.GONE);
+            if (Build.VERSION.SDK_INT >= 21) {
+                sendButton.setVisibility(View.VISIBLE);
+            } else {
+                sendButtonCompat.setVisibility(View.VISIBLE);
+            }
 
         } else if (phone.length() != 10) {
             Toast.makeText(this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            if (Build.VERSION.SDK_INT >= 21) {
+                sendButton.setVisibility(View.VISIBLE);
+            } else {
+                sendButtonCompat.setVisibility(View.VISIBLE);
+            }
         } else {
             ApiController.getAPI(ForgotPasswordActivity.this).recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
                 @Override

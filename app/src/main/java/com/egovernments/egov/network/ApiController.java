@@ -47,16 +47,17 @@ public class ApiController {
 
     private static SessionManager sessionManager;
 
-//    public static String getCityURL(String url) throws IOException {
-//
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .build();
-//
-//        Response response = client.newCall(request).execute();
-//        return response.body().string();
-//
-//    }
+    public static String getCityURL(String url) throws IOException {
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        return response.body().string();
+
+    }
 
     public static List<City> getAllCitiesURL(String url) throws IOException {
 
@@ -168,23 +169,25 @@ public class ApiController {
 
     //Separate interface for login calls as base url differs slightly, and as request interceptor must be set to add header
     public static LoginInterface getLoginAPI(Context context) {
-        if (loginInterface == null) {
 
-            sessionManager = new SessionManager(context);
-            RestAdapter.Builder builder = new RestAdapter.Builder()
-                    .setClient(new OkClient(client))
-                    .setEndpoint(sessionManager.getBaseURL());
+        sessionManager = new SessionManager(context);
+        RestAdapter.Builder builder = new RestAdapter.Builder()
+                .setClient(new OkClient(client))
+                .setErrorHandler(new CustomErrorHandler())
+                .setEndpoint(sessionManager.getBaseURL());
 
-            builder.setRequestInterceptor(new RequestInterceptor() {
-                @Override
-                public void intercept(RequestFacade request) {
-                    request.addHeader("Authorization", "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=");
-                }
-            });
-            RestAdapter restAdapter = builder.build();
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-            loginInterface = restAdapter.create(LoginInterface.class);
-        }
+        builder.setRequestInterceptor(new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                //noinspection SpellCheckingInspection
+                request.addHeader("Authorization", "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=");
+            }
+        });
+        RestAdapter restAdapter = builder.build();
+        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+        loginInterface = restAdapter.create(LoginInterface.class);
+        APIInterface = null;
+
         return loginInterface;
     }
 

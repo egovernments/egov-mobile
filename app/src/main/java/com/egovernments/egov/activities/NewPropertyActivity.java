@@ -8,12 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.PropertyAdapter;
 import com.egovernments.egov.helper.CardViewOnClickListener;
+import com.egovernments.egov.helper.CustomEditText;
 import com.egovernments.egov.models.Property;
 
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class NewPropertyActivity extends BaseActivity {
             }
         };
 
-        EditText searchEditText = (EditText) findViewById(R.id.searchTextbox);
+        CustomEditText searchEditText = (CustomEditText) findViewById(R.id.searchTextbox);
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -55,6 +55,15 @@ public class NewPropertyActivity extends BaseActivity {
                     return true;
                 }
                 return false;
+            }
+        });
+        searchEditText.setDrawableClickListener(new CustomEditText.DrawableClickListener() {
+            @Override
+            public void onClick(DrawablePosition target) {
+                if (target == DrawablePosition.RIGHT) {
+                    propertyList.add(new Property("A Place", "Nearby, Some road, mg street,Bangalore, 532048", "The People", "Rs. 1456378"));
+                    recList.setAdapter(new PropertyAdapter(propertyList, onItemClickCallback));
+                }
             }
         });
 

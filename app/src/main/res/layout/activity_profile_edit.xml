@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:layout_marginBottom="12dp"
-            android:background="@color/button_material_light"
+            android:background="@color/imageBackground"
             android:scaleType="fitCenter"
             android:src="@drawable/profile" />
 
@@ -79,7 +79,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/middle_edittext"
+                android:background="@drawable/top_edittext"
                 android:paddingTop="5dp">
 
                 <EditText

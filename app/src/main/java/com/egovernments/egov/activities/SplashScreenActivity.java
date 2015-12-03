@@ -14,6 +14,9 @@ import com.egovernments.egov.models.City;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -88,25 +91,45 @@ public class SplashScreenActivity extends Activity {
         protected Object doInBackground(String... params) {
 
             try {
-//                String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
 
-                final List<City> cityList = ApiController.getAllCitiesURL(configManager.getString("api.multipleCitiesUrl"));
+                if (configManager.getString("api.multicities").equals("false")) {
+                    String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
+                    JSONObject jsonObject = new JSONObject(response);
+                    sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString(), 0);
+                    timerThread.start();
+                } else {
+                    final List<City> cityList = ApiController.getAllCitiesURL(configManager.getString("api.multipleCitiesUrl"));
 
-                for (int i = 0; i < cityList.size(); i++) {
-                    if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode())) {
-                        url = cityList.get(i).getUrl();
-                        location = cityList.get(i).getCityName();
-                        code = cityList.get(i).getCityCode();
+                    for (int i = 0; i < cityList.size(); i++) {
+                        if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode())) {
+                            url = cityList.get(i).getUrl();
+                            location = cityList.get(i).getCityName();
+                            code = cityList.get(i).getCityCode();
+                        }
                     }
+                    sessionManager.setBaseURL(url, location, code);
+                    timerThread.start();
                 }
-                sessionManager.setBaseURL(url, location, code);
-                timerThread.start();
             } catch (IOException e) {
                 e.printStackTrace();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. The app will now close. Please ensure you are connected to the internet on next start.", Toast.LENGTH_LONG).show();
+                    }
+                });
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, FINISH_TIMEOUT);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. The app may be unavailable in your area. The app will now close.", Toast.LENGTH_LONG).show();
                     }
                 });
                 handler.postDelayed(new Runnable() {

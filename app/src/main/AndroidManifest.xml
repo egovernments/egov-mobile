@@ -24,7 +24,7 @@
     <application
         android:name=".application.EGovApp"
         android:allowBackup="false"
-        android:icon="@drawable/egov"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/egov_label"
         android:theme="@style/AppTheme">
 

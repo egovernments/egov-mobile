@@ -145,6 +145,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_grievance);
 
+
         sessionManager = new SessionManager(getApplicationContext());
 
         cacheDir = this.getExternalCacheDir() == null ? this.getCacheDir() : this.getExternalCacheDir();

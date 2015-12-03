@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.AutoCompleteTextView;
 
-public class CustomAutoCompleteTextView extends AutoCompleteTextView {
+public class CustomEditText extends AutoCompleteTextView {
 
     private Drawable drawableRight;
     private Drawable drawableLeft;
@@ -19,12 +19,12 @@ public class CustomAutoCompleteTextView extends AutoCompleteTextView {
 
     private DrawableClickListener clickListener;
 
-    public CustomAutoCompleteTextView(Context context, AttributeSet attrs) {
+    public CustomEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         // this Constructor required when you are using this view in xml
     }
 
-    public CustomAutoCompleteTextView(Context context, AttributeSet attrs, int defStyle) {
+    public CustomEditText(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

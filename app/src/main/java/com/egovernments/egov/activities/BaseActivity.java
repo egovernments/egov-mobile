@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.helper.BadgeUpdater;
@@ -143,7 +142,7 @@ public class BaseActivity extends AppCompatActivity {
                             finish();
                         break;
 
-                    case 6:
+                    case 7:
                         intent = new Intent(BaseActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -151,7 +150,7 @@ public class BaseActivity extends AppCompatActivity {
                             finish();
                         break;
 
-                    case 7:
+                    case 8:
                         intent = new Intent(BaseActivity.this, NotificationsActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -159,13 +158,11 @@ public class BaseActivity extends AppCompatActivity {
                             finish();
                         break;
 
-                    case 9:
+                    case 10:
                         progressDialog.show();
                         ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
-
-                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
 
                                 sessionManager.logoutUser();
 
@@ -178,8 +175,6 @@ public class BaseActivity extends AppCompatActivity {
 
                             @Override
                             public void failure(RetrofitError error) {
-
-                                Toast.makeText(BaseActivity.this, R.string.logged_out_msg, Toast.LENGTH_SHORT).show();
 
                                 sessionManager.logoutUser();
 
@@ -202,6 +197,7 @@ public class BaseActivity extends AppCompatActivity {
 
         arrayList.add(new NavItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
         arrayList.add(new NavItem(R.drawable.ic_home_black_24dp, getString(R.string.propertytax_label)));
+        arrayList.add(new NavItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
         arrayList.add(new NavItem(R.drawable.ic_location_city_black_24dp, getString(R.string.buildingplans_label)));
         arrayList.add(new NavItem(R.drawable.ic_accessibility_black_24dp, getString(R.string.births_deaths_label)));
         arrayList.add(new NavItem(R.drawable.ic_business_black_24dp, getString(R.string.ads_label)));

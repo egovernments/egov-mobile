@@ -5,7 +5,6 @@
     <string name="otp_hint">Enter OTP</string>
     <string name="otp_button_label">Resend OTP</string>
     <string name="date_label">Date</string>
-    <string name="type_label">Type*</string>
     <string name="additionaldetails_label">Additional details* (10 characters min.)</string>
     <string name="location_label">Location</string>
     <string name="status_label">Status</string>
@@ -33,7 +32,6 @@
     <string name="profileDOB_label">Date of birth:</string>
     <string name="profileaadhaar_label">Aadhaar card no.:</string>
     <string name="profilepan_label">PAN card no.:</string>
-    <string name="municipality_label">Municipality</string>
     <string name="phone_label">Phone no.</string>
     <string name="phone_label_editprofile">Phone no. *</string>
     <string name="altphone_label">Alternate phone no.</string>
@@ -71,7 +69,6 @@
     <string name="processing_msg">Processing request</string>
     <string name="menu_label">Menu</string>
     <string name="home_label">Home</string>
-    <string name="logged_out_msg">You have been logged out</string>
     <string name="grievances_label">Grievances</string>
     <string name="propertytax_label">Property Tax</string>
     <string name="buildingplans_label">Building Plans</string>
@@ -98,5 +95,8 @@
     <string name="newgrievance_label">New Grievance</string>
     <string name="grievancedetails_label">Grievance Details</string>
     <string name="editprofile_label">Edit Profile</string>
-    <string name="loading_label">Loading...</string>
+    <string name="loading_label">Loading…</string>
+    <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
+    <string name="splashscreen_loading">Preparing resources…</string>
+    <string name="watertax_label">Water Tax</string>
 </resources>

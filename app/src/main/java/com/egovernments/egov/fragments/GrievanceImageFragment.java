@@ -39,7 +39,7 @@ public class GrievanceImageFragment extends Fragment {
 
         SessionManager sessionManager = new SessionManager(getActivity());
 
-        final String url = sessionManager.getBaseURL() + "api/v1.0/complaint/"
+        final String url = sessionManager.getBaseURL() + "/api/v1.0/complaint/"
                 + arg.getString("crn") + "/downloadSupportDocument?access_token="
                 + arg.getString("access_token") + "&fileNo="
                 + arg.getString("fileNo");

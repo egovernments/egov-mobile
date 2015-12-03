@@ -162,7 +162,7 @@
                 <Spinner
                     android:id="@+id/update_action"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="5dp"
                     android:background="@drawable/top_edittext" />
 
@@ -170,24 +170,32 @@
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#BFffffff"
+                    android:background="@color/dividerColor"
                     android:gravity="center_horizontal"
                     android:paddingTop="5dp" />
 
-                <Spinner
-                    android:id="@+id/update_feedback"
+                <LinearLayout
+                    android:id="@+id/feedback_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:background="@drawable/top_edittext"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-                <TextView
-                    style="?android:attr/listSeparatorTextViewStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#BFffffff"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="5dp" />
+                    <Spinner
+                        android:id="@+id/update_feedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/top_edittext" />
+
+                    <TextView
+                        style="?android:attr/listSeparatorTextViewStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="5dp" />
+
+                </LinearLayout>
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"

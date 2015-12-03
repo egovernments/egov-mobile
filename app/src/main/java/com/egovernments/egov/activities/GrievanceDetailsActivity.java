@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -82,6 +83,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
         TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
         complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
 
+        final LinearLayout feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
+
         Button updateButton = (Button) findViewById(R.id.grievance_update_button);
 
         updateComment = (EditText) findViewById(R.id.update_comment);
@@ -148,7 +151,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
             commentBoxLabel.setText("Feedback");
 
-            feedbackSpinner.setVisibility(View.VISIBLE);
+            feedbackLayout.setVisibility(View.VISIBLE);
             ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackoptions);
             feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
@@ -208,7 +211,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
                 action = (String) actionsSpinner.getSelectedItem();
                 String comment = updateComment.getText().toString().trim();
                 String feedback = "";
-                if (feedbackSpinner.getVisibility() == View.VISIBLE) {
+                if (feedbackLayout.getVisibility() == View.VISIBLE) {
                     feedback = (String) feedbackSpinner.getSelectedItem();
                 }
 

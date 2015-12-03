@@ -3,6 +3,7 @@ package com.egovernments.egov.network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -54,7 +55,10 @@ public class SessionManager {
 
     //Only when user explicitly logs out, clear all data from storage
     public void logoutUser() {
-        editor.clear();
+        editor.remove(KEY_PASSWORD);
+        editor.remove(KEY_USERNAME);
+        editor.remove(KEY_ACCESS_TOKEN);
+        editor.putBoolean(IS_LOGGED_IN, false);
         editor.commit();
     }
 
@@ -96,6 +100,7 @@ public class SessionManager {
     }
 
     public String getBaseURL() {
+        Log.v(SessionManager.class.getName().toString(), "BASE URL IS ->"+pref.getString(BASE_URL, null));
         return pref.getString(BASE_URL, null);
     }
 

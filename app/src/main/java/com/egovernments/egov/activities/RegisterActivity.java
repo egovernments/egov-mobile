@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,6 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
     private String deviceOS;
     private String deviceType;
 
+    private TextView municipalityInfo;
+
+    private TextInputLayout nameInputLayout;
+
     private String url;
     private String cityName;
 
@@ -96,6 +101,9 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
         sessionManager = new SessionManager(this);
+
+        municipalityInfo = (TextView) findViewById(R.id.municipality_change_info);
+        nameInputLayout = (TextInputLayout) findViewById(R.id.signup_name_inputlayout);
 
         final EditText name_edittext = (EditText) findViewById(R.id.signup_name);
         final EditText email_edittext = (EditText) findViewById(R.id.signup_email);
@@ -278,72 +286,83 @@ public class RegisterActivity extends AppCompatActivity {
         protected Object doInBackground(String... params) {
 
             try {
+                if (configManager.getString("api.multicities").equals("false")) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            municipalityInfo.setVisibility(View.GONE);
+                            spinner.setVisibility(View.GONE);
+                            autoCompleteTextView.setVisibility(View.GONE);
+                            nameInputLayout.setBackgroundResource(R.drawable.top_edittext);
+                        }
+                    });
+                } else {
+                    final List<City> cityList = ApiController.getAllCitiesURL(configManager.getString("api.multipleCitiesUrl"));
+                    final List<String> cities = new ArrayList<>();
 
-                final List<City> cityList = ApiController.getAllCitiesURL(configManager.getString("api.multipleCitiesUrl"));
-                final List<String> cities = new ArrayList<>();
-
-                for (int i = 0; i < cityList.size(); i++) {
-                    cities.add(cityList.get(i).getCityName());
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                        dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        spinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, RegisterActivity.this));
-                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                            @Override
-                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                check = check + 1;
-                                if (check > 1) {
-                                    url = cityList.get(position - 1).getUrl();
-                                    cityName = cityList.get(position - 1).getCityName();
-                                    code = cityList.get(position - 1).getCityCode();
-                                    autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
-                                    autoCompleteTextView.dismissDropDown();
-                                }
-                            }
-
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parent) {
-
-                            }
-                        });
-
-                        ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                        autoCompleteTextView.setHint("Municipality");
-                        autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                        autoCompleteTextView.setOnClickListener(null);
-                        autoCompleteTextView.setAdapter(autoCompleteAdapter);
-                        autoCompleteTextView.setThreshold(1);
-                        autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                            @Override
-                            public void onClick(DrawablePosition target) {
-                                if (target == DrawablePosition.RIGHT) {
-                                    spinner.performClick();
-                                }
-                            }
-                        });
-                        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                String s = autoCompleteTextView.getText().toString();
-                                for (City city : cityList) {
-                                    if (s.equals(city.getCityName())) {
-                                        url = city.getUrl();
-                                        cityName = city.getCityName();
-                                        code = city.getCityCode();
-                                    }
-
-                                }
-                            }
-                        });
-
+                    for (int i = 0; i < cityList.size(); i++) {
+                        cities.add(cityList.get(i).getCityName());
                     }
-                });
 
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
+                            dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, RegisterActivity.this));
+                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                    check = check + 1;
+                                    if (check > 1) {
+                                        url = cityList.get(position - 1).getUrl();
+                                        cityName = cityList.get(position - 1).getCityName();
+                                        code = cityList.get(position - 1).getCityCode();
+                                        autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
+                                        autoCompleteTextView.dismissDropDown();
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                }
+                            });
+
+                            ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
+                            autoCompleteTextView.setHint("Municipality");
+                            autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
+                            autoCompleteTextView.setOnClickListener(null);
+                            autoCompleteTextView.setAdapter(autoCompleteAdapter);
+                            autoCompleteTextView.setThreshold(1);
+                            autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                                @Override
+                                public void onClick(DrawablePosition target) {
+                                    if (target == DrawablePosition.RIGHT) {
+                                        spinner.performClick();
+                                    }
+                                }
+                            });
+                            autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                    String s = autoCompleteTextView.getText().toString();
+                                    for (City city : cityList) {
+                                        if (s.equals(city.getCityName())) {
+                                            url = city.getUrl();
+                                            cityName = city.getCityName();
+                                            code = city.getCityCode();
+                                        }
+
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 handler.post(new Runnable() {

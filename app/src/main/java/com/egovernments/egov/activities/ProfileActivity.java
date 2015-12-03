@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.egovernments.egov.R;
@@ -77,9 +76,6 @@ public class ProfileActivity extends BaseActivity {
 
     //Cause the layout items to be refreshed
     private void updateProfile() {
-
-
-        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.profile_data);
 
         progressBar.setVisibility(View.GONE);
 

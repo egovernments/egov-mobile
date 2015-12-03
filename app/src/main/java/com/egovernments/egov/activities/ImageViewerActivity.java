@@ -72,7 +72,7 @@ public class ImageViewerActivity extends FragmentActivity {
             final ImageView imageView = (ImageView) swipeView.findViewById(R.id.image_viewpager_item);
             Bundle bundle = getArguments();
 
-            final String url = sessionManager.getBaseURL() + "api/v1.0/complaint/"
+            final String url = sessionManager.getBaseURL() + "/api/v1.0/complaint/"
                     + bundle.getString("crn") + "/downloadSupportDocument?access_token="
                     + bundle.getString("access_token") + "&fileNo="
                     + bundle.getString("fileNo");
@@ -97,6 +97,13 @@ public class ImageViewerActivity extends FragmentActivity {
                                     .into(imageView);
                         }
                     });
+
+            swipeView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().finish();
+                }
+            });
 
             return swipeView;
         }

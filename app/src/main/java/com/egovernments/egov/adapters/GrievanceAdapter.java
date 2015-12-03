@@ -80,7 +80,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ((GrievanceViewHolder) viewHolder).complaintLocation.setText(ci.getChildLocationName() + " - " + ci.getLocationName());
 
             final String url = sessionManager.getBaseURL()
-                    + "api/v1.0/complaint/"
+                    + "/api/v1.0/complaint/"
                     + ci.getCrn()
                     + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
 

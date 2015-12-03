@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/egov_logo"
                 android:layout_centerHorizontal="true"
-                android:text="Preparing resources..."
+                android:text="@string/splashscreen_loading"
                 android:textColor="@android:color/white"
                 android:textSize="17sp" />
 
