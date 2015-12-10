@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+
+
+-->
+
+<resources>
+
+    <attr name="fontName" format="string" />
+
+    <declare-styleable name="EGovTextView">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="EGovEditText">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="EGovButton">
+        <attr name="fontName" />
+    </declare-styleable>
+   
+    <declare-styleable name="Header">
+        <attr name="title" format="string" />
+        <attr name="actionButton">
+            <flag name="nav_back" value="1" />
+            <flag name="setting" value="2" />
+            <flag name="search" value="8" />
+            <flag name="add_complaint" value="4" />
+             <flag name="refresh" value="16" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="EGovRoundedImageView">
+        <attr name="border" format="boolean"></attr>
+        <attr name="border_width" format="dimension"></attr>
+        <attr name="border_color" format="color"></attr>
+        <attr name="shadow" format="boolean"></attr>
+        <attr name="circularImageViewStyle" format="reference"></attr>
+    </declare-styleable>
+
+    <!-- library usage -->
+    
+    <declare-styleable name="SlidingDrawerLayout">
+        <attr name="contentLayoutId" format="reference" />
+        <attr name="slideDirection">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="duration" format="integer" />
+        <attr name="drawerSize" format="dimension" />
+    </declare-styleable>
+</resources>

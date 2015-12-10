@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+ * eGov suite of products aim to improve the internal efficiency,transparency, accountability and the service delivery of the
+ * government organizations.
+ * 
+ * Copyright (C) <2015> eGovernments Foundation
+ * 
+ * The updated version of eGov suite of products as by eGovernments Foundation is available at http://www.egovernments.org
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If not, see
+ * http://www.gnu.org/licenses/ or http://www.gnu.org/licenses/gpl.html .
+ * 
+ * In addition to the terms of the GPL license to be adhered to in using this program, the following additional terms are to be
+ * complied with:
+ * 
+ * 1) All versions of this program, verbatim or modified must carry this Legal Notice.
+ * 
+ * 2) Any misrepresentation of the origin of the material is prohibited. It is required that all modified versions of this
+ * material be marked in reasonable ways as different from the original version.
+ * 
+ * 3) This license does not grant any rights to any user of the program with regards to rights under trademark law for use of the
+ * trade names or trademarks of eGovernments Foundation.
+ * 
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+
+
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/org.egov.android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical" >
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#595959"
+                    android:textSize="18dp" />
+
+                <org.egov.android.view.component.EGovTextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:textColor="#818181"
+                    android:textSize="14dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <org.egov.android.view.component.EGovTextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingTop="6dp" >
+
+            <org.egov.android.view.component.EGovTextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="Status"
+                android:textColor="@color/dark_gray" />
+
+            <org.egov.android.view.component.EGovTextView
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textColor="@color/text" />
+
+            <org.egov.android.view.component.EGovTextView
+                android:id="@+id/complaint_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <org.egov.android.view.component.EGovTextView
+        android:id="@+id/load_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Tap here to load more"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone" />
+
+</LinearLayout>

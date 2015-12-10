@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/recentmessagetemplate"
+    android:orientation="vertical" >
+        
+        <org.egov.android.view.component.EGovTextView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:text="Me"
+             android:id="@+id/messageusername"
+             android:textColor="@color/dark_gray" />
+        
+        
+        <org.egov.android.view.component.EGovTextView
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="5dp"
+             android:text="Test Message From USER"
+             android:id="@+id/messagetext"
+             />
+        
+        
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:weightSum="2">
+            
+        <org.egov.android.view.component.EGovTextView
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:text="REGISTERED"
+             android:textSize="14sp"
+             android:id="@+id/messagestatus"
+             android:layout_weight="1"
+             android:textColor="@color/dark_gray" />
+        
+        <org.egov.android.view.component.EGovTextView
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:text="6 mins ago"
+             android:id="@+id/messagetime"
+             android:textSize="14sp"
+             android:layout_weight="1"
+             android:gravity="right"
+             android:textColor="@color/dark_gray" />
+        </LinearLayout>
+        
+        <LinearLayout android:id="@+id/messagetemplatelineseparator"
+                      android:layout_width="match_parent"
+                      android:layout_height="2dp"
+                      android:orientation="vertical"
+                      android:background="#e3e3e3">
+        </LinearLayout>
+        
+</LinearLayout>
