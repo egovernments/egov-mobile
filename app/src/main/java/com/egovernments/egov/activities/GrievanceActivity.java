@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.GrievanceAdapter;
 import com.egovernments.egov.events.GrievancesUpdatedEvent;
-import com.egovernments.egov.events.UpdateFailedEvent;
+import com.egovernments.egov.events.GrievanceUpdateFailedEvent;
 import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.network.UpdateService;
@@ -58,9 +58,9 @@ public class GrievanceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_recyclerview_template);
+        setContentView(R.layout.activity_grievance);
 
-        progressBar = (ProgressBar) findViewById(R.id.recylerview_placeholder);
+        progressBar = (ProgressBar) findViewById(R.id.grievance_recylerview_placeholder);
 
         recyclerView = (RecyclerView) findViewById(R.id.recylerview);
         recyclerView.setHasFixedSize(true);
@@ -120,7 +120,7 @@ public class GrievanceActivity extends BaseActivity {
         });
 
 
-        //Cardview on click listener
+        //CardView on click listener
         onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
@@ -220,7 +220,7 @@ public class GrievanceActivity extends BaseActivity {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(UpdateFailedEvent updateFailedEvent) {
+    public void onEvent(GrievanceUpdateFailedEvent grievanceUpdateFailedEvent) {
         swipeRefreshLayout.setRefreshing(false);
         progressBar.setVisibility(View.GONE);
 

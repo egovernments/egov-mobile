@@ -2,15 +2,10 @@ package com.egovernments.egov.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.egovernments.egov.R;
-import com.egovernments.egov.helper.BadgeUpdater;
 import com.egovernments.egov.network.ApiController;
 import com.egovernments.egov.network.SessionManager;
 import com.google.gson.JsonObject;
@@ -43,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
     protected LinearLayout fullLayout;
     protected FrameLayout activityContent;
 
-    protected ArrayList<NavItem> arrayList;
+    protected ArrayList<NavigationItem> arrayList;
     protected DrawerLayout drawerLayout;
     protected ActionBarDrawerToggle actionBarDrawerToggle;
     protected CharSequence mActionBarTitle;
@@ -135,14 +129,22 @@ public class BaseActivity extends AppCompatActivity {
                         break;
 
                     case 1:
-                        intent = new Intent(BaseActivity.this, PropertyActivity.class);
+                        intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
                         break;
 
-                    case 7:
+                    case 2:
+                        intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        if (!getTitle().toString().equals(getString(R.string.home_label)))
+                            finish();
+                        break;
+
+                    case 3:
                         intent = new Intent(BaseActivity.this, ProfileActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
@@ -150,21 +152,15 @@ public class BaseActivity extends AppCompatActivity {
                             finish();
                         break;
 
-                    case 8:
-                        intent = new Intent(BaseActivity.this, NotificationsActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        if (!getTitle().toString().equals(getString(R.string.home_label)))
-                            finish();
-                        break;
-
-                    case 10:
+                    case 4:
                         progressDialog.show();
                         ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
                                 sessionManager.logoutUser();
+
+                                ApiController.apiInterface = null;
 
                                 Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
@@ -178,7 +174,9 @@ public class BaseActivity extends AppCompatActivity {
 
                                 sessionManager.logoutUser();
 
-                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
+                                ApiController.apiInterface = null;
+
+                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
                                 progressDialog.dismiss();
                                 finish();
@@ -192,58 +190,24 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    //Method fills the nav drawer's arraylist
+    //Method fills the nav drawer's ArrayList
     private void fillList() {
 
-        arrayList.add(new NavItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
-        arrayList.add(new NavItem(R.drawable.ic_home_black_24dp, getString(R.string.propertytax_label)));
-        arrayList.add(new NavItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
-        arrayList.add(new NavItem(R.drawable.ic_location_city_black_24dp, getString(R.string.buildingplans_label)));
-        arrayList.add(new NavItem(R.drawable.ic_accessibility_black_24dp, getString(R.string.births_deaths_label)));
-        arrayList.add(new NavItem(R.drawable.ic_business_black_24dp, getString(R.string.ads_label)));
-        arrayList.add(new NavItem(R.drawable.ic_account_balance_black_24dp, getString(R.string.shops_label)));
-        arrayList.add(new NavItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
-        arrayList.add(new NavItem(R.drawable.ic_notifications_black_24dp, getString(R.string.notifs_label)));
-        arrayList.add(new NavItem(R.drawable.ic_settings_black_24dp, getString(R.string.settings_label)));
-        arrayList.add(new NavItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.propertytax_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
 
-    }
-
-    //To add notification icon to actionbar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.baselayout_actions, menu);
-        MenuItem item = menu.findItem(R.id.badge);
-        LayerDrawable icon = (LayerDrawable) item.getIcon();
-
-        if (Build.VERSION.SDK_INT >= 21) {
-
-//        Update LayerDrawable BadgeDrawable
-            BadgeUpdater.setBadgeCount(this, icon, NotificationsActivity.getCount());
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.badge:
-                Intent intent = new Intent(BaseActivity.this, NotificationsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     //POJO class for nav drawer items
-    private class NavItem {
+    private class NavigationItem {
 
         private final int NavIcon;
         private final String NavTitle;
 
-        public NavItem(int navIcon, String navTitle) {
+        public NavigationItem(int navIcon, String navTitle) {
             NavIcon = navIcon;
             NavTitle = navTitle;
         }
@@ -258,22 +222,28 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    private class NavigationViewHolder {
+        private ImageView nav_item_icon;
+        private TextView nav_item_text;
+    }
+
     //Custom adapter for nav drawer
     public class NavAdapter extends BaseAdapter {
-        List<NavItem> navItems;
 
-        public NavAdapter(List<NavItem> musicList) {
-            this.navItems = musicList;
+        List<NavigationItem> navigationItems;
+
+        public NavAdapter(List<NavigationItem> navigationItems) {
+            this.navigationItems = navigationItems;
         }
 
         @Override
         public int getCount() {
-            return navItems.size();
+            return navigationItems.size();
         }
 
         @Override
-        public NavItem getItem(int position) {
-            return navItems.get(position);
+        public NavigationItem getItem(int position) {
+            return navigationItems.get(position);
         }
 
         @Override
@@ -285,23 +255,31 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            LayoutInflater inflater = getLayoutInflater();
-            View row;
-            row = inflater.inflate(R.layout.item_navdrawer, parent, false);
+            NavigationViewHolder navigationViewHolder = null;
+            View view = convertView;
+            if (convertView == null) {
 
-            ImageView nav_item_ico;
-            TextView nav_item_text;
+                view = getLayoutInflater().inflate(R.layout.item_navdrawer, parent, false);
 
-            nav_item_text = (TextView) row.findViewById(R.id.title);
-            nav_item_ico = (ImageView) row.findViewById(R.id.icon);
+                navigationViewHolder = new NavigationViewHolder();
+                navigationViewHolder.nav_item_text = (TextView) view.findViewById(R.id.title);
+                navigationViewHolder.nav_item_icon = (ImageView) view.findViewById(R.id.icon);
 
-            NavItem navItem = getItem(position);
-            nav_item_text.setText(navItem.getNavTitle());
-            nav_item_ico.setImageResource(navItem.getNavIcon());
+                view.setTag(navigationViewHolder);
+            }
+            if (navigationViewHolder == null) {
+                navigationViewHolder = (NavigationViewHolder) view.getTag();
+            }
 
-            return row;
+            NavigationItem navigationItem = getItem(position);
+            navigationViewHolder.nav_item_text.setText(navigationItem.getNavTitle());
+            navigationViewHolder.nav_item_icon.setImageResource(navigationItem.getNavIcon());
+
+            return view;
         }
+
     }
+
 
     //Allows child classes to access session manager
     protected SessionManager getSessionManager() {

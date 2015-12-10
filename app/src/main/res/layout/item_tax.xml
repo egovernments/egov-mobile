@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/propertytax_installment"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+
+        <TextView
+            android:id="@+id/propertytax_taxamount"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+
+        <TextView
+            android:id="@+id/propertytax_penalty"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/propertytax_total"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+
+        <TextView
+            android:id="@+id/propertytax_rebate"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+
+        <TextView
+            android:id="@+id/propertytax_chequepenalty"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textColor="@color/dataLabelColor"
+            android:textSize="@dimen/data_labelSize" />
+    </LinearLayout>
+
+</LinearLayout>

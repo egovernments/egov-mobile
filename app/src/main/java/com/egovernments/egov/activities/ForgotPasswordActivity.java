@@ -1,13 +1,13 @@
 package com.egovernments.egov.activities;
 
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.SessionManager;
 import com.google.gson.JsonObject;
 
 import retrofit.Callback;
@@ -36,6 +37,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private FloatingActionButton sendButton;
     private com.melnykov.fab.FloatingActionButton sendButtonCompat;
 
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        sessionManager = new SessionManager(this);
 
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
         sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
@@ -107,7 +111,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void submit(String phone) {
 
         if (phone.isEmpty()) {
-            Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
             progressBar.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= 21) {
                 sendButton.setVisibility(View.VISIBLE);
@@ -116,7 +122,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
 
         } else if (phone.length() != 10) {
-            Toast.makeText(this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
             progressBar.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= 21) {
                 sendButton.setVisibility(View.VISIBLE);
@@ -124,11 +132,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 sendButtonCompat.setVisibility(View.VISIBLE);
             }
         } else {
-            ApiController.getAPI(ForgotPasswordActivity.this).recoverPassword(phone, "http://phoenix-qa.egovernments.org", new Callback<JsonObject>() {
+            ApiController.getAPI(ForgotPasswordActivity.this).recoverPassword(phone, sessionManager.getBaseURL(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
-                    Toast.makeText(ForgotPasswordActivity.this, R.string.recoverymessage_msg, Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.recoverymessage_msg, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
 
                     progressBar.setVisibility(View.GONE);
                     if (Build.VERSION.SDK_INT >= 21) {
@@ -136,8 +146,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     } else {
                         sendButtonCompat.setVisibility(View.VISIBLE);
                     }
-
-                    startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
                     finish();
 
                 }
@@ -146,15 +154,23 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 public void failure(RetrofitError error) {
                     if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
                         if (error.getLocalizedMessage() != null) {
-                            Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         } else {
                             JsonObject jsonObject = (JsonObject) error.getBody();
-                            if (jsonObject != null)
-                                Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT).show();
+                            if (jsonObject != null) {
+                                Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
 
                         }
-                    } else
-                        Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast toast = Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+                    }
 
                     progressBar.setVisibility(View.GONE);
                     if (Build.VERSION.SDK_INT >= 21) {

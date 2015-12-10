@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.egovernments.egov.R;
 import com.egovernments.egov.events.ProfileUpdatedEvent;
 import com.egovernments.egov.models.Profile;
+import com.egovernments.egov.models.ProfileUpdateFailedEvent;
 import com.egovernments.egov.network.UpdateService;
 
 import java.text.ParseException;
@@ -32,6 +33,8 @@ public class ProfileActivity extends BaseActivity {
     private ProgressBar progressBar;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    public static boolean isUpdateFailed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,9 @@ public class ProfileActivity extends BaseActivity {
         }
         if (profile != null)
             updateProfile();
+
+        if (isUpdateFailed)
+            progressBar.setVisibility(View.GONE);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.profile_refreshlayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -137,6 +143,12 @@ public class ProfileActivity extends BaseActivity {
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
         updateProfile();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(ProfileUpdateFailedEvent profileUpdateFailedEvent) {
+        swipeRefreshLayout.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
     }
 
 }

@@ -3,7 +3,6 @@ package com.egovernments.egov.network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.util.Calendar;
 
@@ -38,28 +37,33 @@ public class SessionManager {
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
-        editor = pref.edit();
     }
 
 
     //When the user is logged in, store data in shared preferences to be used across sessions
     public void loginUser(String password, String email, String accessToken) {
 
+        editor = pref.edit();
+
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(KEY_PASSWORD, password);
         editor.putString(KEY_USERNAME, email);
         editor.putString(KEY_ACCESS_TOKEN, accessToken);
 
-        editor.commit();
+        editor.apply();
     }
 
     //Only when user explicitly logs out, clear all data from storage
     public void logoutUser() {
+
+        editor = pref.edit();
+
         editor.remove(KEY_PASSWORD);
         editor.remove(KEY_USERNAME);
         editor.remove(KEY_ACCESS_TOKEN);
         editor.putBoolean(IS_LOGGED_IN, false);
-        editor.commit();
+
+        editor.apply();
     }
 
     public boolean isLoggedIn() {
@@ -83,24 +87,28 @@ public class SessionManager {
     }
 
     public void invalidateAccessToken() {
+        editor = pref.edit();
         editor.putString(KEY_ACCESS_TOKEN, null);
+        editor.apply();
     }
 
     public void setBaseURL(String url, String location, int code) {
 
-        if (url.substring(url.length() - 1).equals("/")) {
+        editor = pref.edit();
+
+        if (url.substring(url.length() - 1).equals("/"))
             editor.putString(BASE_URL, url.substring(0, url.length() - 1));
-        } else
+        else
             editor.putString(BASE_URL, url);
 
         editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
         editor.putString(URL_LOCATION, location);
         editor.putInt(URL_LOCATION_CODE, code);
-        editor.commit();
+
+        editor.apply();
     }
 
     public String getBaseURL() {
-        Log.v(SessionManager.class.getName().toString(), "BASE URL IS ->"+pref.getString(BASE_URL, null));
         return pref.getString(BASE_URL, null);
     }
 

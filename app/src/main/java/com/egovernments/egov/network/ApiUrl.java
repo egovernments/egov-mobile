@@ -6,6 +6,11 @@ package com.egovernments.egov.network;
  **/
 
 public class ApiUrl {
+
+    public final static String REFERRER_URL = "125.16.9.138";
+    public final static String AUTHORIZATION = "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=";
+
+
     /**
      * Grievances
      */
@@ -14,8 +19,6 @@ public class ApiUrl {
     public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/api/v1.0/complaint/getFrequentlyFiledTypes";
 
     public final static String COMPLAINT_CREATE = "/api/v1.0/complaint/create";
-
-    public final static String COMPLAINT_UPLOAD_SUPPORT_DOCUMENT = "/api/v1.0/complaint/{complaintNo}/uploadSupportDocument";
 
     public final static String COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT = "/api/v1.0/complaint/{complaintNo}/downloadSupportDocument";
 
@@ -55,4 +58,16 @@ public class ApiUrl {
     public final static String CITIZEN_GET_MY_COMPLAINT = "/api/v1.0/citizen/getMyComplaint/{page}/{pageSize}";
 
     public final static String CITIZEN_SEND_OTP = "/api/v1.0/sendOTP";
+
+    /**
+     * Property Tax
+     */
+
+    public final static String PROPERTY_TAX_DETAILS = "/restapi/property/propertytaxdetails";
+
+    /**
+     * Water Tax
+     */
+
+    public final static String WATER_TAX_DETAILS = "/restapi/watercharges/getwatertaxdetails";
 }

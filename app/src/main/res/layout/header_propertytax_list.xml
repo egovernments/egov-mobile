@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/propertypropertytax_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/propertytax_assessmentno_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/assessmentno_label"
+        android:textSize="@dimen/field_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_assessmentno"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_address_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/address_label"
+        android:textSize="@dimen/field_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_address"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_locality_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/locality_label"
+        android:textSize="@dimen/field_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_locality"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_name_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/owner_label"
+        android:textSize="@dimen/field_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_name"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_contact_label"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/owner_contactno_label"
+        android:textSize="@dimen/field_labelSize" />
+
+    <TextView
+        android:id="@+id/propertytax_contact"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        android:text="@string/installments_label"
+        android:textSize="@dimen/field_labelSize" />
+
+</LinearLayout>

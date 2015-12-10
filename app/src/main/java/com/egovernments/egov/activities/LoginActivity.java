@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,6 +26,7 @@ import com.egovernments.egov.helper.CustomAutoCompleteTextView;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.models.City;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.ApiUrl;
 import com.egovernments.egov.network.SessionManager;
 import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
@@ -88,7 +90,9 @@ public class LoginActivity extends Activity {
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
             } else {
-                Toast.makeText(LoginActivity.this, R.string.session_expiry_message, Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(LoginActivity.this, R.string.session_expiry_message, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
             }
         }
 
@@ -115,7 +119,9 @@ public class LoginActivity extends Activity {
         autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "Fetching municipality list, please wait", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(LoginActivity.this, "Fetching municipality list, please wait", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
             }
         });
 
@@ -208,7 +214,9 @@ public class LoginActivity extends Activity {
     private void submit(final String username, final String password) {
 
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
             progressBar.setVisibility(View.GONE);
             forgotLabel.setVisibility(View.VISIBLE);
             signupButton.setVisibility(View.VISIBLE);
@@ -220,8 +228,14 @@ public class LoginActivity extends Activity {
 
         } else {
 
+            if (url == null) {
+                Toast toast = Toast.makeText(LoginActivity.this, "Please select a municipality", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
+                return;
+            }
             sessionManager.setBaseURL(url, cityName, code);
-            ApiController.getLoginAPI(LoginActivity.this).login(username, "read write", password, "password", new Callback<JsonObject>() {
+            ApiController.getAPI(LoginActivity.this).login(ApiUrl.AUTHORIZATION, username, "read write", password, "password", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
 
@@ -238,7 +252,9 @@ public class LoginActivity extends Activity {
                     JsonObject jsonObject = null;
                     if (error != null) {
                         if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
-                            Toast.makeText(LoginActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(LoginActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         } else {
                             try {
                                 jsonObject = (JsonObject) error.getBody();
@@ -254,10 +270,16 @@ public class LoginActivity extends Activity {
                                     intent.putExtra("username", username);
                                     intent.putExtra("password", password);
                                     startActivity(intent);
-                                } else
-                                    Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT).show();
-                            } else
-                                Toast.makeText(LoginActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast toast = Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT);
+                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+                                }
+                            } else {
+                                Toast toast = Toast.makeText(LoginActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
                         }
                     }
 
@@ -295,75 +317,99 @@ public class LoginActivity extends Activity {
                         }
                     });
                 } else {
-                    final List<City> cityList = ApiController.getAllCitiesURL(configManager.getString("api.multipleCitiesUrl"));
-                    final List<String> cities = new ArrayList<>();
+                    final List<City> cityList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
+                    if (cityList != null) {
 
-                    for (int i = 0; i < cityList.size(); i++) {
-                        cities.add(cityList.get(i).getCityName());
-                    }
+                        final List<String> cities = new ArrayList<>();
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                            dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            spinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, LoginActivity.this));
-
-                            for (int i = 0; i < cityList.size(); i++) {
-                                if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode()))
-                                    autoCompleteTextView.setText(cities.get(i));
-                            }
-                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                    check = check + 1;
-                                    if (check > 1) {
-                                        url = cityList.get(position - 1).getUrl();
-                                        cityName = cityList.get(position - 1).getCityName();
-                                        code = cityList.get(position - 1).getCityCode();
-                                        autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
-                                        autoCompleteTextView.dismissDropDown();
-                                    }
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                }
-                            });
-
-                            ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                            autoCompleteTextView.setHint("Municipality");
-                            autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                            autoCompleteTextView.setOnClickListener(null);
-                            autoCompleteTextView.setAdapter(autoCompleteAdapter);
-                            autoCompleteTextView.setThreshold(1);
-                            autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                @Override
-                                public void onClick(DrawablePosition target) {
-                                    if (target == DrawablePosition.RIGHT) {
-                                        spinner.performClick();
-                                    }
-                                }
-                            });
-                            autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                    String s = autoCompleteTextView.getText().toString();
-                                    for (City city : cityList) {
-                                        if (s.equals(city.getCityName())) {
-                                            url = city.getUrl();
-                                            cityName = city.getCityName();
-                                            code = city.getCityCode();
-                                        }
-
-                                    }
-                                }
-                            });
-
+                        for (int i = 0; i < cityList.size(); i++) {
+                            cities.add(cityList.get(i).getCityName());
                         }
-                    });
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
+                                dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                spinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, LoginActivity.this));
+
+                                for (int i = 0; i < cityList.size(); i++) {
+                                    if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode())) {
+                                        autoCompleteTextView.setText(cities.get(i));
+                                    }
+                                }
+                                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        check = check + 1;
+                                        if (check > 1) {
+                                            url = cityList.get(position - 1).getUrl();
+                                            cityName = cityList.get(position - 1).getCityName();
+                                            code = cityList.get(position - 1).getCityCode();
+                                            autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
+                                            autoCompleteTextView.dismissDropDown();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+
+                                    }
+                                });
+
+                                ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
+                                autoCompleteTextView.setHint("Municipality");
+                                autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
+                                autoCompleteTextView.setOnClickListener(null);
+                                autoCompleteTextView.setAdapter(autoCompleteAdapter);
+                                autoCompleteTextView.setThreshold(1);
+                                autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                                    @Override
+                                    public void onClick(DrawablePosition target) {
+                                        if (target == DrawablePosition.RIGHT) {
+                                            spinner.performClick();
+                                        }
+                                    }
+                                });
+                                autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                        String s = autoCompleteTextView.getText().toString();
+                                        for (City city : cityList) {
+                                            if (s.equals(city.getCityName())) {
+                                                url = city.getUrl();
+                                                cityName = city.getCityName();
+                                                code = city.getCityCode();
+                                            }
+
+                                        }
+                                    }
+                                });
+
+                            }
+                        });
+                    } else {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                autoCompleteTextView.setOnClickListener(null);
+                                autoCompleteTextView.setHint("Loading failed");
+                                autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                                autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                                    @Override
+                                    public void onClick(DrawablePosition target) {
+                                        if (target == DrawablePosition.RIGHT) {
+                                            autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
+                                            autoCompleteTextView.setDrawableClickListener(null);
+                                            autoCompleteTextView.setHint(getString(R.string.loading_label));
+                                            new GetAllCitiesTask().execute();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
 
             } catch (IOException e) {
@@ -373,7 +419,18 @@ public class LoginActivity extends Activity {
                     public void run() {
                         autoCompleteTextView.setOnClickListener(null);
                         autoCompleteTextView.setHint("Loading failed");
-                        autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
+                        autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                        autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                            @Override
+                            public void onClick(DrawablePosition target) {
+                                if (target == DrawablePosition.RIGHT) {
+                                    autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
+                                    autoCompleteTextView.setDrawableClickListener(null);
+                                    autoCompleteTextView.setHint(getString(R.string.loading_label));
+                                    new GetAllCitiesTask().execute();
+                                }
+                            }
+                        });
                     }
                 });
             }

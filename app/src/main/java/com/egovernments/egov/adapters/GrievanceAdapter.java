@@ -122,7 +122,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    //Viewholder for the recycler view. Inflates view to be grievance or progress indicator depending on type
+    //ViewHolder for the recycler view. Inflates view to be grievance or progress indicator depending on type
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 

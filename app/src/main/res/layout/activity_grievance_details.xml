@@ -104,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/additionaldetails_label"
+                android:text="@string/details_label"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
@@ -125,6 +125,22 @@
 
             <TextView
                 android:id="@+id/details_complaint_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="10dp"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
+                android:id="@+id/details_complaint_landmark_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/landmark_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/details_complaint_landmark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="10dp"
@@ -243,16 +259,31 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary">
 
-                <ListView
-                    android:id="@+id/grievance_comments"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_margin="2dp"
-                    android:background="@android:color/white"
-                    android:fadeScrollbars="false"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"
-                    android:scrollbars="vertical"
-                    tools:ignore="NestedScrolling" />
+                    android:layout_margin="2dp">
+
+                    <ProgressBar
+                        android:id="@+id/grievance_history_placeholder"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="20dp" />
+
+                    <ListView
+                        android:id="@+id/grievance_comments"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="@android:color/white"
+                        android:fadeScrollbars="false"
+                        android:scrollbarAlwaysDrawVerticalTrack="true"
+                        android:scrollbars="vertical"
+                        android:visibility="invisible"
+                        tools:ignore="NestedScrolling" />
+
+                </RelativeLayout>
 
             </FrameLayout>
 

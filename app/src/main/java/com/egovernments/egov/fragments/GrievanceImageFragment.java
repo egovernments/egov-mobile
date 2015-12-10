@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.activities.GrievanceDetailsActivity;
-import com.egovernments.egov.activities.ImageViewerActivity;
+import com.egovernments.egov.activities.GrievanceImageViewerActivity;
 import com.egovernments.egov.network.SessionManager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -47,9 +47,9 @@ public class GrievanceImageFragment extends Fragment {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ImageViewerActivity.class);
-                intent.putExtra(ImageViewerActivity.POSITION, arg.getInt("position"));
-                intent.putExtra(ImageViewerActivity.COMPLAINT, GrievanceDetailsActivity.getGrievance());
+                Intent intent = new Intent(getActivity(), GrievanceImageViewerActivity.class);
+                intent.putExtra(GrievanceImageViewerActivity.POSITION, arg.getInt("position"));
+                intent.putExtra(GrievanceImageViewerActivity.COMPLAINT, GrievanceDetailsActivity.getGrievance());
                 startActivity(intent);
             }
         });

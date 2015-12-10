@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.ApiUrl;
 import com.egovernments.egov.network.SessionManager;
 import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
@@ -94,15 +96,22 @@ public class AccountActivationActivity extends AppCompatActivity {
                 ApiController.getAPI(AccountActivationActivity.this).sendOTP(username, new Callback<JsonObject>() {
                     @Override
                     public void success(JsonObject jsonObject, Response response) {
-                        Toast.makeText(AccountActivationActivity.this, R.string.otp_resent_msg, Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(AccountActivationActivity.this, R.string.otp_resent_msg, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        if (error.getLocalizedMessage() != null)
-                            Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                        if (error.getLocalizedMessage() != null) {
+                            Toast toast = Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                        }
                     }
                 });
 
@@ -145,8 +154,10 @@ public class AccountActivationActivity extends AppCompatActivity {
             ApiController.getAPI(AccountActivationActivity.this).activate(username, activationCode.toUpperCase(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
-                    Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT).show();
-                    ApiController.getLoginAPI(AccountActivationActivity.this).login(username, "read write", password, "password", new Callback<JsonObject>() {
+                    Toast toast = Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                    ApiController.getAPI(AccountActivationActivity.this).login(ApiUrl.AUTHORIZATION,username, "read write", password, "password", new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
@@ -160,7 +171,9 @@ public class AccountActivationActivity extends AppCompatActivity {
                         @Override
                         public void failure(RetrofitError error) {
 
-                            Toast.makeText(AccountActivationActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(AccountActivationActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                             startActivity(new Intent(AccountActivationActivity.this, LoginActivity.class));
                         }
                     });
@@ -170,13 +183,20 @@ public class AccountActivationActivity extends AppCompatActivity {
                 public void failure(RetrofitError error) {
                     if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
                         if (error.getLocalizedMessage() != null) {
-                            Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(AccountActivationActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         } else {
                             JsonObject jsonObject = (JsonObject) error.getBody();
-                            if (jsonObject != null)
-                                Toast.makeText(AccountActivationActivity.this, "The OTP is incorrect or has expired", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                            if (jsonObject != null) {
+                                Toast toast = Toast.makeText(AccountActivationActivity.this, "The OTP is incorrect or has expired", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            } else {
+                                Toast toast = Toast.makeText(AccountActivationActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
                         }
                     }
 
@@ -189,7 +209,9 @@ public class AccountActivationActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(AccountActivationActivity.this, "Please enter OTP", Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(AccountActivationActivity.this, "Please enter OTP", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
 
             progressBar.setVisibility(View.GONE);
             resendButton.setVisibility(View.VISIBLE);

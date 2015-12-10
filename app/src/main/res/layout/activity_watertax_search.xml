@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/watertax_searchbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+        <com.egovernments.egov.helper.CustomEditText
+            android:id="@+id/property_searchTextbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/middle_edittext"
+            android:drawableEnd="@drawable/ic_done_black_24dp"
+            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:drawablePadding="5dp"
+            android:drawableRight="@drawable/ic_done_black_24dp"
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            android:hint="@string/watertax_search_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textImeMultiLine"
+            android:minHeight="40dp"
+            android:paddingBottom="5dp"
+            android:paddingEnd="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:paddingTop="5dp"
+            android:textColor="#000"
+            android:textColorHint="#a8a5a5"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ListView
+        android:id="@+id/watertax_taxdetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/watertax_searchbar"
+        android:padding="16dp" />
+
+    <ProgressBar
+        android:id="@+id/watertax_progressbar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

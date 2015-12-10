@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,6 +71,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     private boolean isComment = false;
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +83,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         TextView complaintType = (TextView) findViewById(R.id.details_complaint_type);
         TextView complaintDetails = (TextView) findViewById(R.id.details_complaint_details);
         TextView complaintStatus = (TextView) findViewById(R.id.details_complaint_status);
+        TextView complaintLandmark = (TextView) findViewById(R.id.details_complaint_landmark);
         TextView complaintNo = (TextView) findViewById(R.id.details_complaintNo);
         TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
         complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
@@ -89,13 +94,15 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         updateComment = (EditText) findViewById(R.id.update_comment);
 
+        progressBar = (ProgressBar) findViewById(R.id.grievance_history_placeholder);
+
         listView = (ListView) findViewById(R.id.grievance_comments);
 
         final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
         final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
         ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Comment", "Withdraw"));
         ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Comment", "Re-open"));
-        ArrayList<String> feedbackoptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
+        ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -131,6 +138,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
+        if (grievance.getLandmarkDetails().isEmpty()) {
+            findViewById(R.id.details_complaint_landmark_label).setVisibility(View.GONE);
+            complaintLandmark.setVisibility(View.GONE);
+
+        } else
+            complaintLandmark.setText(grievance.getLandmarkDetails());
 
         //If grievance has lat/lng values, location name is null
         if (grievance.getLat() == null)
@@ -152,7 +165,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
             commentBoxLabel.setText("Feedback");
 
             feedbackLayout.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackoptions);
+            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackOptions);
             feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
 
@@ -184,6 +197,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                 GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
 
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.VISIBLE);
                 listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
 
 
@@ -193,13 +208,23 @@ public class GrievanceDetailsActivity extends BaseActivity {
             public void failure(RetrofitError error) {
                 if (error.getLocalizedMessage() != null)
                     if (error.getLocalizedMessage().equals("Invalid access token")) {
-                        Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+
                         sessionManager.logoutUser();
                         startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                    } else
-                        Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+                    }
+                else {
+                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                }
+                progressBar.setVisibility(View.GONE);
             }
 
         });
@@ -216,13 +241,17 @@ public class GrievanceDetailsActivity extends BaseActivity {
                 }
 
                 if (action == null) {
-                    Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
                 } else {
                     if ((action.equals("Comment") || action.equals("Re-open")) && comment.isEmpty()) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
                         {
-                            Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         }
                     } else {
                         switch (action) {
@@ -246,7 +275,9 @@ public class GrievanceDetailsActivity extends BaseActivity {
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
-                                Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT).show();
+                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
                                 progressDialog.dismiss();
 
                                 ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
@@ -260,11 +291,10 @@ public class GrievanceDetailsActivity extends BaseActivity {
                                         feedbackSpinner.setSelection(0);
                                         updateComment.getText().clear();
                                         if (!isComment) {
-
                                             Intent intent = new Intent(GrievanceDetailsActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
                                             intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
                                             startService(intent);
-                                            startActivity(new Intent(GrievanceDetailsActivity.this, GrievanceActivity.class));
+                                            finish();
                                         }
 
                                     }
@@ -273,13 +303,21 @@ public class GrievanceDetailsActivity extends BaseActivity {
                                     public void failure(RetrofitError error) {
                                         if (error.getLocalizedMessage() != null)
                                             if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                                Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                toast.show();
                                                 sessionManager.logoutUser();
                                                 startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                                            } else
-                                                Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                        else
-                                            Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                toast.show();
+                                            }
+                                        else {
+                                            Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
+                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                            toast.show();
+                                        }
                                     }
                                 });
 
@@ -291,13 +329,21 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
                                 if (error.getLocalizedMessage() != null)
                                     if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                        Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                        toast.show();
                                         sessionManager.logoutUser();
                                         startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                                    } else
-                                        Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                else
-                                    Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                        toast.show();
+                                    }
+                                else {
+                                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+                                }
                                 progressDialog.dismiss();
 
                             }
@@ -330,12 +376,12 @@ public class GrievanceDetailsActivity extends BaseActivity {
         return 0;
     }
 
-    public static Grievance getGrievance(){
+    public static Grievance getGrievance() {
         return grievance;
     }
 
     //The viewpager custom adapter
-    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter{
+    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
 
         public GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -344,7 +390,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             if (grievance.getSupportDocsSize() != 0)
-                return GrievanceImageFragment.instantiateItem(position,getSessionManager().getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
+                return GrievanceImageFragment.instantiateItem(position, getSessionManager().getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
 
             return null;
         }

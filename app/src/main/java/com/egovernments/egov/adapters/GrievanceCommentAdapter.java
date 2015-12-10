@@ -99,7 +99,7 @@ public class GrievanceCommentAdapter extends BaseAdapter {
         return 0;
     }
 
-    public static class GrievanceCommentViewHolder {
+    private class GrievanceCommentViewHolder {
 
         private TextView commentName;
         private TextView commentText;

@@ -40,7 +40,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profilename_label"
+                        android:text="@string/name_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -55,7 +55,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profilephone_label"
+                        android:text="@string/phone_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -72,7 +72,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profilealtphone_label"
+                        android:text="@string/altphone_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -88,7 +88,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profileemail_label"
+                        android:text="@string/email_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -104,7 +104,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profilegender_label"
+                        android:text="@string/gender_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -120,7 +120,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profileDOB_label"
+                        android:text="@string/dob_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -136,7 +136,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profileaadhaar_label"
+                        android:text="@string/aadhaar_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
@@ -152,7 +152,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:gravity="center_vertical"
-                        android:text="@string/profilepan_label"
+                        android:text="@string/pan_label"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView

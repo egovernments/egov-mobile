@@ -31,6 +31,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +52,9 @@ import com.egovernments.egov.helper.ImageCompressionHelper;
 import com.egovernments.egov.helper.NoFilterAdapter;
 import com.egovernments.egov.helper.NothingSelectedSpinnerAdapter;
 import com.egovernments.egov.helper.UriPathHelper;
-import com.egovernments.egov.models.Complaint;
 import com.egovernments.egov.models.GrievanceLocation;
 import com.egovernments.egov.models.GrievanceLocationAPIResponse;
+import com.egovernments.egov.models.GrievanceRequest;
 import com.egovernments.egov.models.GrievanceType;
 import com.egovernments.egov.models.GrievanceTypeAPIResponse;
 import com.egovernments.egov.models.errors.ErrorResponse;
@@ -87,7 +88,7 @@ import retrofit.mime.TypedString;
 /**
  * The Grievance creation page activity
  **/
-
+//TODO clear marker button on map, frequent types
 
 public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -167,7 +168,9 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
         listTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(NewGrievanceActivity.this, "Fetching type list, please wait", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Fetching type list, please wait", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
             }
         });
 
@@ -218,14 +221,21 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                                             public void failure(RetrofitError error) {
                                                                                 if (error.getLocalizedMessage() != null)
                                                                                     if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                                                                        Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                                                                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                                                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                        toast.show();
                                                                                         sessionManager.logoutUser();
                                                                                         startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                                                                                    } else
-                                                                                        Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                                                                                else
-                                                                                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving location", Toast.LENGTH_SHORT).show();
-
+                                                                                    } else {
+                                                                                        Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                                                                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                        toast.show();
+                                                                                    }
+                                                                                else {
+                                                                                    Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving location", Toast.LENGTH_SHORT);
+                                                                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                    toast.show();
+                                                                                }
                                                                             }
                                                                         }
 
@@ -288,7 +298,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                         });
 
                         final ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, strings);
-                        listTextView.setHint("Complaint Type*");
+                        listTextView.setHint(R.string.complaint_type_label);
                         listTextView.setOnClickListener(null);
                         listTextView.setAdapter(autoCompleteAdapter);
                         listTextView.setThreshold(1);
@@ -326,20 +336,26 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                           String landmarkDetails = landmark.getText().toString().trim();
 
                                                           if (locationID == 0 && (marker == null)) {
-                                                              Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_SHORT).show();
+                                                              Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_SHORT);
+                                                              toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                              toast.show();
                                                           } else if (typeID == 0) {
-                                                              Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT).show();
+                                                              Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
+                                                              toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                              toast.show();
                                                           } else if (complaintDetails.isEmpty() || complaintDetails.length() < 10) {
-                                                              Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT).show();
+                                                              Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT);
+                                                              toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                              toast.show();
                                                           } else {
                                                               if (marker != null) {
                                                                   lat = marker.getPosition().latitude;
                                                                   lng = marker.getPosition().longitude;
                                                                   progressDialog.show();
-                                                                  submit(new Complaint(lat, lng, complaintDetails, typeID, landmarkDetails));
+                                                                  submit(new GrievanceRequest(lat, lng, complaintDetails, typeID, landmarkDetails));
                                                               } else {
                                                                   progressDialog.show();
-                                                                  submit(new Complaint(locationID, complaintDetails, typeID, landmarkDetails));
+                                                                  submit(new GrievanceRequest(locationID, complaintDetails, typeID, landmarkDetails));
                                                               }
                                                           }
 
@@ -359,13 +375,166 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                         listTextView.setCompoundDrawables(null, null, null, null);
                         if (error.getLocalizedMessage() != null)
                             if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
                                 sessionManager.logoutUser();
                                 startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                            } else
-                                Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + ". Please exit and return to this screen to attempt to retrieve grievance types", Toast.LENGTH_LONG).show();
-                        else
-                            Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types.Please exit and return to this screen to attempt to retrieve grievance types", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
+                        else {
+                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                        }
+                        listTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                        listTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                            @Override
+                            public void onClick(DrawablePosition target) {
+                                if (target == DrawablePosition.RIGHT) {
+                                    listTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                    listTextView.setDrawableClickListener(null);
+                                    listTextView.setHint(getString(R.string.loading_label));
+
+                                    //Same code as above because I'm stupid
+                                    ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
+                                                @Override
+                                                public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
+                                                    grievanceTypes = grievanceTypeAPIResponse.getGrievanceType();
+                                                    List<String> strings = new ArrayList<>();
+                                                    for (int i = 0; i < grievanceTypes.size(); i++) {
+                                                        strings.add(grievanceTypes.get(i).getName());
+                                                    }
+                                                    ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, strings);
+                                                    dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                                    dropdown.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, NewGrievanceActivity.this));
+                                                    dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                        @Override
+                                                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                            check = check + 1;
+                                                            if (check > 1) {
+                                                                typeID = grievanceTypes.get(position - 1).getId();
+                                                                listTextView.setText(grievanceTypes.get(position - 1).getName());
+                                                                listTextView.dismissDropDown();
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onNothingSelected(AdapterView<?> parent) {
+
+                                                        }
+                                                    });
+
+                                                    final ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, strings);
+                                                    listTextView.setHint("Complaint Type*");
+                                                    listTextView.setOnClickListener(null);
+                                                    listTextView.setAdapter(autoCompleteAdapter);
+                                                    listTextView.setThreshold(1);
+                                                    listTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
+                                                    listTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                                                        @Override
+                                                        public void onClick(DrawablePosition target) {
+                                                            if (target == DrawablePosition.RIGHT) {
+                                                                dropdown.performClick();
+                                                            }
+                                                        }
+                                                    });
+                                                    listTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                                                            @Override
+                                                                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                                                                                String s = listTextView.getText().toString();
+                                                                                                for (GrievanceType grievanceType : grievanceTypes) {
+                                                                                                    if (s.equals(grievanceType.getName()))
+                                                                                                        typeID = grievanceType.getId();
+                                                                                                }
+                                                                                            }
+                                                                                        }
+
+                                                    );
+                                                    button.setOnClickListener(new View.OnClickListener()
+
+                                                                              {
+                                                                                  @Override
+                                                                                  public void onClick(View v) {
+
+                                                                                      String complaintDetails = details.getText().toString().trim();
+                                                                                      double lat;
+                                                                                      double lng;
+                                                                                      String landmarkDetails = landmark.getText().toString().trim();
+
+                                                                                      if (locationID == 0 && (marker == null)) {
+                                                                                          Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_SHORT);
+                                                                                          toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                          toast.show();
+                                                                                      } else if (typeID == 0) {
+                                                                                          Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
+                                                                                          toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                          toast.show();
+                                                                                      } else if (complaintDetails.isEmpty() || complaintDetails.length() < 10) {
+                                                                                          Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT);
+                                                                                          toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                                                          toast.show();
+                                                                                      } else {
+                                                                                          if (marker != null) {
+                                                                                              lat = marker.getPosition().latitude;
+                                                                                              lng = marker.getPosition().longitude;
+                                                                                              progressDialog.show();
+                                                                                              submit(new GrievanceRequest(lat, lng, complaintDetails, typeID, landmarkDetails));
+                                                                                          } else {
+                                                                                              progressDialog.show();
+                                                                                              submit(new GrievanceRequest(locationID, complaintDetails, typeID, landmarkDetails));
+                                                                                          }
+                                                                                      }
+
+
+                                                                                  }
+                                                                              }
+
+                                                    );
+
+
+                                                }
+
+                                                @Override
+                                                public void failure(RetrofitError error) {
+                                                    listTextView.setOnClickListener(null);
+                                                    listTextView.setHint("Loading Failed");
+                                                    listTextView.setCompoundDrawables(null, null, null, null);
+                                                    if (error.getLocalizedMessage() != null)
+                                                        if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                            toast.show();
+                                                            sessionManager.logoutUser();
+                                                            startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
+                                                        } else {
+                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
+                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                            toast.show();
+                                                        }
+                                                    else {
+                                                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
+                                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                                        toast.show();
+                                                    }
+                                                    listTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                                                    listTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                                                        @Override
+                                                        public void onClick(DrawablePosition target) {
+
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+                                    );
+                                }
+                            }
+                        });
                     }
                 }
 
@@ -409,7 +578,9 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
                     dialog.show();
                 } else {
-                    Toast.makeText(NewGrievanceActivity.this, "Limited to 3 photos", Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(NewGrievanceActivity.this, "Limited to 3 image", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
                 }
 
             }
@@ -581,12 +752,12 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
     }
 
     //Invokes call to API
-    private void submit(Complaint complaint) {
+    private void submit(GrievanceRequest grievanceRequest) {
 
         //Used to upload multiple multipart parts with the same field name
         MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 
-        multipartTypedOutput.addPart("json_complaint", new TypedString(new Gson().toJson(complaint)));
+        multipartTypedOutput.addPart("json_complaint", new TypedString(new Gson().toJson(grievanceRequest)));
 
         if (uploadCount != 0) {
             for (Uri uri : uriArrayList) {
@@ -620,7 +791,9 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             @Override
             public void success(JsonObject jsonObject, Response response) {
 
-                Toast.makeText(NewGrievanceActivity.this, "Grievance successfully registered", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Grievance successfully registered", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
 
                 progressDialog.dismiss();
 
@@ -637,20 +810,32 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                 progressDialog.dismiss();
                 if (error.getLocalizedMessage() != null)
                     if (error.getLocalizedMessage().equals("Invalid access token")) {
-                        Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT).show();
+                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
                         sessionManager.logoutUser();
                         startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
                     } else if (error.getLocalizedMessage().contains("400")) {
                         try {
                             ErrorResponse errorResponse = (ErrorResponse) error.getBodyAs(ErrorResponse.class);
-                            Toast.makeText(NewGrievanceActivity.this, errorResponse.getErrorStatus().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(NewGrievanceActivity.this, errorResponse.getErrorStatus().getMessage(), Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         } catch (Exception e) {
-                            Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
                         }
-                    } else
-                        Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+                    }
+                else {
+                    Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                }
 
             }
         });
@@ -758,7 +943,9 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             if (ThumbImage != null) {
                 ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
             } else {
-                Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
             }
 
             imageView.setImageBitmap(ThumbImage);

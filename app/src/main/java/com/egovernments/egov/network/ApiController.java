@@ -11,7 +11,11 @@ import com.egovernments.egov.models.GrievanceTypeAPIResponse;
 import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
-import com.egovernments.egov.models.User;
+import com.egovernments.egov.models.PropertyTaxCallback;
+import com.egovernments.egov.models.PropertyTaxRequest;
+import com.egovernments.egov.models.RegisterRequest;
+import com.egovernments.egov.models.WaterTaxCallback;
+import com.egovernments.egov.models.WaterTaxRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -24,13 +28,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import retrofit.Callback;
-import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Header;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
@@ -39,45 +43,49 @@ import retrofit.mime.MultipartTypedOutput;
 
 public class ApiController {
 
-    private static LoginInterface loginInterface = null;
-
-    private static APIInterface APIInterface = null;
+    public static APIInterface apiInterface = null;
 
     private final static OkHttpClient client = SSLTrustManager.createClient();
 
-    private static SessionManager sessionManager;
+    public static String getCityURL(String url) throws IOException{
 
-    public static String getCityURL(String url) throws IOException {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+            Response response = client.newCall(request).execute();
 
-        Response response = client.newCall(request).execute();
-
-        return response.body().string();
+            return response.body().string();
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 
-    public static List<City> getAllCitiesURL(String url) throws IOException {
+    public static List<City> getAllCitiesURLs(String url) throws IOException {
 
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
 
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful())
-            throw new IOException();
-        Type type = new TypeToken<List<City>>() {
-        }.getType();
-        return new Gson().fromJson(response.body().charStream(), type);
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful())
+                throw new IOException();
+            Type type = new TypeToken<List<City>>() {
+            }.getType();
+            return new Gson().fromJson(response.body().charStream(), type);
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 
     //Sets up the API client
     public static APIInterface getAPI(Context context) {
-        sessionManager = new SessionManager(context);
-        if (APIInterface == null) {
+        SessionManager sessionManager = new SessionManager(context);
+        if (apiInterface == null) {
 
             RestAdapter restAdapter = new RestAdapter
                     .Builder()
@@ -86,16 +94,24 @@ public class ApiController {
                     .setErrorHandler(new CustomErrorHandler())
                     .build();
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-            APIInterface = restAdapter.create(APIInterface.class);
+            apiInterface = restAdapter.create(APIInterface.class);
         }
-        return APIInterface;
+        return apiInterface;
     }
 
     public interface APIInterface {
 
         @POST(ApiUrl.CITIZEN_REGISTER)
-        void registerUser(@Body User user,
+        void registerUser(@Body RegisterRequest registerRequest,
                           Callback<JsonObject> jsonObjectCallback);
+
+        @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_LOGIN)
+        void login(@Header("Authorization") String authorization, @Field("username") String username,
+                   @Field("scope") String scope,
+                   @Field("password") String password,
+                   @Field("grant_type") String grant_type,
+                   Callback<JsonObject> jsonObjectCallback);
 
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGOUT)
@@ -139,6 +155,16 @@ public class ApiController {
                              @Query(value = "access_token", encodeValue = false) String access_token,
                              Callback<JsonObject> jsonObjectCallback);
 
+        @POST(ApiUrl.PROPERTY_TAX_DETAILS)
+        void getPropertyTax(@Header("Referer") String referer,
+                            @Body PropertyTaxRequest propertyTaxRequest,
+                            Callback<PropertyTaxCallback> taxCallback);
+
+        @POST(ApiUrl.WATER_TAX_DETAILS)
+        void getWaterTax(@Header("Referer") String referer,
+                         @Body WaterTaxRequest waterTaxRequest,
+                         Callback<WaterTaxCallback> taxCallback);
+
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_ACTIVATE)
         void activate(@Field("userName") String username,
@@ -164,43 +190,6 @@ public class ApiController {
         void updateProfile(@Body Profile profile,
                            @Query(value = "access_token", encodeValue = false) String access_token,
                            Callback<ProfileAPIResponse> profileAPIResponseCallback);
-    }
-
-
-    //Separate interface for login calls as base url differs slightly, and as request interceptor must be set to add header
-    public static LoginInterface getLoginAPI(Context context) {
-
-        sessionManager = new SessionManager(context);
-        RestAdapter.Builder builder = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
-                .setErrorHandler(new CustomErrorHandler())
-                .setEndpoint(sessionManager.getBaseURL());
-
-        builder.setRequestInterceptor(new RequestInterceptor() {
-            @Override
-            public void intercept(RequestFacade request) {
-                //noinspection SpellCheckingInspection
-                request.addHeader("Authorization", "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=");
-            }
-        });
-        RestAdapter restAdapter = builder.build();
-        restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        loginInterface = restAdapter.create(LoginInterface.class);
-        APIInterface = null;
-
-        return loginInterface;
-    }
-
-    public interface LoginInterface {
-
-        @FormUrlEncoded
-        @POST(ApiUrl.CITIZEN_LOGIN)
-        void login(@Field("username") String username,
-                   @Field("scope") String scope,
-                   @Field("password") String password,
-                   @Field("grant_type") String grant_type,
-                   Callback<JsonObject> jsonObjectCallback);
-
     }
 
 

@@ -6,17 +6,18 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.widget.Toast;
 
 import com.egovernments.egov.activities.GrievanceActivity;
 import com.egovernments.egov.activities.LoginActivity;
-import com.egovernments.egov.activities.NotificationsActivity;
 import com.egovernments.egov.activities.ProfileActivity;
+import com.egovernments.egov.events.GrievanceUpdateFailedEvent;
 import com.egovernments.egov.events.GrievancesUpdatedEvent;
 import com.egovernments.egov.events.ProfileUpdatedEvent;
-import com.egovernments.egov.events.UpdateFailedEvent;
 import com.egovernments.egov.models.GrievanceAPIResponse;
 import com.egovernments.egov.models.ProfileAPIResponse;
+import com.egovernments.egov.models.ProfileUpdateFailedEvent;
 import com.google.gson.JsonObject;
 
 import de.greenrobot.event.EventBus;
@@ -71,7 +72,6 @@ public class UpdateService extends Service {
                     updateComplaints("1");
                     break;
             }
-            NotificationsActivity.createList();
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -123,7 +123,7 @@ public class UpdateService extends Service {
 
                                 }
                             }
-                            EventBus.getDefault().post(new UpdateFailedEvent());
+                            EventBus.getDefault().post(new GrievanceUpdateFailedEvent());
 
                         }
                     }
@@ -160,6 +160,8 @@ public class UpdateService extends Service {
                             }
 
                         }
+                        ProfileActivity.isUpdateFailed = true;
+                        EventBus.getDefault().post(new ProfileUpdateFailedEvent());
                     }
 
                 }
@@ -170,7 +172,7 @@ public class UpdateService extends Service {
 
     private void renewCredentials() {
 
-        ApiController.getLoginAPI(UpdateService.this).login(sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
+        ApiController.getAPI(UpdateService.this).login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
                 sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString());
@@ -195,7 +197,9 @@ public class UpdateService extends Service {
 
         @Override
         public void run() {
-            Toast.makeText(UpdateService.this.getApplicationContext(), mText, Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(UpdateService.this.getApplicationContext(), mText, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
         }
     }
 }

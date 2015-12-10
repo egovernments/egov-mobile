@@ -22,7 +22,7 @@
 
 
     <application
-        android:name=".application.EGovApp"
+        android:name=".application.EgovAppConfig"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/egov_label"
@@ -76,26 +76,6 @@
         </activity>
 
         <activity
-            android:name=".activities.PropertyActivity"
-            android:label="@string/propertytax_label"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
-        </activity>
-
-        <activity
-            android:name=".activities.PropertyDetailsActivity"
-            android:label="@string/propertytax_label"
-            android:parentActivityName=".activities.PropertyActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.PropertyActivity" />
-        </activity>
-
-        <activity
             android:name=".activities.NewGrievanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/newgrievance_label"
@@ -108,23 +88,23 @@
         </activity>
 
         <activity
-            android:name=".activities.NewPropertyActivity"
+            android:name=".activities.PropertyTaxSearchActivity"
             android:label="@string/propertytax_label"
-            android:parentActivityName=".activities.PropertyActivity"
+            android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.PropertyActivity" />
+                android:value="com.egovernments.egov.activities.HomeActivity" />
         </activity>
 
         <activity
-            android:name=".activities.NewPropertyDetailsActivity"
-            android:label="@string/propertytax_label"
-            android:parentActivityName=".activities.NewPropertyActivity"
+            android:name=".activities.WaterTaxSearchActivity"
+            android:label="@string/watertax_label"
+            android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.NewPropertyActivity" />
+                android:value="com.egovernments.egov.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -171,16 +151,6 @@
         </activity>
 
         <activity
-            android:name=".activities.NotificationsActivity"
-            android:label="@string/notifications_label"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
-        </activity>
-
-        <activity
             android:name=".activities.HomeActivity"
             android:label="@string/home_label"
             android:theme="@style/AppTheme" />
@@ -203,7 +173,7 @@
         </activity>
 
         <activity
-            android:name=".activities.ImageViewerActivity"
+            android:name=".activities.GrievanceImageViewerActivity"
             android:parentActivityName=".activities.GrievanceDetailsActivity"
             android:theme="@style/AppTheme">
             <meta-data
