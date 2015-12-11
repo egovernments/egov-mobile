@@ -93,7 +93,7 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
         ApiController.getAPI(WaterTaxSearchActivity.this)
                 .getWaterTax(ApiUrl.REFERRER_URL,
-                        new WaterTaxRequest(/*String.format("%04d", sessionManager.getUrlLocationCode())*/"0001", code),
+                        new WaterTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
                         new Callback<WaterTaxCallback>() {
                             @Override
                             public void success(WaterTaxCallback taxCallback, Response response) {
