@@ -65,8 +65,10 @@ public class ProfileActivity extends BaseActivity {
         if (profile != null)
             updateProfile();
 
-        if (isUpdateFailed)
+        if (isUpdateFailed) {
             progressBar.setVisibility(View.GONE);
+            isUpdateFailed = false;
+        }
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.profile_refreshlayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

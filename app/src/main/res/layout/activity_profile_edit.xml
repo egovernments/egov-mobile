@@ -28,51 +28,51 @@
             android:padding="8dp">
 
             <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_margin="10dp"-->
-                <!--android:orientation="vertical">-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="10dp"-->
+            <!--android:orientation="vertical">-->
 
-                <!--<TextView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginBottom="5dp"-->
-                    <!--android:text="To migrate your account to a different municipality, please select an option here. If you have previously registered in the selected municipality, you may login to it without performing this action." />-->
+            <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:text="To migrate your account to a different municipality, please select an option here. If you have previously registered in the selected municipality, you may login to it without performing this action." />-->
 
-                <!--<FrameLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content">-->
+            <!--<FrameLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
 
-                    <!--<Spinner-->
-                        <!--android:id="@+id/profile_city"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="50dp"-->
-                        <!--android:background="@drawable/top_edittext"-->
-                        <!--android:dropDownVerticalOffset="35dp"-->
-                        <!--android:focusable="false"-->
-                        <!--android:spinnerMode="dropdown"-->
-                        <!--android:visibility="invisible" />-->
+            <!--<Spinner-->
+            <!--android:id="@+id/profile_city"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="@drawable/top_edittext"-->
+            <!--android:dropDownVerticalOffset="35dp"-->
+            <!--android:focusable="false"-->
+            <!--android:spinnerMode="dropdown"-->
+            <!--android:visibility="invisible" />-->
 
-                    <!--<com.egovernments.egov.helper.CustomAutoCompleteTextView-->
-                        <!--android:id="@+id/profile_spinner_autocomplete"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="50dp"-->
-                        <!--android:background="@drawable/top_edittext"-->
-                        <!--android:drawableLeft="@drawable/ic_location_city_black_24dp"-->
-                        <!--android:drawablePadding="5dp"-->
-                        <!--android:drawableStart="@drawable/ic_location_city_black_24dp"-->
-                        <!--android:gravity="center_vertical"-->
-                        <!--android:hint="@string/loading_label"-->
-                        <!--android:paddingEnd="5dp"-->
-                        <!--android:paddingLeft="5dp"-->
-                        <!--android:paddingRight="5dp"-->
-                        <!--android:paddingStart="5dp"-->
-                        <!--android:singleLine="true"-->
-                        <!--android:textColor="#000"-->
-                        <!--android:textColorHint="#a8a5a5"-->
-                        <!--android:textSize="15sp" />-->
+            <!--<com.egovernments.egov.helper.CustomAutoCompleteTextView-->
+            <!--android:id="@+id/profile_spinner_autocomplete"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="@drawable/top_edittext"-->
+            <!--android:drawableLeft="@drawable/ic_location_city_black_24dp"-->
+            <!--android:drawablePadding="5dp"-->
+            <!--android:drawableStart="@drawable/ic_location_city_black_24dp"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:hint="@string/loading_label"-->
+            <!--android:paddingEnd="5dp"-->
+            <!--android:paddingLeft="5dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:paddingStart="5dp"-->
+            <!--android:singleLine="true"-->
+            <!--android:textColor="#000"-->
+            <!--android:textColorHint="#a8a5a5"-->
+            <!--android:textSize="15sp" />-->
 
-                <!--</FrameLayout>-->
+            <!--</FrameLayout>-->
 
             <!--</LinearLayout>-->
 

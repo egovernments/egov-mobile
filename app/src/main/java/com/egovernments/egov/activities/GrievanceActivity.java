@@ -13,8 +13,8 @@ import android.widget.ProgressBar;
 
 import com.egovernments.egov.R;
 import com.egovernments.egov.adapters.GrievanceAdapter;
-import com.egovernments.egov.events.GrievancesUpdatedEvent;
 import com.egovernments.egov.events.GrievanceUpdateFailedEvent;
+import com.egovernments.egov.events.GrievancesUpdatedEvent;
 import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.network.UpdateService;
@@ -27,6 +27,8 @@ import de.greenrobot.event.EventBus;
  * The activity containing grievance list
  **/
 
+
+//TODO pull to refresh not working on empty list
 
 public class GrievanceActivity extends BaseActivity {
 
@@ -47,12 +49,13 @@ public class GrievanceActivity extends BaseActivity {
 
     //The number of pages which have been loaded
     public static int pageLoaded = 0;
-
     private int previousTotal = 0;
-    private boolean loading = true;
     private int visibleThreshold = 5;
-
     private final int ACTION_UPDATE_REQUIRED = 111;
+
+    private boolean loading = true;
+    public static boolean isUpdateFailed = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +166,11 @@ public class GrievanceActivity extends BaseActivity {
 
             newComplaintButtonCompat.setOnClickListener(onClickListener);
 
+        }
+
+        if (isUpdateFailed) {
+            progressBar.setVisibility(View.GONE);
+            isUpdateFailed = false;
         }
     }
 

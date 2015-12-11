@@ -41,6 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -88,7 +89,7 @@ import retrofit.mime.TypedString;
 /**
  * The Grievance creation page activity
  **/
-//TODO clear marker button on map, frequent types
+//TODO frequent types
 
 public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCallback {
 
@@ -127,7 +128,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
     private int uploadCount = 0;
 
-    //Used as a crude stack to maintain unique image IDs
+    //Used as to maintain unique image IDs
     private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
 
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
@@ -599,6 +600,19 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             pictureAddButtonCompat.setOnClickListener(onClickListener);
         }
 
+        ImageButton imageButton = (ImageButton) findViewById(R.id.map_marker_clear_button);
+        Drawable drawable = ContextCompat.getDrawable(NewGrievanceActivity.this, R.drawable.ic_cancel_white_24dp);
+        drawable.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        imageButton.setImageDrawable(drawable);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (marker != null)
+                    marker.remove();
+                marker = null;
+            }
+        });
+
     }
 
 
@@ -661,7 +675,6 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                 e.printStackTrace();
             }
 
-            //Crude pop from the crude stack
             imageID.remove(0);
 
             viewPager.setCurrentItem(uriArrayList.size());
@@ -884,7 +897,6 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
             uriArrayList.remove(position);
             uploadCount--;
 
-            //Crude push to crude stack
             imageID.add(String.valueOf(position + 1));
 
             this.notifyDataSetChanged();

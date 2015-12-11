@@ -262,7 +262,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_margin="2dp">
+                    android:layout_margin="2dp"
+                    android:background="@android:color/white">
 
                     <ProgressBar
                         android:id="@+id/grievance_history_placeholder"
@@ -276,7 +277,6 @@
                         android:id="@+id/grievance_comments"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:background="@android:color/white"
                         android:fadeScrollbars="false"
                         android:scrollbarAlwaysDrawVerticalTrack="true"
                         android:scrollbars="vertical"

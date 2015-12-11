@@ -123,6 +123,7 @@ public class UpdateService extends Service {
 
                                 }
                             }
+                            GrievanceActivity.isUpdateFailed = true;
                             EventBus.getDefault().post(new GrievanceUpdateFailedEvent());
 
                         }
@@ -134,8 +135,6 @@ public class UpdateService extends Service {
     }
 
     private void updateProfile() {
-
-        ProfileActivity.profile = null;
 
         if (sessionManager.getAccessToken() != null) {
             ApiController.getAPI(UpdateService.this).getProfile(sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
