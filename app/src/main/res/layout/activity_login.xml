@@ -48,7 +48,7 @@
                         android:spinnerMode="dropdown"
                         android:visibility="invisible" />
 
-                    <com.egovernments.egov.helper.CustomAutoCompleteTextView
+                    <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
                         android:id="@+id/login_spinner_autocomplete"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"

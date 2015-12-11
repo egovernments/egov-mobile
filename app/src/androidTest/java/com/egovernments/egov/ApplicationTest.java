@@ -1,4 +1,4 @@
-package com.egovernments.egov;
+package org.egovernments.egoverp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

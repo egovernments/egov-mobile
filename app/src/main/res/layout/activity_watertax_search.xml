@@ -10,7 +10,7 @@
         android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <com.egovernments.egov.helper.CustomEditText
+        <org.egovernments.egoverp.helper.CustomEditText
             android:id="@+id/property_searchTextbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

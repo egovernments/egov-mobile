@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.egovernments.egov"
+        applicationId "org.egovernments.egoverp"
         minSdkVersion 13
         targetSdkVersion 23
         versionCode 1

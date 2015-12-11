@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.egovernments.egov"
+    package="org.egovernments.egoverp"
     tools:ignore="UnusedAttribute">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -62,7 +62,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.LoginActivity" />
+                android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
 
         <activity
@@ -72,7 +72,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
+                android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -94,7 +94,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
+                android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -104,7 +104,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
+                android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -127,7 +127,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.LoginActivity" />
+                android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
 
         <activity
@@ -137,7 +137,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.ProfileActivity" />
+                android:value="org.egovernments.egoverp.activities.ProfileActivity" />
         </activity>
 
         <activity
@@ -147,7 +147,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.HomeActivity" />
+                android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
 
         <activity
@@ -169,7 +169,7 @@
             android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.LoginActivity" />
+                android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
 
         <activity
@@ -178,7 +178,7 @@
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.egovernments.egov.activities.GrievanceDetailsActivity" />
+                android:value="org.egovernments.egoverp.activities.GrievanceDetailsActivity" />
         </activity>
 
         <service android:name=".network.UpdateService" />

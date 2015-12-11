@@ -163,7 +163,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.egovernments.egov.helper.CustomAutoCompleteTextView
+                        <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
                             android:id="@+id/grievancetype_spinner_placeholder"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
