@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -190,7 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void submit(final String name, final String email, final String phoneno, final String password, final String confirmpassword) {
 
-        if (url == null || name.isEmpty() || email.isEmpty() || phoneno.isEmpty() || password.isEmpty() || confirmpassword.isEmpty()) {
+        if (url == null || TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneno) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmpassword)) {
             Toast toast = Toast.makeText(RegisterActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();

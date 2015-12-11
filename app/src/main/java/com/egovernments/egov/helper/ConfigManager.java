@@ -36,12 +36,4 @@ public class ConfigManager {
         return this.get(key, "").toString();
     }
 
-    public int getInt(String key) {
-        return Integer.valueOf(this.get(key, 0).toString());
-    }
-
-    public float getFloat(String key) {
-        return Float.valueOf(this.get(key, 0).toString());
-    }
-
 }

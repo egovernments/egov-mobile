@@ -29,7 +29,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -91,7 +94,7 @@ import retrofit.mime.TypedString;
  **/
 //TODO frequent types
 
-public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCallback {
+public class NewGrievanceActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private List<GrievanceType> grievanceTypes = new ArrayList<>();
 
@@ -149,6 +152,12 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
 
 
         sessionManager = new SessionManager(getApplicationContext());
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         cacheDir = this.getExternalCacheDir() == null ? this.getCacheDir() : this.getExternalCacheDir();
 
@@ -344,7 +353,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                               Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
                                                               toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                               toast.show();
-                                                          } else if (complaintDetails.isEmpty() || complaintDetails.length() < 10) {
+                                                          } else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
                                                               Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT);
                                                               toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                               toast.show();
@@ -475,7 +484,7 @@ public class NewGrievanceActivity extends BaseActivity implements OnMapReadyCall
                                                                                           Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
                                                                                           toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                                                           toast.show();
-                                                                                      } else if (complaintDetails.isEmpty() || complaintDetails.length() < 10) {
+                                                                                      } else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
                                                                                           Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT);
                                                                                           toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                                                           toast.show();

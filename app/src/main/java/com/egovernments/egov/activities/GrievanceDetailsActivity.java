@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +37,7 @@ import com.egovernments.egov.models.GrievanceCommentAPIResult;
 import com.egovernments.egov.models.GrievanceUpdate;
 import com.egovernments.egov.network.AddressService;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.SessionManager;
 import com.egovernments.egov.network.UpdateService;
 import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
@@ -53,7 +57,7 @@ import retrofit.client.Response;
  * Displays the details of a complaint when clicked in GrievanceActivity recycler view
  **/
 
-public class GrievanceDetailsActivity extends BaseActivity {
+public class GrievanceDetailsActivity extends AppCompatActivity {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
 
@@ -69,6 +73,8 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
     private String action;
 
+    private SessionManager sessionManager;
+
     private boolean isComment = false;
 
     private ProgressBar progressBar;
@@ -78,6 +84,14 @@ public class GrievanceDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grievance_details);
         grievance = (Grievance) getIntent().getSerializableExtra(GRIEVANCE_ITEM);
+
+        sessionManager = new SessionManager(GrievanceDetailsActivity.this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView complaintDate = (TextView) findViewById(R.id.details_complaint_date);
         TextView complaintType = (TextView) findViewById(R.id.details_complaint_type);
@@ -138,9 +152,10 @@ public class GrievanceDetailsActivity extends BaseActivity {
 
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
-        if (grievance.getLandmarkDetails().isEmpty()) {
-            findViewById(R.id.details_complaint_landmark_label).setVisibility(View.GONE);
-            complaintLandmark.setVisibility(View.GONE);
+        if (TextUtils.isEmpty(grievance.getLandmarkDetails())) {
+
+                findViewById(R.id.details_complaint_landmark_label).setVisibility(View.GONE);
+                complaintLandmark.setVisibility(View.GONE);
 
         } else
             complaintLandmark.setText(grievance.getLandmarkDetails());
@@ -245,7 +260,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
                     toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                     toast.show();
                 } else {
-                    if ((action.equals("Comment") || action.equals("Re-open")) && comment.isEmpty()) {
+                    if ((action.equals("Comment") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
                         {
@@ -390,7 +405,7 @@ public class GrievanceDetailsActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             if (grievance.getSupportDocsSize() != 0)
-                return GrievanceImageFragment.instantiateItem(position, getSessionManager().getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
+                return GrievanceImageFragment.instantiateItem(position, sessionManager.getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
 
             return null;
         }

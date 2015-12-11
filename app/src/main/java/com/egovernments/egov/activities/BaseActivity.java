@@ -2,10 +2,13 @@ package com.egovernments.egov.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.egovernments.egov.R;
@@ -78,8 +82,6 @@ public class BaseActivity extends AppCompatActivity {
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
         assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
 
         mActionBarTitle = actionBar.getTitle();
 
@@ -117,42 +119,68 @@ public class BaseActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent intent;
+                Handler drawerClose = new Handler();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        drawerLayout.closeDrawer(Gravity.LEFT);
+                    }
+                };
 
                 switch (position) {
 
                     case 0:
-                        intent = new Intent(BaseActivity.this, GrievanceActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
                         if (!getTitle().toString().equals(getString(R.string.home_label)))
                             finish();
+                        else
+                            drawerClose.postDelayed(runnable, 1000);
                         break;
 
                     case 1:
-                        intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        if (!getTitle().toString().equals(getString(R.string.home_label)))
-                            finish();
+                        if (!getTitle().toString().equals(getString(R.string.grievances_label))) {
+                            intent = new Intent(BaseActivity.this, GrievanceActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                                finish();
+                        } else
+                            drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
 
                     case 2:
-                        intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        if (!getTitle().toString().equals(getString(R.string.home_label)))
-                            finish();
+                        if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
+                            intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                                finish();
+                        } else
+                            drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
 
                     case 3:
-                        intent = new Intent(BaseActivity.this, ProfileActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        if (!getTitle().toString().equals(getString(R.string.home_label)))
-                            finish();
+                        if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
+                            intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                                finish();
+                        } else
+                            drawerLayout.closeDrawer(Gravity.LEFT);
                         break;
 
                     case 4:
+                        if (!getTitle().toString().equals(getString(R.string.profile_label))) {
+                            intent = new Intent(BaseActivity.this, ProfileActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                                finish();
+                        } else
+                            drawerLayout.closeDrawer(Gravity.LEFT);
+                        break;
+
+                    case 5:
                         progressDialog.show();
                         ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
                             @Override
@@ -193,8 +221,9 @@ public class BaseActivity extends AppCompatActivity {
     //Method fills the nav drawer's ArrayList
     private void fillList() {
 
+        arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label)));
         arrayList.add(new NavigationItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.propertytax_label)));
+        arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label)));
         arrayList.add(new NavigationItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
         arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
         arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
@@ -225,6 +254,7 @@ public class BaseActivity extends AppCompatActivity {
     private class NavigationViewHolder {
         private ImageView nav_item_icon;
         private TextView nav_item_text;
+        private RelativeLayout nav_drawer_row;
     }
 
     //Custom adapter for nav drawer
@@ -264,6 +294,7 @@ public class BaseActivity extends AppCompatActivity {
                 navigationViewHolder = new NavigationViewHolder();
                 navigationViewHolder.nav_item_text = (TextView) view.findViewById(R.id.title);
                 navigationViewHolder.nav_item_icon = (ImageView) view.findViewById(R.id.icon);
+                navigationViewHolder.nav_drawer_row = (RelativeLayout) view.findViewById(R.id.navdrawer_row);
 
                 view.setTag(navigationViewHolder);
             }
@@ -273,18 +304,12 @@ public class BaseActivity extends AppCompatActivity {
 
             NavigationItem navigationItem = getItem(position);
             navigationViewHolder.nav_item_text.setText(navigationItem.getNavTitle());
+            if (mActionBarTitle.equals(navigationItem.getNavTitle()))
+                navigationViewHolder.nav_drawer_row.setBackgroundColor(Color.parseColor("#90CAF9"));
             navigationViewHolder.nav_item_icon.setImageResource(navigationItem.getNavIcon());
 
             return view;
         }
 
     }
-
-
-    //Allows child classes to access session manager
-    protected SessionManager getSessionManager() {
-        return sessionManager;
-    }
-
-
 }

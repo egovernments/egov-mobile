@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navdrawer_row"
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:gravity="center_vertical">
@@ -23,9 +24,5 @@
         android:layout_toRightOf="@+id/icon"
         android:gravity="center_vertical"
         android:textColor="@android:color/black" />
-
-    <!--android:minHeight="?android:attr/listPreferredItemHeightSmall"-->
-    <!--android:textAppearance="?android:attr/textAppearanceListItemSmall"-->
-
 
 </RelativeLayout>

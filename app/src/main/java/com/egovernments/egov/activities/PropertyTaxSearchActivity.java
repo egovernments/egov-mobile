@@ -94,7 +94,7 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
         ApiController.getAPI(PropertyTaxSearchActivity.this)
                 .getPropertyTax(ApiUrl.REFERRER_URL,
-                        new PropertyTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
+                        new PropertyTaxRequest(/*String.format("%04d", sessionManager.getUrlLocationCode())*/"0001", code),
                         new Callback<PropertyTaxCallback>() {
                             @Override
                             public void success(PropertyTaxCallback propertyTaxCallback, Response response) {

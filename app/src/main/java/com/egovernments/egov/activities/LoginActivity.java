@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -213,7 +214,7 @@ public class LoginActivity extends Activity {
     //Invokes call to API
     private void submit(final String username, final String password) {
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             Toast toast = Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();

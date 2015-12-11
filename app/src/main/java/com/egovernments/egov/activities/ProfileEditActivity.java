@@ -5,6 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +24,7 @@ import com.egovernments.egov.models.Profile;
 import com.egovernments.egov.models.ProfileAPIResponse;
 import com.egovernments.egov.models.errors.ErrorResponse;
 import com.egovernments.egov.network.ApiController;
+import com.egovernments.egov.network.SessionManager;
 import com.egovernments.egov.network.UpdateService;
 
 import java.text.ParseException;
@@ -39,7 +43,7 @@ import retrofit.client.Response;
  * The profile edit screen activity
  **/
 
-public class ProfileEditActivity extends BaseActivity {
+public class ProfileEditActivity extends AppCompatActivity {
 
     private EditText profileName;
     private EditText profilePhone;
@@ -50,6 +54,8 @@ public class ProfileEditActivity extends BaseActivity {
     private EditText profilePAN;
 
     private RadioGroup profileGender;
+
+    private SessionManager sessionManager;
 
     private ProgressDialog progressDialog;
 
@@ -63,6 +69,14 @@ public class ProfileEditActivity extends BaseActivity {
         setContentView(R.layout.activity_profile_edit);
 
         Profile profile = (Profile) getIntent().getSerializableExtra(PROFILE_EDIT_CONTENT);
+
+        sessionManager = new SessionManager(ProfileEditActivity.this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -194,17 +208,17 @@ public class ProfileEditActivity extends BaseActivity {
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else if (mobileNumber.isEmpty()) {
+        } else if (TextUtils.isEmpty(mobileNumber)) {
             Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter mobile number", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else if (emailId.isEmpty()) {
+        } else if (TextUtils.isEmpty(emailId)) {
             Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter email ID", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else if (!altContactNumber.isEmpty() && altContactNumber.length() != 10) {
+        } else if (!TextUtils.isEmpty(altContactNumber) && altContactNumber.length() != 10) {
             Toast toast = Toast.makeText(ProfileEditActivity.this, "Alternate Phone no. must be 10 digits", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();

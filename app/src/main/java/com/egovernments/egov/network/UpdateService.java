@@ -96,12 +96,14 @@ public class UpdateService extends Service {
                                 GrievanceActivity.grievanceList.add(null);
                                 GrievanceActivity.grievanceAdapter = null;
                                 EventBus.getDefault().post(new GrievancesUpdatedEvent());
+                                if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
+                                    GrievanceActivity.grievanceList.remove(GrievanceActivity.grievanceList.size() - 1);
+                                }
                             }
                             //If the request is a next page request
                             else {
                                 GrievanceActivity.grievanceList.addAll(GrievanceActivity.grievanceList.size() - 1, grievanceAPIResponse.getResult());
                                 if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
-
                                     GrievanceActivity.grievanceList.remove(GrievanceActivity.grievanceList.size() - 1);
                                 }
                                 EventBus.getDefault().post(new GrievancesUpdatedEvent());

@@ -19,6 +19,7 @@ import com.egovernments.egov.helper.CardViewOnClickListener;
 import com.egovernments.egov.models.Grievance;
 import com.egovernments.egov.network.UpdateService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -28,7 +29,7 @@ import de.greenrobot.event.EventBus;
  **/
 
 
-//TODO pull to refresh not working on empty list
+//TODO pagination not working on first list load
 
 public class GrievanceActivity extends BaseActivity {
 
@@ -67,6 +68,7 @@ public class GrievanceActivity extends BaseActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recylerview);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setClickable(true);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -141,8 +143,12 @@ public class GrievanceActivity extends BaseActivity {
             progressBar.setVisibility(View.GONE);
             grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
             recyclerView.setAdapter(grievanceAdapter);
+        } else {
+            grievanceList = new ArrayList<>();
+            grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
+            recyclerView.setAdapter(grievanceAdapter);
+            grievanceList = null;
         }
-
 
         FloatingActionButton newComplaintButton = (FloatingActionButton) findViewById(R.id.list_fab);
         com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
@@ -231,6 +237,10 @@ public class GrievanceActivity extends BaseActivity {
     public void onEvent(GrievanceUpdateFailedEvent grievanceUpdateFailedEvent) {
         swipeRefreshLayout.setRefreshing(false);
         progressBar.setVisibility(View.GONE);
+        grievanceList = new ArrayList<>();
+        grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
+        recyclerView.setAdapter(grievanceAdapter);
+        grievanceList = null;
 
     }
 }

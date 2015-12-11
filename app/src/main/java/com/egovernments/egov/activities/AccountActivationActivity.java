@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -150,7 +151,7 @@ public class AccountActivationActivity extends AppCompatActivity {
     //Method invokes call to API
     private void submit(String activationCode) {
 
-        if (!activationCode.isEmpty()) {
+        if (!TextUtils.isEmpty(activationCode)) {
             ApiController.getAPI(AccountActivationActivity.this).activate(username, activationCode.toUpperCase(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {

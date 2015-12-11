@@ -146,30 +146,37 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (status) {
             case "REJECTED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_cancel_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
                 break;
             case "REGISTERED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 break;
             case "FORWARDED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 break;
             case "REOPENED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 break;
             case "PROCESSING":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_report_problem_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFC107"), PorterDuff.Mode.MULTIPLY);
                 break;
             case "COMPLETED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
                 break;
             case "WITHDRAWN":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
+                drawable.mutate();
                 drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
                 break;
             default:
@@ -217,7 +224,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-    //Viewholder for the grievance items
+    //ViewHolder for the grievance items
     public static class GrievanceViewHolder extends RecyclerView.ViewHolder {
 
         private TextView complaintType;
