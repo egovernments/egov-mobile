@@ -45,7 +45,7 @@
             android:id="@+id/header"
             style="@style/Header"
             android:layout_width="match_parent"
-            app:title="MyRMC" />
+            app:title="@string/app_name" />
 
         <org.egov.android.view.component.Body
             style="@style/Body"
