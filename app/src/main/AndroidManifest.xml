@@ -20,18 +20,15 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
-
     <application
         android:name=".application.EgovAppConfig"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/egov_label"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBUXMcf50iTY1ekEJyFU-a27s03ZjLaVGs" />
@@ -43,17 +40,16 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/egov_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-
         <activity
             android:name=".activities.RegisterActivity"
             android:label="@string/createaccount_label"
@@ -64,7 +60,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
-
         <activity
             android:name=".activities.GrievanceActivity"
             android:label="@string/grievances_label"
@@ -74,7 +69,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
-
         <activity
             android:name=".activities.NewGrievanceActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -86,17 +80,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
         </activity>
-
         <activity
             android:name=".activities.PropertyTaxSearchActivity"
             android:label="@string/propertytax_label"
             android:parentActivityName=".activities.HomeActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
-
+        <activity
+            android:name=".activities.PropertyTaxBreakupsDetails"
+            android:label="@string/title_activity_property_tax_breakups_details"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.PropertyTaxSearchActivity" />
+        </activity>
         <activity
             android:name=".activities.WaterTaxSearchActivity"
             android:label="@string/watertax_label"
@@ -106,7 +108,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
-
         <activity
             android:name=".activities.GrievanceDetailsActivity"
             android:label="@string/grievancedetails_label"
@@ -117,7 +118,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
         </activity>
-
         <activity
             android:name=".activities.AccountActivationActivity"
             android:label="@string/verify_account_label"
@@ -129,7 +129,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
-
         <activity
             android:name=".activities.ProfileEditActivity"
             android:label="@string/editprofile_label"
@@ -139,7 +138,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.ProfileActivity" />
         </activity>
-
         <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/profile_label"
@@ -149,17 +147,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
-
         <activity
             android:name=".activities.HomeActivity"
             android:label="@string/home_label"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".activities.BaseActivity"
             android:label="@string/home_label"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".activities.ForgotPasswordActivity"
             android:label="@string/account_recovery_label"
@@ -171,7 +166,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.LoginActivity" />
         </activity>
-
         <activity
             android:name=".activities.GrievanceImageViewerActivity"
             android:parentActivityName=".activities.GrievanceDetailsActivity"
@@ -182,8 +176,8 @@
         </activity>
 
         <service android:name=".network.UpdateService" />
-
         <service android:name=".network.AddressService" />
+
 
     </application>
 

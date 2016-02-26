@@ -11,19 +11,19 @@ public class TaxDetail {
     private String installment;
     @SerializedName("taxAmount")
     @Expose
-    private Integer taxAmount;
+    private Double taxAmount;
     @SerializedName("chqBouncePenalty")
     @Expose
-    private Integer chqBouncePenalty;
+    private Double chqBouncePenalty;
     @SerializedName("penalty")
     @Expose
-    private Integer penalty;
+    private Double penalty;
     @SerializedName("rebate")
     @Expose
-    private Integer rebate;
+    private Double rebate;
     @SerializedName("totalAmount")
     @Expose
-    private Integer totalAmount;
+    private Double totalAmount;
 
     /**
      * @return The installment
@@ -35,32 +35,32 @@ public class TaxDetail {
     /**
      * @return The taxAmount
      */
-    public Integer getTaxAmount() {
+    public Double getTaxAmount() {
         return taxAmount;
     }
 
     /**
      * @return The chqBouncePenalty
      */
-    public Integer getChqBouncePenalty() {
+    public Double getChqBouncePenalty() {
         return chqBouncePenalty;
     }
 
     /**
      * @return The penalty
      */
-    public Integer getPenalty() {
+    public Double getPenalty() {
         return penalty;
     }
 
     /**
      * @return The totalAmount
      */
-    public Integer getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public Integer getRebate() {
+    public Double getRebate() {
         return rebate;
     }
 }

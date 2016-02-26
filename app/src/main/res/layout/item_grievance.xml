@@ -3,12 +3,10 @@
     android:id="@+id/complaint_card"
     android:layout_width="match_parent"
     android:layout_height="160dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="15dp"
-    android:layout_marginRight="15dp"
-    android:layout_marginTop="5dp"
     android:paddingTop="5dp"
-    card_view:cardCornerRadius="4dp">
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardCornerRadius="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,11 +41,10 @@
             android:layout_gravity="top"
             android:layout_marginBottom="6dp"
             android:layout_marginEnd="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="6dp"
             android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="12sp" />
 
 
         <TextView
@@ -57,15 +54,13 @@
             android:layout_above="@+id/complaint_type"
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="4dp"
             android:layout_toEndOf="@+id/complaint_image"
             android:layout_toLeftOf="@+id/complaint_status"
             android:layout_toRightOf="@+id/complaint_image"
             android:layout_toStartOf="@+id/complaint_status"
             android:gravity="center_vertical"
             android:textColor="@color/primaryText"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/complaint_type"
@@ -87,6 +82,7 @@
             android:layout_marginStart="5dp"
             android:layout_toEndOf="@+id/complaint_image"
             android:layout_toRightOf="@+id/complaint_image"
+            android:textColor="@color/primaryText"
             android:gravity="center_vertical" />
 
 

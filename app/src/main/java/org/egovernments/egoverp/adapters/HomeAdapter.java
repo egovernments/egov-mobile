@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
@@ -38,7 +39,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         HomeItem homeItem = homeItemList.get(i);
 
         viewHolder.title.setText(homeItem.getTitle());
-        viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
+        //viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
+        viewHolder.cardIcon.setImageResource(homeItem.getIcon());
         viewHolder.description.setText(homeItem.getDescription());
 
         viewHolder.cardView.setOnClickListener(new CardViewOnClickListener(i, onItemClickCallback));
@@ -60,6 +62,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
         private TextView title;
         private TextView description;
+        private ImageView cardIcon;
 
         private CardView cardView;
 
@@ -67,6 +70,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
             super(v);
             title = (TextView) v.findViewById(R.id.home_item_title);
             description = (TextView) v.findViewById(R.id.home_item_text);
+            cardIcon=(ImageView)v.findViewById(R.id.home_item_icon);
             cardView = (CardView) v.findViewById(R.id.home_card);
         }
 

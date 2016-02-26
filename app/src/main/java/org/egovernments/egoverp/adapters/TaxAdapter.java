@@ -12,7 +12,9 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.models.TaxDetail;
 
 import java.lang.ref.WeakReference;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class TaxAdapter extends BaseAdapter {
 
@@ -50,10 +52,10 @@ public class TaxAdapter extends BaseAdapter {
 
             taxViewHolder = new TaxViewHolder();
             taxViewHolder.taxAmount = (TextView) view.findViewById(R.id.propertytax_taxamount);
-            taxViewHolder.taxChequePenalty = (TextView) view.findViewById(R.id.propertytax_chequepenalty);
+            /*taxViewHolder.taxChequePenalty = (TextView) view.findViewById(R.id.propertytax_chequepenalty);*/
             taxViewHolder.taxPenalty = (TextView) view.findViewById(R.id.propertytax_penalty);
             taxViewHolder.taxInstallment = (TextView) view.findViewById(R.id.propertytax_installment);
-            taxViewHolder.taxRebate = (TextView) view.findViewById(R.id.propertytax_rebate);
+            /*taxViewHolder.taxRebate = (TextView) view.findViewById(R.id.propertytax_rebate);*/
             taxViewHolder.taxTotal = (TextView) view.findViewById(R.id.propertytax_total);
 
             view.setTag(taxViewHolder);
@@ -64,12 +66,16 @@ public class TaxAdapter extends BaseAdapter {
         }
         TaxDetail taxDetail = (TaxDetail) getItem(position);
 
-        taxViewHolder.taxInstallment.setText("Installment: " + taxDetail.getInstallment());
-        taxViewHolder.taxAmount.setText("Amount: Rs. " + taxDetail.getTaxAmount());
-        taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());
-        taxViewHolder.taxPenalty.setText("Penalty: Rs. " + taxDetail.getPenalty());
-        taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());
-        taxViewHolder.taxTotal.setText("Total: Rs. " + taxDetail.getTotalAmount());
+        NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
+        nf1.setMinimumFractionDigits(2);
+        nf1.setMaximumFractionDigits(2);
+
+        taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
+        taxViewHolder.taxAmount.setText(nf1.format(taxDetail.getTaxAmount()));
+        /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
+        taxViewHolder.taxPenalty.setText(nf1.format(taxDetail.getPenalty()+taxDetail.getChqBouncePenalty()));
+        /*taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());*/
+        taxViewHolder.taxTotal.setText(nf1.format(taxDetail.getTotalAmount()));
 
         return view;
     }

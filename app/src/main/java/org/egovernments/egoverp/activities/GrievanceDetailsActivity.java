@@ -32,6 +32,7 @@ import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.Grievance;
+import org.egovernments.egoverp.models.GrievanceComment;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResult;
 import org.egovernments.egoverp.models.GrievanceUpdate;
@@ -46,6 +47,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -214,14 +216,18 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
 
                 progressBar.setVisibility(View.GONE);
                 listView.setVisibility(View.VISIBLE);
-                listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
-
-
+                List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
+                //this is bug from server side need to see
+                if(grievanceCommentAPIResult.getGrievanceComments().size()>2)
+                {
+                    grievanceComments.remove(grievanceComments.size()-1);
+                }
+                listView.setAdapter(new GrievanceCommentAdapter(grievanceComments, GrievanceDetailsActivity.this));
             }
 
             @Override
             public void failure(RetrofitError error) {
-                if (error.getLocalizedMessage() != null)
+                if (error.getLocalizedMessage() != null) {
                     if (error.getLocalizedMessage().equals("Invalid access token")) {
                         Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
@@ -234,6 +240,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
                     }
+                }
                 else {
                     Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);

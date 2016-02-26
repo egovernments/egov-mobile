@@ -3,64 +3,168 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:weightSum="2">
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
+
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="5dp">
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="INSTALLMENT #"
+            android:textSize="@dimen/field_labelSize" />
+
 
         <TextView
             android:id="@+id/propertytax_installment"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
+            android:textSize="22sp"/>
 
-        <TextView
-            android:id="@+id/propertytax_taxamount"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
 
-        <TextView
-            android:id="@+id/propertytax_penalty"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="5dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="DEMAND"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_taxamount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="PENALTY"
+                android:textSize="@dimen/field_labelSize" />
+
+
+            <TextView
+                android:id="@+id/propertytax_penalty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize" />
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginTop="5dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="COLLECTION"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize"
+                android:text="-"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="BALANCE"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <!--
+    <TextView
+        android:id="@+id/propertytax_rebate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />
 
-        <TextView
-            android:id="@+id/propertytax_total"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
-
-        <TextView
-            android:id="@+id/propertytax_rebate"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
-
-        <TextView
-            android:id="@+id/propertytax_chequepenalty"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:textColor="@color/dataLabelColor"
-            android:textSize="@dimen/data_labelSize" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/propertytax_chequepenalty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/dataLabelColor"
+        android:textSize="@dimen/data_labelSize" />-->
 
 </LinearLayout>

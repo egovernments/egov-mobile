@@ -100,7 +100,7 @@ public class GrievanceActivity extends BaseActivity {
 
 
                     // Fetch further complaints
-                    if (pageNo >= pageLoaded) {
+                    if (pageNo >= pageLoaded && (totalItemCount != visibleItemCount)) {
                         pageNo++;
                         Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
                         intent.putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);

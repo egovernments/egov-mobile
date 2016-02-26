@@ -70,7 +70,7 @@ public class SplashScreenActivity extends Activity {
             e.printStackTrace();
         }
 
-        sessionManager = new SessionManager(SplashScreenActivity.this);
+        sessionManager = new SessionManager(getApplicationContext());
 
 
         if (sessionManager.getUrlLocation() == null) {

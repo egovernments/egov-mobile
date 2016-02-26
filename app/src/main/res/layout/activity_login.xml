@@ -65,6 +65,8 @@
                         android:singleLine="true"
                         android:textColor="#000"
                         android:textColorHint="#a8a5a5"
+                        android:imeOptions="actionNext"
+                        android:nextFocusDown="@+id/signin_username"
                         android:textSize="15sp" />
 
                 </FrameLayout>
@@ -142,6 +144,17 @@
                     android:src="@drawable/ic_arrow_forward_white_36dp" />
 
                 <!--To make fab compatible in older android versions-->
+                <Button
+                    android:id="@+id/signin_forgot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="#00000000"
+                    android:text="@string/login_forgotlabel"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    android:layout_gravity="center_horizontal" />
+
                 <com.melnykov.fab.FloatingActionButton
                     android:id="@+id/signin_submit_compat"
                     android:layout_width="wrap_content"
@@ -152,16 +165,6 @@
                     fab:fab_colorNormal="@color/colorAccent"
                     fab:fab_colorPressed="@color/colorPrimary"
                     fab:fab_colorRipple="#000" />
-
-                <Button
-                    android:id="@+id/signin_forgot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="35dp"
-                    android:background="#00000000"
-                    android:text="@string/login_forgotlabel"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="16sp" />
 
             </LinearLayout>
         </FrameLayout>

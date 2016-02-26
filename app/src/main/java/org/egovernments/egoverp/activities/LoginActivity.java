@@ -1,6 +1,7 @@
 package org.egovernments.egoverp.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -178,6 +180,8 @@ public class LoginActivity extends Activity {
             }
         });
 
+        final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
         password_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -192,6 +196,9 @@ public class LoginActivity extends Activity {
                     username = username_edittext.getText().toString().trim();
                     password = password_edittext.getText().toString().trim();
                     submit(username, password);
+                    if(imm != null){
+                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                    }
                     return true;
                 }
                 return false;
@@ -229,13 +236,17 @@ public class LoginActivity extends Activity {
 
         } else {
 
-            if (url == null) {
+            if (url == null && configManager.getString("api.multicities").equals("true")) {
                 Toast toast = Toast.makeText(LoginActivity.this, "Please select a municipality", Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
                 return;
             }
-            sessionManager.setBaseURL(url, cityName, code);
+
+            if(configManager.getString("api.multicities").equals("true")) {
+                sessionManager.setBaseURL(url, cityName, code);
+            }
+
             ApiController.getAPI(LoginActivity.this).login(ApiUrl.AUTHORIZATION, username, "read write", password, "password", new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject jsonObject, Response response) {
@@ -308,15 +319,18 @@ public class LoginActivity extends Activity {
             try {
 
                 if (configManager.getString("api.multicities").equals("false")) {
+
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-
                             username_edittext.setBackgroundResource(R.drawable.top_edittext);
                             spinner.setVisibility(View.GONE);
                             autoCompleteTextView.setVisibility(View.GONE);
                         }
                     });
+
+
+
                 } else {
                     final List<City> cityList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
                     if (cityList != null) {

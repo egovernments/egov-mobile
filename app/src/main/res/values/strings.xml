@@ -23,8 +23,8 @@
     <string name="watertax_search_hint">Enter consumer number</string>
     <string name="name_label">Name</string>
     <string name="name_label_editprofile">Name (Required*)</string>
-    <string name="address_label">Address</string>
-    <string name="owner_label">Owner Name</string>
+    <string name="address_label">ADDRESS</string>
+    <string name="owner_label">OWNER NAME</string>
     <string name="phone_label">Phone no.</string>
     <string name="phone_label_editprofile">Phone no. (Required*)</string>
     <string name="altphone_label">Alternate phone no.</string>
@@ -68,7 +68,7 @@
     <string name="account_recovery_label">Account Recovery</string>
     <string name="verify_account_label">Verify Account</string>
     <string name="createaccount_label">Create An Account</string>
-    <string name="egov_label">eGovernments</string>
+    <string name="egov_label">MeGov</string>
     <string name="forgot_password_prompt">Please enter your registered phone number</string>
     <string name="mobilenumber_length_prompt">Mobile number must be 10 digits</string>
     <string name="noaccount_msg">No account exists associated with this mobile number</string>
@@ -88,10 +88,18 @@
     <string name="details_label">Additional details</string>
     <string name="complaint_type_label">Complaint Type (Required*)</string>
     <string name="dob_label">Date of birth</string>
-    <string name="locality_label">Locality</string>
-    <string name="owner_contactno_label">Owner Contact no.</string>
-    <string name="assessmentno_label">Assessment no.</string>
+    <string name="locality_label">LOCALITY</string>
+    <string name="ownername_contactno_label">OWNER NAME/PHONE NO.</string>
+    <string name="assessmentno_label">ASSESSMENT NO.</string>
     <string name="installments_label">Installments</string>
     <string name="consumercode_label">Consumer code</string>
     <string name="contactno_label">Contact no.</string>
+    <string name="arrears_total">ARREARS TOTAL</string>
+    <string name="arrears_penalty">ARREARS PENALTY</string>
+    <string name="current_total">CURRENT TOTAL</string>
+    <string name="current_penalty">CURRENT PENALTY</string>
+    <string name="total">TOTAL</string>
+    <string name="Rs">\u20B9</string>
+    <string name="labelviewbreakupscreen">View Breakups</string>
+    <string name="title_activity_property_tax_breakups_details">View Breakups</string>
 </resources>

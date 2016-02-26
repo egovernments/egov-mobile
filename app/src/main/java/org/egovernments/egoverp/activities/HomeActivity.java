@@ -53,10 +53,10 @@ public class HomeActivity extends BaseActivity {
             }
         };
 
-        homeItemList.add(new HomeItem("Grievances", R.drawable.ic_feedback_black_24dp, "File grievances or review and update previously filed grievances"));
-        homeItemList.add(new HomeItem("Property tax", R.drawable.ic_business_black_24dp, "View property tax details for an assessment number"));
-        homeItemList.add(new HomeItem("Water tax", R.drawable.ic_water_black_24dp, "View water tax details for a consumer code"));
-        homeItemList.add(new HomeItem("Profile", R.drawable.ic_person_black_24dp, "Update or review your profile details."));
+        homeItemList.add(new HomeItem("Grievances", R.drawable.ic_announcement_black_36dp, "File grievances or review and update previously filed grievances"));
+        homeItemList.add(new HomeItem("Property tax", R.drawable.ic_business_black_36dp, "View property tax details for an assessment number"));
+        homeItemList.add(new HomeItem("Water tax", R.drawable.ic_local_drink_black_36dp, "View water tax details for a consumer code"));
+        homeItemList.add(new HomeItem("Profile", R.drawable.ic_person_black_36dp, "Update or review your profile details."));
 
         HomeAdapter homeAdapter = new HomeAdapter(homeItemList, onItemClickCallback);
         recyclerView.setAdapter(homeAdapter);
