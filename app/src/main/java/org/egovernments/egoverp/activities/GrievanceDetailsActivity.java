@@ -26,6 +26,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.viewpagerindicator.LinePageIndicator;
+
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.GrievanceCommentAdapter;
 import org.egovernments.egoverp.events.AddressReadyEvent;
@@ -40,8 +43,6 @@ import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
 import org.egovernments.egoverp.network.UpdateService;
-import com.google.gson.JsonObject;
-import com.viewpagerindicator.LinePageIndicator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -172,30 +173,36 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         complaintNo.setText(grievance.getCrn());
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
-        //Display feedback spinner
-        if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED") || grievance.getStatus().equals("WITHDRAWN")) {
+        if(!grievance.getStatus().equals("WITHDRAWN")) {
+            //Display feedback spinner
+            if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
 
-            commentBoxLabel.setText("Feedback");
+                commentBoxLabel.setText("Feedback");
 
-            feedbackLayout.setVisibility(View.VISIBLE);
-            ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackOptions);
-            feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
+                feedbackLayout.setVisibility(View.VISIBLE);
+                ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackOptions);
+                feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
 
+            }
+            //Display default spinners
+            else {
 
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_open);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+
+                commentBoxLabel.setText("Update grievance");
+            }
         }
-        //Display default spinners
-        else {
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_open);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
-
-            commentBoxLabel.setText("Update grievance");
+        else
+        {
+            LinearLayout layoutGrievanceUpdate=(LinearLayout)findViewById(R.id.update_grievance_layout);
+            layoutGrievanceUpdate.setVisibility(View.GONE);
         }
 
         listView.setOnTouchListener(new View.OnTouchListener() {

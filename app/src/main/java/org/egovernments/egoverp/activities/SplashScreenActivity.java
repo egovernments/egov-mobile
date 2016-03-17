@@ -14,13 +14,11 @@ import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 public class SplashScreenActivity extends Activity {
 
@@ -72,8 +70,7 @@ public class SplashScreenActivity extends Activity {
 
         sessionManager = new SessionManager(getApplicationContext());
 
-
-        if (sessionManager.getUrlLocation() == null) {
+        if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
             timerThread.start();
         } else {
             if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays"))) {
@@ -90,6 +87,7 @@ public class SplashScreenActivity extends Activity {
         protected Object doInBackground(String... params) {
 
             try {
+
                 if (configManager.getString("api.multicities").equals("false")) {
                     String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
                     if (response != null) {
@@ -108,16 +106,11 @@ public class SplashScreenActivity extends Activity {
                         sessionManager.logoutUser();
                     }
                 } else {
-                    final List<City> cityList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
-                    if (cityList != null) {
-
-                        for (int i = 0; i < cityList.size(); i++) {
-                            if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode())) {
-                                url = cityList.get(i).getUrl();
-                                location = cityList.get(i).getCityName();
-                                code = cityList.get(i).getCityCode();
-                            }
-                        }
+                    City activeCity=ApiController.getCityURL(configManager.getString("api.multipleCitiesUrl"), sessionManager.getUrlLocationCode());
+                    if (activeCity != null) {
+                        url = activeCity.getUrl();
+                        location = activeCity.getCityName();
+                        code = activeCity.getCityCode();
                         sessionManager.setBaseURL(url, location, code);
                         timerThread.start();
                     } else {

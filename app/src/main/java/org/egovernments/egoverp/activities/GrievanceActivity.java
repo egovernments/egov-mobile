@@ -55,7 +55,9 @@ public class GrievanceActivity extends BaseActivity {
     private final int ACTION_UPDATE_REQUIRED = 111;
 
     private boolean loading = true;
+    private boolean paginationEnded = false;
     public static boolean isUpdateFailed = false;
+
 
 
     @Override
@@ -91,16 +93,13 @@ public class GrievanceActivity extends BaseActivity {
                     if (totalItemCount > previousTotal) {
                         loading = false;
                         previousTotal = totalItemCount;
-
                     }
                 }
                 // End has been reached
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-
-
                     // Fetch further complaints
-                    if (pageNo >= pageLoaded && (totalItemCount != visibleItemCount)) {
+                    if (pageNo >= pageLoaded && (totalItemCount != visibleItemCount) && !paginationEnded) {
                         pageNo++;
                         Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
                         intent.putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
@@ -169,9 +168,7 @@ public class GrievanceActivity extends BaseActivity {
         } else {
             newComplaintButton.setVisibility(View.GONE);
             newComplaintButtonCompat.setVisibility(View.VISIBLE);
-
             newComplaintButtonCompat.setOnClickListener(onClickListener);
-
         }
 
         if (isUpdateFailed) {
@@ -215,12 +212,18 @@ public class GrievanceActivity extends BaseActivity {
     @SuppressWarnings("unused")
     public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
 
+        paginationEnded=grievancesUpdatedEvent.isPaginationEnded();
+
+        if(grievancesUpdatedEvent.isSendRequest() && (grievanceAdapter==null || (grievanceAdapter.getItemCount()==0)))
+        {
+            progressBar.setVisibility(View.VISIBLE);
+            return;
+        }
         //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {
             pageLoaded = 1;
             pageNo = 1;
             previousTotal = 0;
-            progressBar.setVisibility(View.GONE);
             grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
             recyclerView.setAdapter(grievanceAdapter);
             swipeRefreshLayout.setRefreshing(false);
@@ -241,7 +244,6 @@ public class GrievanceActivity extends BaseActivity {
         grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
         recyclerView.setAdapter(grievanceAdapter);
         grievanceList = null;
-
     }
 }
 

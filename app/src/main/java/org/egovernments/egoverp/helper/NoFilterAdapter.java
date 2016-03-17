@@ -23,8 +23,12 @@ public class NoFilterAdapter<T> extends ArrayAdapter<T> {
 
     public NoFilterAdapter(Context context, int textViewResourceId,
                            List<T> objects) {
-        super(context, android.R.layout.select_dialog_item, objects);
+        super(context, android.R.layout.simple_spinner_dropdown_item, objects);
         items = objects;
+    }
+
+    public List<T> getItems() {
+        return items;
     }
 
     private class KNoFilter extends Filter {

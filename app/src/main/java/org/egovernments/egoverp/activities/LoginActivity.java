@@ -8,7 +8,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,21 +20,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.City;
+import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
 import org.egovernments.egoverp.network.SessionManager;
 import org.egovernments.egoverp.network.UpdateService;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,12 +52,13 @@ import retrofit.client.Response;
  * The login screen activity
  **/
 
+@SuppressWarnings("ALL")
 public class LoginActivity extends Activity {
 
     private String username;
     private String password;
-    private String url;
-    private String cityName;
+   /* private String url;
+    private String cityName;*/
 
     private ProgressBar progressBar;
 
@@ -70,13 +76,19 @@ public class LoginActivity extends Activity {
 
     private ConfigManager configManager;
 
-    private CustomAutoCompleteTextView autoCompleteTextView;
+    private CustomAutoCompleteTextView cityAutocompleteTextBox;
+    private CustomAutoCompleteTextView districtAutocompleteTextBox;
 
-    private Spinner spinner;
+    private Spinner spinnerCity;
+    private Spinner spinnerDistrict;
 
-    private int check = 0;
+    List<District> districtsList;
+    List<City> citiesList;
 
+
+/*
     private int code;
+*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,19 +105,18 @@ public class LoginActivity extends Activity {
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
             } else {
-                Toast toast = Toast.makeText(LoginActivity.this, R.string.session_expiry_message, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
+                showToastMsg("Session expired!");
             }
         }
 
         setContentView(R.layout.activity_login);
 
-        url = sessionManager.getBaseURL();
+        /*url = sessionManager.getBaseURL();
         cityName = sessionManager.getUrlLocation();
-        code = sessionManager.getUrlLocationCode();
+        code = sessionManager.getUrlLocationCode();*/
 
-        spinner = (Spinner) findViewById(R.id.signin_city);
+        spinnerCity = (Spinner) findViewById(R.id.signin_city);
+        spinnerDistrict = (Spinner) findViewById(R.id.spinner_district);
 
         loginButton = (FloatingActionButton) findViewById(R.id.signin_submit);
         loginButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.signin_submit_compat);
@@ -118,13 +129,20 @@ public class LoginActivity extends Activity {
         username_edittext = (EditText) findViewById(R.id.signin_username);
         password_edittext = (EditText) findViewById(R.id.signin_password);
 
-        autoCompleteTextView = (CustomAutoCompleteTextView) findViewById(R.id.login_spinner_autocomplete);
-        autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+        cityAutocompleteTextBox = (CustomAutoCompleteTextView) findViewById(R.id.login_spinner_autocomplete);
+        districtAutocompleteTextBox = (CustomAutoCompleteTextView) findViewById(R.id.autocomplete_district);
+
+        cityAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(LoginActivity.this, "Fetching municipality list, please wait", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
+                showToastMsg("Fetching municipality list, please wait");
+            }
+        });
+
+        districtAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToastMsg("Fetching district list, please wait");
             }
         });
 
@@ -136,47 +154,46 @@ public class LoginActivity extends Activity {
                 username = username_edittext.getText().toString().trim();
                 password = password_edittext.getText().toString().trim();
 
-                progressBar.setVisibility(View.VISIBLE);
-                loginButton.setVisibility(View.GONE);
-                loginButtonCompat.setVisibility(View.GONE);
-                forgotLabel.setVisibility(View.INVISIBLE);
-                signupButton.setVisibility(View.INVISIBLE);
-
                 submit(username, password);
             }
         };
 
+        ImageView imgLogo=(ImageView)findViewById(R.id.applogoBig);
+        imgLogo.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+
+                sessionManager.setDemoMode(!sessionManager.isDemoMode());
+                showToastMsg("Demo Mode is "+(sessionManager.isDemoMode()?"Enabled":"Disabled"));
+
+                return false;
+
+            }
+        });
+
 //        To make fab compatible in older android versions
         if (Build.VERSION.SDK_INT >= 21) {
-
             loginButton.setOnClickListener(onClickListener);
-
         } else {
-
             loginButton.setVisibility(View.GONE);
             loginButtonCompat.setVisibility(View.VISIBLE);
             loginButtonCompat.setOnClickListener(onClickListener);
-
         }
 
         forgotLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
-
-
             }
         });
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-
             }
         });
 
@@ -186,13 +203,6 @@ public class LoginActivity extends Activity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                    progressBar.setVisibility(View.VISIBLE);
-                    loginButton.setVisibility(View.GONE);
-                    loginButtonCompat.setVisibility(View.GONE);
-                    forgotLabel.setVisibility(View.INVISIBLE);
-                    signupButton.setVisibility(View.INVISIBLE);
-
                     username = username_edittext.getText().toString().trim();
                     password = password_edittext.getText().toString().trim();
                     submit(username, password);
@@ -218,239 +228,361 @@ public class LoginActivity extends Activity {
         new GetAllCitiesTask().execute();
     }
 
+    private void showToastMsg(String msg)
+    {
+        Toast toast = Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
+    }
+
+    private void showToastMsg(Integer msg)
+    {
+        Toast toast = Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
+    }
+
+    public void showLoginProgress()
+    {
+        progressBar.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.GONE);
+        loginButtonCompat.setVisibility(View.GONE);
+        forgotLabel.setVisibility(View.INVISIBLE);
+        signupButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void hideLoginProgress()
+    {
+        progressBar.setVisibility(View.GONE);
+        forgotLabel.setVisibility(View.VISIBLE);
+        signupButton.setVisibility(View.VISIBLE);
+        if (Build.VERSION.SDK_INT >= 21) {
+            loginButton.setVisibility(View.VISIBLE);
+        } else
+            loginButtonCompat.setVisibility(View.VISIBLE);
+    }
+
     //Invokes call to API
     private void submit(final String username, final String password) {
 
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-            Toast toast = Toast.makeText(LoginActivity.this, R.string.login_field_empty_prompt, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressBar.setVisibility(View.GONE);
-            forgotLabel.setVisibility(View.VISIBLE);
-            signupButton.setVisibility(View.VISIBLE);
+            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+                showToastMsg(R.string.login_field_empty_prompt);
+                progressBar.setVisibility(View.GONE);
+                forgotLabel.setVisibility(View.VISIBLE);
+                signupButton.setVisibility(View.VISIBLE);
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                loginButton.setVisibility(View.VISIBLE);
-            } else
-                loginButtonCompat.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= 21) {
+                    loginButton.setVisibility(View.VISIBLE);
+                } else
+                    loginButtonCompat.setVisibility(View.VISIBLE);
 
-        } else {
+            } else {
 
-            if (url == null && configManager.getString("api.multicities").equals("true")) {
-                Toast toast = Toast.makeText(LoginActivity.this, "Please select a municipality", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
-                return;
-            }
+                City selectedCity = getCityByName(cityAutocompleteTextBox.getText().toString());
 
-            if(configManager.getString("api.multicities").equals("true")) {
-                sessionManager.setBaseURL(url, cityName, code);
-            }
+                if (selectedCity == null && configManager.getString("api.multicities").equals("true")) {
 
-            ApiController.getAPI(LoginActivity.this).login(ApiUrl.AUTHORIZATION, username, "read write", password, "password", new Callback<JsonObject>() {
-                @Override
-                public void success(JsonObject jsonObject, Response response) {
-
-                    //Stores access token in session manager
-                    sessionManager.loginUser(password, username, jsonObject.get("access_token").toString());
-                    startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    finish();
-
+                    String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
+                    showToastMsg(errorMsg);
+                    CustomAutoCompleteTextView controlToFocus = (TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString()) ? districtAutocompleteTextBox : cityAutocompleteTextBox);
+                    controlToFocus.requestFocus();
+                    return;
                 }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    JsonObject jsonObject = null;
-                    if (error != null) {
-                        if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
-                            Toast toast = Toast.makeText(LoginActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        } else {
-                            try {
-                                jsonObject = (JsonObject) error.getBody();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (jsonObject != null) {
-                                String errorDescription = jsonObject.get("error_description").toString().trim();
-                                //If user has attempted to log into a yet to be activated account,
-                                // automatically redirect the user to account activation screen
-                                if (errorDescription.contains("Please activate your account")) {
-                                    Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
-                                    intent.putExtra("username", username);
-                                    intent.putExtra("password", password);
-                                    startActivity(intent);
-                                } else {
-                                    Toast toast = Toast.makeText(LoginActivity.this, errorDescription, Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                    toast.show();
-                                }
-                            } else {
-                                Toast toast = Toast.makeText(LoginActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        }
+                if (configManager.getString("api.multicities").equals("true"))
+                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+
+                showLoginProgress();
+
+                ApiController.resetAndGetAPI(LoginActivity.this).login(ApiUrl.AUTHORIZATION, username, "read write", password, "password", new Callback<JsonObject>() {
+                    @Override
+                    public void success(JsonObject jsonObject, Response response) {
+
+                        //Stores access token in session manager
+                        sessionManager.loginUser(password, username, jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
+                        startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
+                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        finish();
+
                     }
 
-                    progressBar.setVisibility(View.GONE);
-                    forgotLabel.setVisibility(View.VISIBLE);
-                    signupButton.setVisibility(View.VISIBLE);
+                    @Override
+                    public void failure(RetrofitError error) {
+                        JsonObject jsonObject = null;
+                        if (error != null) {
+                            if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
+                                showToastMsg(error.getLocalizedMessage());
+                            } else {
+                                try {
+                                    jsonObject = (JsonObject) error.getBody();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (jsonObject != null) {
+                                    String errorDescription = jsonObject.get("error_description").getAsString().trim();
+                                    //If user has attempted to log into a yet to be activated account,
+                                    // automatically redirect the user to account activation screen
+                                    if (errorDescription.contains("Please activate your account!")) {
+                                        Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
+                                        intent.putExtra("username", username);
+                                        intent.putExtra("password", password);
+                                        startActivity(intent);
+                                    } else {
+                                        showToastMsg(errorDescription);
+                                    }
+                                } else {
+                                    showToastMsg("An unexpected error occurred while accessing the network!");
+                                }
+                            }
+                        }
 
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        loginButton.setVisibility(View.VISIBLE);
-                    } else
-                        loginButtonCompat.setVisibility(View.VISIBLE);
+                        hideLoginProgress();
 
-                }
-            });
+                    }
+                });
 
 
-        }
+            }
+
     }
 
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
-
         @Override
         protected Object doInBackground(String... params) {
+            loadDropdowns();
+            return null;
+        }
+    }
 
-            try {
+    public void hideMultiCityComponents()
+    {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                username_edittext.setBackgroundResource(R.drawable.top_edittext);
+                spinnerDistrict.setVisibility(View.GONE);
+                districtAutocompleteTextBox.setVisibility(View.GONE);
+                spinnerCity.setVisibility(View.GONE);
+                cityAutocompleteTextBox.setVisibility(View.GONE);
+            }
+        });
+    }
 
-                if (configManager.getString("api.multicities").equals("false")) {
+    public void loadDistrictDropdown() throws IOException
+    {
+        districtsList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            username_edittext.setBackgroundResource(R.drawable.top_edittext);
-                            spinner.setVisibility(View.GONE);
-                            autoCompleteTextView.setVisibility(View.GONE);
-                        }
-                    });
+        if (districtsList != null) {
 
+            final List<String> districts = new ArrayList<>();
 
+            for (int i = 0; i < districtsList.size(); i++) {
+                districts.add(districtsList.get(i).getDistrictName());
+            }
 
-                } else {
-                    final List<City> cityList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
-                    if (cityList != null) {
+            loadDropdownsWithData(districts, spinnerDistrict, districtAutocompleteTextBox, true);
 
-                        final List<String> cities = new ArrayList<>();
+        } else {
+            resetAndRefreshDropdownValues();
+        }
+    }
 
-                        for (int i = 0; i < cityList.size(); i++) {
-                            cities.add(cityList.get(i).getCityName());
-                        }
+    @SuppressWarnings("unchecked")
+    public void loadCityDropdown()
+    {
+        if(citiesList!=null){ citiesList.clear(); }
 
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                                dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                spinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, LoginActivity.this));
+        cityAutocompleteTextBox.setHint("Loading");
+        cityAutocompleteTextBox.setOnClickListener(null);
+        cityAutocompleteTextBox.setAdapter(null);
 
-                                for (int i = 0; i < cityList.size(); i++) {
-                                    if (cityList.get(i).getCityCode() == (sessionManager.getUrlLocationCode())) {
-                                        autoCompleteTextView.setText(cities.get(i));
-                                    }
-                                }
-                                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                        check = check + 1;
-                                        if (check > 1) {
-                                            url = cityList.get(position - 1).getUrl();
-                                            cityName = cityList.get(position - 1).getCityName();
-                                            code = cityList.get(position - 1).getCityCode();
-                                            autoCompleteTextView.setText(cityList.get(position - 1).getCityName());
-                                            autoCompleteTextView.dismissDropDown();
-                                        }
-                                    }
+        spinnerCity.setAdapter(null);
 
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parent) {
+        String s = districtAutocompleteTextBox.getText().toString().toUpperCase();
+        List<String> cities=new ArrayList<>();
 
-                                    }
-                                });
-
-                                ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                                autoCompleteTextView.setHint("Municipality");
-                                autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                                autoCompleteTextView.setOnClickListener(null);
-                                autoCompleteTextView.setAdapter(autoCompleteAdapter);
-                                autoCompleteTextView.setThreshold(1);
-                                autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                    @Override
-                                    public void onClick(DrawablePosition target) {
-                                        if (target == DrawablePosition.RIGHT) {
-                                            spinner.performClick();
-                                        }
-                                    }
-                                });
-                                autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                        String s = autoCompleteTextView.getText().toString();
-                                        for (City city : cityList) {
-                                            if (s.equals(city.getCityName())) {
-                                                url = city.getUrl();
-                                                cityName = city.getCityName();
-                                                code = city.getCityCode();
-                                            }
-
-                                        }
-                                    }
-                                });
-
-                            }
-                        });
-                    } else {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                autoCompleteTextView.setOnClickListener(null);
-                                autoCompleteTextView.setHint("Loading failed");
-                                autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
-                                autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                    @Override
-                                    public void onClick(DrawablePosition target) {
-                                        if (target == DrawablePosition.RIGHT) {
-                                            autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
-                                            autoCompleteTextView.setDrawableClickListener(null);
-                                            autoCompleteTextView.setHint(getString(R.string.loading_label));
-                                            new GetAllCitiesTask().execute();
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
+        for (District district : districtsList) {
+            if (s.equals(district.getDistrictName().toUpperCase())) {
+                districtAutocompleteTextBox.setText(s.toUpperCase());
+                cityAutocompleteTextBox.requestFocus();
+                //noinspection unchecked
+                @SuppressWarnings("unchecked") ArrayList<City> citiesArrayList=(ArrayList)district.getCities();
+                citiesList= (ArrayList)citiesArrayList.clone();
+                for(City city: citiesList)
+                {
+                    cities.add(city.getCityName());
                 }
+                break;
+            }
+        }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                handler.post(new Runnable() {
+        loadDropdownsWithData(cities, spinnerCity, cityAutocompleteTextBox, false);
+    }
+
+    public void loadDropdownsWithData(final List<String> autocompleteList, final Spinner autoCompleteSpinner, final CustomAutoCompleteTextView autocompleteTextBox, final Boolean isDistrict)
+    {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, autocompleteList);
+                dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                autoCompleteSpinner.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, LoginActivity.this));
+                autoCompleteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void run() {
-                        autoCompleteTextView.setOnClickListener(null);
-                        autoCompleteTextView.setHint("Loading failed");
-                        autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
-                        autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                        if ((position - 1) > -1) {
+                            if (isDistrict) {
+                                autocompleteTextBox.setText(districtsList.get(position - 1).getDistrictName());
+                                loadCityDropdown();
+                            } else {
+                                City selectedCity = citiesList.get(position - 1);
+                                autocompleteTextBox.setText(selectedCity.getCityName());
+                            }
+                        }
+                        autocompleteTextBox.dismissDropDown();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+                ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, autocompleteList);
+                //String hintText = (autocompleteList.size() > 0 ? (isDistrict ? "District" : "Municipality") : (isDistrict ? "Districts Not Found!" : "Municipalities Not Found!"));
+
+                autocompleteTextBox.setHint((isDistrict ? "District" : "Municipality"));
+                autocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds((isDistrict ? R.drawable.ic_place_black_24dp : R.drawable.ic_location_city_black_24dp), 0, (autocompleteList.size() > 0 ? R.drawable.ic_keyboard_arrow_down_black_24dp : 0), 0);
+                autocompleteTextBox.setOnClickListener(null);
+                autocompleteTextBox.setAdapter(autoCompleteAdapter);
+                autocompleteTextBox.setThreshold(1);
+                autocompleteTextBox.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                    @Override
+                    public void onClick(DrawablePosition target) {
+                        if (target == DrawablePosition.RIGHT) {
+                            if (!isDistrict && !cityAutocompleteTextBox.hasFocus()) {
+                                return;
+                            }
+                            autoCompleteSpinner.performClick();
+                        }
+                    }
+                });
+
+                autocompleteTextBox.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (isDistrict) {
+                            if (citiesList != null) {
+                                citiesList.clear();
+                            }
+                            cityAutocompleteTextBox.setText("");
+                            cityAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                autocompleteTextBox.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(final View v, boolean hasFocus) {
+
+                        handler.post(new Runnable() {
                             @Override
-                            public void onClick(DrawablePosition target) {
-                                if (target == DrawablePosition.RIGHT) {
-                                    autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
-                                    autoCompleteTextView.setDrawableClickListener(null);
-                                    autoCompleteTextView.setHint(getString(R.string.loading_label));
-                                    new GetAllCitiesTask().execute();
+                            public void run() {
+                                if (!v.hasFocus()) {
+                                    if (isDistrict && !TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString())) {
+                                        loadCityDropdown();
+                                    }
                                 }
                             }
                         });
+
+                    }
+                });
+
+                autocompleteTextBox.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        if (isDistrict) {
+                            loadCityDropdown();
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+
+
+    public City getCityByName(String cityName)
+    {
+        if(citiesList!=null) {
+            for (City city : citiesList) {
+                if (cityName.equals(city.getCityName())) {
+                    return city;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void resetAndRefreshDropdownValues()
+    {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                districtAutocompleteTextBox.setOnClickListener(null);
+                districtAutocompleteTextBox.setHint("Loading failed");
+                districtAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                districtAutocompleteTextBox.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                    @Override
+                    public void onClick(DrawablePosition target) {
+                        if (target == DrawablePosition.RIGHT) {
+                            districtAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, 0, 0);
+                            districtAutocompleteTextBox.setDrawableClickListener(null);
+                            districtAutocompleteTextBox.setHint(getString(R.string.loading_label));
+                            new GetAllCitiesTask().execute();
+                        }
+                    }
+                });
+
+                cityAutocompleteTextBox.setOnClickListener(null);
+                cityAutocompleteTextBox.setHint("Loading failed");
+                cityAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
+                cityAutocompleteTextBox.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+                    @Override
+                    public void onClick(DrawablePosition target) {
+                        if (target == DrawablePosition.RIGHT) {
+                            loadCityDropdown();
+                        }
                     }
                 });
             }
+        });
+    }
 
-            return null;
+    public void loadDropdowns()
+    {
+        try {
+
+            if (configManager.getString("api.multicities").equals("false")) {
+                hideMultiCityComponents();
+            } else {
+                loadDistrictDropdown();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            resetAndRefreshDropdownValues();
         }
     }
 

@@ -3,7 +3,15 @@ package org.egovernments.egoverp.network;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
 import org.egovernments.egoverp.models.City;
+import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
 import org.egovernments.egoverp.models.GrievanceLocationAPIResponse;
@@ -16,12 +24,6 @@ import org.egovernments.egoverp.models.PropertyTaxRequest;
 import org.egovernments.egoverp.models.RegisterRequest;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -63,7 +65,7 @@ public class ApiController {
 
     }
 
-    public static List<City> getAllCitiesURLs(String url) throws IOException {
+    public static List<District> getAllCitiesURLs(String url) throws IOException {
 
         try {
             Request request = new Request.Builder()
@@ -73,9 +75,27 @@ public class ApiController {
             Response response = client.newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException();
-            Type type = new TypeToken<List<City>>() {
+            Type type = new TypeToken<List<District>>() {
             }.getType();
             return new Gson().fromJson(response.body().charStream(), type);
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public static City getCityURL(String url, int cityCode) throws IOException {
+
+        try {
+
+            Request request = new Request.Builder()
+                    .url(url + "&code=" + cityCode)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if (!response.isSuccessful())
+                throw new IOException();
+            return new Gson().fromJson(response.body().charStream(), City.class);
         } catch (Exception e) {
             return null;
         }
@@ -86,7 +106,6 @@ public class ApiController {
     public static APIInterface getAPI(Context context) {
         SessionManager sessionManager = new SessionManager(context);
         if (apiInterface == null) {
-
             RestAdapter restAdapter = new RestAdapter
                     .Builder()
                     .setClient(new OkClient(client))
@@ -96,6 +115,20 @@ public class ApiController {
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
             apiInterface = restAdapter.create(APIInterface.class);
         }
+        return apiInterface;
+    }
+
+    public static APIInterface resetAndGetAPI(Context context) {
+        SessionManager sessionManager = new SessionManager(context);
+        apiInterface=null;
+        RestAdapter restAdapter = new RestAdapter
+                    .Builder()
+                    .setClient(new OkClient(client))
+                    .setEndpoint(sessionManager.getBaseURL())
+                    .setErrorHandler(new CustomErrorHandler())
+                    .build();
+            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+        apiInterface = restAdapter.create(APIInterface.class);
         return apiInterface;
     }
 

@@ -4,11 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,10 +19,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,6 @@ public class BaseActivity extends AppCompatActivity {
         getLayoutInflater().inflate(layoutResID, activityContent, true);
 
         super.setContentView(fullLayout);
-
         sessionManager = new SessionManager(getApplicationContext());
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -78,6 +77,29 @@ public class BaseActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
 
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+
+        android.support.v7.widget.Toolbar toolbarCollapse = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbarCollapse);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        final ListView listView = (ListView) findViewById(R.id.drawer);
+
+        if(toolbarCollapse!=null)
+        {
+            toolbar.setVisibility(View.GONE);
+            toolbar=toolbarCollapse;
+            listView.setPadding(0,getStatusBarHeight(),0,0);
+        }
+
+        /*DrawerLayout customDrawerLayout=(DrawerLayout)findViewById(R.id.custom_drawer_layout);
+
+        if(customDrawerLayout!=null)
+        {
+            drawerLayout=customDrawerLayout;
+            listView=(ListView)findViewById(R.id.custom_drawer);
+        }*/
+
+
         setSupportActionBar(toolbar);
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
@@ -87,7 +109,7 @@ public class BaseActivity extends AppCompatActivity {
 
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
 
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
@@ -104,8 +126,6 @@ public class BaseActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
 
 
-        ListView listView = (ListView) findViewById(R.id.drawer);
-
         arrayList = new ArrayList<>();
         fillList();
 
@@ -116,106 +136,112 @@ public class BaseActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                Intent intent;
-                Handler drawerClose = new Handler();
-                Runnable runnable = new Runnable() {
+                drawerLayout.closeDrawer(listView);
+                drawerLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        drawerLayout.closeDrawer(Gravity.LEFT);
+                        selectItem(position);
                     }
-                };
-
-                switch (position) {
-
-                    case 0:
-                        if (!getTitle().toString().equals(getString(R.string.home_label)))
-                            finish();
-                        else
-                            drawerClose.postDelayed(runnable, 1000);
-                        break;
-
-                    case 1:
-                        if (!getTitle().toString().equals(getString(R.string.grievances_label))) {
-                            intent = new Intent(BaseActivity.this, GrievanceActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            if (!getTitle().toString().equals(getString(R.string.home_label)))
-                                finish();
-                        } else
-                            drawerLayout.closeDrawer(Gravity.LEFT);
-                        break;
-
-                    case 2:
-                        if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
-                            intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            if (!getTitle().toString().equals(getString(R.string.home_label)))
-                                finish();
-                        } else
-                            drawerLayout.closeDrawer(Gravity.LEFT);
-                        break;
-
-                    case 3:
-                        if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
-                            intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            if (!getTitle().toString().equals(getString(R.string.home_label)))
-                                finish();
-                        } else
-                            drawerLayout.closeDrawer(Gravity.LEFT);
-                        break;
-
-                    case 4:
-                        if (!getTitle().toString().equals(getString(R.string.profile_label))) {
-                            intent = new Intent(BaseActivity.this, ProfileActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
-                            if (!getTitle().toString().equals(getString(R.string.home_label)))
-                                finish();
-                        } else
-                            drawerLayout.closeDrawer(Gravity.LEFT);
-                        break;
-
-                    case 5:
-                        progressDialog.show();
-                        ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
-                            @Override
-                            public void success(JsonObject jsonObject, Response response) {
-
-                                sessionManager.logoutUser();
-
-                                ApiController.apiInterface = null;
-
-                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                progressDialog.dismiss();
-                                finish();
-
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                sessionManager.logoutUser();
-
-                                ApiController.apiInterface = null;
-
-                                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                                progressDialog.dismiss();
-                                finish();
-                            }
-                        });
-                        break;
-
-                }
-
+                }, 300);
             }
         });
+    }
+
+    public void selectItem(int position)
+    {
+        Intent intent;
+        switch (position) {
+
+            case 0:
+                if (!getTitle().toString().equals(getString(R.string.home_label)))
+                    finish();
+                break;
+
+            case 1:
+                if (!getTitle().toString().equals(getString(R.string.grievances_label))) {
+                    intent = new Intent(BaseActivity.this, GrievanceActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    if (!getTitle().toString().equals(getString(R.string.home_label)))
+                        finish();
+                }
+                break;
+
+            case 2:
+                if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
+                    intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    if (!getTitle().toString().equals(getString(R.string.home_label)))
+                        finish();
+                }
+                break;
+
+            case 3:
+                if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
+                    intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    if (!getTitle().toString().equals(getString(R.string.home_label)))
+                        finish();
+                }
+                break;
+
+            case 4:
+                if (!getTitle().toString().equals(getString(R.string.profile_label))) {
+                    intent = new Intent(BaseActivity.this, ProfileActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    if (!getTitle().toString().equals(getString(R.string.home_label)))
+                        finish();
+                }
+                break;
+
+            case 5:
+                progressDialog.show();
+                ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                    @Override
+                    public void success(JsonObject jsonObject, Response response) {
+
+                        sessionManager.logoutUser();
+
+                        ApiController.apiInterface = null;
+
+                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
+                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                        sessionManager.logoutUser();
+
+                        ApiController.apiInterface = null;
+
+                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        progressDialog.dismiss();
+                        finish();
+                    }
+                });
+                break;
+
+        }
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     //Method fills the nav drawer's ArrayList
@@ -228,6 +254,11 @@ public class BaseActivity extends AppCompatActivity {
         arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
         arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
 
+    }
+
+    private void closeNavigationDrawer(DrawerLayout drawerLayout, ListView drawerList)
+    {
+        drawerLayout.closeDrawer(drawerList);
     }
 
     //POJO class for nav drawer items
@@ -250,6 +281,7 @@ public class BaseActivity extends AppCompatActivity {
         }
 
     }
+
 
     private class NavigationViewHolder {
         private ImageView nav_item_icon;

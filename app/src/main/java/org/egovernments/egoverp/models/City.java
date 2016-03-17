@@ -27,7 +27,11 @@ public class City {
      * @return The url
      */
     public String getUrl() {
-        return url;
+        if(url!=null)
+        {
+            return url;
+        }
+        return "";
     }
 
     public int getCityCode() {

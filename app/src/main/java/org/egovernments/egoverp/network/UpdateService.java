@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
 import org.egovernments.egoverp.activities.GrievanceActivity;
 import org.egovernments.egoverp.activities.LoginActivity;
 import org.egovernments.egoverp.activities.ProfileActivity;
@@ -18,7 +20,6 @@ import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
-import com.google.gson.JsonObject;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -85,19 +86,29 @@ public class UpdateService extends Service {
     private void updateComplaints(final String page) {
 
         if (sessionManager.getAccessToken() != null) {
+
+            if(page.equals("1"))
+            {
+                GrievancesUpdatedEvent updateStartEvent= new GrievancesUpdatedEvent();
+                updateStartEvent.setIsSendRequest(true);
+                EventBus.getDefault().post(updateStartEvent);
+            }
+
             ApiController.getAPI(UpdateService.this).getMyComplaints(page, "10", sessionManager.getAccessToken(), new Callback<GrievanceAPIResponse>() {
                         @Override
                         public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
 
+
+                            GrievancesUpdatedEvent updatedEvent= new GrievancesUpdatedEvent();
                             //If the request is a refresh request
                             if (page.equals("1")) {
                                 GrievanceActivity.pageLoaded = 0;
                                 GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
                                 GrievanceActivity.grievanceList.add(null);
                                 GrievanceActivity.grievanceAdapter = null;
-                                EventBus.getDefault().post(new GrievancesUpdatedEvent());
                                 if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
                                     GrievanceActivity.grievanceList.remove(GrievanceActivity.grievanceList.size() - 1);
+                                    updatedEvent.setIsPaginationEnded(true);
                                 }
                             }
                             //If the request is a next page request
@@ -105,10 +116,11 @@ public class UpdateService extends Service {
                                 GrievanceActivity.grievanceList.addAll(GrievanceActivity.grievanceList.size() - 1, grievanceAPIResponse.getResult());
                                 if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
                                     GrievanceActivity.grievanceList.remove(GrievanceActivity.grievanceList.size() - 1);
+                                    updatedEvent.setIsPaginationEnded(true);
                                 }
-                                EventBus.getDefault().post(new GrievancesUpdatedEvent());
-
                             }
+
+                            EventBus.getDefault().post(new GrievancesUpdatedEvent());
                         }
 
                         @Override
@@ -122,12 +134,10 @@ public class UpdateService extends Service {
                                         sessionManager.invalidateAccessToken();
                                         renewCredentials();
                                     }
-
                                 }
                             }
                             GrievanceActivity.isUpdateFailed = true;
                             EventBus.getDefault().post(new GrievanceUpdateFailedEvent());
-
                         }
                     }
 
@@ -176,7 +186,7 @@ public class UpdateService extends Service {
         ApiController.getAPI(UpdateService.this).login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
-                sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString());
+                sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                 updateComplaints("1");
                 updateProfile();
             }

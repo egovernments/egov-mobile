@@ -7,8 +7,13 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/signin_background">
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/signin_background"
+            android:scaleType="centerCrop"/>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -24,15 +29,61 @@
                 android:padding="20dp">
 
                 <ImageView
-                    android:id="@+id/egov_logo"
+                    android:id="@+id/applogoBig"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="10dp"
                     android:contentDescription="@string/logostring"
                     android:padding="20dp"
                     android:src="@drawable/egovlogo" />
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinner_district"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/top_edittext"
+                        android:dropDownVerticalOffset="-10dp"
+                        android:focusable="false"
+                        android:spinnerMode="dropdown"
+                        android:visibility="invisible" />
+
+                    <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
+                        android:id="@+id/autocomplete_district"
+                        android:inputType="textNoSuggestions"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/top_edittext"
+                        android:drawableLeft="@drawable/ic_place_black_24dp"
+                        android:drawablePadding="5dp"
+                        android:drawableStart="@drawable/ic_place_black_24dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/loading_label"
+                        android:paddingEnd="10dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="#000"
+                        android:textColorHint="#a8a5a5"
+                        android:imeOptions="actionNext"
+                        android:nextFocusDown="@+id/signin_username"
+                        android:textSize="15sp" />
+
+                </FrameLayout>
+
+                <TextView
+                    style="?android:attr/listSeparatorTextViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dividerColor"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="5dp" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -50,14 +101,15 @@
 
                     <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
                         android:id="@+id/login_spinner_autocomplete"
+                        android:inputType="textNoSuggestions"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="@drawable/top_edittext"
+                        android:background="@drawable/middle_edittext"
                         android:drawableLeft="@drawable/ic_location_city_black_24dp"
                         android:drawablePadding="5dp"
                         android:drawableStart="@drawable/ic_location_city_black_24dp"
                         android:gravity="center_vertical"
-                        android:hint="@string/loading_label"
+                        android:hint="@string/city_hint"
                         android:paddingEnd="10dp"
                         android:paddingLeft="10dp"
                         android:paddingRight="10dp"

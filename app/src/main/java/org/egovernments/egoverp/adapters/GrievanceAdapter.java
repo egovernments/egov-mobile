@@ -14,18 +14,20 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
 import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.network.SessionManager;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -70,7 +72,10 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH).parse(ci.getCreatedDate()));
 
-                ((GrievanceViewHolder) viewHolder).complaintDate.setText(timeDifference(calendar));
+                ((GrievanceViewHolder) viewHolder).complaintDate.setText(dateTimeInfo(ci.getCreatedDate(), "yyyy-MM-dd hh:mm:ss.SSS"));
+
+
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -172,12 +177,12 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case "COMPLETED":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
                 drawable.mutate();
-                drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+                drawable.setColorFilter(Color.parseColor("#4CAF50"), PorterDuff.Mode.MULTIPLY);
                 break;
             case "WITHDRAWN":
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_done_white_24dp);
                 drawable.mutate();
-                drawable.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+                drawable.setColorFilter(Color.parseColor("#1B5E20"), PorterDuff.Mode.MULTIPLY);
                 break;
             default:
                 drawable = ContextCompat.getDrawable(contextWeakReference.get(), R.drawable.ic_cancel_white_24dp);
@@ -204,6 +209,41 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return difference + "months ago";
 
         return difference + "years ago";
+
+    }
+
+    //get DateTime Info into Meaningful
+    public String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
+
+        String formatIfToday="hh:mm a";
+        String formatIfCurrentYear="MMM dd";
+        String formatIfNotCurrentYear="dd/MM/yyyy";
+
+        SimpleDateFormat df=new SimpleDateFormat(dateFormat);
+        Date infoDate=df.parse(dateStr);
+        Date nowDate=new Date();
+
+        String resultFormat=formatIfNotCurrentYear;
+
+        df=new SimpleDateFormat(formatIfCurrentYear);
+
+        Calendar infocal = Calendar.getInstance();
+        infocal.setTime(infoDate);
+        Calendar nowcal = Calendar.getInstance();
+
+        if(df.format(infoDate).equals(df.format(nowDate)))
+        {
+            //info date is today
+            resultFormat=formatIfToday;
+        }
+        else if(String.valueOf(infocal.get(Calendar.YEAR)).equals(String.valueOf(nowcal.get(Calendar.YEAR))))
+        {
+            //info date in current year
+            resultFormat=formatIfCurrentYear;
+        }
+
+        df=new SimpleDateFormat(resultFormat);
+        return df.format(infoDate);
 
     }
 

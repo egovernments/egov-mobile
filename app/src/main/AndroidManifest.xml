@@ -55,7 +55,7 @@
             android:label="@string/createaccount_label"
             android:parentActivityName=".activities.LoginActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.LoginActivity" />
@@ -71,11 +71,11 @@
         </activity>
         <activity
             android:name=".activities.NewGrievanceActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/newgrievance_label"
+            android:configChanges="keyboardHidden|orientation|keyboard"
             android:parentActivityName=".activities.GrievanceActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />

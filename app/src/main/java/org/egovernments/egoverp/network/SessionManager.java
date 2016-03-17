@@ -34,6 +34,11 @@ public class SessionManager {
 
     public static final String KEY_ACCESS_TOKEN = "access_token";
 
+    public static final String KEY_DEMO_MODE = "demoMode";
+
+    public static final String KEY_CITY_LAT = "cityLatitude";
+    public static final String KEY_CITY_LNG = "cityLongitude";
+
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
@@ -49,8 +54,20 @@ public class SessionManager {
         editor.putString(KEY_PASSWORD, password);
         editor.putString(KEY_USERNAME, email);
         editor.putString(KEY_ACCESS_TOKEN, accessToken);
-
         editor.apply();
+    }
+
+    public void loginUser(String password, String email, String accessToken, double cityLat, double cityLng) {
+
+        editor = pref.edit();
+        editor.putBoolean(IS_LOGGED_IN, true);
+        editor.putString(KEY_PASSWORD, password);
+        editor.putString(KEY_USERNAME, email);
+        editor.putString(KEY_ACCESS_TOKEN, accessToken);
+        editor.putString(KEY_CITY_LAT, String.valueOf(cityLat));
+        editor.putString(KEY_CITY_LNG, String.valueOf(cityLng));
+        editor.apply();
+
     }
 
     //Only when user explicitly logs out, clear all data from storage
@@ -94,18 +111,22 @@ public class SessionManager {
 
     public void setBaseURL(String url, String location, int code) {
 
-        editor = pref.edit();
+        if(url!=null)
+        {
+            editor = pref.edit();
 
-        if (url.substring(url.length() - 1).equals("/"))
-            editor.putString(BASE_URL, url.substring(0, url.length() - 1));
-        else
-            editor.putString(BASE_URL, url);
+            if (url.substring(url.length() - 1).equals("/"))
+                editor.putString(BASE_URL, url.substring(0, url.length() - 1));
+            else
+                editor.putString(BASE_URL, url);
 
-        editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
-        editor.putString(URL_LOCATION, location);
-        editor.putInt(URL_LOCATION_CODE, code);
+            editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+            editor.putString(URL_LOCATION, location);
+            editor.putInt(URL_LOCATION_CODE, code);
 
-        editor.apply();
+            editor.apply();
+        }
+
     }
 
     public String getBaseURL() {
@@ -124,5 +145,22 @@ public class SessionManager {
         return pref.getInt(URL_LOCATION_CODE, 0);
     }
 
+    public double getCityLatitude() {
+        return Double.parseDouble(pref.getString(KEY_CITY_LAT, "0"));
+    }
 
+    public double getCityLongitude() {
+        return Double.parseDouble(pref.getString(KEY_CITY_LNG, "0"));
+    }
+
+    public void setDemoMode(boolean isEnabled)
+    {
+        editor = pref.edit();
+        editor.putBoolean(KEY_DEMO_MODE, isEnabled);
+        editor.apply();
+    }
+
+    public boolean isDemoMode() {
+        return pref.getBoolean(KEY_DEMO_MODE, false);
+    }
 }

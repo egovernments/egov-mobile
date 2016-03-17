@@ -82,6 +82,7 @@
     <string name="grievancedetails_label">Grievance Details</string>
     <string name="editprofile_label">Edit Profile</string>
     <string name="loading_label">Loading…</string>
+    <string name="city_hint">Municipality</string>
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
     <string name="watertax_label">Water Tax</string>
@@ -102,4 +103,11 @@
     <string name="Rs">\u20B9</string>
     <string name="labelviewbreakupscreen">View Breakups</string>
     <string name="title_activity_property_tax_breakups_details">View Breakups</string>
+    <string name="testdesc">However, if you are using a ViewPager for horizontal paging between tabs, you can create tabs directly from your PagerAdapter’s getPageTitle() and then connect the two together using setupWithViewPager(). This ensures that tab selection events update the ViewPager and page changes update the selected tab.
+
+CoordinatorLayout, motion, and scrolling
+Distinctive visuals are only one part of material design: motion is also an important part of making a great material designed app. While there are a lot of parts of motion in material design including touch ripples and meaningful transitions, the Design library introduces CoordinatorLayout, a layout which provides an additional level of control over touch events between child views, something which many of the components in the Design library take advantage of.
+
+CoordinatorLayout and floating action buttons
+A great example of this is when you add a FloatingActionButton as a child of your CoordinatorLayout and then pass that CoordinatorLayout to your Snackbar.make() call - instead of the snackbar displaying over the floating action button, the FloatingActionButton takes advantage of additional callbacks provided by CoordinatorLayout to automatically move upward as the snackbar animates in and returns to its position when the snackbar animates out on </string>
 </resources>

@@ -4,9 +4,13 @@ package org.egovernments.egoverp.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -80,12 +84,33 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
+        final CollapsingToolbarLayout collapsingToolbar=(CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+
+        AppBarLayout appBar=(AppBarLayout)findViewById(R.id.appbar);
+
+
+        final ImageView imgProfile=(ImageView)findViewById(R.id.profile_image);
+        AppBarLayout.OnOffsetChangedListener mListener = new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if(collapsingToolbar.getHeight() + verticalOffset < 5 * ViewCompat.getMinimumHeight(collapsingToolbar)) {
+                    imgProfile.setAlpha(0.5f);
+                } else {
+                    imgProfile.setAlpha(1f);
+                }
+            }
+        };
+
+        appBar.addOnOffsetChangedListener(mListener);
+
     }
 
     //Cause the layout items to be refreshed
     private void updateProfile() {
 
         progressBar.setVisibility(View.GONE);
+
+        setTitle(profile.getName());
 
         final TextView name = (TextView) findViewById(R.id.profile_name);
         final TextView emailId = (TextView) findViewById(R.id.profile_email);
