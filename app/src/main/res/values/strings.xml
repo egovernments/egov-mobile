@@ -1,4 +1,5 @@
 <resources>
+    <string name="egov_label">MeGov</string>
     <string name="app_name">Egov</string>
     <string name="logostring">logo</string>
     <string name="otp_textfield">Please enter the 5-digit OTP sent to your registered phone no. and email ID to verify your account.</string>
@@ -68,7 +69,6 @@
     <string name="account_recovery_label">Account Recovery</string>
     <string name="verify_account_label">Verify Account</string>
     <string name="createaccount_label">Create An Account</string>
-    <string name="egov_label">MeGov</string>
     <string name="forgot_password_prompt">Please enter your registered phone number</string>
     <string name="mobilenumber_length_prompt">Mobile number must be 10 digits</string>
     <string name="noaccount_msg">No account exists associated with this mobile number</string>
@@ -103,11 +103,4 @@
     <string name="Rs">\u20B9</string>
     <string name="labelviewbreakupscreen">View Breakups</string>
     <string name="title_activity_property_tax_breakups_details">View Breakups</string>
-    <string name="testdesc">However, if you are using a ViewPager for horizontal paging between tabs, you can create tabs directly from your PagerAdapter’s getPageTitle() and then connect the two together using setupWithViewPager(). This ensures that tab selection events update the ViewPager and page changes update the selected tab.
-
-CoordinatorLayout, motion, and scrolling
-Distinctive visuals are only one part of material design: motion is also an important part of making a great material designed app. While there are a lot of parts of motion in material design including touch ripples and meaningful transitions, the Design library introduces CoordinatorLayout, a layout which provides an additional level of control over touch events between child views, something which many of the components in the Design library take advantage of.
-
-CoordinatorLayout and floating action buttons
-A great example of this is when you add a FloatingActionButton as a child of your CoordinatorLayout and then pass that CoordinatorLayout to your Snackbar.make() call - instead of the snackbar displaying over the floating action button, the FloatingActionButton takes advantage of additional callbacks provided by CoordinatorLayout to automatically move upward as the snackbar animates in and returns to its position when the snackbar animates out on </string>
 </resources>

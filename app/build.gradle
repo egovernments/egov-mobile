@@ -14,9 +14,23 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    productFlavors {
+        egov {
+            applicationId = "org.egovernments.egoverp"
+            versionName = "0.1-beta-demo"
+        }
+
+        ap {
+            applicationId = "org.egov.myap"
+            versionName = "0.1-beta"
+        }
+    }
+
 }
 
 
