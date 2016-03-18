@@ -134,7 +134,7 @@ public class RegisterActivity extends BaseActivity {
 
         if(!sharedpreferences.getBoolean("register.pwdinfo", false))
         {
-           ((TextView)findViewById(R.id.passwordmsg)).setText("Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except \'& < > # % \" ' / \\' and space");
+           ((TextView)findViewById(R.id.passwordmsg)).setText(getResources().getString(R.string.password_constraint));
            viewpwd.setVisibility(View.VISIBLE);
         }
         else
@@ -388,23 +388,23 @@ public class RegisterActivity extends BaseActivity {
         } else if (phone.length() != 10) {
             showMessage(getMessage(R.string.phone_number_length));
             return;
-        }/* else if (isEmpty(email)) {
+        } else if (isEmpty(email)) {
             showMessage(getMessage(R.string.email_empty));
             return;
-        }*/ else if (!isEmpty(email) && !_isValidEmail(email)) {
+        } else if (!isEmpty(email) && !_isValidEmail(email)) {
             showMessage(getMessage(R.string.invalid_email));
             return;
         } else if (isEmpty(password)) {
             showMessage(getMessage(R.string.password_empty));
-            return;
-        } else if (!_isValidPassword(password)) {
-        	showPasswordConstraintMessage();
             return;
         } else if (isEmpty(confirm_password.toString())) {
             showMessage(getMessage(R.string.confirm_password_empty));
             return;
         } else if (!password.equals(confirm_password)) {
             showMessage(getMessage(R.string.password_match));
+            return;
+        } else if (!_isValidPassword(password)) {
+        	showPasswordConstraintMessage();
             return;
         } else if (citySelectedIdx == 0) {
             showMessage(getMessage(R.string.city_selection_empty));
@@ -440,7 +440,7 @@ public class RegisterActivity extends BaseActivity {
     private void showPasswordConstraintMessage()
     {
     	new AlertDialog.Builder(RegisterActivity.this)
-        .setMessage("Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except \'& < > # % \" ' / \\' and space")
+        .setMessage(getResources().getString(R.string.password_constraint))
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
                 
@@ -454,10 +454,9 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private boolean _isValidPassword(String password) {
-        String expression = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$;:+=-_?()!]).{8,32})";
-        Pattern pattern = Pattern.compile(expression);
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+    	String numExp=".*[0-9].*";
+    	String alphaExp=".*[A-Za-z].*";
+    	return (password.matches(numExp) && password.matches(alphaExp) && (password.length()>=8));
     }
 
     /**
