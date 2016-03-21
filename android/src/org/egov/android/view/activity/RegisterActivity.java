@@ -54,6 +54,7 @@ import org.egov.android.AndroidLibrary;
 import org.egov.android.R;
 import org.egov.android.api.ApiResponse;
 import org.egov.android.common.JSONUtil;
+import org.egov.android.common.PasswordLevel;
 import org.egov.android.controller.ApiController;
 import org.egov.android.listener.Event;
 import org.egov.android.model.User;
@@ -134,7 +135,7 @@ public class RegisterActivity extends BaseActivity {
 
         if(!sharedpreferences.getBoolean("register.pwdinfo", false))
         {
-           ((TextView)findViewById(R.id.passwordmsg)).setText(getResources().getString(R.string.password_constraint));
+           ((TextView)findViewById(R.id.passwordmsg)).setText(getPasswordConstraintInformation());
            viewpwd.setVisibility(View.VISIBLE);
         }
         else
@@ -369,10 +370,9 @@ public class RegisterActivity extends BaseActivity {
         String name = ((EditText) findViewById(R.id.register_name)).getText().toString().trim();
         String phone = ((EditText) findViewById(R.id.register_phone)).getText().toString().trim();
         String email = ((EditText) findViewById(R.id.register_email)).getText().toString().trim();
-        String password = ((EditText) findViewById(R.id.register_password)).getText().toString()
-                .trim();
+        String password = ((EditText) findViewById(R.id.register_password)).getText().toString();
         String confirm_password = ((EditText) findViewById(R.id.register_confirm_password))
-                .getText().toString().trim();
+                .getText().toString();
         String deviceId = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
         Integer citySelectedIdx = ((Spinner) findViewById(R.id.citydropdown)).getSelectedItemPosition();
 
@@ -394,10 +394,10 @@ public class RegisterActivity extends BaseActivity {
         } else if (!isEmpty(email) && !_isValidEmail(email)) {
             showMessage(getMessage(R.string.invalid_email));
             return;
-        } else if (isEmpty(password)) {
+        } else if (isEmpty(password.trim())) {
             showMessage(getMessage(R.string.password_empty));
             return;
-        } else if (isEmpty(confirm_password.toString())) {
+        } else if (isEmpty(confirm_password.toString().trim())) {
             showMessage(getMessage(R.string.confirm_password_empty));
             return;
         } else if (!password.equals(confirm_password)) {
@@ -411,7 +411,6 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
         
-
         User user = new User();
         user.setName(name);
         user.setMobileNo(phone);
@@ -440,7 +439,7 @@ public class RegisterActivity extends BaseActivity {
     private void showPasswordConstraintMessage()
     {
     	new AlertDialog.Builder(RegisterActivity.this)
-        .setMessage(getResources().getString(R.string.password_constraint))
+        .setMessage(getPasswordConstraintInformation())
         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
                 
@@ -454,9 +453,64 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private boolean _isValidPassword(String password) {
+    	String pwdLevel=AndroidLibrary.getInstance().getConfig().getPasswordLevel();
+    	if(pwdLevel.equals(PasswordLevel.HIGH))
+    	{
+    		return checkPasswordHighLevel(password);
+    	}
+    	else if(pwdLevel.equals(PasswordLevel.MEDIUM))
+    	{
+    		return checkPasswordMediumLevel(password);
+    	}
+    	else
+    	{
+    		return checkPasswordLowLevel(password);
+    	}
+    }
+    
+    /* PASSWORD LEVEL LOW VALIDATION */
+    private boolean checkPasswordLowLevel(String password)
+    {
     	String numExp=".*[0-9].*";
-    	String alphaExp=".*[A-Za-z].*";
-    	return (password.matches(numExp) && password.matches(alphaExp) && (password.length()>=8));
+    	String alphaCapExp=".*[A-Z].*";
+    	String alphaSmallExp=".*[a-z].*";
+    	return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=4));
+    }
+    
+    /* PASSWORD LEVEL MEDIUM VALIDATION */
+    private boolean checkPasswordMediumLevel(String password)
+    {
+    	String numExp=".*[0-9].*";
+    	String alphaCapExp=".*[A-Z].*";
+    	String alphaSmallExp=".*[a-z].*";
+    	return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=8));
+    }
+    
+    /* PASSWORD HIGH MEDIUM VALIDATION */
+    private boolean checkPasswordHighLevel(String password)
+    {
+    	  String expression="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^+=_?();:])(?=\\S+$).{8,32}$";
+    	  String exceptCharExp=".*[&<>#%\"'].*";
+          Pattern pattern = Pattern.compile(expression);
+          Matcher matcher = pattern.matcher(password);
+          return matcher.matches() && !password.matches(exceptCharExp);
+    }
+    
+    private String getPasswordConstraintInformation()
+    {
+    	String pwdLevel=AndroidLibrary.getInstance().getConfig().getPasswordLevel();
+    	if(pwdLevel.equals(PasswordLevel.HIGH))
+    	{
+    		return getResources().getString(R.string.password_level_high);
+    	}
+    	else if(pwdLevel.equals(PasswordLevel.MEDIUM))
+    	{
+    		return getResources().getString(R.string.password_level_medium);
+    	}
+    	else
+    	{
+    		return getResources().getString(R.string.password_level_low);
+    	}
     }
 
     /**

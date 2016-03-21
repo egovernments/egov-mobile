@@ -78,6 +78,11 @@ public class Config {
         return property.getProperty("date.format", "yyyy-MM-dd HH:mm:ss");
     }
 
+    public String getPasswordLevel()
+    {
+    	return property.getProperty("app.pwd.level","LOW");
+    }
+    
     public Object get(String key, Object defaultValue) {
         return (property.get(key) == null) ? defaultValue : property.get(key);
     }

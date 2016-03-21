@@ -80,7 +80,7 @@
                     android:id="@+id/passwordmsg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/password_constraint"
+                    android:text="@string/password_level_medium"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
