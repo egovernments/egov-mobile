@@ -65,6 +65,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
+import org.egovernments.egoverp.helper.PasswordLevel;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.RegisterRequest;
@@ -237,10 +238,64 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isValidPassword(String password) {
-        String expression = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$;:+=-_?()!]).{8,32})";
+        String pwdLevel=configManager.getString("app.passwordLevel");
+        if(pwdLevel.equals(PasswordLevel.HIGH))
+        {
+            return checkPasswordHighLevel(password);
+        }
+        else if(pwdLevel.equals(PasswordLevel.MEDIUM))
+        {
+            return checkPasswordMediumLevel(password);
+        }
+        else
+        {
+            return checkPasswordLowLevel(password);
+        }
+    }
+
+    /* PASSWORD LEVEL LOW VALIDATION */
+    private boolean checkPasswordLowLevel(String password)
+    {
+        String numExp=".*[0-9].*";
+        String alphaCapExp=".*[A-Z].*";
+        String alphaSmallExp=".*[a-z].*";
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=4));
+    }
+
+    /* PASSWORD LEVEL MEDIUM VALIDATION */
+    private boolean checkPasswordMediumLevel(String password)
+    {
+        String numExp=".*[0-9].*";
+        String alphaCapExp=".*[A-Z].*";
+        String alphaSmallExp=".*[a-z].*";
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=8));
+    }
+
+    /* PASSWORD LEVEL HIGH VALIDATION */
+    private boolean checkPasswordHighLevel(String password)
+    {
+        String expression="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^+=_?();:])(?=\\S+$).{8,32}$";
+        String exceptCharExp=".*[&<>#%\"'].*";
         Pattern pattern = Pattern.compile(expression);
         Matcher matcher = pattern.matcher(password);
-        return matcher.matches();
+        return matcher.matches() && !password.matches(exceptCharExp);
+    }
+
+    private String getPasswordConstraintInformation()
+    {
+        String pwdLevel=configManager.getString("app.passwordLevel");
+        if(pwdLevel.equals(PasswordLevel.HIGH))
+        {
+            return getResources().getString(R.string.password_level_high);
+        }
+        else if(pwdLevel.equals(PasswordLevel.MEDIUM))
+        {
+            return getResources().getString(R.string.password_level_medium);
+        }
+        else
+        {
+            return getResources().getString(R.string.password_level_low);
+        }
     }
 
     private void submit(final String name, final String email, final String phoneno, final String password, final String confirmpassword) {
@@ -263,7 +318,7 @@ public class RegisterActivity extends AppCompatActivity {
             toast.show();
             progressDialog.dismiss();
         } else if (!isValidPassword(password)) {
-            Toast toast = Toast.makeText(RegisterActivity.this, "Password must be 8-32 characters long, containing at least one uppercase letter, one lowercase letter, and one number or special character excluding '& < > # % \" ' / \\' and space", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(RegisterActivity.this, getPasswordConstraintInformation(), Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
@@ -365,123 +420,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(String... params) {
-
             loadDropdowns();
-
-           /* try {
-                if (configManager.getString("api.multicities").equals("false")) {
-
-                } else {
-                    *//*final List<City> cityList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
-                    if (cityList != null) {
-                        final List<String> cities = new ArrayList<>();
-
-                        for (int i = 0; i < cityList.size(); i++) {
-                            cities.add(cityList.get(i).getCityName());
-                        }
-
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                                dropdownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                spinnerCity.setAdapter(new NothingSelectedSpinnerAdapter(dropdownAdapter, android.R.layout.simple_spinner_dropdown_item, RegisterActivity.this));
-                                spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                        check = check + 1;
-                                        if (check > 1) {
-                                            url = cityList.get(position - 1).getUrl();
-                                            cityName = cityList.get(position - 1).getCityName();
-                                            code = cityList.get(position - 1).getCityCode();
-                                            cityAutoCompleteTextView.setText(cityList.get(position - 1).getCityName());
-                                            cityAutoCompleteTextView.dismissDropDown();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parent) {
-
-                                    }
-                                });
-
-                                ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, cities);
-                                cityAutoCompleteTextView.setHint("Municipality");
-                                cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                                cityAutoCompleteTextView.setOnClickListener(null);
-                                cityAutoCompleteTextView.setAdapter(autoCompleteAdapter);
-                                cityAutoCompleteTextView.setThreshold(1);
-                                cityAutoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                    @Override
-                                    public void onClick(DrawablePosition target) {
-                                        if (target == DrawablePosition.RIGHT) {
-                                            spinnerCity.performClick();
-                                        }
-                                    }
-                                });
-                                cityAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                        String s = cityAutoCompleteTextView.getText().toString();
-                                        for (City city : cityList) {
-                                            if (s.equals(city.getCityName())) {
-                                                url = city.getUrl();
-                                                cityName = city.getCityName();
-                                                code = city.getCityCode();
-                                            }
-
-                                        }
-                                    }
-                                });
-
-                            }
-                        });
-
-                    } else {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                cityAutoCompleteTextView.setOnClickListener(null);
-                                cityAutoCompleteTextView.setHint("Loading failed");
-                                cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
-                                cityAutoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                    @Override
-                                    public void onClick(DrawablePosition target) {
-                                        if (target == DrawablePosition.RIGHT) {
-                                            cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
-                                            cityAutoCompleteTextView.setDrawableClickListener(null);
-                                            cityAutoCompleteTextView.setHint(getString(R.string.loading_label));
-                                            new GetAllCitiesTask().execute();
-                                        }
-                                    }
-                                });
-                                Toast toast = Toast.makeText(RegisterActivity.this, "An unexpected error occurred while retrieving the list of available municipalities", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                                cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
-                                cityAutoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                    @Override
-                                    public void onClick(DrawablePosition target) {
-                                        if (target == DrawablePosition.RIGHT) {
-                                            cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, 0, 0);
-                                            cityAutoCompleteTextView.setDrawableClickListener(null);
-                                            cityAutoCompleteTextView.setHint(getString(R.string.loading_label));
-                                            new GetAllCitiesTask().execute();
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }*//*
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            }*/
-
             return null;
         }
+
     }
 
     public void resetAndRefreshDropdown()
@@ -526,7 +468,6 @@ public class RegisterActivity extends AppCompatActivity {
     public void loadDropdowns()
     {
         try {
-
             if (configManager.getString("api.multicities").equals("false")) {
                 handler.post(new Runnable() {
                     @Override

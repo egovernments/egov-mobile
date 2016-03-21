@@ -103,4 +103,8 @@
     <string name="Rs">\u20B9</string>
     <string name="labelviewbreakupscreen">View Breakups</string>
     <string name="title_activity_property_tax_breakups_details">View Breakups</string>
+    <string name="password_level_medium">Password must be at least 8 to 32 characters long and must have and at least one number, small and capital letter combination!</string>
+    <string name="password_level_high">Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except &amp; &lt; &gt; # % \&quot; \' and space!</string>
+    <string name="password_level_low">Password must be at least 4 to 32 characters long and must have at least one number, small and capital letter combination!</string>
+
 </resources>
