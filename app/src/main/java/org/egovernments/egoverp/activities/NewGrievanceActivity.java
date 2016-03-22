@@ -191,6 +191,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
 
     final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
     final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
 
     private boolean isLocationPermissionAsked=false;
 
@@ -663,9 +664,21 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
                         @Override
                         public void onClick(View v) {
 
-                            Intent intent = new Intent(Intent.ACTION_PICK);
-                            intent.setType("image/*");
-                            startActivityForResult(intent, GALLERY_PHOTO);
+                            if (Build.VERSION.SDK_INT < 23) {
+                                Intent intent = new Intent(Intent.ACTION_PICK);
+                                intent.setType("image/*");
+                                startActivityForResult(intent, GALLERY_PHOTO);
+                            }
+                            else
+                            {
+                                if(checkReadAccessPermission())
+                                {
+                                    Intent intent = new Intent(Intent.ACTION_PICK);
+                                    intent.setType("image/*");
+                                    startActivityForResult(intent, GALLERY_PHOTO);
+                                }
+                            }
+
                             dialog.dismiss();
 
                         }
@@ -1218,6 +1231,18 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
                     Toast.makeText(NewGrievanceActivity.this, "You're disabled camera access!", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, GALLERY_PHOTO);
+                }
+                else
+                {
+                    Toast.makeText(NewGrievanceActivity.this, "You're disabled read access!", Toast.LENGTH_SHORT).show();
+                }
+                break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -1228,7 +1253,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
         try {
             String s = UriPathHelper.getRealPathFromURI(imageUri, this);
             ExifInterface exifInterface = new ExifInterface(s);
-
             double lat;
             double lng;
             try {
@@ -1238,12 +1262,9 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
                 lat = 0;
                 lng = 0;
             }
-
             if (lat != 0 && lng != 0) {
                 addMarkerToMap(new LatLng(lat, lng));
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1261,7 +1282,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
             autoCompleteComplaintLoc.setText("");
             locationID=0;
     }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     private boolean checkLocationPermission()
@@ -1288,5 +1308,16 @@ public class NewGrievanceActivity extends AppCompatActivity implements OnMapRead
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkReadAccessPermission()
+    {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS);
+            return false;
+        }
+        return true;
+    }
 
 }
