@@ -111,5 +111,6 @@
     <string name="action_regcomplaint">Register complaint</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
+    <string name="balance_due">BALANCE DUE</string>
 
 </resources>

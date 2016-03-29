@@ -39,6 +39,22 @@
                 android:textSize="@dimen/data_labelSize" />
 
             <TextView
+                android:id="@+id/propertytax_contact_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/ownername_contactno_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_ownernamecontact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
                 android:id="@+id/propertytax_address_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,21 +87,15 @@
                 android:textSize="@dimen/data_labelSize" />
 
 
-            <TextView
-                android:id="@+id/propertytax_contact_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="@string/ownername_contactno_label"
-                android:textSize="@dimen/field_labelSize" />
 
             <TextView
-                android:id="@+id/propertytax_ownernamecontact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:layout_marginBottom="5dp"
+                android:text="@string/balance_due"
+                android:layout_marginTop="10dp"
                 android:textSize="@dimen/data_labelSize" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
