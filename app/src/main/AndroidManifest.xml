@@ -8,11 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="22" />
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="22" />
+        android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -69,13 +67,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.HomeActivity" />
         </activity>
+        <!--android:configChanges="keyboardHidden|orientation|keyboard"-->
         <activity
             android:name=".activities.NewGrievanceActivity"
             android:label="@string/newgrievance_label"
-            android:configChanges="keyboardHidden|orientation|keyboard"
             android:parentActivityName=".activities.GrievanceActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />

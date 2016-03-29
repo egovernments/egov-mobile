@@ -9,4 +9,5 @@
     <color name="secondaryText">#727272</color>
     <color name="dividerColor">#757575</color>
     <color name="imageBackground">#ffd6d7d7</color>
+    <color name="dividercolor">#1f000000</color>
 </resources>

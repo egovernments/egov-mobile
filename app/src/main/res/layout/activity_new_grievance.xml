@@ -9,293 +9,226 @@
         android:id="@+id/toolbar"
         layout="@layout/view_toolbar" />
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="false">
 
-        <ScrollView
-            android:id="@+id/grievanceview"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="true"
-            android:paddingBottom="45dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp">
+
+                    <RelativeLayout
+                        android:id="@+id/image_prompt_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="@color/imageBackground"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true">
+
+                            <ImageView
+                                android:id="@+id/image_field"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@color/imageBackground"
+                                android:scaleType="center"
+                                android:src="@drawable/ic_photo_black_48dp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/complaintpicture_label"
+                                android:id="@+id/textView" />
+
+                        </LinearLayout>
+
+
+
+                    </RelativeLayout>
+
+                   <android.support.v4.view.ViewPager
+                    android:id="@+id/upload_complaint_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/picture_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/fab_margin"
+                        android:src="@drawable/ic_camera_alt_white_24dp"
+                        android:layout_gravity="right|bottom" />
+
+                    <com.melnykov.fab.FloatingActionButton
+                        android:id="@+id/picture_addcompat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|bottom"
+                        android:layout_margin="@dimen/fab_margin"
+                        android:src="@drawable/ic_camera_alt_white_24dp"
+                        android:visibility="gone"
+                        app:fab_colorNormal="@color/colorAccent"
+                        app:fab_colorPressed="@color/colorPrimary"
+                        app:fab_colorRipple="#000" />
+
+                </FrameLayout>
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <RelativeLayout
-                            android:id="@+id/viewpager_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="230dp">
-
-                            <FrameLayout
-                                android:id="@+id/image_prompt_layout"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:paddingTop="5dp">
 
 
-                                <ImageView
-                                    android:id="@+id/image_field"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="200dp"
-                                    android:layout_gravity="center_horizontal"
-                                    android:background="@color/imageBackground"
-                                    android:scaleType="center"
-                                    android:src="@drawable/ic_photo_black_48dp" />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="center_horizontal"
-                                    android:layout_marginTop="30dp"
-                                    android:text="@string/complaintpicture_label" />
-
-                            </FrameLayout>
-
-
-                            <android.support.v4.view.ViewPager
-                                android:id="@+id/upload_complaint_image"
-                                android:layout_width="match_parent"
-                                android:layout_height="200dp" />
-
-                            <com.viewpagerindicator.LinePageIndicator
-                                android:id="@+id/new_indicator"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_marginBottom="10dp"
-                                app:lineWidth="30dp"
-                                app:selectedColor="@color/colorAccent"
-                                app:strokeWidth="4dp" />
-
-                        </RelativeLayout>
-
-                        <android.support.design.widget.FloatingActionButton
-                            android:id="@+id/picture_add"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/viewpager_layout"
-                            android:layout_alignRight="@+id/viewpager_layout"
-                            android:layout_marginEnd="30dp"
-                            android:layout_marginRight="30dp"
-                            android:layout_marginTop="168dp"
-                            android:src="@drawable/ic_camera_alt_white_24dp" />
-
-                        <com.melnykov.fab.FloatingActionButton
-                            android:id="@+id/picture_addcompat"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@+id/viewpager_layout"
-                            android:layout_alignRight="@+id/viewpager_layout"
-                            android:layout_marginEnd="30dp"
-                            android:layout_marginRight="30dp"
-                            android:layout_marginTop="172dp"
-                            android:src="@drawable/ic_camera_alt_white_24dp"
-                            android:visibility="gone"
-                            app:fab_colorNormal="@color/colorAccent"
-                            app:fab_colorPressed="@color/colorPrimary"
-                            app:fab_colorRipple="#000" />
-
-                    </RelativeLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_horizontal"
-                        android:paddingEnd="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingStart="10dp"
-                        android:text="@string/complaintlocation_label" />
-
-                    <FrameLayout
+                    <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
+                        android:id="@+id/grievancetype_spinner_placeholder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingEnd="16dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingStart="16dp">
+                        android:background="@null"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:hint="@string/complaint_type_text"
+                        android:singleLine="true"
+                        android:textColor="#000"
+                        android:textColorHint="#a8a5a5"
+                        android:imeOptions="actionNext"
+                        android:nextFocusDown="@+id/complaint_locationname"
+                        android:textSize="16sp"
+                       />
 
-                        <fragment
-                            android:id="@+id/complaint_map"
-                            android:name="com.NYXDigital.NiceSupportMapFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="300dp"
-                            android:layout_marginBottom="20dp" />
-
-                        <ImageButton
-                            android:id="@+id/map_marker_clear_button"
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:layout_gravity="right|top"
-                            android:layout_marginEnd="12dp"
-                            android:layout_marginRight="12dp"
-                            android:layout_marginTop="60dp"
-                            android:background="@drawable/imagebutton_background" />
-
-
-                    </FrameLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/activity_vertical_margin">
-
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-
-                        <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
-                            android:id="@+id/grievancetype_spinner_placeholder"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:background="@drawable/top_edittext"
-                            android:drawablePadding="5dp"
-                            android:gravity="center_vertical"
-                            android:hint="@string/loading_label"
-                            android:paddingEnd="10dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingStart="10dp"
-                            android:singleLine="true"
-                            android:textColor="#000"
-                            android:textColorHint="#a8a5a5"
-                            android:imeOptions="actionNext"
-                            android:nextFocusDown="@+id/complaint_locationname"
-                            android:textSize="15sp" />
-
-                        <Spinner
-                            android:id="@+id/complaint_type"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:background="@drawable/top_edittext"
-                            android:dropDownVerticalOffset="35dp"
-                            android:focusable="false"
-                            android:prompt="@string/complainttype_label"
-                            android:spinnerMode="dropdown"
-                            android:visibility="visible" />
-
-                    </FrameLayout>
-
-
-                    <TextView
-                        style="?android:attr/listSeparatorTextViewStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/dividerColor"
-                        android:gravity="center_horizontal"
-                        android:paddingTop="5dp"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"/>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/middle_edittext"
-                        android:paddingTop="5dp">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/complaint_locationname"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:hint="@string/area_label"
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
-                            android:minHeight="40dp"
-                            android:paddingEnd="10dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingStart="10dp"
-                            android:textColorHint="#a8a5a5"
-                            android:textSize="15sp" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/middle_edittext">
-
-                        <EditText
-                            android:id="@+id/complaint_landmark"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:hint="@string/landmark_label"
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
-                            android:minHeight="40dp"
-                            android:paddingEnd="10dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingStart="10dp"
-                            android:textColorHint="#a8a5a5"
-                            android:textSize="15sp" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bottom_edittext">
-
-                        <EditText
-                            android:id="@+id/complaint_details"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minHeight="40dp"
-                            android:paddingBottom="8dp"
-                            android:gravity="center_vertical"
-                            android:hint="@string/additionaldetails_label"
-                            android:inputType="textMultiLine"
-                            android:paddingEnd="10dp"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:paddingStart="10dp"
-                            android:textColorHint="#a8a5a5"
-                            android:background="@null"
-                            android:textSize="15sp" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
 
             </LinearLayout>
 
-        </ScrollView>
+            <View style="@style/Divider"/>
 
-        <Button
-            android:id="@+id/button_submit"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorAccent"
-            android:text="@string/submit_label"
-            android:textColor="@android:color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
 
-    </RelativeLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                   <AutoCompleteTextView
+                    android:id="@+id/complaint_locationname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:hint="@string/complaint_location_text"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:textSize="16sp"
+                    android:paddingRight="50dp"
+                    android:textColorHint="#a8a5a5"/>
+
+                   <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:id="@+id/imgClear"
+                        android:src="@drawable/ic_cancel_white_24dp"
+                        android:layout_marginRight="25dp"
+                        android:visibility="gone"
+                        android:layout_gravity="right" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:id="@+id/imgMapPick"
+                        android:src="@drawable/ic_map_black_24dp"
+                        android:layout_gravity="right" />
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+            <View style="@style/Divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                    <EditText
+                        android:id="@+id/complaint_landmark"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="Land Mark"
+                        android:background="@null"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:textColorHint="#a8a5a5"
+                        android:textSize="16sp"
+                        />
+
+            </LinearLayout>
+
+            <View style="@style/Divider"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                    <EditText
+                        android:id="@+id/complaint_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:hint="@string/additionaldetails_label"
+                        android:inputType="textMultiLine"
+                        android:textColorHint="#a8a5a5"
+                        android:background="@null"
+                        android:textSize="16sp"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!--<com.viewpagerindicator.LinePageIndicator
+        android:id="@+id/new_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        app:lineWidth="30dp"
+        app:selectedColor="@color/colorAccent"
+        app:strokeWidth="4dp" />-->
+
 
 </LinearLayout>

@@ -149,8 +149,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
 
         final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
         final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
-        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Comment", "Withdraw"));
-        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Comment", "Re-open"));
+        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Select", "Withdraw"));
+        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Select", "Re-open"));
         ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -306,7 +306,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
                     toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                     toast.show();
                 } else {
-                    if ((action.equals("Comment") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
+                    if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
                         {
@@ -316,7 +316,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
                         }
                     } else {
                         switch (action) {
-                            case "Comment":
+                            case "Select":
                                 isComment = true;
                                 action = grievance.getStatus();
                                 break;

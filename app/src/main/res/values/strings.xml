@@ -6,7 +6,7 @@
     <string name="otp_hint">Enter OTP</string>
     <string name="otp_button_label">Resend OTP</string>
     <string name="date_label">Date</string>
-    <string name="additionaldetails_label">Additional details (Required*/ 10 characters min.)</string>
+    <string name="additionaldetails_label">Complaint Description*</string>
     <string name="location_label">Location</string>
     <string name="status_label">Status</string>
     <string name="complaintID_label">Complaint ID</string>
@@ -87,7 +87,7 @@
     <string name="splashscreen_loading">Preparing resources…</string>
     <string name="watertax_label">Water Tax</string>
     <string name="details_label">Additional details</string>
-    <string name="complaint_type_label">Complaint Type (Required*)</string>
+    <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">Date of birth</string>
     <string name="locality_label">LOCALITY</string>
     <string name="ownername_contactno_label">OWNER NAME/PHONE NO.</string>
@@ -106,5 +106,10 @@
     <string name="password_level_medium">Password must be at least 8 to 32 characters long and must have and at least one number, small and capital letter combination!</string>
     <string name="password_level_high">Password must be at least 8 to 32 characters long and must have one or more upper case and lower case alphabet, number and special character except &amp; &lt; &gt; # % \&quot; \' and space!</string>
     <string name="password_level_low">Password must be at least 4 to 32 characters long and must have at least one number, small and capital letter combination!</string>
+    <string name="complaint_type_text">Complaint Type*</string>
+    <string name="complaint_location_text">Complaint Location*</string>
+    <string name="action_regcomplaint">Register complaint</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
 
 </resources>
