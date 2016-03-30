@@ -93,7 +93,7 @@
     <string name="ownername_contactno_label">OWNER NAME/PHONE NO.</string>
     <string name="assessmentno_label">ASSESSMENT NO.</string>
     <string name="installments_label">Installments</string>
-    <string name="consumercode_label">Consumer code</string>
+    <string name="consumercode_label">CONSUMER CODE</string>
     <string name="contactno_label">Contact no.</string>
     <string name="arrears_total">ARREARS TOTAL</string>
     <string name="arrears_penalty">ARREARS PENALTY</string>

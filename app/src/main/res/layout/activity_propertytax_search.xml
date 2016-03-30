@@ -48,6 +48,7 @@
         </android.support.v7.widget.Toolbar>
 
         <ScrollView
+            android:id="@+id/scrollviewpropertytax"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="100dp"
@@ -80,9 +81,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:src="@drawable/ic_rupee_24dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_margin="@dimen/fab_margin"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />

@@ -44,8 +44,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,9 +82,8 @@ public class PropertyTaxSearchActivity extends BaseActivity {
     Button btnBreakups;
     List<TaxDetail> listBreakups;
     FloatingActionButton fabPayPropertyTax;
-
-    private ListView listView;
     CardView propertyTaxDetailsView;
+    ScrollView scrollViewPropertyTax;
 
     private ProgressBar progressBar;
 
@@ -98,6 +97,8 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
         fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpaypropertytax);
         fabPayPropertyTax.setVisibility(View.GONE);
+
+        scrollViewPropertyTax = (ScrollView) findViewById(R.id.scrollviewpropertytax);
 
         propertyTaxDetailsView = (CardView)findViewById(R.id.propertypropertytax_layout);
         propertyTaxDetailsView.setVisibility(View.GONE);
@@ -228,6 +229,12 @@ public class PropertyTaxSearchActivity extends BaseActivity {
                                     if(Total>0)
                                     {
                                       fabPayPropertyTax.setVisibility(View.VISIBLE);
+                                    }
+                                    else
+                                    {
+                                        float scale = getResources().getDisplayMetrics().density;
+                                        int dpAsPixels = (int) (10*scale + 0.5f);
+                                        scrollViewPropertyTax.setPadding(0,0,0,dpAsPixels);
                                     }
 
                                     tvOwnerNamePhone.setText(ownersMobileNos);

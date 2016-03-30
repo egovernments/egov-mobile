@@ -147,9 +147,7 @@ public class GrievanceActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 progressBar.setVisibility(View.GONE);
-                Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-                intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
-                startService(intent);
+                refreshGrievanceList();
             }
         });
 
@@ -204,6 +202,11 @@ public class GrievanceActivity extends BaseActivity {
             progressBar.setVisibility(View.GONE);
             isUpdateFailed = false;
         }
+
+
+        refreshGrievanceList();
+
+
     }
 
     //Handles result when NewGrievanceActivity finishes
@@ -271,6 +274,14 @@ public class GrievanceActivity extends BaseActivity {
         grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
         recyclerView.setAdapter(grievanceAdapter);
         grievanceList = null;
+    }
+
+    public void refreshGrievanceList()
+    {
+        pageNo=1;
+        Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
+        intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
+        startService(intent);
     }
 }
 
