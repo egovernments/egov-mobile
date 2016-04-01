@@ -35,34 +35,40 @@ package org.egovernments.egoverp.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.adapters.GrievanceCommentAdapter;
 import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
@@ -92,19 +98,15 @@ import retrofit.client.Response;
  * Displays the details of a complaint when clicked in GrievanceActivity recycler view
  **/
 
-public class GrievanceDetailsActivity extends AppCompatActivity {
+public class GrievanceDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
 
     private static Grievance grievance;
 
-    private ListView listView;
-
     private EditText updateComment;
 
     private ProgressDialog progressDialog;
-
-    private TextView complaintLocation;
 
     private String action;
 
@@ -113,6 +115,13 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
     private boolean isComment = false;
 
     private ProgressBar progressBar;
+
+    private LinearLayout layoutCompComments;
+
+    private LinearLayout layoutToggleComments;
+
+    private Button btnMoreComments;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +137,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        TextView complaintLocation;
+        CardView mapCardView;
+
         TextView complaintDate = (TextView) findViewById(R.id.details_complaint_date);
         TextView complaintType = (TextView) findViewById(R.id.details_complaint_type);
         TextView complaintDetails = (TextView) findViewById(R.id.details_complaint_details);
@@ -135,7 +147,12 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         TextView complaintLandmark = (TextView) findViewById(R.id.details_complaint_landmark);
         TextView complaintNo = (TextView) findViewById(R.id.details_complaintNo);
         TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
+        LinearLayout layoutLandMark=(LinearLayout)findViewById(R.id.layoutlandmark);
         complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
+        mapCardView=(CardView)findViewById(R.id.mapcardview);
+        layoutCompComments =(LinearLayout)findViewById(R.id.complaintcommentscontainer);
+        layoutToggleComments = (LinearLayout) findViewById(R.id.complainttogglecomments);
+        btnMoreComments=(Button)findViewById(R.id.btnmorecomments);
 
         final LinearLayout feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
 
@@ -144,8 +161,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         updateComment = (EditText) findViewById(R.id.update_comment);
 
         progressBar = (ProgressBar) findViewById(R.id.grievance_history_placeholder);
-
-        listView = (ListView) findViewById(R.id.grievance_comments);
 
         final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
         final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
@@ -158,14 +173,27 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         progressDialog.setMessage("Processing request");
         progressDialog.setCancelable(false);
 
-        //The default image when complaint has no uploaded images
-        ImageView default_image = (ImageView) findViewById(R.id.details_defaultimage);
+        btnMoreComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(layoutToggleComments.getVisibility() == View.VISIBLE)
+                {
+                    btnMoreComments.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
+                    layoutToggleComments.setVisibility(View.GONE);
+                }
+                else
+                {
+                    btnMoreComments.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_keyboard_arrow_up_black_24dp,0);
+                    layoutToggleComments.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         //The layout for uploaded images
         RelativeLayout imageLayout = (RelativeLayout) findViewById(R.id.details_imageslayout);
 
         //If no uploaded images
         if (grievance.getSupportDocsSize() == 0) {
-            default_image.setVisibility(View.VISIBLE);
             imageLayout.setVisibility(View.GONE);
         } else {
             ViewPager viewPager = (ViewPager) findViewById(R.id.details_complaint_image);
@@ -176,30 +204,37 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         }
 
         //Parses complaint date into a more readable format
-        try {
-            //noinspection SpellCheckingInspection
-            complaintDate.setText(new SimpleDateFormat("EEEE, d MMMM, yyyy", Locale.ENGLISH)
-                    .format(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS", Locale.ENGLISH)
-                            .parse(grievance.getCreatedDate())));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        complaintDate.setText(formatDateString(grievance.getCreatedDate(),"yyyy-MM-dd hh:mm:ss.SSS","dd/MM/yyyy hh:mm aa"));
 
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
         if (TextUtils.isEmpty(grievance.getLandmarkDetails())) {
-
-                findViewById(R.id.details_complaint_landmark_label).setVisibility(View.GONE);
-                complaintLandmark.setVisibility(View.GONE);
-
+            layoutLandMark.setVisibility(View.GONE);
         } else
             complaintLandmark.setText(grievance.getLandmarkDetails());
 
         //If grievance has lat/lng values, location name is null
-        if (grievance.getLat() == null)
-            complaintLocation.setText(grievance.getChildLocationName() + " - " + grievance.getLocationName());
+        if (grievance.getLat() == null) {
+            mapCardView.setVisibility(View.GONE);
+            String complaintloc =grievance.getChildLocationName() + " - " + grievance.getLocationName();
+            complaintLocation.setText(complaintloc);
+        }
         else {
+            complaintLocation.setVisibility(View.GONE);
             getAddress(grievance.getLat(), grievance.getLng());
+            final MapFragment map = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        map.getView().setClickable(false);
+                        map.getMapAsync(GrievanceDetailsActivity.this);
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+
         }
 
         complaintNo.setText(grievance.getCrn());
@@ -209,26 +244,25 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
             //Display feedback spinner
             if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_closed);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_closed);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
+                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
 
-                commentBoxLabel.setText("Feedback");
+                commentBoxLabel.setText(getResources().getString(R.string.feedback));
 
                 feedbackLayout.setVisibility(View.VISIBLE);
-                ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievancefeedback_spinner, feedbackOptions);
+                ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, feedbackOptions);
                 feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.view_grievancefeedback_spinner, GrievanceDetailsActivity.this));
+                feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
 
             }
             //Display default spinners
             else {
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.view_grievanceupdate_spinner, actions_open);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_open);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.view_grievanceupdate_spinner, GrievanceDetailsActivity.this));
-
-                commentBoxLabel.setText("Update grievance");
+                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
+                commentBoxLabel.setText(getResources().getString(R.string.updatecomplaint));
             }
         }
         else
@@ -237,58 +271,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
             layoutGrievanceUpdate.setVisibility(View.GONE);
         }
 
-        listView.setOnTouchListener(new View.OnTouchListener() {
-            // Setting on Touch Listener for handling the touch inside ScrollView
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // Disallow the touch request for parent scroll on touch of child view
-                v.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
-            }
-        });
 
-        ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
-            @Override
-            public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
-
-                GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
-
-                progressBar.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
-                List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
-                //this is bug from server side need to see
-                if(grievanceCommentAPIResult.getGrievanceComments().size()>2)
-                {
-                    grievanceComments.remove(grievanceComments.size()-1);
-                }
-                listView.setAdapter(new GrievanceCommentAdapter(grievanceComments, GrievanceDetailsActivity.this));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (error.getLocalizedMessage() != null) {
-                    if (error.getLocalizedMessage().equals("Invalid access token")) {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-
-                        sessionManager.logoutUser();
-                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                    } else {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                    }
-                }
-                else {
-                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
-                }
-                progressBar.setVisibility(View.GONE);
-            }
-
-        });
+        //load complaint history
+        new LoadComplaintHistory().execute();
 
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -347,7 +332,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
 
                                         GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
 
-                                        listView.setAdapter(new GrievanceCommentAdapter(grievanceCommentAPIResult.getGrievanceComments(), GrievanceDetailsActivity.this));
+                                        loadComplaintComments(grievanceCommentAPIResult.getGrievanceComments());
                                         actionsSpinner.setSelection(0);
                                         feedbackSpinner.setSelection(0);
                                         updateComment.getText().clear();
@@ -441,6 +426,71 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         return grievance;
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        //Add marker at complaint filed location in map and zoom map to complaint location
+        LatLng latLng = new LatLng(grievance.getLat(), grievance.getLng());
+        googleMap.addMarker(new MarkerOptions().position(latLng));
+        CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+        googleMap.animateCamera(location);
+    }
+
+    private void loadComplaintHistory()
+    {
+        ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
+            @Override
+            public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
+
+                GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
+
+                progressBar.setVisibility(View.GONE);
+                List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
+                //this is bug from server side need to see
+                if(grievanceComments.size()>1)
+                {
+                    grievanceComments.remove(grievanceComments.size() - 1);
+                }
+
+                loadComplaintComments(grievanceComments);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error.getLocalizedMessage() != null) {
+                    if (error.getLocalizedMessage().equals("Invalid access token")) {
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+
+                        sessionManager.logoutUser();
+                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
+                    } else {
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+                    }
+                }
+                else {
+                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                }
+                progressBar.setVisibility(View.GONE);
+            }
+
+        });
+    }
+
+    //Load complaint History
+    public class LoadComplaintHistory extends AsyncTask<String, Integer, String>
+    {
+        @Override
+        protected String doInBackground(String... params) {
+            loadComplaintHistory();
+            return null;
+        }
+    }
+
     //The viewpager custom adapter
     private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
 
@@ -471,6 +521,75 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         startService(intent);
     }
 
+    //return date format dd/MM/yyy hh:mm aa
+    private String formatDateString(String dateText, String currentDateFormat, String outputDateFormat)
+    {
+        try {
+            return new SimpleDateFormat(outputDateFormat, Locale.ENGLISH)
+                    .format(new SimpleDateFormat(currentDateFormat, Locale.ENGLISH)
+                            .parse(dateText));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private void loadComplaintComments(List<GrievanceComment> grievanceComments)
+    {
+
+        //more comments button show hide check
+        if(grievanceComments.size()<=2)
+        {
+            btnMoreComments.setVisibility(View.GONE);
+        }
+        else{
+            btnMoreComments.setVisibility(View.VISIBLE);
+            String commentsText=(grievanceComments.size()-2)+" COMMENTS";
+            btnMoreComments.setText(commentsText);
+        }
+
+        layoutToggleComments.removeAllViews();
+        layoutCompComments.removeAllViews();
+
+
+        for(int i=(grievanceComments.size()-1);i>=0;i--)
+        {
+            View commentItemTemplate=getLayoutInflater().inflate(R.layout.template_comment_item,null);
+            GrievanceComment comment=grievanceComments.get(i);
+            TextView tvUserName=(TextView)commentItemTemplate.findViewById(R.id.commenter_name);
+            tvUserName.setText(comment.getUpdatedBy());
+
+            if (comment.getUpdatedUserType().equals("EMPLOYEE"))
+                tvUserName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
+
+            if(sessionManager.getUsername().equals(comment.getUpdatedBy()))
+                tvUserName.setText("Me");
+
+
+            ((TextView)commentItemTemplate.findViewById(R.id.comment_datetime)).setText(formatDateString(comment.getDate(), "MMM dd, yyyy hh:mm:ss aa", "dd/MM/yyyy hh:mm aa"));
+            if(!TextUtils.isEmpty(comment.getComments()))
+            {
+                ((TextView)commentItemTemplate.findViewById(R.id.comment_text)).setText(comment.getComments());
+            }
+            else
+            {
+                String commentText="Status has been changed into "+comment.getStatus();
+                ((TextView)commentItemTemplate.findViewById(R.id.comment_text)).setText(commentText);
+            }
+
+            ((TextView)commentItemTemplate.findViewById(R.id.comment_status)).setText(comment.getStatus());
+
+            if(i<=1)
+            {
+                layoutCompComments.addView(commentItemTemplate);
+            }
+            else {
+                layoutToggleComments.addView(commentItemTemplate);
+            }
+        }
+    }
+
+
     //Handles AddressReadyEvent posted by AddressService on success
     @SuppressWarnings("unused")
     public void onEvent(AddressReadyEvent addressReadyEvent) {
@@ -478,7 +597,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                complaintLocation.setText(AddressService.addressResult);
+                ((TextView)findViewById(R.id.map_location_text)).setText(AddressService.addressResult);
             }
         });
 

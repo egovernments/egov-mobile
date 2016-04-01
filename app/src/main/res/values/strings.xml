@@ -5,11 +5,11 @@
     <string name="otp_textfield">Please enter the 5-digit OTP sent to your registered phone no. and email ID to verify your account.</string>
     <string name="otp_hint">Enter OTP</string>
     <string name="otp_button_label">Resend OTP</string>
-    <string name="date_label">Date</string>
+    <string name="date_label">CREATED AT</string>
     <string name="additionaldetails_label">Complaint Description*</string>
-    <string name="location_label">Location</string>
-    <string name="status_label">Status</string>
-    <string name="complaintID_label">Complaint ID</string>
+    <string name="location_label">COMPLAINT LOCATION</string>
+    <string name="status_label">COMPLAINT STATUS</string>
+    <string name="complaintID_label">COMPLAINT NO</string>
     <string name="forgotpassword_hint">Enter mobile no.</string>
     <string name="forgotpassword_text">Please enter your registered phone number. A recovery message will be sent to your phone and to your registered email ID.</string>
     <string name="login_username">Email ID or Phone No.</string>
@@ -44,12 +44,12 @@
     <string name="gender_female_label">Female</string>
     <string name="gender_male_label">Male</string>
     <string name="gender_label">Gender</string>
-    <string name="landmark_label">Landmark</string>
+    <string name="landmark_label">LANDMARK</string>
     <string name="area_label">Area (Required* if location not set on map)</string>
     <string name="gallery_label">Gallery</string>
     <string name="camera_label">Camera</string>
-    <string name="details_type_label">Type</string>
-    <string name="history_label">History</string>
+    <string name="details_type_label">COMPLAINT TYPE</string>
+    <string name="history_label">COMPLAINT HISTORY</string>
     <string name="processing_label">Processing</string>
     <string name="completed_label">Completed</string>
     <string name="rejected_label">Rejected</string>
@@ -79,14 +79,14 @@
     <string name="forwarded_label">Forwarded</string>
     <string name="withdrawn_label">Withdrawn</string>
     <string name="newgrievance_label">New Grievance</string>
-    <string name="grievancedetails_label">Grievance Details</string>
+    <string name="grievancedetails_label">View Grievance</string>
     <string name="editprofile_label">Edit Profile</string>
     <string name="loading_label">Loading…</string>
     <string name="city_hint">Municipality</string>
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
     <string name="watertax_label">Water Tax</string>
-    <string name="details_label">Additional details</string>
+    <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">Date of birth</string>
     <string name="locality_label">LOCALITY</string>
@@ -111,6 +111,8 @@
     <string name="action_regcomplaint">Register complaint</string>
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
+    <string name="feedback">FEEDBACK</string>
+    <string name="updatecomplaint">UPDATE COMPLAINT</string>
     <string name="balance_due">BALANCE DUE</string>
 
 </resources>
