@@ -236,7 +236,11 @@ public class GrievanceActivity extends BaseActivity {
             recyclerView.setAdapter(grievanceAdapter);
             swipeRefreshLayout.setRefreshing(false);
         } else {
-            grievanceAdapter.notifyItemInserted(grievanceList.size());
+            if(pageNo==1)
+                grievanceAdapter.notifyItemRangeChanged(0, grievanceList.size());
+            else
+                grievanceAdapter.notifyItemInserted(grievanceList.size());
+
         }
         progressBar.setVisibility(View.GONE);
     }
