@@ -98,6 +98,7 @@ public class SSLTrustManager {
 
     public static OkHttpClient createClient() {
         final OkHttpClient client = new OkHttpClient();
+        client.setReadTimeout(2, TimeUnit.MINUTES);
         client.setConnectTimeout(2, TimeUnit.MINUTES);
         return configureClient(client);
     }

@@ -133,7 +133,7 @@ public class LoginActivity extends Activity {
             //If user is logged in and has a stored access token, immediately login user
             if (sessionManager.getAccessToken() != (null)) {
                 //Start fetching data from server
-                startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
+                startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE));
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
             } else {

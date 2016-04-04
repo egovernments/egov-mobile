@@ -48,6 +48,7 @@ import org.egovernments.egoverp.adapters.GrievanceAdapter;
 import org.egovernments.egoverp.events.GrievanceUpdateFailedEvent;
 import org.egovernments.egoverp.events.GrievancesUpdatedEvent;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
+import org.egovernments.egoverp.helper.EndlessRecyclerOnScrollListener;
 import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.network.UpdateService;
 
@@ -60,8 +61,6 @@ import de.greenrobot.event.EventBus;
  * The activity containing grievance list
  **/
 
-
-//TODO pagination not working on first list load
 
 public class GrievanceActivity extends BaseActivity {
 
@@ -80,13 +79,12 @@ public class GrievanceActivity extends BaseActivity {
     //The currently visible page no.
     private int pageNo = 1;
 
-    private int previousTotal = 0;
-    private int visibleThreshold = 5;
     private final int ACTION_UPDATE_REQUIRED = 111;
 
     private boolean loading = true;
     private boolean paginationEnded = false;
     public static boolean isUpdateFailed = false;
+    EndlessRecyclerOnScrollListener onScrollListener;
 
 
 
@@ -97,7 +95,6 @@ public class GrievanceActivity extends BaseActivity {
         setContentView(R.layout.activity_grievance);
 
         progressBar = (ProgressBar) findViewById(R.id.grievance_recylerview_placeholder);
-
         recyclerView = (RecyclerView) findViewById(R.id.recylerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setClickable(true);
@@ -105,41 +102,22 @@ public class GrievanceActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-
-        //Enables infinite scrolling (pagination)
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            int firstVisibleItem, visibleItemCount, totalItemCount;
-
+        onScrollListener=new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                visibleItemCount = recyclerView.getChildCount();
-                totalItemCount = linearLayoutManager.getItemCount();
-                firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-
-                if (loading) {
-                    if (totalItemCount > previousTotal) {
-                        loading = false;
-                        previousTotal = totalItemCount;
-                    }
-                }
-                // End has been reached
-                if (!loading && (totalItemCount - visibleItemCount)
-                        <= (firstVisibleItem + visibleThreshold)) {
-                    // Fetch further complaints
-                    if ((totalItemCount != visibleItemCount) && !paginationEnded) {
-                        pageNo++;
-                        Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
-                        intent.putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-                        intent.putExtra(UpdateService.COMPLAINTS_PAGE, String.valueOf(pageNo));
-                        startService(intent);
-                        loading = true;
-                    }
+            public void onLoadMore(int current_page) {
+                if(!loading && !paginationEnded) {
+                    pageNo++;
+                    loading = true;
+                    Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
+                    intent.putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
+                    intent.putExtra(UpdateService.COMPLAINTS_PAGE, String.valueOf(pageNo));
+                    startService(intent);
                 }
             }
-        });
+        };
+
+        //Enables infinite scrolling (pagination)
+        recyclerView.addOnScrollListener(onScrollListener);
 
         //Enables pull to refresh
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.recylerview_refreshlayout);
@@ -150,7 +128,6 @@ public class GrievanceActivity extends BaseActivity {
                 refreshGrievanceList();
             }
         });
-
 
         //CardView on click listener
         onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
@@ -245,6 +222,7 @@ public class GrievanceActivity extends BaseActivity {
     public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
 
         paginationEnded=grievancesUpdatedEvent.isPaginationEnded();
+        loading=false;
 
         if(grievancesUpdatedEvent.isSendRequest() && (grievanceAdapter==null || (grievanceAdapter.getItemCount()==0)))
         {
@@ -254,16 +232,13 @@ public class GrievanceActivity extends BaseActivity {
         //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {
             pageNo = 1;
-            previousTotal = 0;
             grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
             recyclerView.setAdapter(grievanceAdapter);
             swipeRefreshLayout.setRefreshing(false);
         } else {
-            grievanceAdapter.notifyDataSetChanged();
+            grievanceAdapter.notifyItemInserted(grievanceList.size());
         }
         progressBar.setVisibility(View.GONE);
-
-
     }
 
     @SuppressWarnings("unused")
@@ -278,7 +253,10 @@ public class GrievanceActivity extends BaseActivity {
 
     public void refreshGrievanceList()
     {
+        loading=true;
+        paginationEnded=false;
         pageNo=1;
+        onScrollListener.resetScrollListenerValues();
         Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
         intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
         startService(intent);
