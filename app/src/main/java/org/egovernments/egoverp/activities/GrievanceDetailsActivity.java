@@ -196,11 +196,16 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         if (grievance.getSupportDocsSize() == 0) {
             imageLayout.setVisibility(View.GONE);
         } else {
-            ViewPager viewPager = (ViewPager) findViewById(R.id.details_complaint_image);
-            viewPager.setAdapter(new GrievanceImagePagerAdapter(getSupportFragmentManager()));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ViewPager viewPager = (ViewPager) findViewById(R.id.details_complaint_image);
+                    viewPager.setAdapter(new GrievanceImagePagerAdapter(getSupportFragmentManager()));
+                    LinePageIndicator linePageIndicator = (LinePageIndicator) findViewById(R.id.indicator);
+                    linePageIndicator.setViewPager(viewPager);
+                }
+            });
 
-            LinePageIndicator linePageIndicator = (LinePageIndicator) findViewById(R.id.indicator);
-            linePageIndicator.setViewPager(viewPager);
         }
 
         //Parses complaint date into a more readable format
@@ -294,11 +299,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                     if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
                         Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
                     } else if (feedback == null) {
-                        {
-                            Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
                     } else {
                         switch (action) {
                             case "Select":
