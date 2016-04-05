@@ -61,6 +61,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
@@ -72,7 +73,6 @@ import org.egovernments.egoverp.network.SessionManager;
 import org.egovernments.egoverp.network.UpdateService;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,9 +250,7 @@ public class LoginActivity extends Activity {
         handler = new Handler();
 
         try {
-            InputStream inputStream = getAssets().open("egov.conf");
-            configManager = new ConfigManager(inputStream, LoginActivity.this);
-            inputStream.close();
+            configManager = AppUtils.getConfigManager(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

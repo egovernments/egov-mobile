@@ -65,6 +65,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
         return homeItemList.size();
     }
 
+    public HomeItem getItem(int position)
+    {
+        return homeItemList.get(position);
+    }
+
     @Override
     public void onBindViewHolder(final HomeViewHolder viewHolder, final int i) {
 

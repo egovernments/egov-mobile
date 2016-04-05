@@ -42,6 +42,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.network.ApiController;
@@ -50,7 +51,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class SplashScreenActivity extends Activity {
 
@@ -93,9 +93,7 @@ public class SplashScreenActivity extends Activity {
         };
 
         try {
-            InputStream inputStream = getAssets().open("egov.conf");
-            configManager = new ConfigManager(inputStream, SplashScreenActivity.this);
-            inputStream.close();
+            configManager = AppUtils.getConfigManager(getApplicationContext());
         } catch (IOException e) {
             e.printStackTrace();
         }

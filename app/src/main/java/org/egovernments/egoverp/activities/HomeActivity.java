@@ -33,7 +33,6 @@
 package org.egovernments.egoverp.activities;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,9 +40,12 @@ import android.view.View;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.HomeAdapter;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
+import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.HomeItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +59,7 @@ public class HomeActivity extends BaseActivity {
 
         List<HomeItem> homeItemList = new ArrayList<>();
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -66,32 +68,46 @@ public class HomeActivity extends BaseActivity {
         CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
             @Override
             public void onItemClicked(View view, int position) {
-
-                switch (position) {
-                    case 0:
-                        startActivity(new Intent(HomeActivity.this, GrievanceActivity.class));
-                        break;
-                    case 1:
-                        startActivity(new Intent(HomeActivity.this, PropertyTaxSearchActivity.class));
-                        break;
-                    case 2:
-                        startActivity(new Intent(HomeActivity.this, WaterTaxSearchActivity.class));
-                        break;
-                    case 3:
-                        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-                        break;
-                }
-
+                HomeItem homeItem = ((HomeAdapter)recyclerView.getAdapter()).getItem(position);
+                String homeItemTitle=homeItem.getTitle();
+                openPage(homeItemTitle);
             }
         };
 
-        homeItemList.add(new HomeItem("Grievances", R.drawable.ic_announcement_black_36dp, "File grievances or review and update previously filed grievances"));
-        homeItemList.add(new HomeItem("Property tax", R.drawable.ic_business_black_36dp, "View property tax details for an assessment number"));
-        homeItemList.add(new HomeItem("Water tax", R.drawable.ic_local_drink_black_36dp, "View water tax details for a consumer code"));
-        homeItemList.add(new HomeItem("Profile", R.drawable.ic_person_black_36dp, "Update or review your profile details."));
+        try
+        {
+
+            ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
+
+            //check for pgr module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.grievances_label), R.drawable.ic_announcement_black_36dp, "File grievances or review and update previously filed grievances"));
+            }
+
+            //check for property tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number"));
+            }
+
+            //check for water tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.watertax_label), R.drawable.ic_local_drink_black_36dp, "View water tax details for a consumer code"));
+            }
+
+            homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details."));
+
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
 
         HomeAdapter homeAdapter = new HomeAdapter(homeItemList, onItemClickCallback);
         recyclerView.setAdapter(homeAdapter);
+
 
     }
 }

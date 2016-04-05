@@ -54,6 +54,8 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
+import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
 
@@ -165,97 +167,129 @@ public class BaseActivity extends AppCompatActivity {
                 drawerLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        selectItem(position);
+                        NavigationItem navigationItem=(NavigationItem)listView.getItemAtPosition(position);
+                        openPage(navigationItem.getNavTitle());
                     }
                 }, 300);
             }
         });
     }
 
-    public void selectItem(int position)
+    public void openPage(String menuItemText)
+    {
+        if(getString(R.string.home_label).equals(menuItemText))
+        {
+            openHomePage();
+        }
+        else if(getString(R.string.grievances_label).equals(menuItemText))
+        {
+            openGrievancePage();
+        }
+        else if(getString(R.string.propertytax_label).equals(menuItemText))
+        {
+            openPropertyPage();
+        }
+        else if(getString(R.string.watertax_label).equals(menuItemText))
+        {
+            openWaterTaxPage();
+        }
+        else if(getString(R.string.profile_label).equals(menuItemText))
+        {
+            openProfilePage();
+        }
+        else if(getString(R.string.logout_label).equals(menuItemText))
+        {
+            logoutUser();
+        }
+
+    }
+
+    public void openHomePage()
+    {
+        if (!getTitle().toString().equals(getString(R.string.home_label)))
+            finish();
+    }
+
+    public void openGrievancePage()
     {
         Intent intent;
-        switch (position) {
-
-            case 0:
-                if (!getTitle().toString().equals(getString(R.string.home_label)))
-                    finish();
-                break;
-
-            case 1:
-                if (!getTitle().toString().equals(getString(R.string.grievances_label))) {
-                    intent = new Intent(BaseActivity.this, GrievanceActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    if (!getTitle().toString().equals(getString(R.string.home_label)))
-                        finish();
-                }
-                break;
-
-            case 2:
-                if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
-                    intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    if (!getTitle().toString().equals(getString(R.string.home_label)))
-                        finish();
-                }
-                break;
-
-            case 3:
-                if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
-                    intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    if (!getTitle().toString().equals(getString(R.string.home_label)))
-                        finish();
-                }
-                break;
-
-            case 4:
-                if (!getTitle().toString().equals(getString(R.string.profile_label))) {
-                    intent = new Intent(BaseActivity.this, ProfileActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    if (!getTitle().toString().equals(getString(R.string.home_label)))
-                        finish();
-                }
-                break;
-
-            case 5:
-                progressDialog.show();
-                ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
-                    @Override
-                    public void success(JsonObject jsonObject, Response response) {
-
-                        sessionManager.logoutUser();
-
-                        ApiController.apiInterface = null;
-
-                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                        sessionManager.logoutUser();
-
-                        ApiController.apiInterface = null;
-
-                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        progressDialog.dismiss();
-                        finish();
-                    }
-                });
-                break;
-
+        if (!getTitle().toString().equals(getString(R.string.grievances_label))) {
+            intent = new Intent(BaseActivity.this, GrievanceActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
         }
+    }
+
+    public void openPropertyPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
+            intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
+    public void openWaterTaxPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
+            intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
+    public void openProfilePage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.profile_label))) {
+            intent = new Intent(BaseActivity.this, ProfileActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
+    public void logoutUser()
+    {
+        progressDialog.show();
+        ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+
+                sessionManager.logoutUser();
+
+                ApiController.apiInterface = null;
+
+                Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                progressDialog.dismiss();
+
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+                sessionManager.logoutUser();
+
+                ApiController.apiInterface = null;
+
+                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                progressDialog.dismiss();
+                finish();
+            }
+        });
     }
 
     public int getStatusBarHeight() {
@@ -270,14 +304,40 @@ public class BaseActivity extends AppCompatActivity {
     //Method fills the nav drawer's ArrayList
     private void fillList() {
 
-        arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
-        arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
+        try {
+            ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
+
+            arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label)));
+
+            //check for pgr module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
+            }
+
+            //check for property tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label)));
+            }
+
+            //check for water tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
+            }
+
+            arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
+            arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
+
+
 
     private void closeNavigationDrawer(DrawerLayout drawerLayout, ListView drawerList)
     {

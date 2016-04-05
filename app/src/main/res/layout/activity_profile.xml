@@ -56,151 +56,234 @@
 
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="15dp"
+                android:layout_marginTop="20dp">
 
-                <android.support.v4.widget.SwipeRefreshLayout
-                    android:id="@+id/profile_refreshlayout"
+                <android.support.v7.widget.CardView
+                    android:id="@+id/complaint_card"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardUseCompatPadding="true"
+                    app:cardCornerRadius="2dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="12dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_call_black_24dp"/>
 
                             <LinearLayout
-                                android:id="@+id/profileLayout"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="8dp"
-                                android:orientation="vertical"
-                                android:padding="16dp">
-
-
-                                <TextView
-                                    android:id="@+id/profile_name_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/name_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_name"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_phoneno_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/phone_label"
-                                    android:textSize="@dimen/field_labelSize" />
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
 
                                 <TextView
                                     android:id="@+id/profile_phoneno"
                                     android:layout_width="match_parent"
-                                    android:layout_height="30dp"
+                                    android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
                                     android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
-
+                                    android:textSize="18sp"/>
 
                                 <TextView
-                                    android:id="@+id/profile_altphoneno_label"
+                                    android:id="@+id/profile_phoneno_label"
                                     android:layout_width="match_parent"
-                                    android:layout_height="30dp"
+                                    android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
-                                    android:text="@string/altphone_label"
+                                    android:text="@string/phone_label"
+                                    android:paddingBottom="12dp"
                                     android:textSize="@dimen/field_labelSize" />
+
+                                <View style="@style/Divider" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_call_black_24dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
 
                                 <TextView
                                     android:id="@+id/profile_altphoneno"
                                     android:layout_width="match_parent"
-                                    android:layout_height="30dp"
+                                    android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
                                     android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
+                                    android:textSize="18sp" />
 
                                 <TextView
-                                    android:id="@+id/profile_email_label"
+                                    android:id="@+id/profile_altphoneno_label"
                                     android:layout_width="match_parent"
-                                    android:layout_height="30dp"
+                                    android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
-                                    android:text="@string/email_label"
+                                    android:text="@string/altphone_label"
                                     android:textSize="@dimen/field_labelSize" />
 
-                                <TextView
-                                    android:id="@+id/profile_email"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
 
-                                <TextView
-                                    android:id="@+id/profile_gender_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/gender_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_gender"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_dateofbirth_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/dob_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_dateofbirth"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_aadhaarcardno_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/aadhaar_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_aadhaarcardno"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_PANcardno_label"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:text="@string/pan_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <TextView
-                                    android:id="@+id/profile_PANcardno"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="30dp"
-                                    android:gravity="center_vertical"
-                                    android:textColor="@color/dataLabelColor"
-                                    android:textSize="@dimen/data_labelSize" />
 
                             </LinearLayout>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+               </android.support.v7.widget.CardView>
+
+
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/profile_refreshlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/profileLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="8dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+
+                        <TextView
+                            android:id="@+id/profile_name_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/name_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize"
+                            android:layout_marginBottom="15dp"/>
+
+
+
+
+
+
+
+
+                        <TextView
+                            android:id="@+id/profile_email_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/email_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_gender_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/gender_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_gender"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_dateofbirth_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/dob_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_dateofbirth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_aadhaarcardno_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/aadhaar_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_aadhaarcardno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_PANcardno_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:text="@string/pan_label"
+                            android:textSize="@dimen/field_labelSize" />
+
+                        <TextView
+                            android:id="@+id/profile_PANcardno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textColor="@color/dataLabelColor"
+                            android:textSize="@dimen/data_labelSize" />
+
+                    </LinearLayout>
 
 
 
