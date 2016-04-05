@@ -221,14 +221,17 @@ public class GrievanceActivity extends BaseActivity {
     @SuppressWarnings("unused")
     public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
 
+        if(grievancesUpdatedEvent.isSendRequest())
+        {
+            if((grievanceAdapter==null || (grievanceAdapter.getItemCount()==0))) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            return;
+        }
+
         paginationEnded=grievancesUpdatedEvent.isPaginationEnded();
         loading=false;
 
-        if(grievancesUpdatedEvent.isSendRequest() && (grievanceAdapter==null || (grievanceAdapter.getItemCount()==0)))
-        {
-            progressBar.setVisibility(View.VISIBLE);
-            return;
-        }
         //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {
             pageNo = 1;
@@ -237,7 +240,7 @@ public class GrievanceActivity extends BaseActivity {
             swipeRefreshLayout.setRefreshing(false);
         } else {
             if(pageNo==1)
-                grievanceAdapter.notifyItemRangeChanged(0, grievanceList.size());
+                grievanceAdapter.notifyDataSetChanged();
             else
                 grievanceAdapter.notifyItemInserted(grievanceList.size());
 

@@ -134,6 +134,9 @@ public class UpdateService extends Service {
                             GrievancesUpdatedEvent updatedEvent= new GrievancesUpdatedEvent();
                             //If the request is a refresh request
                             if (page.equals("1")) {
+                                if(GrievanceActivity.grievanceList!=null) {
+                                    GrievanceActivity.grievanceList.clear();
+                                }
                                 GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
                                 GrievanceActivity.grievanceList.add(null);
                                 GrievanceActivity.grievanceAdapter = null;

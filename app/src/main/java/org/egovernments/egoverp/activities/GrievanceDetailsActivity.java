@@ -232,7 +232,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                 @Override
                 public void run() {
                     try {
-                        map.getView().setClickable(false);
                         map.getMapAsync(GrievanceDetailsActivity.this);
                     } catch (NullPointerException ex) {
                         ex.printStackTrace();
@@ -431,6 +430,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.getUiSettings().setScrollGesturesEnabled(false);
         //Add marker at complaint filed location in map and zoom map to complaint location
         LatLng latLng = new LatLng(grievance.getLat(), grievance.getLng());
         googleMap.addMarker(new MarkerOptions().position(latLng));

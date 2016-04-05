@@ -422,6 +422,9 @@ public class LoginActivity extends Activity {
     @SuppressWarnings("unchecked")
     public void loadCityDropdown()
     {
+        if(districtsList==null){
+            return;
+        }
         if(citiesList!=null){ citiesList.clear(); }
 
         cityAutocompleteTextBox.setHint("Loading");
