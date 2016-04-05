@@ -40,7 +40,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -68,9 +68,9 @@ public class ProfileActivity extends BaseActivity {
 
     private ProgressBar progressBar;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-
     public static boolean isUpdateFailed = false;
+
+    private final int ACTION_UPDATE_REQUIRED = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +87,7 @@ public class ProfileActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, ProfileEditActivity.class);
                 intent.putExtra(ProfileEditActivity.PROFILE_EDIT_CONTENT, profile);
-                startActivity(intent);
+                startActivityForResult(intent, ACTION_UPDATE_REQUIRED);
             }
         };
 
@@ -105,16 +105,6 @@ public class ProfileActivity extends BaseActivity {
             progressBar.setVisibility(View.GONE);
             isUpdateFailed = false;
         }
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.profile_refreshlayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                progressBar.setVisibility(View.GONE);
-                Intent intent = new Intent(ProfileActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE);
-                startService(intent);
-            }
-        });
 
         final CollapsingToolbarLayout collapsingToolbar=(CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
 
@@ -153,19 +143,23 @@ public class ProfileActivity extends BaseActivity {
         final TextView pan = (TextView) findViewById(R.id.profile_PANcardno);
         final TextView gender = (TextView) findViewById(R.id.profile_gender);
 
-        name.setText(profile.getName());
-        emailId.setText(profile.getEmailId());
-        mobileNo.setText(profile.getMobileNumber());
-        altMobileNo.setText(profile.getAltContactNumber());
-        if (profile.getDob() != null) {
+        name.setText(validateIsEmpty(profile.getName()));
+        emailId.setText(validateIsEmpty(profile.getEmailId()));
+        mobileNo.setText(validateIsEmpty(profile.getMobileNumber()));
+        altMobileNo.setText(validateIsEmpty(profile.getAltContactNumber()));
+        if (TextUtils.isEmpty(profile.getDob())) {
             try {
                 dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        aadhaar.setText(profile.getAadhaarCard());
-        pan.setText(profile.getPanCard());
+        else
+        {
+            dob.setText("-");
+        }
+        aadhaar.setText(validateIsEmpty(profile.getAadhaarCard()));
+        pan.setText(validateIsEmpty(profile.getPanCard()));
         if (profile.getGender() != null) {
             switch (profile.getGender()) {
                 case "MALE":
@@ -179,8 +173,33 @@ public class ProfileActivity extends BaseActivity {
                 case "OTHERS":
                     gender.setText(R.string.gender_unmentioned_label);
                     break;
+                default:
+                    gender.setText("-");
+                    break;
+
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
+            Intent intent = new Intent(ProfileActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE);
+            startService(intent);
+        }
+
+    }
+
+    public String validateIsEmpty(String value)
+    {
+        if(TextUtils.isEmpty(value))
+        {
+            return "-";
+        }
+        return value;
     }
 
     //Subscribes the activity to events
@@ -201,12 +220,10 @@ public class ProfileActivity extends BaseActivity {
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
         updateProfile();
-        swipeRefreshLayout.setRefreshing(false);
     }
 
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdateFailedEvent profileUpdateFailedEvent) {
-        swipeRefreshLayout.setRefreshing(false);
         progressBar.setVisibility(View.GONE);
     }
 

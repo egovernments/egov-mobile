@@ -75,13 +75,22 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
-                        android:paddingTop="12dp"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ProgressBar
+                                android:id="@+id/profile_placeholder"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:layout_centerInParent="true"
+                                android:layout_margin="20dp"
+                                android:indeterminate="false" />
 
                             <ImageView
                                 android:layout_width="wrap_content"
@@ -121,7 +130,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
 
                             <ImageView
                                 android:layout_width="wrap_content"
@@ -150,13 +160,228 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
                                     android:text="@string/altphone_label"
-                                    android:textSize="@dimen/field_labelSize" />
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
 
+                                <View style="@style/Divider" />
 
 
                             </LinearLayout>
 
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_mail_black_24dp"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:id="@+id/profile_email"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:textColor="@color/dataLabelColor"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/profile_email_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/email_label"
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
+
+                                <View style="@style/Divider" />
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_face_black_24dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/profile_gender"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:textColor="@color/dataLabelColor"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/profile_gender_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/gender_label"
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
+
+                                <View style="@style/Divider" />
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_today_black_24dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:id="@+id/profile_dateofbirth"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:textColor="@color/dataLabelColor"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/profile_dateofbirth_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/dob_label"
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
+
+                                <View style="@style/Divider" />
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_credit_card_black_24dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/profile_aadhaarcardno"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:textColor="@color/dataLabelColor"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/profile_aadhaarcardno_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/aadhaar_label"
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
+
+                                <View style="@style/Divider" />
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingRight="16dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_credit_card_black_24dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/profile_PANcardno"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:textColor="@color/dataLabelColor"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/profile_PANcardno_label"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:text="@string/pan_label"
+                                    android:textSize="@dimen/field_labelSize"
+                                    android:paddingBottom="12dp"/>
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
 
 
                     </LinearLayout>
@@ -203,85 +428,15 @@
 
 
 
-                        <TextView
-                            android:id="@+id/profile_email_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:text="@string/email_label"
-                            android:textSize="@dimen/field_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_gender_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:text="@string/gender_label"
-                            android:textSize="@dimen/field_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_gender"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_dateofbirth_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:text="@string/dob_label"
-                            android:textSize="@dimen/field_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_dateofbirth"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_aadhaarcardno_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:text="@string/aadhaar_label"
-                            android:textSize="@dimen/field_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_aadhaarcardno"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_PANcardno_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:text="@string/pan_label"
-                            android:textSize="@dimen/field_labelSize" />
 
-                        <TextView
-                            android:id="@+id/profile_PANcardno"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize" />
 
                     </LinearLayout>
 
@@ -289,14 +444,7 @@
 
                 </android.support.v4.widget.SwipeRefreshLayout>
 
-                <ProgressBar
-                    android:id="@+id/profile_placeholder"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_centerInParent="true"
-                    android:layout_margin="20dp"
-                    android:indeterminate="false" />
+
 
             </RelativeLayout>
 
