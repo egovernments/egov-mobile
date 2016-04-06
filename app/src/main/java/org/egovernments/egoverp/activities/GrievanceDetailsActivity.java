@@ -448,11 +448,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
                 progressBar.setVisibility(View.GONE);
                 List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
-                //this is bug from server side need to see
-                if(grievanceComments.size()>1)
-                {
-                    grievanceComments.remove(grievanceComments.size() - 1);
-                }
 
                 loadComplaintComments(grievanceComments);
             }
