@@ -88,7 +88,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        sessionManager = new SessionManager(this);
+        sessionManager = new SessionManager(getApplicationContext());
 
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
         sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
@@ -166,7 +166,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 sendButtonCompat.setVisibility(View.VISIBLE);
             }
         } else {
-            ApiController.getAPI(ForgotPasswordActivity.this).recoverPassword(phone, sessionManager.getBaseURL(), new Callback<JsonObject>() {
+            ApiController.resetAndGetAPI(ForgotPasswordActivity.this).recoverPassword(phone, sessionManager.getBaseURL(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
@@ -186,24 +186,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
+                    if (error != null) {
                         if (error.getLocalizedMessage() != null) {
                             Toast toast = Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
                             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                             toast.show();
-                        } else {
-                            JsonObject jsonObject = (JsonObject) error.getBody();
-                            if (jsonObject != null) {
-                                Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.noaccount_msg, Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-
                         }
-                    } else {
-                        Toast toast = Toast.makeText(ForgotPasswordActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
                     }
 
                     progressBar.setVisibility(View.GONE);

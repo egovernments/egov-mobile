@@ -216,8 +216,18 @@ public class LoginActivity extends Activity {
         forgotLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (configManager.getString("api.multicities").equals("true"))
+                {
+                    City selectedCity=getCityByName(cityAutocompleteTextBox.getText().toString());
+                    if(!isValidDistrictAndMunicipality(selectedCity))
+                    {
+                        return;
+                    }
+                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+                }
+
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -310,12 +320,8 @@ public class LoginActivity extends Activity {
 
                 City selectedCity = getCityByName(cityAutocompleteTextBox.getText().toString());
 
-                if (selectedCity == null && configManager.getString("api.multicities").equals("true")) {
-
-                    String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
-                    showToastMsg(errorMsg);
-                    CustomAutoCompleteTextView controlToFocus = (TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString()) ? districtAutocompleteTextBox : cityAutocompleteTextBox);
-                    controlToFocus.requestFocus();
+                if(!isValidDistrictAndMunicipality(selectedCity))
+                {
                     return;
                 }
 
@@ -494,9 +500,6 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onClick(DrawablePosition target) {
                         if (target == DrawablePosition.RIGHT) {
-                            if (!isDistrict && !cityAutocompleteTextBox.hasFocus()) {
-                                return;
-                            }
                             autoCompleteSpinner.performClick();
                         }
                     }
@@ -554,6 +557,19 @@ public class LoginActivity extends Activity {
 
             }
         });
+    }
+
+    public boolean isValidDistrictAndMunicipality(City selectedCity)
+    {
+        if (selectedCity == null && configManager.getString("api.multicities").equals("true")) {
+
+            String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
+            showToastMsg(errorMsg);
+            CustomAutoCompleteTextView controlToFocus = (TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString()) ? districtAutocompleteTextBox : cityAutocompleteTextBox);
+            controlToFocus.requestFocus();
+            return false;
+        }
+        return true;
     }
 
 

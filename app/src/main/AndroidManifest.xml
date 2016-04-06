@@ -49,6 +49,7 @@
             android:label="@string/egov_label"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activities.RegisterActivity"

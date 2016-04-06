@@ -99,9 +99,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private TextInputLayout nameInputLayout;
 
-    private String url;
-    private String cityName;
-
     private ProgressDialog progressDialog;
 
     private ConfigManager configManager;
@@ -118,10 +115,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     List<District> districtsList;
     List<City> citiesList;
-
-    private int check = 0;
-
-    private int code;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -577,9 +570,6 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DrawablePosition target) {
                         if (target == DrawablePosition.RIGHT) {
-                            if (!isDistrict && ! cityAutoCompleteTextView.hasFocus()) {
-                                return;
-                            }
                             autoCompleteSpinner.performClick();
                         }
                     }

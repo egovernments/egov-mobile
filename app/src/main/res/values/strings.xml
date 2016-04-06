@@ -27,9 +27,11 @@
     <string name="address_label">ADDRESS</string>
     <string name="owner_label">OWNER NAME</string>
     <string name="phone_label">PHONE NO.</string>
+    <string name="phone_label_normal">Phone No.</string>
     <string name="phone_label_editprofile">PHONE NO.*</string>
     <string name="altphone_label">ALTERNATE PHONE NO.</string>
-    <string name="email_label">EMAIL ID</string>
+    <string name="email_label">EMAIL ADDRESS</string>
+    <string name="email_label_normal">Email Address</string>
     <string name="email_label_editprofile">EMAIL ADDRESS*</string>
     <string name="dob_label_editprofile">DATE OF BIRTH*</string>
     <string name="aadhaar_label">AADHAR CARD NO.</string>
