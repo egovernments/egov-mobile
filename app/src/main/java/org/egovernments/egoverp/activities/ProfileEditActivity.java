@@ -51,13 +51,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
-import org.egovernments.egoverp.network.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +64,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -155,16 +152,21 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
 
 
-            DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            final DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    profileDOB.setText(String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear + 1) + "-" + String.valueOf(year));
+                    try {
+                        String selectedDateStr=String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear + 1) + "-" + String.valueOf(year);
+                        profileDOB.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(selectedDateStr)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     date_of_birth = String.valueOf(year) + "-" + String.valueOf(monthOfYear + 1) + "-" + String.valueOf(dayOfMonth);
                 }
             };
 
             Calendar dob = Calendar.getInstance();
-            if (profile.getDob() != null) {
+            if (!TextUtils.isEmpty(profile.getDob())) {
                 try {
                     dob.setTime(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob()));
                 } catch (ParseException e) {
@@ -174,7 +176,6 @@ public class ProfileEditActivity extends AppCompatActivity {
 
             final DatePickerDialog datePickerDialog = new DatePickerDialog(ProfileEditActivity.this, onDateSetListener, dob.get(Calendar.YEAR), dob.get(Calendar.MONTH), dob.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.setCancelable(false);
-            datePickerDialog.setTitle(R.string.dob_label_editprofile);
 
             profileDOB.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -279,11 +280,10 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                     ProfileActivity.profile = profileAPIResponse.getProfile();
 
-                    EventBus.getDefault().post(new ProfileUpdatedEvent());
-
                     progressDialog.dismiss();
-                    startService(new Intent(ProfileEditActivity.this, UpdateService.class)
-                            .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE));
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK, intent);
+
                     finish();
                 }
 

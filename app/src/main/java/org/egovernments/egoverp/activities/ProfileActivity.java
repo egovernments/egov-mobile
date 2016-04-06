@@ -147,7 +147,7 @@ public class ProfileActivity extends BaseActivity {
         emailId.setText(validateIsEmpty(profile.getEmailId()));
         mobileNo.setText(validateIsEmpty(profile.getMobileNumber()));
         altMobileNo.setText(validateIsEmpty(profile.getAltContactNumber()));
-        if (TextUtils.isEmpty(profile.getDob())) {
+        if (!TextUtils.isEmpty(profile.getDob())) {
             try {
                 dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
             } catch (ParseException e) {
