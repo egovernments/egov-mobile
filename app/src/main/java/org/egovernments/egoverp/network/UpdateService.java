@@ -155,7 +155,8 @@ public class UpdateService extends Service {
                                         List<Address> addresses;
                                         try {
                                             addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
-                                            grievance.setLocationName(returnValidString(addresses.get(0).getSubLocality()));
+                                            String location=(TextUtils.isEmpty(addresses.get(0).getSubLocality())?addresses.get(0).getThoroughfare():addresses.get(0).getSubLocality());
+                                            grievance.setLocationName(returnValidString(location));
                                             grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
                                         } catch (IOException e) {
                                             e.printStackTrace();
