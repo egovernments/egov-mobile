@@ -35,9 +35,12 @@ package org.egovernments.egoverp.network;
 
 import android.app.Service;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -49,9 +52,14 @@ import org.egovernments.egoverp.activities.ProfileActivity;
 import org.egovernments.egoverp.events.GrievanceUpdateFailedEvent;
 import org.egovernments.egoverp.events.GrievancesUpdatedEvent;
 import org.egovernments.egoverp.events.ProfileUpdatedEvent;
+import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -138,6 +146,23 @@ public class UpdateService extends Service {
                                     GrievanceActivity.grievanceList.clear();
                                 }
                                 GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
+
+                                for(Grievance grievance:GrievanceActivity.grievanceList)
+                                {
+                                    if (grievance.getLocationName() == null && grievance.getLat()>0)
+                                    {
+                                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                        List<Address> addresses;
+                                        try {
+                                            addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
+                                            grievance.setLocationName(returnValidString(addresses.get(0).getSubLocality()));
+                                            grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+
                                 GrievanceActivity.grievanceList.add(null);
                                 GrievanceActivity.grievanceAdapter = null;
                             }
@@ -175,6 +200,14 @@ public class UpdateService extends Service {
             );
         }
 
+    }
+
+    public String returnValidString(String string)
+    {
+        if(!TextUtils.isEmpty(string)){
+            return string;
+        }
+        return "";
     }
 
     private void updateProfile() {
