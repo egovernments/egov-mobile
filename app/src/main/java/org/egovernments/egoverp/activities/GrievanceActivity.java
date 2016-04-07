@@ -38,6 +38,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -224,6 +225,7 @@ public class GrievanceActivity extends BaseActivity {
         if(grievancesUpdatedEvent.isSendRequest())
         {
             if((grievanceAdapter==null || (grievanceAdapter.getItemCount()==0))) {
+                findViewById(R.id.cvnocomplaintsnotify).setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
             return;
@@ -231,6 +233,16 @@ public class GrievanceActivity extends BaseActivity {
 
         paginationEnded=grievancesUpdatedEvent.isPaginationEnded();
         loading=false;
+
+        //check and show no complaint information
+        if(grievanceList.size()==0)
+        {
+            ((CardView)findViewById(R.id.cvnocomplaintsnotify)).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            ((CardView)findViewById(R.id.cvnocomplaintsnotify)).setVisibility(View.GONE);
+        }
 
         //If a refresh action has been taken, reinitialize the list
         if (grievanceAdapter == null) {

@@ -105,7 +105,12 @@ public class TaxAdapter extends BaseAdapter {
         taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
         taxViewHolder.taxAmount.setText(nf1.format(taxDetail.getTaxAmount()));
         /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
-        taxViewHolder.taxPenalty.setText(nf1.format(taxDetail.getPenalty()+taxDetail.getChqBouncePenalty()));
+        String chequePenalty="";
+        if(taxDetail.getChqBouncePenalty()>0)
+        {
+            chequePenalty="(CHEQ.PENALTY : "+nf1.format(taxDetail.getChqBouncePenalty())+")";
+        }
+        taxViewHolder.taxPenalty.setText(nf1.format(taxDetail.getPenalty()+taxDetail.getChqBouncePenalty())+chequePenalty);
         /*taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());*/
         taxViewHolder.taxTotal.setText(nf1.format(taxDetail.getTotalAmount()));
 

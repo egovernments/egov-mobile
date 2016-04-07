@@ -119,7 +119,7 @@ public class GrievanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final String url = sessionManager.getBaseURL()
                     + "/api/v1.0/complaint/"
                     + ci.getCrn()
-                    + "/downloadSupportDocument?isThumbnail=true&access_token=" + sessionManager.getAccessToken();
+                    + "/downloadSupportDocument?access_token=" + sessionManager.getAccessToken();
 
             if (ci.getSupportDocsSize() == 0) {
                 Picasso.with(contextWeakReference.get())

@@ -97,6 +97,13 @@ public class WaterTaxSearchActivity extends BaseActivity {
         fabPayWaterTax=(FloatingActionButton)findViewById(R.id.fabpaywatertax);
         fabPayWaterTax.setVisibility(View.GONE);
 
+        fabPayWaterTax.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         assessmentNo = (TextView) findViewById(R.id.watertax_assessmentno);
         address = (TextView) findViewById(R.id.watertax_address);
         locality = (TextView) findViewById(R.id.watertax_locality);

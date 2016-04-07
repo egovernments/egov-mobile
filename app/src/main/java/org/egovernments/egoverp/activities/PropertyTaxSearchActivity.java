@@ -98,6 +98,13 @@ public class PropertyTaxSearchActivity extends BaseActivity {
         fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpaypropertytax);
         fabPayPropertyTax.setVisibility(View.GONE);
 
+        fabPayPropertyTax.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(PropertyTaxSearchActivity.this,"Payment feature is coming soon!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         scrollViewPropertyTax = (ScrollView) findViewById(R.id.scrollviewpropertytax);
 
         propertyTaxDetailsView = (CardView)findViewById(R.id.propertypropertytax_layout);

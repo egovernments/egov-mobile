@@ -192,4 +192,15 @@ public class Grievance implements Serializable {
     public Double getLng() {
         return lng;
     }
+
+    public void setLocationName(String locationName)
+    {
+        this.locationName=locationName;
+    }
+
+    public void setChildLocationName(String childLocationName)
+    {
+        this.childLocationName=childLocationName;
+    }
+
 }

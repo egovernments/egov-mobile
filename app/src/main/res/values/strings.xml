@@ -116,5 +116,6 @@
     <string name="feedback">FEEDBACK</string>
     <string name="updatecomplaint">UPDATE COMPLAINT</string>
     <string name="balance_due">BALANCE DUE</string>
+    <string name="nocomplaints">No Complaints</string>
 
 </resources>
