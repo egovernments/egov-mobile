@@ -99,6 +99,7 @@ public class SplashScreenActivity extends Activity {
         }
 
         sessionManager = new SessionManager(getApplicationContext());
+        sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString("app.debug.log")));
 
         if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
             timerThread.start();

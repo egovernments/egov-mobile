@@ -71,6 +71,7 @@ public class SessionManager {
     public static final String KEY_CITY_LAT = "cityLatitude";
     public static final String KEY_CITY_LNG = "cityLongitude";
 
+    public static final String KEY_DEBUG_LOG="isLogEnabled";
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
@@ -195,4 +196,16 @@ public class SessionManager {
     public boolean isDemoMode() {
         return pref.getBoolean(KEY_DEMO_MODE, false);
     }
+
+    public void setKeyDebugLog(boolean isEnabled)
+    {
+        editor = pref.edit();
+        editor.putBoolean(KEY_DEBUG_LOG, isEnabled);
+        editor.apply();
+    }
+
+    public boolean getKeyDebugLog() {
+        return pref.getBoolean(KEY_DEBUG_LOG, false);
+    }
+
 }

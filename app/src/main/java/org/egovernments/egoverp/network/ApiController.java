@@ -144,7 +144,8 @@ public class ApiController {
                     .setEndpoint(sessionManager.getBaseURL())
                     .setErrorHandler(new CustomErrorHandler())
                     .build();
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+            //logger enable or disable based on app config
+            restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
             apiInterface = restAdapter.create(APIInterface.class);
         }
         return apiInterface;
@@ -159,7 +160,8 @@ public class ApiController {
                     .setEndpoint(sessionManager.getBaseURL())
                     .setErrorHandler(new CustomErrorHandler())
                     .build();
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+        //logger enable or disable based on app config
+        restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
         apiInterface = restAdapter.create(APIInterface.class);
         return apiInterface;
     }
