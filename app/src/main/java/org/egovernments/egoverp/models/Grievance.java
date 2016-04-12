@@ -33,16 +33,20 @@
 
 package org.egovernments.egoverp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * POJO class to parse server response to getComplaints
  **/
 
-public class Grievance implements Serializable {
+public class Grievance implements Serializable, Parcelable {
 
     @SerializedName("detail")
     @Expose
@@ -92,6 +96,29 @@ public class Grievance implements Serializable {
     @SerializedName("lng")
     @Expose
     private Double lng;
+    @SerializedName("supportDocs")
+    @Expose
+    private ArrayList<SupportDoc> supportDocs;
+
+
+    public Grievance(Parcel in){
+        this.detail = in.readString();
+        this.crn = in.readString();
+        this.status = in.readString();
+        this.lastModifiedBy = in.readString();
+        this.lastModifiedDate = in.readString();
+        this.complainantName = in.readString();
+        this.locationName = in.readString();
+        this.childLocationName = in.readString();
+        this.complaintTypeId = in.readInt();
+        this.complaintTypeName = in.readString();
+        this.landmarkDetails = in.readString();
+        this.createdDate = in.readString();
+        this.supportDocsSize = in.readInt();
+        this.lat = in.readDouble();
+        this.lng = in.readDouble();
+    }
+
 
     public String getCrn() {
         return crn;
@@ -203,4 +230,56 @@ public class Grievance implements Serializable {
         this.childLocationName=childLocationName;
     }
 
+    public void setSupportDocs(ArrayList<SupportDoc> supportDocs) {
+        this.supportDocs=supportDocs;
+    }
+
+    public ArrayList<SupportDoc> getSupportDocs() {
+        return supportDocs;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.detail);
+        dest.writeString(this.crn);
+        dest.writeString(this.status);
+        dest.writeString(this.lastModifiedBy);
+        dest.writeString(this.lastModifiedDate);
+        dest.writeString(this.complainantName);
+        dest.writeString(this.locationName);
+        dest.writeString(this.childLocationName);
+        dest.writeInt(this.complaintTypeId);
+        dest.writeString(this.complaintTypeName);
+        dest.writeString(this.landmarkDetails);
+        dest.writeString(this.createdDate);
+        dest.writeInt(this.supportDocsSize);
+
+        this.lat=0d;
+        this.lng=0d;
+
+        if(this.lat!=null)
+        {
+            dest.writeDouble(this.lat);
+        }
+        if(this.lng!=null)
+        {
+            dest.writeDouble(this.lng);
+        }
+    }
+
+    public static final Parcelable.Creator<Grievance> CREATOR = new Parcelable.Creator<Grievance>() {
+        public Grievance createFromParcel(Parcel in) {
+            return new Grievance(in);
+        }
+
+        public Grievance[] newArray(int size) {
+            return new Grievance[size];
+        }
+    };
 }

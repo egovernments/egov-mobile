@@ -43,9 +43,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -53,6 +55,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -117,6 +120,8 @@ public class LoginActivity extends Activity {
     List<District> districtsList;
     List<City> citiesList;
 
+    ImageView imgLogo;
+
 
 /*
     private int code;
@@ -178,10 +183,15 @@ public class LoginActivity extends Activity {
             }
         });
 
+        final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                if(imm != null){
+                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+                }
 
                 username = username_edittext.getText().toString().trim();
                 password = password_edittext.getText().toString().trim();
@@ -190,7 +200,7 @@ public class LoginActivity extends Activity {
             }
         };
 
-        ImageView imgLogo=(ImageView)findViewById(R.id.applogoBig);
+        imgLogo=(ImageView)findViewById(R.id.applogoBig);
         imgLogo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -239,7 +249,6 @@ public class LoginActivity extends Activity {
             }
         });
 
-        final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         password_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -396,10 +405,20 @@ public class LoginActivity extends Activity {
             @Override
             public void run() {
                 username_edittext.setBackgroundResource(R.drawable.top_edittext);
-                spinnerDistrict.setVisibility(View.GONE);
-                districtAutocompleteTextBox.setVisibility(View.GONE);
-                spinnerCity.setVisibility(View.GONE);
-                cityAutocompleteTextBox.setVisibility(View.GONE);
+                ((LinearLayout)findViewById(R.id.multicityoptions)).setVisibility(View.GONE);
+
+                int marginTopInDp = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 40, getResources()
+                                .getDisplayMetrics());
+
+                int marginBottomInDp = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 10, getResources()
+                                .getDisplayMetrics());
+
+                ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(imgLogo.getLayoutParams());
+                marginParams.setMargins(0,marginTopInDp,0,marginBottomInDp);
+                imgLogo.setLayoutParams(new LinearLayout.LayoutParams(marginParams));
+
             }
         });
     }

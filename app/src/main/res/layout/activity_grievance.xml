@@ -13,7 +13,7 @@
             android:id="@+id/cvnocomplaintsnotify"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             fab:cardCornerRadius="2dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"

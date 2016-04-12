@@ -72,17 +72,19 @@ public class GrievanceImageFragment extends Fragment {
 
         SessionManager sessionManager = new SessionManager(getActivity());
 
-        final String url = sessionManager.getBaseURL() + "/api/v1.0/complaint/"
-                + arg.getString("crn") + "/downloadSupportDocument?access_token="
-                + arg.getString("access_token") + "&fileNo="
-                + arg.getString("fileNo");
+        final String url = sessionManager.getBaseURL()
+                + "/api/v1.0/complaint/downloadfile/"
+                + arg.get("fileId")
+                + "?access_token=" + arg.getString("access_token");
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GrievanceImageViewerActivity.class);
                 intent.putExtra(GrievanceImageViewerActivity.POSITION, arg.getInt("position"));
-                intent.putExtra(GrievanceImageViewerActivity.COMPLAINT, GrievanceDetailsActivity.getGrievance());
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(GrievanceImageViewerActivity.COMPLAINT_SUPPORT_DOCS, GrievanceDetailsActivity.getGrievance().getSupportDocs());
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -113,13 +115,12 @@ public class GrievanceImageFragment extends Fragment {
     }
 
     //Sets up a new fragment instance
-    public static Fragment instantiateItem(int position, String access_token, String crn, String fileNo) {
+    public static Fragment instantiateItem(int position, String access_token, String fileId) {
         GrievanceImageFragment grievanceImageFragment = new GrievanceImageFragment();
 
         Bundle args = new Bundle();
         args.putString("access_token", access_token);
-        args.putString("crn", crn);
-        args.putString("fileNo", fileNo);
+        args.putString("fileId", fileId);
         args.putString("type", "download");
         args.putInt("position", position);
         grievanceImageFragment.setArguments(args);

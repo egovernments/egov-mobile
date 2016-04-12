@@ -48,16 +48,18 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.models.Grievance;
+import org.egovernments.egoverp.models.SupportDoc;
 import org.egovernments.egoverp.network.SessionManager;
+
+import java.util.ArrayList;
 
 public class GrievanceImageViewerActivity extends FragmentActivity {
 
-    public static final String COMPLAINT = "";
+    public static final String COMPLAINT_SUPPORT_DOCS = "grievanceSupportDocs";
 
     public static final String POSITION = "position";
 
-    private Grievance grievance;
+    private ArrayList<SupportDoc> supportDocs;
 
     private static SessionManager sessionManager;
 
@@ -68,7 +70,7 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
 
         int position = getIntent().getExtras().getInt(POSITION);
 
-        grievance = (Grievance) getIntent().getSerializableExtra(COMPLAINT);
+        supportDocs=(ArrayList<SupportDoc>)getIntent().getExtras().get(COMPLAINT_SUPPORT_DOCS);
 
         sessionManager = new SessionManager(this);
 
@@ -85,13 +87,12 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return grievance.getSupportDocsSize();
+            return supportDocs.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            return ImageFragment.instantiateItem(sessionManager.getAccessToken(),
-                    grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
+            return ImageFragment.instantiateItem(sessionManager.getAccessToken(), supportDocs.get(position).getFileId());
         }
     }
 
@@ -105,10 +106,10 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
             final ImageView imageView = (ImageView) swipeView.findViewById(R.id.image_viewpager_item);
             Bundle bundle = getArguments();
 
-            final String url = sessionManager.getBaseURL() + "/api/v1.0/complaint/"
-                    + bundle.getString("crn") + "/downloadSupportDocument?access_token="
-                    + bundle.getString("access_token") + "&fileNo="
-                    + bundle.getString("fileNo");
+            final String url = sessionManager.getBaseURL()
+                    + "/api/v1.0/complaint/downloadfile/"
+                    + bundle.get("fileId")
+                    + "?access_token=" + bundle.getString("access_token");
 
             Picasso.with(getActivity())
                     .load(url)
@@ -141,16 +142,13 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
             return swipeView;
         }
 
-        static ImageFragment instantiateItem(String access_token, String crn, String fileNo) {
+        static ImageFragment instantiateItem(String access_token, String fileId) {
             ImageFragment imageFragment = new ImageFragment();
-
             Bundle args = new Bundle();
             args.putString("access_token", access_token);
-            args.putString("crn", crn);
-            args.putString("fileNo", fileNo);
+            args.putString("fileId", fileId);
             args.putString("type", "download");
             imageFragment.setArguments(args);
-
             return imageFragment;
         }
 

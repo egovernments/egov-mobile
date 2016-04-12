@@ -77,6 +77,7 @@ import org.egovernments.egoverp.models.GrievanceComment;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResult;
 import org.egovernments.egoverp.models.GrievanceUpdate;
+import org.egovernments.egoverp.models.SupportDoc;
 import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
@@ -101,6 +102,7 @@ import retrofit.client.Response;
 public class GrievanceDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
+    public static final String GRIEVANCE_SUPPORT_DOCS = "GrievanceSupportDocs";
 
     private static Grievance grievance;
 
@@ -127,7 +129,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grievance_details);
-        grievance = (Grievance) getIntent().getSerializableExtra(GRIEVANCE_ITEM);
+
+        grievance = (Grievance)getIntent().getExtras().get(GRIEVANCE_ITEM);
+        grievance.setSupportDocs((ArrayList<SupportDoc>)getIntent().getExtras().get(GRIEVANCE_SUPPORT_DOCS));
 
         sessionManager = new SessionManager(GrievanceDetailsActivity.this);
 
@@ -219,7 +223,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
             complaintLandmark.setText(grievance.getLandmarkDetails());
 
         //If grievance has lat/lng values, location name is null
-        if (grievance.getLat() == null) {
+        if (grievance.getLat() == null || grievance.getLat() <= 0) {
             mapCardView.setVisibility(View.GONE);
             String complaintloc =grievance.getChildLocationName() + " - " + grievance.getLocationName();
             complaintLocation.setText(complaintloc);
@@ -499,8 +503,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         @Override
         public Fragment getItem(int position) {
             if (grievance.getSupportDocsSize() != 0)
-                return GrievanceImageFragment.instantiateItem(position, sessionManager.getAccessToken(), grievance.getCrn(), String.valueOf(grievance.getSupportDocsSize() - position));
-
+                return GrievanceImageFragment.instantiateItem(position, sessionManager.getAccessToken(),grievance.getSupportDocs().get(position).getFileId());
             return null;
         }
 

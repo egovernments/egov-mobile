@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -104,7 +105,7 @@ public class SplashScreenActivity extends Activity {
         if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
             timerThread.start();
         } else {
-            if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays"))) {
+            if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays")) || TextUtils.isEmpty(sessionManager.getBaseURL())) {
                 new GetCityTask().execute();
             } else {
                 timerThread.start();
@@ -123,7 +124,7 @@ public class SplashScreenActivity extends Activity {
                     String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
                     if (response != null) {
                         JSONObject jsonObject = new JSONObject(response);
-                        sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString(), 0);
+                        sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString(), jsonObject.getInt("city_code"));
                         timerThread.start();
                     } else {
                         handler.post(new Runnable() {

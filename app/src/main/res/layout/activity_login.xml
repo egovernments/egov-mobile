@@ -12,8 +12,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/signin_background"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/signin_background" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -27,8 +27,8 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="20dp"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp">
+                android:paddingBottom="0dp"
+                android:paddingTop="0dp">
 
                 <ImageView
                     android:id="@+id/applogoBig"
@@ -41,98 +41,105 @@
                     android:paddingBottom="10dp"
                     android:src="@drawable/applogo" />
 
-
-                <FrameLayout
+                <LinearLayout
+                    android:id="@+id/multicityoptions"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <Spinner
-                        android:id="@+id/spinner_district"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:background="@drawable/top_edittext"
-                        android:dropDownVerticalOffset="-10dp"
-                        android:focusable="false"
-                        android:spinnerMode="dropdown"
-                        android:visibility="invisible" />
+                        android:layout_height="wrap_content">
 
-                    <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
-                        android:id="@+id/autocomplete_district"
-                        android:inputType="textNoSuggestions"
+                        <Spinner
+                            android:id="@+id/spinner_district"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/top_edittext"
+                            android:dropDownVerticalOffset="-10dp"
+                            android:focusable="false"
+                            android:spinnerMode="dropdown"
+                            android:visibility="invisible" />
+
+                        <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
+                            android:id="@+id/autocomplete_district"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/top_edittext"
+                            android:drawableLeft="@drawable/ic_place_black_24dp"
+                            android:drawablePadding="5dp"
+                            android:drawableStart="@drawable/ic_place_black_24dp"
+                            android:gravity="center_vertical"
+                            android:hint="@string/loading_label"
+                            android:imeOptions="actionNext"
+                            android:inputType="textNoSuggestions"
+                            android:nextFocusDown="@+id/signin_username"
+                            android:paddingEnd="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingStart="10dp"
+                            android:singleLine="true"
+                            android:textColor="#000"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        style="?android:attr/listSeparatorTextViewStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:background="@drawable/top_edittext"
-                        android:drawableLeft="@drawable/ic_place_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_place_black_24dp"
-                        android:gravity="center_vertical"
-                        android:hint="@string/loading_label"
-                        android:paddingEnd="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColor="#000"
-                        android:textColorHint="#a8a5a5"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/signin_username"
-                        android:textSize="15sp" />
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="5dp" />
 
-                </FrameLayout>
-
-                <TextView
-                    style="?android:attr/listSeparatorTextViewStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/dividerColor"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="5dp" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/signin_city"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:background="@drawable/top_edittext"
-                        android:dropDownVerticalOffset="-10dp"
-                        android:focusable="false"
-                        android:spinnerMode="dropdown"
-                        android:visibility="invisible" />
+                        android:layout_height="wrap_content">
 
-                    <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
-                        android:id="@+id/login_spinner_autocomplete"
-                        android:inputType="textNoSuggestions"
+                        <Spinner
+                            android:id="@+id/signin_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/top_edittext"
+                            android:dropDownVerticalOffset="-10dp"
+                            android:focusable="false"
+                            android:spinnerMode="dropdown"
+                            android:visibility="invisible" />
+
+                        <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
+                            android:id="@+id/login_spinner_autocomplete"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/middle_edittext"
+                            android:drawableLeft="@drawable/ic_location_city_black_24dp"
+                            android:drawablePadding="5dp"
+                            android:drawableStart="@drawable/ic_location_city_black_24dp"
+                            android:gravity="center_vertical"
+                            android:hint="@string/city_hint"
+                            android:imeOptions="actionNext"
+                            android:inputType="textNoSuggestions"
+                            android:nextFocusDown="@+id/signin_username"
+                            android:paddingEnd="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingStart="10dp"
+                            android:singleLine="true"
+                            android:textColor="#000"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </FrameLayout>
+
+                    <TextView
+                        style="?android:attr/listSeparatorTextViewStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:background="@drawable/middle_edittext"
-                        android:drawableLeft="@drawable/ic_location_city_black_24dp"
-                        android:drawablePadding="5dp"
-                        android:drawableStart="@drawable/ic_location_city_black_24dp"
-                        android:gravity="center_vertical"
-                        android:hint="@string/city_hint"
-                        android:paddingEnd="10dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingStart="10dp"
-                        android:singleLine="true"
-                        android:textColor="#000"
-                        android:textColorHint="#a8a5a5"
-                        android:imeOptions="actionNext"
-                        android:nextFocusDown="@+id/signin_username"
-                        android:textSize="15sp" />
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="5dp" />
 
-                </FrameLayout>
-
-                <TextView
-                    style="?android:attr/listSeparatorTextViewStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/dividerColor"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="5dp" />
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/signin_username"
@@ -203,12 +210,12 @@
                     android:id="@+id/signin_forgot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="0dp"
                     android:background="#00000000"
                     android:text="@string/login_forgotlabel"
                     android:textColor="@color/colorAccent"
-                    android:textSize="16sp"
-                    android:layout_gravity="center_horizontal" />
+                    android:textSize="16sp" />
 
                 <com.melnykov.fab.FloatingActionButton
                     android:id="@+id/signin_submit_compat"

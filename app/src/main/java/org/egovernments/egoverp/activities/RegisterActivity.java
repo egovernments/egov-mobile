@@ -55,6 +55,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +116,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     List<District> districtsList;
     List<City> citiesList;
+
+    boolean isMultiCity=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -293,7 +296,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
 
-        if (selectedCity == null || TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneno) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmpassword)) {
+        if ((selectedCity == null && isMultiCity) || TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneno) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmpassword)) {
             Toast toast = Toast.makeText(RegisterActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
@@ -320,7 +323,9 @@ public class RegisterActivity extends AppCompatActivity {
             progressDialog.dismiss();
         } else {
 
+            if(isMultiCity)
             sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+
             RegisterRequest registerRequest = new RegisterRequest(email, phoneno, name, password, deviceID, deviceType, deviceOS);
             ApiController.resetAndGetAPI(RegisterActivity.this).registerUser(registerRequest, new Callback<JsonObject>() {
                 @Override
@@ -463,10 +468,10 @@ public class RegisterActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        ((LinearLayout)findViewById(R.id.multicityoptions)).setVisibility(View.GONE);
                         municipalityInfo.setVisibility(View.GONE);
-                        spinnerCity.setVisibility(View.GONE);
-                        cityAutoCompleteTextView.setVisibility(View.GONE);
                         nameInputLayout.setBackgroundResource(R.drawable.top_edittext);
+                        isMultiCity=false;
                     }
                 });
             } else {

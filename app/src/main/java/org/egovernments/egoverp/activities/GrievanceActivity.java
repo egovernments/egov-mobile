@@ -136,7 +136,10 @@ public class GrievanceActivity extends BaseActivity {
             public void onItemClicked(View view, int position) {
 
                 Intent intent = new Intent(GrievanceActivity.this, GrievanceDetailsActivity.class);
-                intent.putExtra(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
+                bundle.putParcelableArrayList(GrievanceDetailsActivity.GRIEVANCE_SUPPORT_DOCS, grievanceList.get(position).getSupportDocs());
+                intent.putExtras(bundle);
                 startActivityForResult(intent, ACTION_UPDATE_REQUIRED);
 
             }
