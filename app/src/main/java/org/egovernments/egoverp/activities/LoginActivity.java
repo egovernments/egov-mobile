@@ -123,10 +123,6 @@ public class LoginActivity extends Activity {
     ImageView imgLogo;
 
 
-/*
-    private int code;
-*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,10 +143,6 @@ public class LoginActivity extends Activity {
         }
 
         setContentView(R.layout.activity_login);
-
-        /*url = sessionManager.getBaseURL();
-        cityName = sessionManager.getUrlLocation();
-        code = sessionManager.getUrlLocationCode();*/
 
         spinnerCity = (Spinner) findViewById(R.id.signin_city);
         spinnerDistrict = (Spinner) findViewById(R.id.spinner_district);
@@ -183,7 +175,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        final InputMethodManager imm = (InputMethodManager)LoginActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -204,17 +196,13 @@ public class LoginActivity extends Activity {
         imgLogo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-
-
                 sessionManager.setDemoMode(!sessionManager.isDemoMode());
                 showToastMsg("Demo Mode is "+(sessionManager.isDemoMode()?"Enabled":"Disabled"));
-
                 return false;
-
             }
         });
 
-//        To make fab compatible in older android versions
+        //To make fab compatible in older android versions
         if (Build.VERSION.SDK_INT >= 21) {
             loginButton.setOnClickListener(onClickListener);
         } else {
@@ -367,7 +355,7 @@ public class LoginActivity extends Activity {
                                     String errorDescription = jsonObject.get("error_description").getAsString().trim();
                                     //If user has attempted to log into a yet to be activated account,
                                     // automatically redirect the user to account activation screen
-                                    if (errorDescription.contains("Please activate your account!")) {
+                                    if (errorDescription.startsWith("Please activate your account")) {
                                         Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
                                         intent.putExtra("username", username);
                                         intent.putExtra("password", password);
