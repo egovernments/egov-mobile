@@ -99,8 +99,8 @@ public class TaxAdapter extends BaseAdapter {
         TaxDetail taxDetail = (TaxDetail) getItem(position);
 
         NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-        nf1.setMinimumFractionDigits(2);
-        nf1.setMaximumFractionDigits(2);
+        //nf1.setMinimumFractionDigits(2);
+        //nf1.setMaximumFractionDigits(2);
 
         taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
         taxViewHolder.taxAmount.setText(nf1.format(taxDetail.getTaxAmount()));

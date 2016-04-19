@@ -34,7 +34,6 @@ package org.egovernments.egoverp.activities;
 
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -78,7 +77,9 @@ public class ProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_profile);
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
+/*
         final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
+*/
 
         progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
 
@@ -91,13 +92,14 @@ public class ProfileActivity extends BaseActivity {
             }
         };
 
-        if (Build.VERSION.SDK_INT >= 21) {
+        profileEditButton.setOnClickListener(onClickListener);
+        /*if (Build.VERSION.SDK_INT >= 21) {
             profileEditButton.setOnClickListener(onClickListener);
         } else {
             profileEditButton.setVisibility(View.GONE);
             profileEditButtonCompat.setVisibility(View.VISIBLE);
             profileEditButtonCompat.setOnClickListener(onClickListener);
-        }
+        }*/
         if (profile != null)
             updateProfile();
 

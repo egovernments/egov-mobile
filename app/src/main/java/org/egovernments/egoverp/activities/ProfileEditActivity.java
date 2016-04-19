@@ -261,7 +261,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else if (dob.isEmpty()) {
+        } else if (TextUtils.isEmpty(dob)) {
             Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter date of birth", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();

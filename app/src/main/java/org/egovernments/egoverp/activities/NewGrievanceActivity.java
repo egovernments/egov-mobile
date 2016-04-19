@@ -654,7 +654,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
         }else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
-            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter additional details (at least 10 characters", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter complaint details (at least 10 characters", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
         } else {

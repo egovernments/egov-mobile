@@ -53,15 +53,16 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="right"
                 android:text="DEMAND"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:id="@+id/propertytax_taxamount"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dataLabelColor"
+                android:gravity="right"
                 android:textSize="@dimen/data_labelSize" />
 
 
@@ -77,16 +78,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="right"
                 android:text="PENALTY"
                 android:textSize="@dimen/field_labelSize" />
 
 
             <TextView
                 android:id="@+id/propertytax_penalty"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dataLabelColor"
+                android:gravity="right"
                 android:textSize="@dimen/data_labelSize" />
 
 
@@ -113,14 +115,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="right"
                 android:text="COLLECTION"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/dataLabelColor"
+                android:gravity="right"
                 android:textSize="@dimen/data_labelSize"
                 android:text="-"/>
 
@@ -136,14 +139,15 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="right"
                 android:text="BALANCE"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:id="@+id/propertytax_total"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:textColor="@color/dataLabelColor"
                 android:textSize="@dimen/data_labelSize" />
 

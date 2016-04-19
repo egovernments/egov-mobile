@@ -75,7 +75,6 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
     private TextView tvAssessmentNo;
     private TextView tvAddress;
-    private TextView tvLocality;
     private TextView tvOwnerNamePhone;
     private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
     CustomEditText searchEditText;
@@ -112,7 +111,6 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
         tvAssessmentNo = (TextView) findViewById(R.id.propertytax_assessmentno);
         tvAddress = (TextView) findViewById(R.id.propertytax_address);
-        tvLocality = (TextView) findViewById(R.id.propertytax_locality);
         tvOwnerNamePhone = (TextView) findViewById(R.id.propertytax_ownernamecontact);
 
         tvArrearsTotal = (TextView) findViewById(R.id.propertytax_arrears_total);
@@ -189,7 +187,6 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
                                     tvAssessmentNo.setText(propertyTaxCallback.getAssessmentNo());
                                     tvAddress.setText(propertyTaxCallback.getPropertyAddress());
-                                    tvLocality.setText(propertyTaxCallback.getLocalityName());
 
                                     String ownersMobileNos = "";
                                     int check = 0;
@@ -224,8 +221,8 @@ public class PropertyTaxSearchActivity extends BaseActivity {
                                     }
 
                                     NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-                                    nf1.setMinimumFractionDigits(2);
-                                    nf1.setMaximumFractionDigits(2);
+                                    //nf1.setMinimumFractionDigits(2);
+                                   // nf1.setMaximumFractionDigits(2);
 
                                     tvArrearsTotal.setText(nf1.format(arrearsTotal));
                                     tvArrearsPenalty.setText(nf1.format(arrearsPenalty));

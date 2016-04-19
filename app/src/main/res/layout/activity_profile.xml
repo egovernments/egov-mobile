@@ -1,6 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -463,7 +462,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_mode_edit_white_24dp" />
 
-    <com.melnykov.fab.FloatingActionButton
+   <!-- <com.melnykov.fab.FloatingActionButton
         android:id="@+id/profile_editcompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -474,7 +473,7 @@
         fab:fab_colorNormal="@color/colorAccent"
         android:layout_margin="@dimen/fab_margin"
         fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="#000" />
+        fab:fab_colorRipple="#000" />-->
 
 
 

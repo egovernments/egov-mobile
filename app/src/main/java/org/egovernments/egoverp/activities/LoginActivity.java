@@ -45,10 +45,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -180,14 +178,8 @@ public class LoginActivity extends Activity {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(imm != null){
-                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                }
-
                 username = username_edittext.getText().toString().trim();
                 password = password_edittext.getText().toString().trim();
-
                 submit(username, password);
             }
         };
@@ -238,7 +230,7 @@ public class LoginActivity extends Activity {
         });
 
 
-        password_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+       /* password_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -252,7 +244,7 @@ public class LoginActivity extends Activity {
                 }
                 return false;
             }
-        });
+        });*/
 
         handler = new Handler();
 

@@ -7,8 +7,7 @@
         android:id="@+id/image_viewpager_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
-        android:scaleType="fitCenter" />
+        android:background="#000000" />
 
     <ImageView
         android:id="@+id/viewpager_cancel"
