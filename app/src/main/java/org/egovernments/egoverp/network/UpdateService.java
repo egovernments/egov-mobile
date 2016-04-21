@@ -35,8 +35,6 @@ package org.egovernments.egoverp.network;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -46,20 +44,11 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import org.egovernments.egoverp.activities.GrievanceActivity;
 import org.egovernments.egoverp.activities.LoginActivity;
 import org.egovernments.egoverp.activities.ProfileActivity;
-import org.egovernments.egoverp.events.GrievanceUpdateFailedEvent;
-import org.egovernments.egoverp.events.GrievancesUpdatedEvent;
 import org.egovernments.egoverp.events.ProfileUpdatedEvent;
-import org.egovernments.egoverp.models.Grievance;
-import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -75,7 +64,6 @@ public class UpdateService extends Service {
     public static final String KEY_METHOD = "method";
 
     public static final String UPDATE_PROFILE = "UPDATE_PROFILE";
-    public static final String UPDATE_COMPLAINTS = "UPDATE_COMPLAINTS";
     public static final String UPDATE_ALL = "UPDATE_ALL";
 
     public static final String COMPLAINTS_PAGE = "UPDATE_ALL";
@@ -100,9 +88,6 @@ public class UpdateService extends Service {
             String method = intent.getStringExtra(KEY_METHOD);
             switch (method) {
 
-                case UPDATE_COMPLAINTS:
-                    updateComplaints(intent.getStringExtra(COMPLAINTS_PAGE));
-                    break;
 
                 case UPDATE_PROFILE:
                     updateProfile();
@@ -110,7 +95,6 @@ public class UpdateService extends Service {
 
                 case UPDATE_ALL:
                     updateProfile();
-                    updateComplaints("1");
                     break;
             }
         }
@@ -121,86 +105,6 @@ public class UpdateService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    private void updateComplaints(final String page) {
-
-        if (sessionManager.getAccessToken() != null) {
-
-            if(page.equals("1"))
-            {
-                GrievancesUpdatedEvent updateStartEvent= new GrievancesUpdatedEvent();
-                updateStartEvent.setIsSendRequest(true);
-                EventBus.getDefault().post(updateStartEvent);
-            }
-
-            ApiController.getAPI(UpdateService.this).getMyComplaints(page, "10", sessionManager.getAccessToken(), new Callback<GrievanceAPIResponse>() {
-                        @Override
-                        public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
-
-
-                            GrievancesUpdatedEvent updatedEvent= new GrievancesUpdatedEvent();
-                            //If the request is a refresh request
-                            if (page.equals("1")) {
-                                if(GrievanceActivity.grievanceList!=null) {
-                                    GrievanceActivity.grievanceList.clear();
-                                }
-                                GrievanceActivity.grievanceList = grievanceAPIResponse.getResult();
-
-                                for(Grievance grievance:GrievanceActivity.grievanceList)
-                                {
-                                    if (grievance.getLocationName() == null && grievance.getLat()>0)
-                                    {
-                                        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                                        List<Address> addresses;
-                                        try {
-                                            addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
-                                            String location=(TextUtils.isEmpty(addresses.get(0).getSubLocality())?addresses.get(0).getThoroughfare():addresses.get(0).getSubLocality());
-                                            grievance.setLocationName(returnValidString(location));
-                                            grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-
-                                GrievanceActivity.grievanceList.add(null);
-                                GrievanceActivity.grievanceAdapter = null;
-                            }
-                            //If the request is a next page request
-                            else {
-                                GrievanceActivity.grievanceList.addAll(GrievanceActivity.grievanceList.size() - 1, grievanceAPIResponse.getResult());
-                            }
-
-                            if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
-                                GrievanceActivity.grievanceList.remove(GrievanceActivity.grievanceList.size() - 1);
-                                updatedEvent.setIsPaginationEnded(true);
-                            }
-
-                            EventBus.getDefault().post(updatedEvent);
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (error != null) {
-                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                                    handler.post(new ToastRunnable("Failed to fetch grievances. " + error.getLocalizedMessage()));
-                                else {
-                                    //Flag counter to prevent multiple executions of the below
-                                    if (flag == 1) {
-                                        sessionManager.invalidateAccessToken();
-                                        renewCredentials();
-                                    }
-                                }
-                            }
-                            GrievanceActivity.isUpdateFailed = true;
-                            EventBus.getDefault().post(new GrievanceUpdateFailedEvent());
-                        }
-                    }
-
-            );
-        }
-
     }
 
     public String returnValidString(String string)
@@ -252,7 +156,6 @@ public class UpdateService extends Service {
             @Override
             public void success(JsonObject jsonObject, Response response) {
                 sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
-                updateComplaints("1");
                 updateProfile();
             }
 

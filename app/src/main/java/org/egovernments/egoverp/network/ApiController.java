@@ -189,6 +189,7 @@ public class ApiController {
         void getMyComplaints(@Path(value = "page", encode = false) String pages,
                              @Path(value = "pageSize", encode = false) String pagesize,
                              @Query(value = "access_token", encodeValue = false) String access_token,
+                             @Query(value = "complaintStatus", encodeValue = false) String complaintStatus,
                              Callback<GrievanceAPIResponse> complaintAPIResponseCallback);
 
         @GET(ApiUrl.COMPLAINT_LATEST)

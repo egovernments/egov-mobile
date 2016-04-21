@@ -34,7 +34,10 @@ package org.egovernments.egoverp.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -46,7 +49,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,7 +74,7 @@ import retrofit.client.Response;
 
 public class BaseActivity extends AppCompatActivity {
 
-    protected LinearLayout fullLayout;
+    protected CoordinatorLayout fullLayout;
     protected FrameLayout activityContent;
 
     protected ArrayList<NavigationItem> arrayList;
@@ -84,6 +86,9 @@ public class BaseActivity extends AppCompatActivity {
 
     protected ProgressDialog progressDialog;
 
+    protected boolean isTabSupport=false;
+    protected TabLayout tabLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,18 +98,25 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    public void setContentViewWithTabs(final int layoutResID)
+    {
+        isTabSupport=true;
+        setContentView(layoutResID);
+    }
+
     //Overridden method will intercept layout passed and inflate it into baselayout.xml
     @Override
     public void setContentView(final int layoutResID) {
 
-        fullLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
+        fullLayout = (CoordinatorLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
+
         activityContent = (FrameLayout) fullLayout.findViewById(R.id.drawer_content);
 
         getLayoutInflater().inflate(layoutResID, activityContent, true);
 
         super.setContentView(fullLayout);
-        sessionManager = new SessionManager(getApplicationContext());
 
+        sessionManager = new SessionManager(getApplicationContext());
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.processing_msg));
@@ -114,9 +126,20 @@ public class BaseActivity extends AppCompatActivity {
 
         android.support.v7.widget.Toolbar toolbarCollapse = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbarCollapse);
 
+        tabLayout=(TabLayout)findViewById(R.id.tablayout);
+
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         final ListView listView = (ListView) findViewById(R.id.drawer);
+
+        if(isTabSupport)
+        {
+            if (Build.VERSION.SDK_INT >= 22) {
+                toolbar.setElevation(0);
+            }
+            tabLayout.setVisibility(View.VISIBLE);
+        }
 
         if(toolbarCollapse!=null)
         {
@@ -335,13 +358,6 @@ public class BaseActivity extends AppCompatActivity {
         {
             ex.printStackTrace();
         }
-    }
-
-
-
-    private void closeNavigationDrawer(DrawerLayout drawerLayout, ListView drawerList)
-    {
-        drawerLayout.closeDrawer(drawerList);
     }
 
     //POJO class for nav drawer items

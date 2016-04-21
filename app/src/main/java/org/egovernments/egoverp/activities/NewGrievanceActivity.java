@@ -802,8 +802,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
                 progressDialog.dismiss();
 
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_OK, new Intent());
                 finish();
 
 

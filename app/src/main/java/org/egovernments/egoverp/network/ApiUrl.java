@@ -66,6 +66,8 @@ public class ApiUrl {
 
     public final static String COMPLAINT_HISTORY = "/api/v1.0/complaint/{complaintNo}/complaintHistory";
 
+    public final static String COMPLAINT_DOWNLOAD_IMAGE = "/api/v1.0/complaint/downloadfile/";
+
     public final static String COMPLAINT_STATUS = "/api/v1.0/complaint/{complaintNo}/status";
 
     public final static String COMPLAINT_UPDATE_STATUS = "/api/v1.0/complaint/{complaintNo}/updateStatus";

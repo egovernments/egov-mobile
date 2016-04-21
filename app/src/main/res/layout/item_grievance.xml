@@ -19,18 +19,6 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-        <ImageView
-            android:id="@+id/complaint_status"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="6dp"
-            android:layout_marginRight="6dp"
-            android:layout_marginTop="6dp"
-            android:scaleType="fitXY" />
-
 
         <TextView
             android:id="@+id/complaint_date"
@@ -57,9 +45,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginRight="5dp"
             android:layout_toEndOf="@+id/complaint_image"
-            android:layout_toLeftOf="@+id/complaint_status"
             android:layout_toRightOf="@+id/complaint_image"
-            android:layout_toStartOf="@+id/complaint_status"
             android:gravity="center_vertical"
             android:textColor="@color/primaryText"
             android:textSize="18sp" />
@@ -87,6 +73,8 @@
             android:layout_toEndOf="@+id/complaint_image"
             android:layout_toRightOf="@+id/complaint_image"
             android:textColor="@color/primaryText"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:gravity="center_vertical" />
 
 

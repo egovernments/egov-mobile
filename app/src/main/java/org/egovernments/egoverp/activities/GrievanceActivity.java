@@ -34,29 +34,18 @@ package org.egovernments.egoverp.activities;
 
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.adapters.GrievanceAdapter;
-import org.egovernments.egoverp.events.GrievanceUpdateFailedEvent;
-import org.egovernments.egoverp.events.GrievancesUpdatedEvent;
-import org.egovernments.egoverp.helper.CardViewOnClickListener;
-import org.egovernments.egoverp.helper.EndlessRecyclerOnScrollListener;
-import org.egovernments.egoverp.models.Grievance;
-import org.egovernments.egoverp.network.UpdateService;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import de.greenrobot.event.EventBus;
+import org.egovernments.egoverp.fragments.GrievanceFragment;
+import org.egovernments.egoverp.network.ApiUrl;
 
 /**
  * The activity containing grievance list
@@ -65,99 +54,17 @@ import de.greenrobot.event.EventBus;
 
 public class GrievanceActivity extends BaseActivity {
 
-    public static List<Grievance> grievanceList;
-
-    private CardViewOnClickListener.OnItemClickCallback onItemClickCallback;
-
-    private RecyclerView recyclerView;
-
-    private ProgressBar progressBar;
-
-    public static GrievanceAdapter grievanceAdapter;
-
-    private android.support.v4.widget.SwipeRefreshLayout swipeRefreshLayout;
-
-    //The currently visible page no.
-    private int pageNo = 1;
-
-    private final int ACTION_UPDATE_REQUIRED = 111;
-
-    private boolean loading = true;
-    private boolean paginationEnded = false;
-    public static boolean isUpdateFailed = false;
-    EndlessRecyclerOnScrollListener onScrollListener;
-
-
+    public static int ACTION_UPDATE_REQUIRED = 111;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentViewWithTabs(R.layout.activity_grievance);
+        viewPager=(ViewPager)findViewById(R.id.viewPager);
+        viewPager.setAdapter(new GrievanceFragmentPagerAdapter(getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
 
-        setContentView(R.layout.activity_grievance);
-
-        progressBar = (ProgressBar) findViewById(R.id.grievance_recylerview_placeholder);
-        recyclerView = (RecyclerView) findViewById(R.id.recylerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setClickable(true);
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        onScrollListener=new EndlessRecyclerOnScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int current_page) {
-                if(!loading && !paginationEnded) {
-                    pageNo++;
-                    loading = true;
-                    Intent intent = new Intent(GrievanceActivity.this, UpdateService.class);
-                    intent.putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-                    intent.putExtra(UpdateService.COMPLAINTS_PAGE, String.valueOf(pageNo));
-                    startService(intent);
-                }
-            }
-        };
-
-        //Enables infinite scrolling (pagination)
-        recyclerView.addOnScrollListener(onScrollListener);
-
-        //Enables pull to refresh
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.recylerview_refreshlayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                progressBar.setVisibility(View.GONE);
-                refreshGrievanceList();
-            }
-        });
-
-        //CardView on click listener
-        onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
-            @Override
-            public void onItemClicked(View view, int position) {
-
-                Intent intent = new Intent(GrievanceActivity.this, GrievanceDetailsActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
-                bundle.putParcelableArrayList(GrievanceDetailsActivity.GRIEVANCE_SUPPORT_DOCS, grievanceList.get(position).getSupportDocs());
-                intent.putExtras(bundle);
-                startActivityForResult(intent, ACTION_UPDATE_REQUIRED);
-
-            }
-        };
-
-        //Checks if the update service has fetched complaints before setting up list
-        if (grievanceList != null) {
-            progressBar.setVisibility(View.GONE);
-            grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
-            recyclerView.setAdapter(grievanceAdapter);
-        } else {
-            grievanceList = new ArrayList<>();
-            grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
-            recyclerView.setAdapter(grievanceAdapter);
-            grievanceList = null;
-        }
-
-        FloatingActionButton newComplaintButton = (FloatingActionButton) findViewById(R.id.list_fab);
         com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -169,25 +76,26 @@ public class GrievanceActivity extends BaseActivity {
 
             }
         };
+        newComplaintButtonCompat.setOnClickListener(onClickListener);
+        viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount()-1);
+    }
 
-        if (Build.VERSION.SDK_INT >= 21) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_grievance_home, menu);
+        return true;
+    }
 
-            newComplaintButton.setOnClickListener(onClickListener);
-        } else {
-            newComplaintButton.setVisibility(View.GONE);
-            newComplaintButtonCompat.setVisibility(View.VISIBLE);
-            newComplaintButtonCompat.setOnClickListener(onClickListener);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_refresh)
+        {
+            refreshGrievanceViewPager();
         }
 
-        if (isUpdateFailed) {
-            progressBar.setVisibility(View.GONE);
-            isUpdateFailed = false;
-        }
-
-
-        refreshGrievanceList();
-
-
+        return super.onOptionsItemSelected(item);
     }
 
     //Handles result when NewGrievanceActivity finishes
@@ -197,91 +105,44 @@ public class GrievanceActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
-            progressBar.setVisibility(View.GONE);
-            pageNo = 1;
-            Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-            intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
-            startService(intent);
-            grievanceAdapter = null;
+           refreshGrievanceViewPager();
         }
 
     }
 
-    //Subscribes the activity to events
-    @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    //Updates the complaint list when subscribed and a GrievancesUpdatedEvent is posted by the UpdateService
-    @SuppressWarnings("unused")
-    public void onEvent(GrievancesUpdatedEvent grievancesUpdatedEvent) {
-
-        if(grievancesUpdatedEvent.isSendRequest())
-        {
-            if((grievanceAdapter==null || (grievanceAdapter.getItemCount()==0))) {
-                findViewById(R.id.cvnocomplaintsnotify).setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            return;
-        }
-
-        paginationEnded=grievancesUpdatedEvent.isPaginationEnded();
-        loading=false;
-
-        //check and show no complaint information
-        if(grievanceList.size()==0)
-        {
-            ((CardView)findViewById(R.id.cvnocomplaintsnotify)).setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            ((CardView)findViewById(R.id.cvnocomplaintsnotify)).setVisibility(View.GONE);
-        }
-
-        //If a refresh action has been taken, reinitialize the list
-        if (grievanceAdapter == null) {
-            pageNo = 1;
-            grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
-            recyclerView.setAdapter(grievanceAdapter);
-            swipeRefreshLayout.setRefreshing(false);
-        } else {
-            if(pageNo==1)
-                grievanceAdapter.notifyDataSetChanged();
-            else
-                grievanceAdapter.notifyItemInserted(grievanceList.size());
-
-        }
-        progressBar.setVisibility(View.GONE);
-    }
-
-    @SuppressWarnings("unused")
-    public void onEvent(GrievanceUpdateFailedEvent grievanceUpdateFailedEvent) {
-        swipeRefreshLayout.setRefreshing(false);
-        progressBar.setVisibility(View.GONE);
-        grievanceList = new ArrayList<>();
-        grievanceAdapter = new GrievanceAdapter(GrievanceActivity.this, grievanceList, onItemClickCallback);
-        recyclerView.setAdapter(grievanceAdapter);
-        grievanceList = null;
-    }
-
-    public void refreshGrievanceList()
+    public void refreshGrievanceViewPager()
     {
-        loading=true;
-        paginationEnded=false;
-        pageNo=1;
-        onScrollListener.resetScrollListenerValues();
-        Intent intent = new Intent(GrievanceActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-        intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
-        startService(intent);
+        int selectedIdx=viewPager.getCurrentItem();
+        viewPager.setAdapter(new GrievanceFragmentPagerAdapter(getSupportFragmentManager()));
+        viewPager.getAdapter().notifyDataSetChanged();
+        viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount()-1);
+        viewPager.setCurrentItem(selectedIdx);
     }
+
+    private class GrievanceFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        String[] titles={"ALL", "PENDING", "COMPLETED", "REJECTED"};
+
+        public GrievanceFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles[position], position, sessionManager.getBaseURL()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
+        }
+    }
+
+
 }
 

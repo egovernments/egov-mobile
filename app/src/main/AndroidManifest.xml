@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.egovernments.egoverp"
     android:installLocation="auto"
+    android:largeHeap="true"
     tools:ignore="UnusedAttribute">
 
     <uses-permission android:name="android.permission.INTERNET" />

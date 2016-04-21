@@ -81,7 +81,6 @@ import org.egovernments.egoverp.models.SupportDoc;
 import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
-import org.egovernments.egoverp.network.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -342,10 +341,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                                         actionsSpinner.setSelection(0);
                                         feedbackSpinner.setSelection(0);
                                         updateComment.getText().clear();
+
                                         if (!isComment) {
-                                            Intent intent = new Intent(GrievanceDetailsActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_COMPLAINTS);
-                                            intent.putExtra(UpdateService.COMPLAINTS_PAGE, "1");
-                                            startService(intent);
+                                            setResult(RESULT_OK,new Intent());
                                             finish();
                                         }
 
