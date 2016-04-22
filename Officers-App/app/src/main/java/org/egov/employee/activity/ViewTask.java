@@ -3,14 +3,9 @@ package org.egov.employee.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -23,22 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
-import org.egov.employee.api.ApiController;
-import org.egov.employee.api.ApiUrl;
 import org.egov.employee.controls.AutoHeightGridView;
 import org.egov.employee.data.ComplaintHistory;
 import org.egov.employee.data.Task;
-import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -49,10 +37,6 @@ import java.util.List;
 import java.util.Locale;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 public class ViewTask extends BaseActivity {
 
@@ -74,8 +58,7 @@ public class ViewTask extends BaseActivity {
         if(viewTask.getTask().toUpperCase().equals(GrievanceModuleName))
         {
             //initializeListenersAndComponentsForComplaint();
-            String complaintNo=viewTask.getLink();
-            complaintNo=complaintNo.substring(complaintNo.lastIndexOf("/")+1, complaintNo.length());
+            String complaintNo=viewTask.getRefNum();
 
             /*WebView webView=(WebView)findViewById(R.id.webview);
             // Enable javascript
@@ -183,8 +166,7 @@ public class ViewTask extends BaseActivity {
         Button btnMoreComments=(Button)findViewById(R.id.btnmorecomments);
 
         //get complaint no from task object
-        String complaintNo=viewTask.getLink();
-        complaintNo=complaintNo.substring(complaintNo.lastIndexOf("/")+1, complaintNo.length());
+        String complaintNo=viewTask.getRefNum();
 
         tvComplaintNo.setText(complaintNo);
         tvComplaintDate.setText("24/03/2016 04:26 PM");

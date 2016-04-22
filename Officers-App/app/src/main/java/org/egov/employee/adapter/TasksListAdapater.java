@@ -1,16 +1,12 @@
 package org.egov.employee.adapter;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
@@ -76,7 +72,7 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
                 taskName=taskNameFilter[taskNameFilter.length-1];
             }
 
-            String taskDate=currentTask.getDate();
+            String taskDate=currentTask.getRefDate();
 
             try {
                 taskDate=dateTimeInfo(taskDate,"dd/MM/yyyy hh:mm a");
@@ -84,17 +80,17 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
                 e.printStackTrace();
             }
 
+            String itemDetails=currentTask.getItemDetails();
             //grievance list item condition for displaying complaint no instead of nature of task
             if(taskName.toUpperCase().equals("GRIEVANCE"))
             {
-                String urlPath=currentTask.getLink();
-                taskName=urlPath.substring(urlPath.lastIndexOf("/")+1, urlPath.length());
+                itemDetails=itemDetails.substring(itemDetails.indexOf("for"),itemDetails.length());
             }
 
-            taskViewHolder.tvnatureoftask.setText(taskName);
-            taskViewHolder.tvsender.setText(currentTask.getSender());
+            taskViewHolder.tvnatureoftask.setText(currentTask.getRefNum());
+            taskViewHolder.tvsender.setText(currentTask.getCitizenName()+"("+ currentTask.getCitizenPhoneno() +")");
             taskViewHolder.tvtaskdatetime.setText(taskDate);
-            taskViewHolder.tvtaskdetails.setText(currentTask.getDetails());
+            taskViewHolder.tvtaskdetails.setText(itemDetails);
             taskViewHolder.tvtaskstatus.setText(currentTask.getStatus());
         }
         else
