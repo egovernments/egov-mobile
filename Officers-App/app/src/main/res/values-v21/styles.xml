@@ -1,0 +1,54 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:spinnerStyle">@style/Widget.AppCompat.Spinner.Underlined</item>
+        <item name="android:dropDownSpinnerStyle">@style/Widget.AppCompat.Spinner.DropDown</item>
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:scrollbarSize">2dp</item>
+        <item name="android:scrollbarThumbVertical">@color/scrollbarcolor</item>
+    </style>
+
+    <style name="Egovinputstyle">
+        <item name="android:textColorHint">@color/edittexthintcolor</item>
+        <item name="android:editTextColor">@color/edittexttextcolor</item>
+        <item name="colorControlNormal">@color/edittextbordercolor</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+
+    <style name="Egovnegativebutton">
+        <item name="android:colorButtonNormal">#D32F2E</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="Egovotheractionbutton">
+        <item name="android:colorButtonNormal">#1083c2</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="Egovpositivebutton">
+        <item name="android:colorButtonNormal">#648f2f</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="Egovbutton">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>
