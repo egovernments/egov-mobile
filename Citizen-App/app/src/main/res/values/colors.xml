@@ -1,0 +1,14 @@
+<resources>
+
+    <color name="colorPrimary">#6B4F2C</color>
+    <color name="colorAccent">#F2851F</color>
+    <color name="colorPrimaryDark">#5D4037</color>
+    <color name="blackOverlay">#BF000000</color>
+    <color name="dataLabelColor">#424242</color>
+    <color name="primaryText">#212121</color>
+    <color name="secondaryText">#727272</color>
+    <color name="dividerColor">#757575</color>
+    <color name="imageBackground">#ffd6d7d7</color>
+    <color name="dividercolor">#1f000000</color>
+    <color name="iconstintcolor">#757575</color>
+</resources>

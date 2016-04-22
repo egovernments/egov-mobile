@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/propertywatertax_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="2dp"
+    android:focusable="true"
+    card_view:cardUseCompatPadding="true"
+    android:layout_margin="5dp"
+    android:layout_marginBottom="10dp"
+    android:visibility="gone"
+    card_view:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/watertax_assessmentno_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/consumercode_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/watertax_assessmentno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_contact_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/ownername_contactno_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/watertax_ownernamecontact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_address_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/address_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/watertax_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_locality_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/locality_label"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/watertax_locality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/data_labelSize" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/balance_due"
+                android:layout_marginTop="10dp"
+                android:textSize="@dimen/data_labelSize" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:layout_marginBottom="5dp"></LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/watertax_arrears_total_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/arrears_total"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/watertax_arrears_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="@dimen/data_labelSize" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/watertax_arrears_penalty_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/arrears_penalty"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/watertax_arrears_penalty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="@dimen/data_labelSize" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/watertax_current_total_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/current_total"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/watertax_current_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="@dimen/data_labelSize" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/watertax_current_penalty_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/current_penalty"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/watertax_current_penalty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="@dimen/data_labelSize" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/watertax_total_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/total"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <TextView
+                        android:id="@+id/watertax_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/dataLabelColor"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Breakups"
+                android:layout_margin="5dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:textColor="#2095F3"
+                android:id="@+id/btnbreakups" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
