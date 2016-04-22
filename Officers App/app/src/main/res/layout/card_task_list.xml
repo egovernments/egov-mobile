@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskcvlist"
+        android:focusable="true"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardElevation="2dp"
+        card_view:cardBackgroundColor="@color/cardbg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:padding="16dp" android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:weightSum="3">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="PROPERTY TAX"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/tvnatureoftsk" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Small Text"
+                    android:textSize="14sp"
+                    android:gravity="right"
+                    android:textColor="@color/cardsubtitlecolor"
+                    android:visibility="visible"
+                    android:id="@+id/tvdate" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:text="Medium Text"
+                android:textColor="@color/cardtitleColor"
+                android:paddingBottom="10dp"
+                android:id="@+id/tvsender" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="To create complex lists and cards with material design styles in your apps, you can use the RecyclerView and CardView widgets."
+                android:textColor="@color/cardtitleColor"
+                android:paddingBottom="10dp"
+                android:id="@+id/tvdetails" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="Status"
+                android:paddingBottom="8dp"
+                android:textColor="@color/cardstatustextcolor"
+                android:id="@+id/tvstatus" />
+
+        </LinearLayout>
+
+
+
+    </android.support.v7.widget.CardView>
+
+
+</LinearLayout>

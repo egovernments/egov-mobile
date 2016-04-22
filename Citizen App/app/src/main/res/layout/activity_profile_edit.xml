@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/view_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/editprofile_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="40dp"
+                android:background="@drawable/profilecirclebackground"
+                android:scaleType="fitCenter"
+                android:src="@drawable/person_white_540dp"
+                android:tint="@android:color/white" />
+
+
+            <LinearLayout
+                android:id="@+id/editprofile_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editprofile_image"
+                android:background="@android:color/white"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/Divider"
+                    android:layout_below="@+id/editprofile_image" />
+
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:orientation="vertical">-->
+
+                <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:text="To migrate your account to a different municipality, please select an option here. If you have previously registered in the selected municipality, you may login to it without performing this action." />-->
+
+                <!--<FrameLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
+
+                <!--<Spinner-->
+                <!--android:id="@+id/profile_city"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:background="@drawable/top_edittext"-->
+                <!--android:dropDownVerticalOffset="35dp"-->
+                <!--android:focusable="false"-->
+                <!--android:spinnerMode="dropdown"-->
+                <!--android:visibility="invisible" />-->
+
+                <!--<org.egovernments.egoverp.helper.CustomAutoCompleteTextView-->
+                <!--android:id="@+id/profile_spinner_autocomplete"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:background="@drawable/top_edittext"-->
+                <!--android:drawableLeft="@drawable/ic_location_city_black_24dp"-->
+                <!--android:drawablePadding="5dp"-->
+                <!--android:drawableStart="@drawable/ic_location_city_black_24dp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:hint="@string/loading_label"-->
+                <!--android:paddingEnd="5dp"-->
+                <!--android:paddingLeft="5dp"-->
+                <!--android:paddingRight="5dp"-->
+                <!--android:paddingStart="5dp"-->
+                <!--android:singleLine="true"-->
+                <!--android:textColor="#000"-->
+                <!--android:textColorHint="#a8a5a5"-->
+                <!--android:textSize="15sp" />-->
+
+                <!--</FrameLayout>-->
+
+                <!--</LinearLayout>-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <EditText
+                            android:id="@+id/editprofile_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/name_label_editprofile"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLength="64"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editprofile_phoneno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/phone_label_editprofile"
+                            android:imeOptions="actionNext"
+                            android:inputType="phone"
+                            android:maxLength="10"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editprofile_altphoneno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/altphone_label"
+                            android:imeOptions="actionNext"
+                            android:inputType="phone"
+                            android:maxLength="10"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gender_label"
+                        android:textSize="@dimen/field_labelSize" />
+
+                    <RadioGroup
+                        android:id="@+id/editprofile_gender"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="5dp">
+
+                        <RadioButton
+                            android:id="@+id/radioButton_male"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:paddingRight="10dp"
+                            android:text="@string/gender_male_label" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_female"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:paddingRight="10dp"
+                            android:text="@string/gender_female_label" />
+
+                        <RadioButton
+                            android:id="@+id/radioButton_others"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/gender_unmentioned_label" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editprofile_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/email_label_editprofile"
+                            android:imeOptions="actionNext"
+                            android:inputType="textEmailAddress"
+                            android:maxLength="128"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false">
+
+                        <EditText
+                            android:id="@+id/editprofile_dateofbirth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@null"
+                            android:ems="10"
+                            android:focusable="false"
+                            android:hint="@string/dob_label_editprofile"
+                            android:inputType="date"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editprofile_aadhaarcardno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/aadhaar_label"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:maxLength="12"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <View style="@style/Divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editprofile_PANcardno"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:ems="10"
+                            android:hint="@string/pan_label"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLength="10"
+                            android:paddingTop="5dp"
+                            android:singleLine="true"
+                            android:textColorHint="#a8a5a5"
+                            android:textSize="15sp" />
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>
