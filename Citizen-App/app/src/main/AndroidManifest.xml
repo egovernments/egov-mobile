@@ -68,6 +68,7 @@
             android:name=".activities.GrievanceActivity"
             android:label="@string/grievances_label"
             android:parentActivityName=".activities.HomeActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

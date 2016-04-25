@@ -48,7 +48,7 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.helper.CardViewOnClickListener;
+import org.egovernments.egoverp.helper.GrievanceItemInterface;
 import org.egovernments.egoverp.models.Grievance;
 
 import java.lang.ref.WeakReference;
@@ -68,21 +68,21 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
     private final int VIEW_PROG = 0;
 
     private List<Grievance> grievances;
-    static CardViewOnClickListener.OnItemClickCallback grievanceItemListener;
+    GrievanceItemInterface grievanceItemInterface;
     private WeakReference<Context> contextWeakReference;
     Bundle downloadArgs;
 
-    public GrievanceListAdapater(Context context, List<Grievance> tasks, CardViewOnClickListener.OnItemClickCallback tasksItemClickListener, Bundle downloadArgs)
+    public GrievanceListAdapater(Context context, List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface, Bundle downloadArgs)
     {
         this.grievances =tasks;
-        this.grievanceItemListener =tasksItemClickListener;
+        this.grievanceItemInterface =grievanceItemInterface;
         this.contextWeakReference = new WeakReference<>(context);
         this.downloadArgs=downloadArgs;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        RecyclerView.ViewHolder vh=null;
+        RecyclerView.ViewHolder vh;
         if(viewType==VIEW_ITEM) {
 
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_grievance, viewGroup, false);
@@ -106,7 +106,7 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
         if(holder instanceof GrievanceViewHolder)
         {
-            Grievance ci = grievances.get(position);
+            final Grievance ci = grievances.get(position);
 
             final GrievanceViewHolder viewHolder=(GrievanceViewHolder)holder;
 
@@ -162,7 +162,12 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
                         });
             }
 
-            viewHolder.complaintCardView.setOnClickListener(new CardViewOnClickListener(position, grievanceItemListener));
+            viewHolder.complaintCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    grievanceItemInterface.clickedItem(ci);
+                }
+            });
             viewHolder.complaintNo.setText("Grievance No.: " + ci.getCrn());
         }
         else

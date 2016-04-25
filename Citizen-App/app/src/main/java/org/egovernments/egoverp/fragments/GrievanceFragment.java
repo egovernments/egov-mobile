@@ -52,8 +52,8 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceActivity;
 import org.egovernments.egoverp.activities.GrievanceDetailsActivity;
 import org.egovernments.egoverp.adapters.GrievanceListAdapater;
-import org.egovernments.egoverp.helper.CardViewOnClickListener;
 import org.egovernments.egoverp.helper.EndlessRecyclerOnScrollListener;
+import org.egovernments.egoverp.helper.GrievanceItemInterface;
 import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.network.ApiController;
@@ -72,7 +72,7 @@ import retrofit.client.Response;
  */
 public class GrievanceFragment extends android.support.v4.app.Fragment {
 
-    private CardViewOnClickListener.OnItemClickCallback onItemClickCallback;
+    GrievanceItemInterface grievanceItemInterface;
 
     private List<Grievance> grievanceList=new ArrayList<>();
 
@@ -161,18 +161,15 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         //Enables infinite scrolling (pagination)
         recyclerView.addOnScrollListener(onScrollListener);
 
-        //CardView on click listener
-        onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
+        grievanceItemInterface=new GrievanceItemInterface() {
             @Override
-            public void onItemClicked(View view, int position) {
-
+            public void clickedItem(Grievance grievance) {
                 Intent intent = new Intent(getActivity(), GrievanceDetailsActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievanceList.get(position));
-                bundle.putParcelableArrayList(GrievanceDetailsActivity.GRIEVANCE_SUPPORT_DOCS, grievanceList.get(position).getSupportDocs());
+                bundle.putSerializable(GrievanceDetailsActivity.GRIEVANCE_ITEM, grievance);
+                bundle.putParcelableArrayList(GrievanceDetailsActivity.GRIEVANCE_SUPPORT_DOCS, grievance.getSupportDocs());
                 intent.putExtras(bundle);
                 getActivity().startActivityForResult(intent, GrievanceActivity.ACTION_UPDATE_REQUIRED);
-
             }
         };
 
@@ -249,7 +246,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                                     grievanceList.clear();
                                 }
                                 grievanceList = grievanceAPIResponse.getResult();
-                                grievanceAdapter=new GrievanceListAdapater(getActivity(), grievanceList, onItemClickCallback, downImageArgs);
+                                grievanceAdapter=new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
                                 recyclerView.setAdapter(grievanceAdapter);
                                 progressBar.setVisibility(View.GONE);
                             }
@@ -304,7 +301,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
        {
            progressBar.setVisibility(View.GONE);
            grievanceList = new ArrayList<>();
-           grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, onItemClickCallback, downImageArgs);
+           grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
            recyclerView.setAdapter(grievanceAdapter);
            grievanceList = null;
        }
