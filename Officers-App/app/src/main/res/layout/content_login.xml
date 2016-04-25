@@ -39,6 +39,29 @@
             android:visibility="gone"
             android:spinnerMode="dropdown" />
 
+        <org.egov.employee.controls.CustomAutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/autocomplete_district"
+            android:theme="@style/Egovinputstyle"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:nextFocusDown="@+id/autocomplete_city"
+            android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
+            android:drawablePadding="20dp"
+            android:hint="Select District"/>
+
+        <org.egov.employee.controls.CustomAutoCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/autocomplete_city"
+            android:theme="@style/Egovinputstyle"
+            android:imeOptions="actionNext"
+            android:inputType="textNoSuggestions"
+            android:nextFocusDown="@+id/edusername"
+            android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
+            android:hint="Select City" />
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

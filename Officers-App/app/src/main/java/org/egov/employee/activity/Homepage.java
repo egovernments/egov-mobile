@@ -1,12 +1,10 @@
 package org.egov.employee.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,13 +16,9 @@ import com.google.gson.JsonObject;
 
 import org.egov.employee.adapter.TasksAdapter;
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.ApiUrl;
-import org.egov.employee.application.EgovApp;
 import org.egov.employee.controls.SlidingTabLayout;
 import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import offices.org.egov.egovemployees.R;
 import retrofit.Call;
@@ -68,6 +62,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
 
         getWorkListCategory();
 
+        showSnackBar("Welcome, "+preference.getName());
         //BadgeView bv1 = new BadgeView(this, ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0));
 
     }
@@ -155,6 +150,10 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         else if(id == R.id.action_refresh)
         {
             getWorkListCategory();
+        }
+        else if(id == R.id.action_search)
+        {
+            startActivity(new Intent(Homepage.this, SearchableActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

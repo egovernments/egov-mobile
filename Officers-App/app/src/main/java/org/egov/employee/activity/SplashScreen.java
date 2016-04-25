@@ -14,17 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.squareup.okhttp.Response;
 
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.ApiUrl;
 import org.egov.employee.application.EgovApp;
 
 import java.util.Date;
-
 
 import offices.org.egov.egovemployees.R;
 import retrofit.Call;
@@ -142,8 +139,8 @@ public class SplashScreen extends BaseActivity {
     }
 
     @Override
-    public void showErrorMessage(String msg) {
-        super.showErrorMessage(msg);
+    public void showSnackBar(String msg) {
+        super.showSnackBar(msg);
         serverErrorMsg=msg;
     }
 
@@ -189,7 +186,13 @@ public class SplashScreen extends BaseActivity {
         @Override
         protected Response doInBackground(String... params) {
             Response response=null;
-            response= ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), SplashScreen.this);
+            if(EgovApp.getInstance().isMultiCitySupport() && preference.getActiveCityCode() !=-1)
+            {
+                response = ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), preference.getActiveCityCode(), SplashScreen.this);
+            }
+            else {
+                response = ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), SplashScreen.this);
+            }
             return response;
         }
 
@@ -202,23 +205,13 @@ public class SplashScreen extends BaseActivity {
                     if (response.code() == 200) {
                         String s = response.body().string();
                         //check and load city config's
-                        if (EgovApp.getInstance().isMultiCitySupport()) {
+
+                        if (EgovApp.getInstance().isMultiCitySupport() && preference.getActiveCityCode() == -1) {
                             JsonArray jsonCitiesList = new JsonParser().parse(s).getAsJsonArray();
                             preference.setCitiesList(jsonCitiesList.toString());
-                            if (preference.getActiveCityCode() != -1) {
-                                for (JsonElement jsonObj : jsonCitiesList) {
-                                    JsonObject jsonCityObj = jsonObj.getAsJsonObject();
-                                    if (jsonCityObj.get("city_code").getAsInt() == preference.getActiveCityCode()) {
-                                        preference.setActiveCityCode(jsonCityObj.get("city_code").getAsInt());
-                                        preference.setActiveCityName(jsonCityObj.get("city_name").getAsString());
-                                        preference.setActiveCityUrl(jsonCityObj.get("url").getAsString());
-                                    }
-                                }
-                            }
-
                         } else {
                             JsonObject jsonCityObj = new JsonParser().parse(s).getAsJsonObject();
-                            //reset single city resources
+                            //reset active city resources
                             preference.setActiveCityName(jsonCityObj.get("city_name").getAsString());
                             preference.setActiveCityUrl(jsonCityObj.get("url").getAsString());
                             preference.setLastUrlUpdateTime(new Date().getTime());

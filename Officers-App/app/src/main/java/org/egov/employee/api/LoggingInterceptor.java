@@ -1,8 +1,6 @@
 package org.egov.employee.api;
 
 
-import android.widget.Switch;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.squareup.okhttp.Connection;
@@ -17,9 +15,11 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.okhttp.internal.Platform;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
+
 import okio.Buffer;
 import okio.BufferedSource;
 
@@ -103,7 +103,7 @@ public final class LoggingInterceptor implements Interceptor {
 
     public interface ErrorListener
     {
-        void showErrorMessage(String msg);
+        void showSnackBar(String msg);
         void sessionTimeOutError();
     }
 
@@ -246,7 +246,7 @@ public final class LoggingInterceptor implements Interceptor {
     public IOException errorHandlerFromResponse(IOException ex)
     {
         if(errorListener!=null) {
-            errorListener.showErrorMessage(ex.getLocalizedMessage());
+            errorListener.showSnackBar(ex.getLocalizedMessage());
         }
         return ex;
     }
@@ -314,7 +314,7 @@ public final class LoggingInterceptor implements Interceptor {
             }
             else
             {
-                errorListener.showErrorMessage(errorMsg);
+                errorListener.showSnackBar(errorMsg);
             }
         }
 

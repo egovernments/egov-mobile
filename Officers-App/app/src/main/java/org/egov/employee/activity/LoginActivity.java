@@ -4,21 +4,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.egov.employee.api.ApiUrl;
+import com.google.gson.reflect.TypeToken;
+
 import org.egov.employee.api.ApiController;
+import org.egov.employee.api.ApiUrl;
 import org.egov.employee.application.EgovApp;
+import org.egov.employee.controls.CustomAutoCompleteTextView;
+import org.egov.employee.data.MultiDistrictsAPIResponse;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
 import offices.org.egov.egovemployees.R;
 import retrofit.Call;
 import retrofit.Callback;
@@ -33,6 +43,11 @@ public class LoginActivity extends BaseActivity {
     EditText editTextPwd;
     Spinner spinnerCity;
     JsonArray citiesArray;
+    CustomAutoCompleteTextView autocompleteDistrict;
+    CustomAutoCompleteTextView autocompleteCity;
+    boolean isDistrictSelectedFromList;
+
+    ArrayList<MultiDistrictsAPIResponse> districts;
 
 
     @Override
@@ -49,28 +64,59 @@ public class LoginActivity extends BaseActivity {
 
         if(EgovApp.getInstance().isMultiCitySupport())
         {
-            List<String> cities = new ArrayList<>();
-            cities.add("Select Your City");
-            citiesArray=new JsonParser().parse(preference.getCitiesList()).getAsJsonArray();
-            int activeCityCode=preference.getActiveCityCode();
-            int loopIdx=0, activeCityPosition=0;
-            for(JsonElement jsonObj:citiesArray) {
-                //add city to list for load dropdown
-                JsonObject jsonCityObj = jsonObj.getAsJsonObject();
-                cities.add(jsonCityObj.get("city_name").getAsString());
-                //check if app preference having any active city code or not
-                if(activeCityCode>-1 && activeCityCode==jsonCityObj.get("city_code").getAsInt())
-                {
-                    activeCityPosition=loopIdx;
-                }
-                loopIdx++;
-            }
+            List<String> options = new ArrayList<>();
 
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_large, cities);
-            dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_large);
-            spinnerCity.setAdapter(dataAdapter);
-            spinnerCity.setVisibility(View.VISIBLE);
-            spinnerCity.setSelection((activeCityPosition+1));
+            Type listOfTestObject = new TypeToken<List<MultiDistrictsAPIResponse>>(){}.getType();
+            districts=new Gson().fromJson(preference.getCitiesList(), listOfTestObject);
+
+            autocompleteDistrict=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_district);
+            autocompleteCity=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_city);
+
+            setAdapterForAutoCompleteTextView(districts, autocompleteDistrict);
+
+            isDistrictSelectedFromList =false;
+
+            autocompleteDistrict.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    isDistrictSelectedFromList=true;
+                    String selection = (String) parent.getItemAtPosition(position);
+                    setAdapterForAutoCompleteTextView(getCitiesByDistrictName(selection), autocompleteCity);
+                }
+            });
+
+            autocompleteDistrict.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(!hasFocus && !isDistrictSelectedFromList)
+                    {
+                        List<MultiDistrictsAPIResponse.City> cities=getCitiesByDistrictName(autocompleteDistrict.getText().toString().trim());
+                        if(cities!=null)
+                        setAdapterForAutoCompleteTextView(cities, autocompleteCity);
+                    }
+                }
+            });
+
+            autocompleteDistrict.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    isDistrictSelectedFromList =false;
+                    autocompleteCity.setText("");
+                    autocompleteCity.setAdapter(null);
+                }
+            });
+
+
         }
         else {
             spinnerCity.setVisibility(View.GONE);
@@ -80,7 +126,7 @@ public class LoginActivity extends BaseActivity {
 
         if(getIntent().getBooleanExtra("isFromSessionTimeOut", false))
         {
-            showErrorMessage("Session Timeout!");
+            showSnackBar("Session Timeout!");
         }
 
         fablogin.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +138,38 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
+
+    public void setAdapterForAutoCompleteTextView(List<?> items, final CustomAutoCompleteTextView autoCompleteTextView)
+    {
+        List<String> options = new ArrayList<>();
+
+        for(Object object:items)
+        {
+            if(object instanceof MultiDistrictsAPIResponse)
+            {
+                options.add(((MultiDistrictsAPIResponse) object).getDistrictName());
+            }
+            else if(object instanceof MultiDistrictsAPIResponse.City){
+                options.add(((MultiDistrictsAPIResponse.City) object).getCityName());
+            }
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,options);
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+            @Override
+            public void onClick(DrawablePosition target) {
+                if (target == DrawablePosition.RIGHT) {
+                    autoCompleteTextView.showDropDown();
+                }
+            }
+        });
+
+        autoCompleteTextView.setText("");
+
+    }
+
 
     @Override
     protected int getLayoutResource() {
@@ -152,18 +230,18 @@ public class LoginActivity extends BaseActivity {
                             }
                             else
                             {
-                                showErrorMessage("You're not a employee!");
+                                showSnackBar("You're not a employee!");
                                 showLoginControls();
                             }
 
                         } else {
-                            showErrorMessage("Invalid response from server!");
+                            showSnackBar("Invalid response from server!");
                             showLoginControls();
                         }
                     }
                     catch (Exception ex)
                     {
-                        showErrorMessage("Invalid response from server!");
+                        showSnackBar("Invalid response from server!");
                         showLoginControls();
                     }
 
@@ -196,34 +274,68 @@ public class LoginActivity extends BaseActivity {
         //validate city dropdown if app has multicity support
         if(EgovApp.getInstance().isMultiCitySupport())
         {
-            if(spinnerCity.getSelectedItemPosition() == 0)
+
+            if(TextUtils.isEmpty(autocompleteDistrict.getText().toString()) || TextUtils.isEmpty(autocompleteCity.getText().toString()))
             {
-                showErrorMessage("Please select your city!");
+                showSnackBar("Please enter your district and municipality!");
                 return false;
             }
-            else
+
+            MultiDistrictsAPIResponse.City city=getCityByCityName(autocompleteCity.getText().toString().trim());
+            if(city==null)
             {
-                //get current city json object based on cities dropdown selection
-                JsonObject currentCityObj = citiesArray.get((spinnerCity.getSelectedItemPosition()-1)).getAsJsonObject();
-                preference.setActiveCityUrl(currentCityObj.get("url").getAsString());
-                preference.setActiveCityName(currentCityObj.get("city_name").getAsString());
-                preference.setActiveCityCode(currentCityObj.get("city_code").getAsInt());
+                showSnackBar("Please enter valid district and municipality!");
+                return false;
             }
+            preference.setActiveCityUrl(city.getUrl());
+            preference.setActiveCityName(city.getCityName());
+            preference.setActiveCityCode(city.getCityCode());
         }
 
         if(TextUtils.isEmpty(editTextUsernmae.getText().toString()))
         {
-            showErrorMessage("Please enter your username!");
+            showSnackBar("Please enter your username!");
             return false;
         }
 
         if(TextUtils.isEmpty(editTextPwd.getText().toString()))
         {
-            showErrorMessage("Please enter your password!");
+            showSnackBar("Please enter your password!");
             return false;
         }
 
         return true;
+    }
+
+    public List<MultiDistrictsAPIResponse.City> getCitiesByDistrictName(String districtName)
+    {
+        for(MultiDistrictsAPIResponse district:districts)
+        {
+            if(district.getDistrictName().toUpperCase().equals(districtName.trim().toUpperCase()))
+            {
+                if(!isDistrictSelectedFromList)
+                {
+                    autocompleteDistrict.setText(district.getDistrictName());
+                }
+                return district.getCities();
+            }
+        }
+        return null;
+    }
+
+    public MultiDistrictsAPIResponse.City getCityByCityName(String cityName)
+    {
+        for(MultiDistrictsAPIResponse district:districts)
+        {
+            for(MultiDistrictsAPIResponse.City city:district.getCities())
+            {
+                if(city.getCityName().toUpperCase().equals(cityName.trim().toUpperCase()))
+                {
+                    return city;
+                }
+            }
+        }
+        return null;
     }
 
 }

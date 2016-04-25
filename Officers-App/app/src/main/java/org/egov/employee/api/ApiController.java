@@ -56,6 +56,26 @@ public class ApiController {
         }
     }
 
+    public static Response getCityURL(String url, int cityCode, LoggingInterceptor.ErrorListener errorListener) {
+
+        try {
+
+            LoggingInterceptor logging = new LoggingInterceptor();
+            // set your desired log level none, body, header
+            logging.setLevel(LoggingInterceptor.Level.BODY);
+            logging.setErrorListener(errorListener);
+            client.interceptors().add(logging);
+
+            Request request = new Request.Builder()
+                    .url(url + "&code=" + cityCode)
+                    .build();
+            return client.newCall(request).execute();
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
 
     /*public static List<City> getAllCitiesURLs(String url) throws IOException {
 

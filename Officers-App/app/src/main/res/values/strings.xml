@@ -19,4 +19,5 @@
     <string name="complaint_history">COMPLAINT HISTORY</string>
     <string name="complaint_actions">COMPLAINT ACTIONS</string>
     <string name="comments">COMMENTS</string>
+    <string name="title_activity_searchable">SearchableActivity</string>
 </resources>

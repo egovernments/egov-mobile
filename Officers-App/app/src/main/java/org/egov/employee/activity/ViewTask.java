@@ -117,7 +117,7 @@ public class ViewTask extends BaseActivity {
             dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             spinnerapvr.setAdapter(dataAdapter);
 
-            showErrorMessage(getIntent().getExtras().getString("url"));
+            showSnackBar(getIntent().getExtras().getString("url"));
         }
 
 

@@ -5,21 +5,18 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import org.egov.employee.api.LoggingInterceptor;
 import org.egov.employee.config.AppPreference;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import offices.org.egov.egovemployees.R;
 
 /**
@@ -45,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
 
     //error message function called from error listener when receive an error response from server
     @Override
-    public void showErrorMessage(String msg) {
+    public void showSnackBar(String msg) {
         Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
     }
 
