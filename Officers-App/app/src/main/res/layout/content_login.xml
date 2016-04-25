@@ -29,16 +29,6 @@
             android:layout_marginBottom="15dp"
             android:layout_gravity="center_horizontal" />
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnercity"
-            android:layout_gravity="center_horizontal"
-            android:theme="@style/Egovinputstyle"
-            android:layout_marginBottom="10dp"
-            android:visibility="gone"
-            android:spinnerMode="dropdown" />
-
         <org.egov.employee.controls.CustomAutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +39,7 @@
             android:nextFocusDown="@+id/autocomplete_city"
             android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
             android:drawablePadding="20dp"
-            android:hint="Select District"/>
+            android:hint="@string/select_district"/>
 
         <org.egov.employee.controls.CustomAutoCompleteTextView
             android:layout_width="match_parent"
@@ -60,13 +50,13 @@
             android:inputType="textNoSuggestions"
             android:nextFocusDown="@+id/edusername"
             android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
-            android:hint="Select City" />
+            android:hint="@string/select_municipality" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="UserName"
+            android:hint="@string/username"
             android:ems="10"
             android:id="@+id/edusername"
             android:theme="@style/Egovinputstyle"
@@ -78,7 +68,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:hint="Password"
+            android:hint="@string/password"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:id="@+id/edpwd"

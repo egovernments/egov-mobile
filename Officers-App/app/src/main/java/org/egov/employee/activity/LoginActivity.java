@@ -12,10 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -41,8 +39,6 @@ public class LoginActivity extends BaseActivity {
     ProgressBar pblogin;
     EditText editTextUsernmae;
     EditText editTextPwd;
-    Spinner spinnerCity;
-    JsonArray citiesArray;
     CustomAutoCompleteTextView autocompleteDistrict;
     CustomAutoCompleteTextView autocompleteCity;
     boolean isDistrictSelectedFromList;
@@ -60,7 +56,9 @@ public class LoginActivity extends BaseActivity {
         fablogin = (FloatingActionButton) findViewById(R.id.fablogin);
         pblogin = (ProgressBar)findViewById(R.id.pblogin);
         pblogin.setVisibility(View.INVISIBLE);
-        spinnerCity=(Spinner)findViewById(R.id.spinnercity);
+
+        autocompleteDistrict=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_district);
+        autocompleteCity=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_city);
 
         if(EgovApp.getInstance().isMultiCitySupport())
         {
@@ -68,9 +66,6 @@ public class LoginActivity extends BaseActivity {
 
             Type listOfTestObject = new TypeToken<List<MultiDistrictsAPIResponse>>(){}.getType();
             districts=new Gson().fromJson(preference.getCitiesList(), listOfTestObject);
-
-            autocompleteDistrict=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_district);
-            autocompleteCity=(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_city);
 
             setAdapterForAutoCompleteTextView(districts, autocompleteDistrict);
 
@@ -119,7 +114,8 @@ public class LoginActivity extends BaseActivity {
 
         }
         else {
-            spinnerCity.setVisibility(View.GONE);
+            autocompleteDistrict.setVisibility(View.GONE);
+            autocompleteCity.setVisibility(View.GONE);
         }
 
         setFieldValuesFromPreference();
@@ -183,6 +179,14 @@ public class LoginActivity extends BaseActivity {
             editTextUsernmae.setText(preference.getUserName());
             editTextPwd.setText(preference.getPwd());
         }
+
+        if(!TextUtils.isEmpty(preference.getDistrict()) && !TextUtils.isEmpty(preference.getActiveCityName()))
+        {
+            autocompleteDistrict.setText(preference.getDistrict());
+            autocompleteCity.setText(preference.getActiveCityName());
+            autocompleteDistrict.dismissDropDown();
+        }
+
     }
 
     //perform login action
@@ -217,6 +221,7 @@ public class LoginActivity extends BaseActivity {
                                 preference.setUserName(username);
                                 preference.setPwd(pwd);
                                 preference.setName(respJson.get("name").getAsString());
+                                preference.setDistrict(autocompleteDistrict.getText().toString());
 
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {

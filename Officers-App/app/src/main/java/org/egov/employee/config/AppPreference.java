@@ -30,7 +30,8 @@ public class AppPreference {
     private String pwd="pwd";
     //This is used to store name of current logged user
     private String name="name";
-    
+    //This is used to save selected district text
+    private String district="district";
 
     public AppPreference(Context context){
         this.appSharedPrefs = context.getSharedPreferences(APP_PREFS, Activity.MODE_PRIVATE);
@@ -107,5 +108,13 @@ public class AppPreference {
 
     public void setName(String _name) {
         prefsEditor.putString(name, _name).commit();
+    }
+
+    public String getDistrict() {
+        return appSharedPrefs.getString(district, "");
+    }
+
+    public void setDistrict(String _district) {
+        prefsEditor.putString(district, _district).commit();
     }
 }
