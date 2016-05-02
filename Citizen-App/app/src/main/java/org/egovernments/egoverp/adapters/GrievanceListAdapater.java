@@ -130,7 +130,7 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
             if (ci.getSupportDocsSize() == 0) {
                 Picasso.with(contextWeakReference.get())
-                        .load(R.drawable.complaint_default)
+                        .load(R.drawable.ic_error_outline_black_140dp)
                         .into(((GrievanceViewHolder) viewHolder).complaintImage);
             } else {
 

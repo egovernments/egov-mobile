@@ -82,7 +82,7 @@ public class HomeActivity extends BaseActivity {
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.grievances_label), R.drawable.ic_announcement_black_36dp, "File grievances or review and update previously filed grievances"));
+                homeItemList.add(new HomeItem(getString(R.string.grievances_label), R.drawable.ic_error_outline_black_36dp, "File grievances or review and update previously filed grievances"));
             }
 
             //check for property tax module enabled or not

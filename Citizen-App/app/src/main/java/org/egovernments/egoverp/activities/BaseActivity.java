@@ -336,7 +336,7 @@ public class BaseActivity extends AppCompatActivity {
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_feedback_black_24dp, getString(R.string.grievances_label)));
+                arrayList.add(new NavigationItem(R.drawable.ic_error_outline_black_24dp, getString(R.string.grievances_label)));
             }
 
             //check for property tax module enabled or not
@@ -348,7 +348,7 @@ public class BaseActivity extends AppCompatActivity {
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_water_black_24dp, getString(R.string.watertax_label)));
+                arrayList.add(new NavigationItem(R.drawable.ic_local_drink_black_24dp, getString(R.string.watertax_label)));
             }
 
             arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
