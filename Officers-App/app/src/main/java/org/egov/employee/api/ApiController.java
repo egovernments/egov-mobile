@@ -6,21 +6,25 @@ import android.util.Log;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import org.egov.employee.config.AppPreference;
 import org.egov.employee.data.ComplaintViewAPIResponse;
 import org.egov.employee.data.TaskAPIResponse;
 
+import java.util.Map;
+
 import retrofit.Call;
-import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.PartMap;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -145,10 +149,23 @@ public class ApiController {
         @GET(ApiUrl.EMPLOYEE_WORKLIST)
         Call<TaskAPIResponse> getInboxItemsByCategory(@Path("worklisttype") String worklisttype, @Path("from") int from, @Path("to") int to, @Query("access_token") String accessToken);
 
+        @GET(ApiUrl.EMPLOYEE_FORWARD_DETAILS)
+        Call<JsonObject> getForwardDetails(@Query(value = "department") String departmentId, @Query(value = "designation") String designationId, @Query(value = "access_token") String accessToken);
+
         @GET(ApiUrl.PGR_COMPLAINT_DETAILS)
-        void getComplaintDetails(@Path(value = "complaintNo") String complaintNo,
-                                 @Query(value = "access_token") String access_token,
-                                 Callback<ComplaintViewAPIResponse> grievanceCommentAPIResponseCallback);
+        Call<ComplaintViewAPIResponse> getComplaintDetails(@Path(value = "complaintNo") String complaintNo,
+                                 @Query(value = "access_token") String accessToken);
+
+        @GET(ApiUrl.PGR_COMPLAINT_HISTORY)
+        Call<ComplaintViewAPIResponse.HistoryAPIResponse> getComplaintHistory(@Path(value = "complaintNo") String complaintNo,
+                                                           @Query(value = "access_token") String accessToken);
+
+        @GET(ApiUrl.PGR_COMPLAINT_ACTIONS)
+        Call<JsonObject> getComplaintActions(@Path(value = "complaintNo") String complaintNo, @Query(value = "access_token") String accessToken);
+
+        @Multipart
+        @POST(ApiUrl.PGR_COMPLAINT_UPDATE)
+        Call<JsonObject> updateComplaint(@Path(value = "complaintNo") String complaintNo, @Query(value = "access_token") String accessToken, @PartMap Map<String, RequestBody> files);
 
 
     }

@@ -28,12 +28,12 @@
 
 
     <style name="Egovnegativebutton">
-        <item name="colorButtonNormal">@color/redcolor</item>
+        <item name="colorButtonNormal">#D32F2E</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Egovotheractionbutton">
-        <item name="colorButtonNormal">@color/bluecolor</item>
+        <item name="colorButtonNormal">@color/otheractionbuttoncolor</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
@@ -48,12 +48,12 @@
     </style>
 
 
-    <style name="AppTheme.NoActionBar" parent="AppTheme">
+    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.Transparent" parent="AppTheme">
+    <style name="AppTheme.Transparent">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>

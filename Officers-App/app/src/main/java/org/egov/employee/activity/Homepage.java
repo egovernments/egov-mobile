@@ -37,6 +37,8 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     CharSequence Titles[]={"COMPLAINTS", "PROPERTY", "PROPERTY TAX", "WATER TAX", "ADVERTISEMENT"};
     int Numboftabs = 5;
 
+    public static int ACTION_UPDATE_REQUIRED=111;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +123,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     public void onTaskItemClicked(Task clickedTask) {
         Intent openTaskScreen=new Intent(Homepage.this, ViewTask.class);
         openTaskScreen.putExtra("task", clickedTask);
-        startActivity(openTaskScreen);
+        startActivityForResult(openTaskScreen, ACTION_UPDATE_REQUIRED);
     }
 
     @Override
@@ -153,12 +155,34 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         }
         else if(id == R.id.action_search)
         {
-            startActivity(new Intent(Homepage.this, SearchableActivity.class));
+
+            View menuButton = findViewById(R.id.action_search);
+            int[] searchActionBarLocation = new int[]{0,0};
+            // This could be called when the button is not there yet, so we must test for null
+            if (menuButton != null) {
+                // Found it! Do what you need with the button
+                menuButton.getLocationInWindow(searchActionBarLocation);
+                searchActionBarLocation[0] = searchActionBarLocation[0]+menuButton.getWidth() / 2;
+                searchActionBarLocation[1] = searchActionBarLocation[1]+menuButton.getHeight() / 2;
+            }
+
+
+            Intent searchScreen=new Intent(Homepage.this, SearchableActivity.class);
+            searchScreen.putExtra("xyLocations", searchActionBarLocation);
+            startActivity(searchScreen);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
+            showSnackBar("Complaint Successfully Updated!");
+            getWorkListCategory();
+        }
 
+    }
 }

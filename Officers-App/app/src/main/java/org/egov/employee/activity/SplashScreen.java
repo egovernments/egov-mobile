@@ -41,6 +41,16 @@ public class SplashScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ((Button)findViewById(R.id.btnretry)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performAppStartUpSetup();
+            }
+        });
+
+        pbsplash=(ProgressBar)findViewById(R.id.pbsplash);
+        layerror=(LinearLayout) findViewById(R.id.layerror);
+
         isFromSessionTimeOut=getIntent().getBooleanExtra("isFromSessionTimeOut",false);
         isFromLogOut=getIntent().getBooleanExtra("isLoggedOut", false);
         if(isFromSessionTimeOut || isFromLogOut)
@@ -59,15 +69,7 @@ public class SplashScreen extends BaseActivity {
             performAppStartUpSetup();
         }
 
-        ((Button)findViewById(R.id.btnretry)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performAppStartUpSetup();
-            }
-        });
 
-        pbsplash=(ProgressBar)findViewById(R.id.pbsplash);
-        layerror=(LinearLayout) findViewById(R.id.layerror);
 
     }
 

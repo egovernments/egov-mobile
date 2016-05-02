@@ -14,9 +14,6 @@
     <color name="cardsubtitlecolor">#757575</color>
     <color name="cardstatustextcolor">#F6D730</color>
     <color name="scrollbarcolor">#7a7a7a</color>
-    <color name="bluecolor">#1083c2</color>
-    <color name="lightbluecolor">#CC1083c2</color>
-    <color name="greencolor">#648f2f</color>
-    <color name="lightgreencolor">#CC648f2f</color>
-    <color name="redcolor">#D32F2E</color>
+    <color name="otheractionbuttoncolor">#1083c2</color>
+
 </resources>

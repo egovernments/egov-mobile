@@ -16,11 +16,18 @@ public class ApiUrl {
 
     public final static String EMPLOYEE_WORKLIST = "api/v1.0/employee/inbox/{worklisttype}/{from}/{to}";
 
-    public final static String PGR_COMPLAINT_DETAILS = "api/v1.0/complaint/detail/{complaintNo}";
+    public final static String EMPLOYEE_FORWARD_DETAILS = "/api/v1.0/employee/forwardDetails";
+
+    public final static String PGR_COMPLAINT_DETAILS = "api/v1.0/complaint/{complaintNo}/detail";
 
     public final static String PGR_DOWNLOAD_IMAGE = "api/v1.0/complaint/downloadfile/"; //Need to append file id with this url for download particular image
 
     public final static String PGR_COMPLAINT_HISTORY = "/api/v1.0/complaint/{complaintNo}/complaintHistory";
+
+    public final static String PGR_COMPLAINT_ACTIONS = "/api/v1.0/employee/complaint/{complaintNo}/complaintActions";
+
+    public final static String PGR_COMPLAINT_UPDATE = "/api/v1.0/employee/complaint/update/{complaintNo}";
+
 
 
 

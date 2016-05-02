@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+
+import org.egov.employee.utils.PicassoTrustAll;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +69,9 @@ public class ImageViewerActivity extends BaseActivity {
             final ProgressBar pb=(ProgressBar)swipeView.findViewById(R.id.progressBar);
             final Bundle bundle = getArguments();
 
-            Picasso.with(getActivity())
+            PicassoTrustAll.getInstance(getActivity())
                     .load(bundle.getString("imageUrl"))
-                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .error(R.drawable.ic_broken_image_white_18dp)
                     .into(imageView, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -81,11 +81,6 @@ public class ImageViewerActivity extends BaseActivity {
                         @Override
                         public void onError() {
                             pb.setVisibility(View.GONE);
-                            Picasso.with(getActivity())
-                                    .load(bundle.getString("imageUrl"))
-                                    .placeholder(R.drawable.ic_schedule_white_18dp)
-                                    .error(R.drawable.ic_broken_image_white_18dp)
-                                    .into(imageView);
                         }
                     });
 

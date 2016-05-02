@@ -21,28 +21,34 @@
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
+    <style name="Egovspinnerstyle" parent="@style/Widget.AppCompat.Spinner.Underlined">
+        <item name="android:backgroundTint">@color/edittextbordercolor</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorAccent</item>
+    </style>
+
     <style name="Egovnegativebutton">
-        <item name="android:colorButtonNormal">#D32F2E</item>
-        <item name="android:textColor">#FFF</item>
+        <item name="android:colorButtonNormal">@color/redcolor</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Egovotheractionbutton">
         <item name="android:colorButtonNormal">#1083c2</item>
-        <item name="android:textColor">#FFF</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Egovpositivebutton">
         <item name="android:colorButtonNormal">#648f2f</item>
-        <item name="android:textColor">#FFF</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Egovbutton">
         <item name="android:colorButtonNormal">@color/colorAccent</item>
-        <item name="android:textColor">#FFF</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

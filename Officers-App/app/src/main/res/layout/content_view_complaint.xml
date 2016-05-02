@@ -9,26 +9,19 @@
     tools:context="org.egov.employee.activity.ViewTask"
     tools:showIn="@layout/activity_view_task">
 
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-    </WebView>
-
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:visibility="gone"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"
+        android:visibility="visible" />
 
 
     <ScrollView
         android:id="@+id/svcontent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,7 +130,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:paddingBottom="@dimen/rowbottompadding"
-                            android:weightSum="1">
+                            android:weightSum="2">
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -162,26 +155,52 @@
                                     android:textSize="@dimen/datalabelsize" />
                             </LinearLayout>
 
-                            <!--<LinearLayout
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:textSize="@dimen/fieldlabelsize"
-                                    android:textColor="@color/cardsubtitlecolor"
-                                    android:paddingBottom="@dimen/fieldlabelpaddingbottom"
-                                    android:text="MOBILE NO"/>
 
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:textSize="@dimen/datalabelsize"
-                                    android:textColor="@color/cardtitleColor"
-                                    android:text="1234567890"/>
-                            </LinearLayout>-->
+                                    android:paddingBottom="@dimen/fieldlabelpaddingbottom"
+                                    android:text="@string/mobile_no"
+                                    android:textColor="@color/cardsubtitlecolor"
+                                    android:textSize="@dimen/fieldlabelsize" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/tvcomplainantmobno"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="1234567890"
+                                        android:textColor="@color/cardtitleColor"
+                                        android:textSize="@dimen/datalabelsize" />
+
+                                    <TextView
+                                        android:id="@+id/tvCall"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="5dp"
+                                        android:background="@drawable/positive_button_bg"
+                                        android:clickable="true"
+                                        android:paddingBottom="2dp"
+                                        android:paddingLeft="8dp"
+                                        android:paddingRight="8dp"
+                                        android:paddingTop="2dp"
+                                        android:shadowRadius="4"
+                                        android:text="@string/call"
+                                        android:textColor="@color/cardtitleColor"
+                                        android:textSize="@dimen/datalabelsize" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
 
                         </LinearLayout>
@@ -231,6 +250,22 @@
                                 android:textColor="@color/cardtitleColor"
                                 android:textSize="@dimen/datalabelsize" />
 
+                            <TextView
+                                android:id="@+id/tvOpenMap"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/blue_button_bg"
+                                android:clickable="true"
+                                android:paddingBottom="2dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingTop="2dp"
+                                android:shadowRadius="4"
+                                android:text="SHOW MAP"
+                                android:textColor="@color/cardtitleColor"
+                                android:textSize="@dimen/datalabelsize" />
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -277,6 +312,9 @@
                                 android:id="@+id/tvcomplaintdesc"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/colorprimarybg"
+                                android:padding="10dp"
                                 android:text=""
                                 android:textColor="@color/cardtitleColor"
                                 android:textSize="@dimen/datalabelsize" />
@@ -285,6 +323,7 @@
 
 
                         <LinearLayout
+                            android:id="@+id/layoutcompAttachments"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
@@ -377,40 +416,53 @@
                             android:textColor="@color/colorAccent"
                             android:textSize="16sp" />
 
-
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btnmorecomments"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
-                        android:text=""
-                        android:textColor="@android:color/white" />
+                    <ProgressBar
+                        android:id="@+id/pbCompHistory"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="15dp" />
 
                     <LinearLayout
+                        android:id="@+id/layoutCompHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                        <LinearLayout
-                            android:id="@+id/complainttogglecomments"
-                            android:layout_width="match_parent"
+                        <Button
+                            android:id="@+id/btnmorecomments"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
-
-                        </LinearLayout>
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
+                            android:textColor="@android:color/white" />
 
                         <LinearLayout
-                            android:id="@+id/complaintcommentscontainer"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/complainttogglecomments"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/complaintcommentscontainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
@@ -439,186 +491,221 @@
                     android:padding="16dp"
                     android:paddingBottom="24dp">
 
+                    <ProgressBar
+                        android:id="@+id/pbCompAction"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:visibility="visible"
+                        android:layout_margin="15dp" />
 
                     <LinearLayout
+                        android:id="@+id/layoutCompActionControls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:orientation="horizontal"
-                        android:paddingBottom="16dp"
-                        android:weightSum="3">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:text="@string/complaint_actions"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="16sp" />
-
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="@dimen/rowbottompadding">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:paddingBottom="@dimen/fieldlabelpaddingbottom"
-                            android:text="CHANGE STATUS"
-                            android:layout_marginLeft="5dp"
-                            android:textColor="@color/cardsubtitlecolor"
-                            android:textSize="12sp" />
-
-                        <Spinner
-                            android:id="@+id/spinnercomplaintactions"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:spinnerMode="dropdown"
-                            style="@style/Egovspinnerstyle" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/layoutforward"
                         android:visibility="gone"
                         android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingBottom="@dimen/fieldlabelpaddingbottom"
-                        android:text="FORWARD TO"
-                        android:layout_marginLeft="5dp"
-                        android:textColor="@color/cardsubtitlecolor"
-                        android:textSize="12sp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="@dimen/rowbottompadding">
-
-                        <Spinner
-                            android:id="@+id/spinnerdept"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:spinnerMode="dropdown"
-                            style="@style/Egovspinnerstyle" />
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:orientation="horizontal"
+                            android:paddingBottom="16dp"
+                            android:weightSum="3">
 
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="2"
+                                android:text="@string/complaint_actions"
+                                android:textColor="@color/colorAccent"
+                                android:textSize="16sp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="@dimen/rowbottompadding">
 
-                        <Spinner
-                            android:id="@+id/spinnerdesg"
+                        </LinearLayout>
+
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:spinnerMode="dropdown"
-                            style="@style/Egovspinnerstyle" />
+                            android:orientation="vertical"
+                            android:paddingBottom="@dimen/rowbottompadding">
 
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="5dp"
+                                android:paddingBottom="@dimen/fieldlabelpaddingbottom"
+                                android:text="CHANGE STATUS"
+                                android:textColor="@color/cardsubtitlecolor"
+                                android:textSize="12sp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="@dimen/rowbottompadding">
-
-                        <Spinner
-                            android:id="@+id/spinneremp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:spinnerMode="dropdown"
-                            style="@style/Egovspinnerstyle" />
-
-                    </LinearLayout>
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingBottom="@dimen/rowbottompadding">
-
-
-                        <android.support.design.widget.TextInputLayout
-                            android:id="@+id/input_layout_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <EditText
-                                android:id="@+id/etcomplaintcomments"
+                            <Spinner
+                                android:id="@+id/spinnercomplaintactions"
+                                style="@style/Egovspinnerstyle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/comments"
-                                android:singleLine="false"
-                                android:maxLength="400"
-                                android:textSize="14sp"
-                                android:textColor="@color/edittexttextcolor"
-                                android:theme="@style/Egovinputstyle" />
+                                android:layout_gravity="center_horizontal"
+                                android:spinnerMode="dropdown" />
 
-                        </android.support.design.widget.TextInputLayout>
+                        </LinearLayout>
 
-                        <Button
-                            android:id="@+id/btnattachphoto"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Upload Photograph"
-                            android:theme="@style/Egovotheractionbutton"
-                            android:textColor="@android:color/white" />
-
-                        <org.egov.employee.controls.AutoHeightGridView
-                            android:id="@+id/gridviewUploadDocs"
+                        <LinearLayout
+                            android:id="@+id/layoutforward"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginLeft="5dp"
-                            android:columnWidth="120dp"
-                            android:gravity="center"
-                            android:horizontalSpacing="2dp"
-                            android:isScrollContainer="false"
-                            android:numColumns="3"
-                            android:stretchMode="columnWidth"
-                            android:verticalSpacing="2dp" />
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="5dp"
+                                android:paddingBottom="@dimen/fieldlabelpaddingbottom"
+                                android:text="FORWARD TO"
+                                android:textColor="@color/cardsubtitlecolor"
+                                android:textSize="12sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="@dimen/rowbottompadding">
+
+                                <Spinner
+                                    android:id="@+id/spinnerdept"
+                                    style="@style/Egovspinnerstyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:spinnerMode="dropdown" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="@dimen/rowbottompadding">
+
+                                <Spinner
+                                    android:id="@+id/spinnerdesg"
+                                    style="@style/Egovspinnerstyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:spinnerMode="dropdown" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="@dimen/rowbottompadding">
+
+                                <Spinner
+                                    android:id="@+id/spinneremp"
+                                    style="@style/Egovspinnerstyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:spinnerMode="dropdown" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
 
 
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/rowbottompadding">
-
-                        <Button
-                            android:id="@+id/btnaction"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="SUBMIT"
-                            android:textColor="@android:color/white" />
+                            android:orientation="vertical"
+                            android:paddingBottom="@dimen/rowbottompadding">
+
+
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColorHint="@color/edittexthintcolor">
+
+                                <EditText
+                                    android:id="@+id/etcomplaintcomments"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/comments"
+                                    android:maxLength="400"
+                                    android:textColor="@color/edittexttextcolor"
+                                    android:singleLine="false"
+                                    android:textSize="16sp"
+                                    android:theme="@style/Egovinputstyle" />
+
+                            </android.support.design.widget.TextInputLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <Button
+                                    android:id="@+id/btnattachphoto"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/upload_photograph"
+                                    android:textColor="@android:color/white"
+                                    android:theme="@style/Egovotheractionbutton" />
+
+                                <Button
+                                    android:id="@+id/btnclearphoto"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/clear_all"
+                                    android:visibility="gone"
+                                    android:textColor="@android:color/white"
+                                    android:theme="@style/Egovnegativebutton" />
+
+                            </LinearLayout>
+
+
+
+                            <org.egov.employee.controls.AutoHeightGridView
+                                android:id="@+id/gridviewUploadDocs"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginTop="5dp"
+                                android:columnWidth="120dp"
+                                android:gravity="center"
+                                android:horizontalSpacing="2dp"
+                                android:isScrollContainer="false"
+                                android:numColumns="3"
+                                android:stretchMode="columnWidth"
+                                android:verticalSpacing="2dp" />
+
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="@dimen/rowbottompadding">
+
+                            <Button
+                                android:id="@+id/btnaction"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SUBMIT"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
-
 
 
                 </LinearLayout>

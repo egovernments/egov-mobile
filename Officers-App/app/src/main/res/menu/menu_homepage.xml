@@ -15,13 +15,11 @@
 
     <item
         android:id="@+id/action_profile"
-        android:orderInCategory="100"
         android:title="@string/option_profile"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_logout"
-        android:orderInCategory="100"
         android:title="@string/option_logout"
         app:showAsAction="never" />
 </menu>

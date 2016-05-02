@@ -16,7 +16,7 @@ public class ComplaintViewAPIResponse {
     private Status status;
     @SerializedName("result")
     @Expose
-    private Result result;
+    private ComplaintDetails complaintDetails;
 
     /**
      *
@@ -36,71 +36,88 @@ public class ComplaintViewAPIResponse {
         this.status = status;
     }
 
-    /**
-     *
-     * @return
-     * The result
-     */
-    public Result getResult() {
-        return result;
+    public ComplaintDetails getComplaintDetails() {
+        return complaintDetails;
     }
 
-    /**
-     *
-     * @param result
-     * The result
-     */
-    public void setResult(Result result) {
-        this.result = result;
+    public void setComplaintDetails(ComplaintDetails complaintDetails) {
+        this.complaintDetails = complaintDetails;
     }
 
+    public class HistoryAPIResponse{
 
-    public class Result {
-
-        @SerializedName("complaintdetails")
+        @SerializedName("status")
         @Expose
-        private ComplaintDetails complaintdetails;
-        @SerializedName("complainthistory")
+        private Status status;
+        @SerializedName("result")
         @Expose
-        private List<ComplaintHistory> complainthistory = new ArrayList<ComplaintHistory>();
+        private Result result;
 
         /**
          *
          * @return
-         * The complaintdetails
+         * The status
          */
-        public ComplaintDetails getComplaintdetails() {
-            return complaintdetails;
+        public Status getStatus() {
+            return status;
         }
 
         /**
          *
-         * @param complaintdetails
-         * The complaintdetails
+         * @param status
+         * The status
          */
-        public void setComplaintdetails(ComplaintDetails complaintdetails) {
-            this.complaintdetails = complaintdetails;
+        public void setStatus(Status status) {
+            this.status = status;
         }
 
         /**
          *
          * @return
-         * The complainthistory
+         * The result
          */
-        public List<ComplaintHistory> getComplainthistory() {
-            return complainthistory;
+        public Result getResult() {
+            return result;
         }
 
         /**
          *
-         * @param complainthistory
-         * The complainthistory
+         * @param result
+         * The result
          */
-        public void setComplainthistory(List<ComplaintHistory> complainthistory) {
-            this.complainthistory = complainthistory;
+        public void setResult(Result result) {
+            this.result = result;
+        }
+
+
+        public class Result {
+
+            @SerializedName("comments")
+            @Expose
+            private List<ComplaintHistory> comments = new ArrayList<ComplaintHistory>();
+
+            /**
+             *
+             * @return
+             * The comments
+             */
+            public List<ComplaintHistory> getComments() {
+                return comments;
+            }
+
+            /**
+             *
+             * @param comments
+             * The comments
+             */
+            public void setComments(List<ComplaintHistory> comments) {
+                this.comments = comments;
+            }
+
         }
 
     }
+
 
 
 }

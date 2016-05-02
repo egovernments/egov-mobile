@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">eGovOfficials</string>
+    <string name="app_name">APOfficials</string>
     <string name="option_logout">Logout</string>
     <string name="option_profile">Profile</string>
     <string name="title_activity_homepage">Worklist</string>
@@ -8,24 +8,16 @@
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="complaint_details">COMPLAINT DETAILS</string>
     <string name="complaint_no">COMPLAINT NO</string>
-    <string name="complaint_filed_date">COMPLAINT DATE</string>
+    <string name="complaint_filed_date">COMPLAINT FILED DATE</string>
     <string name="complainant_name">COMPLAINANT NAME</string>
     <string name="complaint_type">COMPLAINT TYPE</string>
-    <string name="complaint_location">LOCATION</string>
+    <string name="complaint_location">COMPLAINT LOCATION</string>
     <string name="landmark">LANDMARK</string>
-    <string name="complaint_description">DESCRIPTION</string>
+    <string name="complaint_description">COMPLAINT DESCRIPTION</string>
     <string name="attached_documents">ATTACHED DOCUMENTS</string>
     <string name="complaint_current_status">COMPLAINT CURRENT STATUS</string>
     <string name="complaint_history">COMPLAINT HISTORY</string>
     <string name="complaint_actions">COMPLAINT ACTIONS</string>
     <string name="comments">COMMENTS</string>
     <string name="title_activity_searchable">SearchableActivity</string>
-    <string name="select_district">Select District</string>
-    <string name="select_municipality">Select Municipality</string>
-    <string name="username">UserName</string>
-    <string name="password">Password</string>
-    <string name="mobile_no">MOBILE NO</string>
-    <string name="call">CALL</string>
-    <string name="clear_all">Clear All</string>
-    <string name="upload_photograph">Upload Photograph</string>
 </resources>
