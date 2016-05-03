@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,7 +44,6 @@ import org.egov.employee.utils.ImageCompressionHelper;
 import org.egov.employee.utils.UriPathHelper;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -937,11 +935,7 @@ public class ViewTask extends BaseActivity {
             try {
                 File capturedImg=new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
                 Uri uri = Uri.fromFile(capturedImg);
-                Bitmap mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                FileOutputStream outStream = new FileOutputStream(capturedImg);
-                mBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outStream);
-                outStream.flush();
-                outStream.close();
+                ImageCompressionHelper.compressImage(capturedImg.getAbsolutePath(), capturedImg.getAbsolutePath());
                 listUploadDocs.add(uri);
                 imageIdxForCamera.remove(0);
                 loadOrRefreshUploadImageGrid();

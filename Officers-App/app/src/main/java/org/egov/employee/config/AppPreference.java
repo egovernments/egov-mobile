@@ -43,6 +43,11 @@ public class AppPreference {
     }
 
     public void setActiveCityUrl(String _activeCityUrl) {
+        //check whether url is properly ended or not
+        if(!_activeCityUrl.endsWith("/"))
+        {
+            _activeCityUrl=_activeCityUrl+"/";
+        }
         prefsEditor.putString(activeCityUrl, _activeCityUrl).commit();
     }
 
