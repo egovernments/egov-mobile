@@ -687,10 +687,14 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         //If result is from camera
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
+            File savedImg=new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
             //Stores image in app cache
-            Uri uri = Uri.fromFile(new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg"));
-            uriArrayList.add(uri);
+            Uri uri = Uri.fromFile(savedImg);
 
+            //apply image compression
+            ImageCompressionHelper.compressImage(savedImg.getAbsolutePath(), savedImg.getAbsolutePath());
+
+            uriArrayList.add(uri);
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
             grievanceImagePagerAdapter.notifyDataSetChanged();
