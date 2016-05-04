@@ -534,18 +534,18 @@ public class ViewTask extends BaseActivity {
         boolean isValidationSuccess=true;
         String selectedStatus=complaintComponents.spinnerCompStatus.getSelectedItem().toString();
 
-        if(selectedStatus.equals(viewTask.getStatus()) && TextUtils.isEmpty(complaintComponents.etComments.getText().toString().trim()))
-        {
-            showSnackBar("Please enter your comments");
-            isValidationSuccess=false;
-        }
-        else if(selectedStatus.equals(PGR_FORWARD_ACTION))
+        if(selectedStatus.equals(PGR_FORWARD_ACTION))
         {
             if(complaintComponents.spinnerForwardEmp.getSelectedItemPosition()==0)
             {
                 showSnackBar("Please select a user want to forward");
                 isValidationSuccess=false;
             }
+        }
+        else if(TextUtils.isEmpty(complaintComponents.etComments.getText().toString().trim()))
+        {
+            showSnackBar("Please enter your comments");
+            isValidationSuccess=false;
         }
 
         return isValidationSuccess;
