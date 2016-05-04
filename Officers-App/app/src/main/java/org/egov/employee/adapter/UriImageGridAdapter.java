@@ -1,16 +1,15 @@
 package org.egov.employee.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import java.io.IOException;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -48,13 +47,7 @@ public class UriImageGridAdapter extends BaseAdapter {
             imageView = (ImageView) view;
         }
 
-        try {
-            Bitmap bitmap=MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), gridViewImages.get(i));
-            imageView.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Picasso.with(mContext).load(gridViewImages.get(i)).centerCrop().resize(250,250).into(imageView);
         return imageView;
     }
 

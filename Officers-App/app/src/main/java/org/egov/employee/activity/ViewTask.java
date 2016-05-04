@@ -104,51 +104,11 @@ public class ViewTask extends BaseActivity {
 
         if(viewTask.getTask().toUpperCase().equals(GrievanceModuleName))
         {
-            //initializeListenersAndComponentsForComplaint();
-            String complaintNo=viewTask.getRefNum();
             initializeListenersAndComponentsForComplaint();
         }
         else {
-
-            List<String> categories = new ArrayList<String>();
-            categories.add("Select Approver Department");
-            categories.add("Accounts");
-            categories.add("Administration");
-            categories.add("Education");
-            categories.add("Revenue");
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, categories);
-            dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-
-            Spinner spinnerdept = (Spinner) findViewById(R.id.spinnerdept);
-            spinnerdept.setAdapter(dataAdapter);
-
-            categories = new ArrayList<String>();
-            categories.add("Select Approver Designation");
-            categories.add("Accounts");
-            categories.add("Administration");
-            categories.add("Education");
-
-            Spinner spinnerdesg = (Spinner) findViewById(R.id.spinnerdesg);
-            dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, categories);
-            dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-            spinnerdesg.setAdapter(dataAdapter);
-
-            categories = new ArrayList<String>();
-            categories.add("Select Approver");
-            categories.add("Vigish");
-            categories.add("Dinesh");
-            categories.add("Aslam");
-            categories.add("Syed");
-
-            Spinner spinnerapvr = (Spinner) findViewById(R.id.spinnerappvr);
-            dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, categories);
-            dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-            spinnerapvr.setAdapter(dataAdapter);
-
-            showSnackBar(getIntent().getExtras().getString("url"));
+            showSnackBar("NO UI SUPPORT FOR THIS ITEM !");
         }
-
-
 
     }
 
@@ -245,7 +205,6 @@ public class ViewTask extends BaseActivity {
         btnClearAttachments=(Button)findViewById(R.id.btnclearphoto);
 
         //get complaint no from task object
-        String complaintNo=viewTask.getRefNum();
         complaintComponents.tvComplaintNo.setText(viewTask.getRefNum());
         complaintComponents.tvComplainantName.setText(viewTask.getCitizenName());
         complaintComponents.tvComplainantMobileNo.setText(viewTask.getCitizenPhoneno());
@@ -454,7 +413,7 @@ public class ViewTask extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intOpenImageView=new Intent(ViewTask.this, ImageViewerActivity.class);
                 intOpenImageView.putExtra("position", position);
-                ArrayList<String> imageUrls=new ArrayList<String>();
+                ArrayList<String> imageUrls=new ArrayList<>();
                 imageUrls.addAll(complaintImgsUrl);
                 intOpenImageView.putStringArrayListExtra("imageUrls", imageUrls);
                 startActivity(intOpenImageView);
@@ -520,7 +479,6 @@ public class ViewTask extends BaseActivity {
         {
             String mimeType = getMimeType(uploadDoc);
             String path;
-            File imgFile = new File(uploadDoc.getPath());
             path = UriPathHelper.getRealPathFromURI(uploadDoc, getApplicationContext());
             path = ImageCompressionHelper.compressImage(path, path);
             File uploadFile=new File(path);
@@ -718,7 +676,7 @@ public class ViewTask extends BaseActivity {
             }
 
             public void onNothingSelected(AdapterView<?> adapterView) {
-                return;
+
             }
         });
 
@@ -767,7 +725,7 @@ public class ViewTask extends BaseActivity {
             @Override
             public void onClick(View v) {
                 listUploadDocs.clear();
-                imageIdxForCamera=new ArrayList<String>(Arrays.asList("1", "2", "3"));
+                imageIdxForCamera=new ArrayList<>(Arrays.asList("1", "2", "3"));
                 loadOrRefreshUploadImageGrid();
             }
         });
@@ -844,7 +802,7 @@ public class ViewTask extends BaseActivity {
 
     public void setSpinnerOptionsFromJsonArray(Spinner spinner, JsonArray jsonArray, String keyToExport, String defaultOptionText, String defaultSelectedText)
     {
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, getArrayListFromJsonArray(jsonArray, keyToExport, defaultOptionText));
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, R.layout.spinner_item, getArrayListFromJsonArray(jsonArray, keyToExport, defaultOptionText));
         dataAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
 
@@ -935,7 +893,6 @@ public class ViewTask extends BaseActivity {
             try {
                 File capturedImg=new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
                 Uri uri = Uri.fromFile(capturedImg);
-                ImageCompressionHelper.compressImage(capturedImg.getAbsolutePath(), capturedImg.getAbsolutePath());
                 listUploadDocs.add(uri);
                 imageIdxForCamera.remove(0);
                 loadOrRefreshUploadImageGrid();

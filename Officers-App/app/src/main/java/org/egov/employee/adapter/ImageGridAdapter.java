@@ -50,6 +50,8 @@ public class ImageGridAdapter extends BaseAdapter {
 
         PicassoTrustAll.getInstance(mContext)
                 .load(gridViewImages.get(i))
+                .centerCrop()
+                .resize(250, 250)
                 .error(R.drawable.ic_broken_image_white_18dp)
                 .placeholder(R.drawable.loaderbg)
                 .into(imageView, new com.squareup.picasso.Callback() {
