@@ -34,10 +34,10 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     SlidingTabLayout tabs;
     public RelativeLayout homePageLoader;
     public LinearLayout inboxEmptyInfo;
-    CharSequence Titles[]={"COMPLAINTS", "PROPERTY", "PROPERTY TAX", "WATER TAX", "ADVERTISEMENT"};
-    int Numboftabs = 5;
 
     public static int ACTION_UPDATE_REQUIRED=111;
+
+    String WORK_FLOW_TYPE_COMPLAINT="Complaint";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,11 +101,25 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
 
     public void setWorkListCategoryTabs(JsonArray responseArray)
     {
+
+        JsonArray jsonWorkflowTypes=new JsonArray();
+        //disable workflow types except complaint
+        for(int i=0;i<responseArray.size();i++)
+        {
+            JsonObject workflowType = responseArray.get(i).getAsJsonObject();
+            if(workflowType.get("workflowtype").getAsString().equals(WORK_FLOW_TYPE_COMPLAINT))
+            {
+                jsonWorkflowTypes.add(workflowType);
+                break;
+            }
+        }
+
         //if inbox is empty then show some notification
-        inboxEmptyInfo.setVisibility((responseArray.size()==0?View.VISIBLE:View.GONE));
+        inboxEmptyInfo.setVisibility((jsonWorkflowTypes.size()==0?View.VISIBLE:View.GONE));
         homePageLoader.setVisibility(View.GONE);
+
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new TasksAdapter(getSupportFragmentManager(), responseArray, preference.getApiAccessToken());
+        adapter =  new TasksAdapter(getSupportFragmentManager(), jsonWorkflowTypes, preference.getApiAccessToken());
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
