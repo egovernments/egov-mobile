@@ -1,4 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /*******************************************************************************
+  ~  eGov suite of products aim to improve the internal efficiency,transparency,
+  ~      accountability and the service delivery of the government  organizations.
+  ~
+  ~        Copyright (C) <2016>  eGovernments Foundation
+  ~
+  ~        The updated version of eGov suite of products as by eGovernments Foundation
+  ~        is available at http://www.egovernments.org
+  ~
+  ~        This program is free software: you can redistribute it and/or modify
+  ~        it under the terms of the GNU General Public License as published by
+  ~        the Free Software Foundation, either version 3 of the License, or
+  ~        any later version.
+  ~
+  ~        This program is distributed in the hope that it will be useful,
+  ~        but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~        GNU General Public License for more details.
+  ~
+  ~        You should have received a copy of the GNU General Public License
+  ~        along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~        http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~        In addition to the terms of the GPL license to be adhered to in using this
+  ~        program, the following additional terms are to be complied with:
+  ~
+  ~    	1) All versions of this program, verbatim or modified must carry this
+  ~    	   Legal Notice.
+  ~
+  ~    	2) Any misrepresentation of the origin of the material is prohibited. It
+  ~    	   is required that all modified versions of this material be marked in
+  ~    	   reasonable ways as different from the original version.
+  ~
+  ~    	3) This license does not grant any rights to any user of the program
+  ~    	   with regards to rights under trademark law for use of the trade names
+  ~    	   or trademarks of eGovernments Foundation.
+  ~
+  ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  ******************************************************************************/
+  -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,31 +51,109 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:weightSum="3">
 
-        <TextView
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="00000"
-            android:textSize="14sp"
-            android:textColor="@color/colorAccent"
-            android:id="@+id/tvnatureoftsk" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvRefNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="00170-2016-MA"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="14sp"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tvItemType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COMPLAINT"
+                android:textSize="10sp"
+                android:padding="5dp"
+                android:layout_gravity="top"
+                android:background="@drawable/colorprimarybg"
+                android:layout_marginLeft="5dp"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
 
         <TextView
+            android:id="@+id/tvDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Apr 12"
             android:textSize="14sp"
             android:gravity="right"
+            android:layout_weight="1"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:textColor="@color/cardsubtitlecolor"
-            android:visibility="visible"
-            android:id="@+id/tvdate" />
+            android:visibility="visible" />
+
+
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCitizen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Dinesh"
+        android:layout_marginBottom="5dp"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Am i doing something wrong ,should it work or is there another way to save it that i have my values assigned with String keys?"
+        android:layout_marginBottom="5dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvSubType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Broken Bin"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="REGISTERED"
+            android:gravity="right"
+            android:textColor="@color/cardstatustextcolor" />
+
+    </LinearLayout>
+
+
+
 
 </LinearLayout>

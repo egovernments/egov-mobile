@@ -1,3 +1,45 @@
+/*
+ * ******************************************************************************
+ *  eGov suite of products aim to improve the internal efficiency,transparency,
+ *      accountability and the service delivery of the government  organizations.
+ *
+ *        Copyright (C) <2016>  eGovernments Foundation
+ *
+ *        The updated version of eGov suite of products as by eGovernments Foundation
+ *        is available at http://www.egovernments.org
+ *
+ *        This program is free software: you can redistribute it and/or modify
+ *        it under the terms of the GNU General Public License as published by
+ *        the Free Software Foundation, either version 3 of the License, or
+ *        any later version.
+ *
+ *        This program is distributed in the hope that it will be useful,
+ *        but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *        GNU General Public License for more details.
+ *
+ *        You should have received a copy of the GNU General Public License
+ *        along with this program. If not, see http://www.gnu.org/licenses/ or
+ *        http://www.gnu.org/licenses/gpl.html .
+ *
+ *        In addition to the terms of the GPL license to be adhered to in using this
+ *        program, the following additional terms are to be complied with:
+ *
+ *    	1) All versions of this program, verbatim or modified must carry this
+ *    	   Legal Notice.
+ *
+ *    	2) Any misrepresentation of the origin of the material is prohibited. It
+ *    	   is required that all modified versions of this material be marked in
+ *    	   reasonable ways as different from the original version.
+ *
+ *    	3) This license does not grant any rights to any user of the program
+ *    	   with regards to rights under trademark law for use of the trade names
+ *    	   or trademarks of eGovernments Foundation.
+ *
+ *      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  *****************************************************************************
+ */
+
 package org.egov.employee.activity;
 
 import android.animation.Animator;
@@ -7,6 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,9 +61,10 @@ import android.view.WindowManager;
 
 import offices.org.egov.egovemployees.R;
 
-public class SearchableActivity extends BaseActivity {
+public class SearchableActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     CoordinatorLayout rootLayout;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +145,8 @@ public class SearchableActivity extends BaseActivity {
         });
 
         searchItem.expandActionView();
+        searchView=(SearchView)menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(this);
 
         return true;
     }
@@ -112,4 +158,14 @@ public class SearchableActivity extends BaseActivity {
     }
 
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        searchView.clearFocus();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return true;
+    }
 }
