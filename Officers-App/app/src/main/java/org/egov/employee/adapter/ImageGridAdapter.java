@@ -40,7 +40,8 @@ public class ImageGridAdapter extends BaseAdapter {
         final ImageView imageView;
         if(view == null){
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(150, 150));
+            int imageSize=(int) mContext.getResources().getDimension(R.dimen.imagegridsize);
+            imageView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             //imageView.setPadding(2, 2, 2, 2);
         }

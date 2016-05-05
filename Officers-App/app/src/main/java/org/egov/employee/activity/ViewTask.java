@@ -492,7 +492,7 @@ public class ViewTask extends BaseActivity {
 
         final ProgressDialog pb=new ProgressDialog(ViewTask.this);
         pb.setCancelable(false);
-        pb.setMessage("Updaing Complaint...");
+        pb.setMessage("Updating Complaint...");
         pb.show();
 
         Call<JsonObject> complaintUpdate=ApiController.getAPI(getApplicationContext(), ViewTask.this).updateComplaint(viewTask.getRefNum(), preference.getApiAccessToken(), uploadPics);

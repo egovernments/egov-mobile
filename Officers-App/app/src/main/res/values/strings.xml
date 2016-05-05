@@ -18,7 +18,7 @@
     <string name="complaint_current_status">COMPLAINT CURRENT STATUS</string>
     <string name="complaint_history">COMPLAINT HISTORY</string>
     <string name="complaint_actions">COMPLAINT ACTIONS</string>
-    <string name="comments">COMMENTS</string>
+    <string name="comments">COMMENTS*</string>
     <string name="title_activity_searchable">SearchableActivity</string>
     <string name="select_district">Select District</string>
     <string name="select_municipality">Select Municipality</string>
