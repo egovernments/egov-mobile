@@ -50,18 +50,21 @@
         app:showAsAction="ifRoom"
         android:title="Refresh"/>
 
-    <item android:id="@+id/action_search"
+    <!--<item android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="ifRoom"
-        android:title="Search"/>
-
-    <item
-        android:id="@+id/action_profile"
-        android:title="@string/option_profile"
-        app:showAsAction="never" />
+        android:title="Search"/>-->
 
     <item
         android:id="@+id/action_logout"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
         android:title="@string/option_logout"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
+
+    <!--<item
+        android:id="@+id/action_profile"
+        android:title="@string/option_profile"
+        app:showAsAction="never" />-->
+
+
 </menu>
