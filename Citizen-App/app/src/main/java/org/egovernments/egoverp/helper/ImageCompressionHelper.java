@@ -137,6 +137,11 @@ public class ImageCompressionHelper {
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
 
+        String attrLatitute = null;
+        String attrLatituteRef = null;
+        String attrLONGITUDE=null;
+        String attrLONGITUDEREf=null;
+
 //      check the rotation of the image and display it properly
         ExifInterface exif;
         try {
@@ -155,6 +160,12 @@ public class ImageCompressionHelper {
                 matrix.postRotate(270);
                 Log.d("EXIF", "Exif: " + orientation);
             }
+
+            attrLatitute = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+            attrLatituteRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            attrLONGITUDE = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+            attrLONGITUDEREf = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+
             scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                     scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
                     true);
@@ -169,7 +180,25 @@ public class ImageCompressionHelper {
 //          write the compressed bitmap at the destination specified by filename.
             scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
 
+            ExifInterface exif2 = new ExifInterface(outputFilePath);
+
+            if(attrLatitute != null)
+            {
+                exif2.setAttribute(ExifInterface.TAG_GPS_LATITUDE, attrLatitute);
+                exif2.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, attrLONGITUDE);
+            }
+
+            if(attrLatituteRef != null)
+            {
+                exif2.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, attrLatituteRef);
+                exif2.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, attrLONGITUDEREf);
+            }
+
+            exif2.saveAttributes();
+
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return outputFilePath;

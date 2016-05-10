@@ -62,7 +62,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -708,37 +707,10 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
             grievanceImagePagerAdapter.notifyDataSetChanged();
-
             uploadCount++;
 
-            //Attempts to extract GPS data from image and place marker on map
-            try {
-                String s = UriPathHelper.getRealPathFromURI(uri, this);
-                ExifInterface exifInterface = new ExifInterface(s);
-
-                double lat;
-                double lng;
-                try {
-                    lat = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                    lng = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-                } catch (Exception e) {
-                    lat = 0;
-                    lng = 0;
-                }
-
-                if (lat != 0 && lng != 0) {
-                    LatLng latLng = new LatLng(lat, lng);
-                    if (marker != null) {
-                        marker.remove();
-                    }
-                    marker = googleMap.addMarker(new MarkerOptions().position(latLng));
-
-                    CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-                    googleMap.animateCamera(location);
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (uploadCount == 1) {
+                addMarkerFromImage(uri);
             }
 
             imageID.remove(0);
@@ -892,7 +864,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     //Custom adapter for viewpager
     private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
 
-        public GrievanceImagePagerAdapter(FragmentManager fm) {
+        public                      GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -970,10 +942,11 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
             Bitmap ThumbImage = null;
             try {
-                ThumbImage = ThumbnailUtils
+                /*ThumbImage = ThumbnailUtils
                         .extractThumbnail(MediaStore.Images.Media.getBitmap
                                 (getActivity().getContentResolver(),
-                                        Uri.parse(arg.getString("uri"))), 1280, 720);
+                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
+                ThumbImage=MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -989,6 +962,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             }
 
             imageView.setImageBitmap(ThumbImage);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             fragmentPosition = arg.getInt("pos");
 
