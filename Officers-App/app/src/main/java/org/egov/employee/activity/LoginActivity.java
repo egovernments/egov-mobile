@@ -227,6 +227,7 @@ public class LoginActivity extends BaseActivity {
             autocompleteDistrict.setText(preference.getDistrict());
             autocompleteCity.setText(preference.getActiveCityName());
             autocompleteDistrict.dismissDropDown();
+            editTextPwd.requestFocus();
         }
 
     }

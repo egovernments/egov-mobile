@@ -43,7 +43,6 @@
 package org.egov.employee.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.OkHttpClient;
@@ -160,8 +159,6 @@ public class ApiController {
         client.interceptors().add(logging);
 
         AppPreference preference=new AppPreference(context);
-
-        Log.v("URL --------->", preference.getActiveCityUrl());
 
         Retrofit restAdapter = new Retrofit.Builder()
                 .client(client)

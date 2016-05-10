@@ -68,10 +68,10 @@ android {
             versionName '0.1'
         }
         ap {
-            applicationId "org.egov.apofficals"
+            applicationId "org.egov.apemployees"
             minSdkVersion 14
             targetSdkVersion 23
-            versionName "0.1-beta"
+            versionName "0.1-alpha"
             versionCode 1
         }
     }
