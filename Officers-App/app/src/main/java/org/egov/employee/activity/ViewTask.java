@@ -51,6 +51,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -83,6 +84,7 @@ import org.egov.employee.data.ComplaintHistory;
 import org.egov.employee.data.ComplaintViewAPIResponse;
 import org.egov.employee.data.Task;
 import org.egov.employee.utils.ImageCompressionHelper;
+import org.egov.employee.utils.LatLngAddressParser;
 import org.egov.employee.utils.UriPathHelper;
 
 import java.io.File;
@@ -421,7 +423,6 @@ public class ViewTask extends BaseActivity {
 
         complaintComponents.tvComplaintDate.setText(formatDateString(details.getCreatedDate(),"yyyy-MM-dd hh:mm:ss.SSS","dd/MM/yyyy hh:mm aa"));
         complaintComponents.tvComplaintType.setText(details.getComplaintTypeName());
-        complaintComponents.tvComplaintLoc.setText(details.getChildLocationName()+" - "+details.getLocationName());
 
         if(TextUtils.isEmpty(details.getLandmarkDetails()))
         {
@@ -471,15 +472,21 @@ public class ViewTask extends BaseActivity {
 
         if(details.getLat()!=null)
         {
+            complaintComponents.tvComplaintLoc.setText("Loading...");
+
+            //getting address from lat, lng
+            setComplaintAddressFromLatLng(complaintComponents.tvComplaintLoc, new Double[]{details.getLat(), details.getLng()});
+
             complaintComponents.tvOpenMap.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openMap(details.getLat(), details.getLng(), 16);
+                openMap(details.getLat(), details.getLng(), 16);
                 }
             });
         }
         else
         {
+            complaintComponents.tvComplaintLoc.setText(details.getChildLocationName()+" - "+details.getLocationName());
             complaintComponents.tvOpenMap.setVisibility(View.GONE);
         }
 
@@ -945,4 +952,29 @@ public class ViewTask extends BaseActivity {
             }
         }
     }
+
+
+    public void setComplaintAddressFromLatLng(final TextView textViewAddress, Double[] locationDetails)
+    {
+        class GetAddressFromLatLng extends AsyncTask<Double, Integer, String>
+        {
+            @Override
+            protected String doInBackground(Double... params) {
+                double lat=params[0];
+                double lng=params[1];
+                return LatLngAddressParser.getAddress(ViewTask.this,lat,lng);
+            }
+
+            @Override
+            protected void onPostExecute(String address) {
+                super.onPostExecute(address);
+                textViewAddress.setText(address);
+            }
+        }
+
+        new GetAddressFromLatLng().execute(locationDetails);
+    }
+
+
+
 }
