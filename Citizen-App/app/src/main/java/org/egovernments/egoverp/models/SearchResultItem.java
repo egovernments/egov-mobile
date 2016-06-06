@@ -42,37 +42,47 @@
 
 package org.egovernments.egoverp.models;
 
+/**
+ * Created by egov on 25/5/16.
+ */
+public class SearchResultItem {
 
-public class HomeItem {
+    String titleText;
+    String secondaryText;
+    String otherText;
 
-    private String title;
-    private String description;
-    private int icon;
-    private boolean isGrievanceItem=false;
+    public SearchResultItem()
+    {
 
-    public HomeItem(String title, int icon, String description) {
-        this.title = title;
-        this.description = description;
-        this.icon = icon;
     }
 
-    public String getTitle() {
-        return title;
+    public SearchResultItem(String titleText, String secondaryText, String otherText) {
+        this.titleText = titleText;
+        this.secondaryText = secondaryText;
+        this.otherText = otherText;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTitleText() {
+        return titleText;
     }
 
-    public int getIcon() {
-        return icon;
+    public void setTitleText(String titleText) {
+        this.titleText = titleText;
     }
 
-    public boolean isGrievanceItem() {
-        return isGrievanceItem;
+    public String getSecondaryText() {
+        return secondaryText;
     }
 
-    public void setGrievanceItem(boolean grievanceItem) {
-        isGrievanceItem = grievanceItem;
+    public void setSecondaryText(String secondaryText) {
+        this.secondaryText = secondaryText;
+    }
+
+    public String getOtherText() {
+        return otherText;
+    }
+
+    public void setOtherText(String otherText) {
+        this.otherText = otherText;
     }
 }

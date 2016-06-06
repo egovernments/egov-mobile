@@ -46,33 +46,27 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.adapters.NavdrawAdapter;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
+import org.egovernments.egoverp.models.NavigationItem;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -84,8 +78,7 @@ import retrofit.client.Response;
 
 public class BaseActivity extends AppCompatActivity {
 
-    protected CoordinatorLayout fullLayout;
-    protected FrameLayout activityContent;
+    protected LinearLayout activityContent;
 
     protected ArrayList<NavigationItem> arrayList;
     protected DrawerLayout drawerLayout;
@@ -118,13 +111,13 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(final int layoutResID) {
 
-        fullLayout = (CoordinatorLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
+        drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
 
-        activityContent = (FrameLayout) fullLayout.findViewById(R.id.drawer_content);
+        activityContent = (LinearLayout) drawerLayout.findViewById(R.id.activityContent);
 
         getLayoutInflater().inflate(layoutResID, activityContent, true);
 
-        super.setContentView(fullLayout);
+        super.setContentView(drawerLayout);
 
         sessionManager = new SessionManager(getApplicationContext());
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
@@ -138,10 +131,14 @@ public class BaseActivity extends AppCompatActivity {
 
         tabLayout=(TabLayout)findViewById(R.id.tablayout);
 
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        final ListView listView = (ListView) findViewById(R.id.drawer);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.drawer);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setClickable(true);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(BaseActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         if(isTabSupport)
         {
@@ -155,7 +152,6 @@ public class BaseActivity extends AppCompatActivity {
         {
             toolbar.setVisibility(View.GONE);
             toolbar=toolbarCollapse;
-            listView.setPadding(0,getStatusBarHeight(),0,0);
         }
 
         setSupportActionBar(toolbar);
@@ -185,27 +181,25 @@ public class BaseActivity extends AppCompatActivity {
 
 
         arrayList = new ArrayList<>();
+        arrayList.add(null);
         fillList();
 
-        BaseAdapter navAdapter = new NavAdapter(arrayList);
-
-        listView.setAdapter(navAdapter);
-
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        NavdrawAdapter.NavItemClickListener navItemClickListener=new NavdrawAdapter.NavItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
-                drawerLayout.closeDrawer(listView);
+            public void onItemClick(final NavigationItem navigationItem) {
+                drawerLayout.closeDrawer(recyclerView);
                 drawerLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        NavigationItem navigationItem=(NavigationItem)listView.getItemAtPosition(position);
                         openPage(navigationItem.getNavTitle());
                     }
                 }, 300);
             }
-        });
+        };
+
+
+        recyclerView.setAdapter(new NavdrawAdapter(arrayList, sessionManager.getName(), sessionManager.getMobile(), R.drawable.ic_person_black_36dp, navItemClickListener));
+
     }
 
     public void openPage(String menuItemText)
@@ -341,28 +335,28 @@ public class BaseActivity extends AppCompatActivity {
             ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
 
-            arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label)));
+            arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle))));
 
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_error_outline_black_24dp, getString(R.string.grievances_label)));
+                arrayList.add(new NavigationItem(R.drawable.ic_error_outline_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle))));
             }
 
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label)));
+                arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle))));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_local_drink_black_24dp, getString(R.string.watertax_label)));
+                arrayList.add(new NavigationItem(R.drawable.ic_local_drink_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle))));
             }
 
-            arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label)));
-            arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label)));
+            arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label), (getString(R.string.profile_label).equals(mActionBarTitle))));
+            arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label), (getString(R.string.logout_label).equals(mActionBarTitle))));
         }
         catch (Exception ex)
         {
@@ -370,88 +364,4 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    //POJO class for nav drawer items
-    private class NavigationItem {
-
-        private final int NavIcon;
-        private final String NavTitle;
-
-        public NavigationItem(int navIcon, String navTitle) {
-            NavIcon = navIcon;
-            NavTitle = navTitle;
-        }
-
-        public int getNavIcon() {
-            return NavIcon;
-        }
-
-        public String getNavTitle() {
-            return NavTitle;
-        }
-
-    }
-
-
-    private class NavigationViewHolder {
-        private ImageView nav_item_icon;
-        private TextView nav_item_text;
-        private RelativeLayout nav_drawer_row;
-    }
-
-    //Custom adapter for nav drawer
-    public class NavAdapter extends BaseAdapter {
-
-        List<NavigationItem> navigationItems;
-
-        public NavAdapter(List<NavigationItem> navigationItems) {
-            this.navigationItems = navigationItems;
-        }
-
-        @Override
-        public int getCount() {
-            return navigationItems.size();
-        }
-
-        @Override
-        public NavigationItem getItem(int position) {
-            return navigationItems.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            NavigationViewHolder navigationViewHolder = null;
-            View view = convertView;
-            if (convertView == null) {
-
-                view = getLayoutInflater().inflate(R.layout.item_navdrawer, parent, false);
-
-                navigationViewHolder = new NavigationViewHolder();
-                navigationViewHolder.nav_item_text = (TextView) view.findViewById(R.id.title);
-                navigationViewHolder.nav_item_icon = (ImageView) view.findViewById(R.id.icon);
-                navigationViewHolder.nav_drawer_row = (RelativeLayout) view.findViewById(R.id.navdrawer_row);
-
-                view.setTag(navigationViewHolder);
-            }
-            if (navigationViewHolder == null) {
-                navigationViewHolder = (NavigationViewHolder) view.getTag();
-            }
-
-            NavigationItem navigationItem = getItem(position);
-            navigationViewHolder.nav_item_text.setText(navigationItem.getNavTitle());
-            if (mActionBarTitle.equals(navigationItem.getNavTitle())) {
-                navigationViewHolder.nav_drawer_row.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.colorAccent));
-                navigationViewHolder.nav_drawer_row.getBackground().setAlpha(102);
-            }
-            navigationViewHolder.nav_item_icon.setImageResource(navigationItem.getNavIcon());
-            return view;
-        }
-
-    }
 }

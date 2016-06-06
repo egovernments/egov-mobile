@@ -42,31 +42,52 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/navdrawer_row"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:orientation="horizontal"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/parent"
+    android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
     android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical">
-
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="25dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/ic_mail_black_24dp" />
-
-
+    android:paddingTop="16dp">
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="00125265885"
+        android:textColor="@android:color/black"
+        android:id="@+id/tvTitle"
+        android:paddingLeft="16dp"
+        android:textStyle="bold"
+        android:paddingRight="16dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="@android:color/black" />
+        android:text="Dinesh"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:id="@+id/tvSecondary"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Bellandur, Bengaluru, Karnataka 560103"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:id="@+id/tvOther"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_gravity="center_horizontal" />
+
+
+    <View style="@style/Divider" android:layout_marginTop="16dp"/>
 
 </LinearLayout>

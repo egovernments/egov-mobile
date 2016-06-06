@@ -42,37 +42,35 @@
 
 package org.egovernments.egoverp.models;
 
+/**
+ * Created by egov on 24/5/16.
+ */
+public class NavigationItem {
 
-public class HomeItem {
+    private final int NavIcon;
+    private final String NavTitle;
 
-    private String title;
-    private String description;
-    private int icon;
-    private boolean isGrievanceItem=false;
+    private boolean isActive=false;
 
-    public HomeItem(String title, int icon, String description) {
-        this.title = title;
-        this.description = description;
-        this.icon = icon;
+    public NavigationItem(int navIcon, String navTitle, boolean IsActive) {
+        NavIcon = navIcon;
+        NavTitle = navTitle;
+        isActive=IsActive;
     }
 
-    public String getTitle() {
-        return title;
+    public int getNavIcon() {
+        return NavIcon;
     }
 
-    public String getDescription() {
-        return description;
+    public String getNavTitle() {
+        return NavTitle;
     }
 
-    public int getIcon() {
-        return icon;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public boolean isGrievanceItem() {
-        return isGrievanceItem;
-    }
-
-    public void setGrievanceItem(boolean grievanceItem) {
-        isGrievanceItem = grievanceItem;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

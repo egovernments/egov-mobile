@@ -42,281 +42,75 @@
 
 package org.egovernments.egoverp.activities;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.CardView;
-import android.view.Gravity;
-import android.view.KeyEvent;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.helper.CustomEditText;
-import org.egovernments.egoverp.models.PropertyTaxCallback;
-import org.egovernments.egoverp.models.PropertyTaxRequest;
-import org.egovernments.egoverp.models.TaxDetail;
-import org.egovernments.egoverp.models.TaxOwnerDetail;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class PropertyTaxSearchActivity extends BaseActivity {
 
-    private TextView tvAssessmentNo;
-    private TextView tvAddress;
-    private TextView tvOwnerNamePhone;
-    private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
-    CustomEditText searchEditText;
-    Button btnBreakups;
-    List<TaxDetail> listBreakups;
-    FloatingActionButton fabPayPropertyTax;
-    CardView propertyTaxDetailsView;
-    ScrollView scrollViewPropertyTax;
+    EditText etAssessmentNo;
+    EditText etOwnerName;
+    EditText etMobileNo;
+    FloatingActionButton fabSearchProperty;
 
-    private ProgressBar progressBar;
+    public static String paramUlbCode="ulbCode";
+    public static String paramAssessmentNo="assessmentNo";
+    public static String paramOwnerName="ownerName";
+    public static String paramMobileNo="mobileNo";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_propertytax_search);
+        setContentView(R.layout.activity_property_tax_search);
 
-        listBreakups= new ArrayList<>();
-        progressBar = (ProgressBar) findViewById(R.id.propertytax_progressbar);
+        etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
+        etOwnerName=(EditText)findViewById(R.id.etOwnerName);
+        etMobileNo=(EditText)findViewById(R.id.etMobileNo);
 
-        fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpaypropertytax);
-        fabPayPropertyTax.setVisibility(View.GONE);
+        fabSearchProperty=(FloatingActionButton)findViewById(R.id.fabSearchProperty);
 
-        fabPayPropertyTax.setOnClickListener(new View.OnClickListener() {
+
+        fabSearchProperty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(PropertyTaxSearchActivity.this,"Payment feature is coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
 
-        scrollViewPropertyTax = (ScrollView) findViewById(R.id.scrollviewpropertytax);
-
-        propertyTaxDetailsView = (CardView)findViewById(R.id.propertypropertytax_layout);
-        propertyTaxDetailsView.setVisibility(View.GONE);
-
-        tvAssessmentNo = (TextView) findViewById(R.id.propertytax_assessmentno);
-        tvAddress = (TextView) findViewById(R.id.propertytax_address);
-        tvOwnerNamePhone = (TextView) findViewById(R.id.propertytax_ownernamecontact);
-
-        tvArrearsTotal = (TextView) findViewById(R.id.propertytax_arrears_total);
-        tvArrearsPenalty = (TextView) findViewById(R.id.propertytax_arrears_penalty);
-        tvCurrentTotal = (TextView) findViewById(R.id.propertytax_current_total);
-        tvCurrentPenalty = (TextView) findViewById(R.id.propertytax_current_penalty);
-        tvTotal = (TextView) findViewById(R.id.propertytax_total);
-
-        btnBreakups=(Button)findViewById(R.id.btnbreakups);
-
-        btnBreakups.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent intentViewBreakup=new Intent(PropertyTaxSearchActivity.this, PropertyTaxBreakupsDetails.class);
-                intentViewBreakup.putExtra("breakupsList", new Gson().toJson(listBreakups));
-                startActivity(intentViewBreakup);
-            }
-        });
-
-        searchEditText = (CustomEditText) findViewById(R.id.property_searchTextbox);
-        final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    submit(searchEditText.getText().toString().trim());
-                    if(imm != null){
-                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                    }
+                if(validateInputSearchFields())
+                {
+                    Intent openSearchResult=new Intent(PropertyTaxSearchActivity.this, SearchResultActivity.class);
+                    openSearchResult.putExtra(paramUlbCode,sessionManager.getUrlLocationCode());
+                    openSearchResult.putExtra(paramAssessmentNo,etAssessmentNo.getText().toString());
+                    openSearchResult.putExtra(paramOwnerName,etOwnerName.getText().toString());
+                    openSearchResult.putExtra(paramMobileNo,etMobileNo.getText().toString());
+                    startActivity(openSearchResult);
                 }
-                return true;
-            }
-        });
-        searchEditText.setDrawableClickListener(new CustomEditText.DrawableClickListener() {
-            @Override
-            public void onClick(DrawablePosition target) {
-                if (target == DrawablePosition.RIGHT) {
-                    submit(searchEditText.getText().toString().trim());
-                    if(imm != null){
-                        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
-                    }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "At least, Please fill any one field to search", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
-
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setElevation(0);
-
 
     }
 
-    private void submit(final String code) {
 
-        propertyTaxDetailsView.setVisibility(View.GONE);
-        fabPayPropertyTax.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-
-        if (code.length() < 10) {
-            Toast toast = Toast.makeText(PropertyTaxSearchActivity.this, "Assessment no. must be at least 10 characters", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-            progressBar.setVisibility(View.GONE);
-            return;
-        }
-
-        ApiController.getAPI(PropertyTaxSearchActivity.this)
-                .getPropertyTax(ApiUrl.REFERRER_URL,
-                        new PropertyTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
-                        new Callback<PropertyTaxCallback>() {
-                            @Override
-                            public void success(PropertyTaxCallback propertyTaxCallback, Response response) {
-
-                                if (propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
-
-                                    tvAssessmentNo.setText(propertyTaxCallback.getAssessmentNo());
-                                    tvAddress.setText(propertyTaxCallback.getPropertyAddress());
-
-                                    String ownersMobileNos = "";
-                                    int check = 0;
-
-                                    for (TaxOwnerDetail taxOwnerDetail : propertyTaxCallback.getTaxOwnerDetails()) {
-
-                                        if (check > 0) {
-                                            ownersMobileNos += ", ";
-                                        }
-
-                                        ownersMobileNos += taxOwnerDetail.getOwnerName()+"/"+taxOwnerDetail.getMobileNo();
-                                        check++;
-                                    }
-
-
-                                    String currentInstallmentText=getCurrentInstallmentText();
-
-                                    double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, Total=0;
-
-                                    for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
-                                        if(currentInstallmentText.equals(taxDetail.getInstallment()))
-                                        {
-                                            currentTotal=taxDetail.getTaxAmount();
-                                            currentPenalty=taxDetail.getPenalty();
-                                        }
-                                        else
-                                        {
-                                            arrearsTotal+=taxDetail.getTaxAmount();
-                                            arrearsPenalty+=taxDetail.getPenalty();
-                                        }
-                                        Total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
-                                    }
-
-                                    NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-                                    //nf1.setMinimumFractionDigits(2);
-                                   // nf1.setMaximumFractionDigits(2);
-
-                                    tvArrearsTotal.setText(nf1.format(arrearsTotal));
-                                    tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
-                                    tvCurrentTotal.setText(nf1.format(currentTotal));
-                                    tvCurrentPenalty.setText(nf1.format(currentPenalty));
-                                    tvTotal.setText(nf1.format(Total));
-
-                                    if(Total>0)
-                                    {
-                                      fabPayPropertyTax.setVisibility(View.VISIBLE);
-                                    }
-                                    else
-                                    {
-                                        float scale = getResources().getDisplayMetrics().density;
-                                        int dpAsPixels = (int) (10*scale + 0.5f);
-                                        scrollViewPropertyTax.setPadding(0,0,0,dpAsPixels);
-                                    }
-
-                                    tvOwnerNamePhone.setText(ownersMobileNos);
-                                    listBreakups=propertyTaxCallback.getTaxDetails();
-                                    propertyTaxDetailsView.setVisibility(View.VISIBLE);
-
-                                } else {
-                                    Toast toast = Toast.makeText(PropertyTaxSearchActivity.this, propertyTaxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER, 0, 0);
-                                    toast.show();
-                                    listBreakups.clear();
-                                }
-                                progressBar.setVisibility(View.GONE);
-
-
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                Toast toast;
-                                if (error.getLocalizedMessage() != null)
-                                    toast = Toast.makeText(PropertyTaxSearchActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                else                                    toast = Toast.makeText(PropertyTaxSearchActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
-
-                                progressBar.setVisibility(View.GONE);
-                                listBreakups.clear();
-
-
-                            }
-                        });
-    }
-
-    public String getCurrentInstallmentText()
+    boolean validateInputSearchFields()
     {
+        return (isNotEmpty(etAssessmentNo.getText().toString()) || isNotEmpty(etOwnerName.getText().toString()) || isNotEmpty(etMobileNo.getText().toString()));
+    }
 
-        String installmentText;
-
-        List<Integer> firstInstallment= Arrays.asList(3, 4, 5, 6, 7, 8);
-        //List<Integer> secondInstallment=Arrays.asList(9, 10, 11, 0, 1, 2);
-
-        Calendar now = Calendar.getInstance();
-        int currentMonth=now.get(Calendar.MONTH);
-        int currentYear=now.get(Calendar.YEAR);
-        int nextYear=currentYear+1;
-        int prevYear=currentYear-1;
-        if(firstInstallment.contains(currentMonth))
-        {
-            installmentText=currentYear+"-"+nextYear+"-1";
-        }
-        else
-        {
-            if(currentMonth<=2)
-            {
-                installmentText=prevYear+"-"+currentYear+"-2";
-            }
-            else
-            {
-                installmentText=currentYear+"-"+nextYear+"-2";
-            }
-        }
-
-        return installmentText;
-
+    boolean isNotEmpty(String string)
+    {
+        return !TextUtils.isEmpty(string);
     }
 
 
 }
-

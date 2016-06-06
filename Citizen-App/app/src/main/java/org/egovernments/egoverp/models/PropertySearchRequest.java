@@ -43,36 +43,17 @@
 package org.egovernments.egoverp.models;
 
 
-public class HomeItem {
+public class PropertySearchRequest {
 
-    private String title;
-    private String description;
-    private int icon;
-    private boolean isGrievanceItem=false;
+    int ulbCode;
+    String assessmentNo;
+    String ownerName;
+    String mobileNumber;
 
-    public HomeItem(String title, int icon, String description) {
-        this.title = title;
-        this.description = description;
-        this.icon = icon;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getIcon() {
-        return icon;
-    }
-
-    public boolean isGrievanceItem() {
-        return isGrievanceItem;
-    }
-
-    public void setGrievanceItem(boolean grievanceItem) {
-        isGrievanceItem = grievanceItem;
+    public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber) {
+        this.ulbCode = ulbCode;
+        this.assessmentNo = assessmentNo;
+        this.ownerName = ownerName;
+        this.mobileNumber = mobileNumber;
     }
 }
