@@ -62,5 +62,11 @@
         fab:fab_colorNormal="@color/colorAccent"
         android:layout_gravity="bottom|right"/>
 
+    <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/pbhome"
+        android:layout_gravity="center" />
+
 
 </FrameLayout>

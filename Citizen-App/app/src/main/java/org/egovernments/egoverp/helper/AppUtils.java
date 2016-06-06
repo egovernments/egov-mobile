@@ -43,6 +43,9 @@
 package org.egovernments.egoverp.helper;
 
 import android.content.Context;
+import android.text.TextUtils;
+
+import com.google.gson.JsonElement;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,5 +61,15 @@ public class AppUtils {
         inputStream.close();
         return configManager;
     }
+
+    public static String getNullAsEmptyString(String string)
+    {
+        return (TextUtils.isEmpty(string)?"":string);
+    }
+
+    public static String getNullAsEmptyString(JsonElement jsonElement) {
+        return jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
+    }
+
 
 }

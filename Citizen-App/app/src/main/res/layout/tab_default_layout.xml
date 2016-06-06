@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ /*******************************************************************************
   ~  eGov suite of products aim to improve the internal efficiency,transparency,
@@ -40,13 +41,26 @@
   ~  ******************************************************************************/
   -->
 
-<resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="field_labelSize">12sp</dimen>
-    <dimen name="data_labelSize">17sp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="tab_max_width">264dp</dimen>
-    <dimen name="splashscreenlogowidth">230dp</dimen>
-</resources>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/count"
+        android:text="120"
+        android:layout_gravity="center"
+        android:textSize="12sp"
+        />
+
+</LinearLayout>

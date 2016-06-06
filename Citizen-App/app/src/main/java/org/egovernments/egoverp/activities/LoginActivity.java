@@ -334,7 +334,9 @@ public class LoginActivity extends Activity {
                     public void success(JsonObject jsonObject, Response response) {
 
                         //Stores access token in session manager
-                        sessionManager.loginUser(password, username, jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
+                        sessionManager.loginUser(username, password,AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                                AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
+                                jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                         startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                         finish();

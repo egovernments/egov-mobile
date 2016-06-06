@@ -62,7 +62,7 @@
     <string name="complainttype_label">Complaint Type (Required*)</string>
     <string name="complaintlocation_label">Please select complaint location on map and/or enter location name. If a picture with GPS data is added, location will automatically be set to that position.</string>
     <string name="complaintpicture_label">Please upload supporting picture(s)</string>
-    <string name="propertytax_search_hint">Enter assessment number</string>
+    <string name="propertytax_search_hint">Property No, Owner Name, Mobile No</string>
     <string name="watertax_search_hint">Enter consumer number</string>
     <string name="name_label">NAME</string>
     <string name="name_label_editprofile">NAME*</string>
@@ -107,7 +107,9 @@
     <string name="menu_label">Menu</string>
     <string name="home_label">Home</string>
     <string name="grievances_label">Grievances</string>
+    <string name="search_property">Search Property</string>
     <string name="propertytax_label">Property Tax</string>
+    <string name="view_propertytax">View Property Tax</string>
     <string name="profile_label">My Profile</string>
     <string name="logout_label">Logout</string>
     <string name="account_recovery_label">Account Recovery</string>
@@ -159,5 +161,7 @@
     <string name="updatecomplaint">UPDATE COMPLAINT</string>
     <string name="balance_due">BALANCE DUE</string>
     <string name="nocomplaints">No Complaints</string>
+    <string name="title_activity_property_tax_search">PropertyTaxSearchActivity</string>
+    <string name="title_activity_search_result">Results</string>
 
 </resources>

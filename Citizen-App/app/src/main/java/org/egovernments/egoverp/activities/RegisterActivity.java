@@ -150,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.setMessage("Processing request");
         progressDialog.setCancelable(false);
 
-        sessionManager = new SessionManager(this);
+        sessionManager = new SessionManager(getApplicationContext());
 
         municipalityInfo = (TextView) findViewById(R.id.municipality_change_info);
         nameInputLayout = (TextInputLayout) findViewById(R.id.signup_name_inputlayout);

@@ -61,6 +61,8 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
+    public static String GRIEVANCE_INFO_BROADCAST="GRIEVANCE-COUNT-INFO";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +94,10 @@ public class HomeActivity extends BaseActivity {
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.grievances_label), R.drawable.ic_error_outline_black_36dp, "File grievances or review and update previously filed grievances"));
+                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), R.drawable.ic_error_outline_black_36dp, "File grievances or review and update previously filed grievances");
+                //grievanceItem.setGrievanceItem(true);
+                homeItemList.add(grievanceItem);
+
             }
 
             //check for property tax module enabled or not
@@ -115,9 +120,8 @@ public class HomeActivity extends BaseActivity {
             ex.printStackTrace();
         }
 
-        HomeAdapter homeAdapter = new HomeAdapter(homeItemList, onItemClickCallback);
+        HomeAdapter homeAdapter = new HomeAdapter(HomeActivity.this, homeItemList, onItemClickCallback);
         recyclerView.setAdapter(homeAdapter);
-
 
     }
 }

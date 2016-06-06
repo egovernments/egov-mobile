@@ -48,15 +48,19 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import org.egovernments.egoverp.activities.HomeActivity;
 import org.egovernments.egoverp.activities.LoginActivity;
 import org.egovernments.egoverp.activities.ProfileActivity;
 import org.egovernments.egoverp.events.ProfileUpdatedEvent;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
 
@@ -74,6 +78,7 @@ public class UpdateService extends Service {
     public static final String KEY_METHOD = "method";
 
     public static final String UPDATE_PROFILE = "UPDATE_PROFILE";
+    public static final String GET_GRIEVANCE_COUNT_INFO = "UPDATE_GRIEVANCE_COUNT_INFO";
     public static final String UPDATE_ALL = "UPDATE_ALL";
 
     public static final String COMPLAINTS_PAGE = "UPDATE_ALL";
@@ -98,13 +103,15 @@ public class UpdateService extends Service {
             String method = intent.getStringExtra(KEY_METHOD);
             switch (method) {
 
-
                 case UPDATE_PROFILE:
                     updateProfile();
                     break;
 
                 case UPDATE_ALL:
                     updateProfile();
+                    break;
+                case GET_GRIEVANCE_COUNT_INFO:
+                    updateGrievanceCountInfo();
                     break;
             }
         }
@@ -160,12 +167,36 @@ public class UpdateService extends Service {
         }
     }
 
+    private void updateGrievanceCountInfo() {
+        Log.v("Access_TOKEN_SERVICE", "token ---- "+sessionManager.getAccessToken());
+        if (sessionManager.getAccessToken() != null) {
+
+            ApiController.getAPI(UpdateService.this).getComplaintCountDetails(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+                @Override
+                public void success(JsonObject jsonObject, Response response) {
+                    Intent intent = new Intent(HomeActivity.GRIEVANCE_INFO_BROADCAST);
+                    intent.putExtra("success", true);
+                    intent.putExtra("data", jsonObject.get("result").getAsJsonObject().toString());
+                    LocalBroadcastManager.getInstance(UpdateService.this).sendBroadcast(intent);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Intent intent = new Intent(HomeActivity.GRIEVANCE_INFO_BROADCAST);
+                    intent.putExtra("success", false);
+                    LocalBroadcastManager.getInstance(UpdateService.this).sendBroadcast(intent);
+                }
+            });
+        }
+    }
+
     private void renewCredentials() {
 
         ApiController.getAPI(UpdateService.this).login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
-                sessionManager.loginUser(sessionManager.getPassword(), sessionManager.getUsername(), jsonObject.get("access_token").toString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
+                sessionManager.loginUser(sessionManager.getUsername(), sessionManager.getPassword(), AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                        AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) , jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                 updateProfile();
             }
 

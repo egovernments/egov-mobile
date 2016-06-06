@@ -74,6 +74,12 @@ public class SessionManager {
 
     public static final String KEY_USERNAME = "username";
 
+    public static final String KEY_NAME = "name";
+
+    public static final String KEY_MOBILE = "mobile";
+
+    public static final String KEY_EMAIL = "email";
+
     public static final String KEY_ACCESS_TOKEN = "access_token";
 
     public static final String KEY_DEMO_MODE = "demoMode";
@@ -100,12 +106,15 @@ public class SessionManager {
         editor.apply();
     }
 
-    public void loginUser(String password, String email, String accessToken, double cityLat, double cityLng) {
+    public void loginUser(String username, String password, String name, String mobileno, String email, String accessToken, double cityLat, double cityLng) {
 
         editor = pref.edit();
         editor.putBoolean(IS_LOGGED_IN, true);
         editor.putString(KEY_PASSWORD, password);
-        editor.putString(KEY_USERNAME, email);
+        editor.putString(KEY_USERNAME, username);
+        editor.putString(KEY_NAME, name);
+        editor.putString(KEY_MOBILE, mobileno);
+        editor.putString(KEY_EMAIL, email);
         editor.putString(KEY_ACCESS_TOKEN, accessToken);
         editor.putString(KEY_CITY_LAT, String.valueOf(cityLat));
         editor.putString(KEY_CITY_LNG, String.valueOf(cityLng));
@@ -140,10 +149,7 @@ public class SessionManager {
 
     public String getAccessToken() {
         String access_token = pref.getString(KEY_ACCESS_TOKEN, null);
-        if (access_token != null)
-            //To remove quotes from string
-            return access_token.substring(1, access_token.length() - 1);
-        return null;
+        return access_token;
     }
 
     public void invalidateAccessToken() {
@@ -218,4 +224,15 @@ public class SessionManager {
         return pref.getBoolean(KEY_DEBUG_LOG, false);
     }
 
+    public String getName() {
+        return pref.getString(KEY_NAME, "UNKOWN");
+    }
+
+    public String getMobile() {
+        return pref.getString(KEY_MOBILE, "----");
+    }
+
+    public String getEmail() {
+        return pref.getString(KEY_EMAIL, "----");
+    }
 }

@@ -128,7 +128,9 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        final CustomEditText searchEditText = (CustomEditText) findViewById(R.id.property_searchTextbox);
+        final CustomEditText searchEditText = (CustomEditText) findViewById(R.id.editTextSearch);
+        searchEditText.setVisibility(View.VISIBLE);
+        searchEditText.setHint(R.string.watertax_search_hint);
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

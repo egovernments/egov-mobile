@@ -56,6 +56,9 @@ public class ApiUrl {
     /**
      * Grievances
      */
+
+    public final static String COMPLAINTS_COUNT_DETAILS = "/api/v1.0/complaint/count";
+
     public final static String COMPLAINT_GET_TYPES = "/api/v1.0/complaint/getAllTypes";
 
     public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/api/v1.0/complaint/getFrequentlyFiledTypes";
@@ -99,6 +102,8 @@ public class ApiUrl {
 
     public final static String CITIZEN_LOGOUT = "/api/v1.0/citizen/logout";
 
+    public final static String CITIZEN_GET_COMPLAINT_CATEGORIES_COUNT = "/api/v1.0/citizen/getMyComplaint/count";
+
     public final static String CITIZEN_GET_MY_COMPLAINT = "/api/v1.0/citizen/getMyComplaint/{page}/{pageSize}";
 
     public final static String CITIZEN_SEND_OTP = "/api/v1.0/sendOTP";
@@ -107,6 +112,7 @@ public class ApiUrl {
      * Property Tax
      */
 
+    public final static String SEARCH_PROPERTY = "/restapi/property/propertytaxdetailsByOwnerDetails";
     public final static String PROPERTY_TAX_DETAILS = "/restapi/property/propertytaxdetails";
 
     /**

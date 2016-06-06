@@ -58,7 +58,7 @@
 
             <ImageView
                 android:id="@+id/egov_logo"
-                android:layout_width="280dp"
+                android:layout_width="@dimen/splashscreenlogowidth"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_horizontal"

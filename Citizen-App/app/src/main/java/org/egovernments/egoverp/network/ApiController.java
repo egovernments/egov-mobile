@@ -61,6 +61,7 @@ import org.egovernments.egoverp.models.GrievanceTypeAPIResponse;
 import org.egovernments.egoverp.models.GrievanceUpdate;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
+import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.PropertyTaxRequest;
 import org.egovernments.egoverp.models.RegisterRequest;
@@ -195,6 +196,14 @@ public class ApiController {
         void logout(@Field("access_token") String access_token,
                     Callback<JsonObject> jsonObjectCallback);
 
+        @GET(ApiUrl.COMPLAINTS_COUNT_DETAILS)
+        void getComplaintCountDetails(@Query(value = "access_token", encodeValue = false) String access_token,
+                           Callback<JsonObject> grievanceAPIJsonCallback);
+
+
+        @GET(ApiUrl.CITIZEN_GET_COMPLAINT_CATEGORIES_COUNT)
+        void getComplaintCategoriesWithCount(@Query("access_token") String authorization, Callback<JsonObject> complaintCategoriesCallback);
+
         @GET(ApiUrl.CITIZEN_GET_MY_COMPLAINT)
         void getMyComplaints(@Path(value = "page", encode = false) String pages,
                              @Path(value = "pageSize", encode = false) String pagesize,
@@ -233,6 +242,11 @@ public class ApiController {
                              @Query(value = "access_token", encodeValue = false) String access_token,
                              Callback<JsonObject> jsonObjectCallback);
 
+        @POST(ApiUrl.SEARCH_PROPERTY)
+        void searchProperty(@Header("Referer") String referer,
+                            @Body PropertySearchRequest propertySearchRequest,
+                            Callback<List<PropertyTaxCallback>> taxCallback);
+
         @POST(ApiUrl.PROPERTY_TAX_DETAILS)
         void getPropertyTax(@Header("Referer") String referer,
                             @Body PropertyTaxRequest propertyTaxRequest,
@@ -268,6 +282,8 @@ public class ApiController {
         void updateProfile(@Body Profile profile,
                            @Query(value = "access_token", encodeValue = false) String access_token,
                            Callback<ProfileAPIResponse> profileAPIResponseCallback);
+
+
     }
 
 

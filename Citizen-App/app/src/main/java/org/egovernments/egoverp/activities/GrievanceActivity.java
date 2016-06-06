@@ -44,18 +44,36 @@ package org.egovernments.egoverp.activities;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.fragments.GrievanceFragment;
+import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * The activity containing grievance list
@@ -66,28 +84,41 @@ public class GrievanceActivity extends BaseActivity {
 
     public static int ACTION_UPDATE_REQUIRED = 111;
     ViewPager viewPager;
+    ProgressBar pbHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentViewWithTabs(R.layout.activity_grievance);
         viewPager=(ViewPager)findViewById(R.id.viewPager);
-        viewPager.setAdapter(new GrievanceFragmentPagerAdapter(getSupportFragmentManager()));
-        tabLayout.setupWithViewPager(viewPager);
+        pbHome=(ProgressBar)findViewById(R.id.pbhome);
 
         com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Activity refreshes if NewGrievanceActivity finishes with success
                 startActivityForResult(new Intent(GrievanceActivity.this, NewGrievanceActivity.class), ACTION_UPDATE_REQUIRED);
 
             }
         };
         newComplaintButtonCompat.setOnClickListener(onClickListener);
-        viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount()-1);
+        loadGrievanceCategories();
+    }
+
+    public void highlightTabTextView(View view, boolean isSelected)
+    {
+        if(view!=null) {
+            TextView tabTextView = (TextView) view.findViewById(R.id.title);
+            if (!isSelected) {
+                tabTextView.setTextColor(Color.WHITE);
+                tabTextView.setAlpha(0.5f);
+            } else {
+                tabTextView.setTextColor(Color.WHITE);
+                tabTextView.setAlpha(1f);
+            }
+        }
     }
 
     @Override
@@ -102,7 +133,7 @@ public class GrievanceActivity extends BaseActivity {
         int id = item.getItemId();
         if(id == R.id.action_refresh)
         {
-            refreshGrievanceViewPager();
+            loadGrievanceCategories();
         }
 
         return super.onOptionsItemSelected(item);
@@ -115,42 +146,144 @@ public class GrievanceActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
-           refreshGrievanceViewPager();
+           loadGrievanceCategories();
         }
 
     }
 
-    public void refreshGrievanceViewPager()
+    public void loadGrievanceCategories()
     {
-        int selectedIdx=viewPager.getCurrentItem();
-        viewPager.setAdapter(new GrievanceFragmentPagerAdapter(getSupportFragmentManager()));
-        viewPager.getAdapter().notifyDataSetChanged();
+        showLoader();
+
+        ApiController.getAPI(GrievanceActivity.this).getComplaintCategoriesWithCount(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+
+                loadViewPager(jsonObject.get("result").getAsJsonObject());
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void showLoader()
+    {
+        viewPager.setVisibility(View.GONE);
+        pbHome.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoader()
+    {
+        viewPager.setVisibility(View.VISIBLE);
+        pbHome.setVisibility(View.GONE);
+    }
+
+    public void loadViewPager(JsonObject categories)
+    {
+
+        hideLoader();
+
+        int selectedIdx=-1;
+
+        if(viewPager.getAdapter()!=null)
+        {
+            selectedIdx=viewPager.getCurrentItem();
+        }
+
+        GrievanceFragmentPagerAdapter pagerAdapter=new GrievanceFragmentPagerAdapter(getSupportFragmentManager(), categories);
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.removeAllTabs();
+        tabLayout.setupWithViewPager(viewPager);
+        setTabCount(pagerAdapter);
         viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount()-1);
-        viewPager.setCurrentItem(selectedIdx);
+
+        if(selectedIdx!=-1)
+        {
+            viewPager.setCurrentItem(selectedIdx);
+            return;
+        }
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                highlightTabTextView(tab.getCustomView(), true);
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                highlightTabTextView(tab.getCustomView(), false);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+    }
+
+    void setTabCount(GrievanceFragmentPagerAdapter pagerAdapter)
+    {
+        //tabLayout.setTabTextColors(Color.parseColor("#000"), Color.parseColor("#fff"));
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            View view = tab.getCustomView();
+            if(view !=null)
+            {
+                view = pagerAdapter.getTabView(i);
+            }
+            else {
+                tab.setCustomView(pagerAdapter.getTabView(i));
+            }
+        }
+        highlightTabTextView(tabLayout.getTabAt(0).getCustomView(), true);
     }
 
     private class GrievanceFragmentPagerAdapter extends FragmentPagerAdapter {
 
-        String[] titles={"ALL", "PENDING", "COMPLETED", "REJECTED"};
+        JsonObject categories;
+        List<String> titles;
 
-        public GrievanceFragmentPagerAdapter(FragmentManager fm) {
+        public GrievanceFragmentPagerAdapter(FragmentManager fm, JsonObject categories) {
             super(fm);
+            this.categories=categories;
+            titles=new ArrayList<>();
+            for (Map.Entry<String, JsonElement> e : categories.entrySet()) {
+                titles.add(e.getKey());
+            }
         }
 
         @Override
         public int getCount() {
-            return titles.length;
+            return titles.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles[position];
+            return titles.get(position);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles[position], position, sessionManager.getBaseURL()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
+            return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles.get(position), position, sessionManager.getBaseURL()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
         }
+
+        public View getTabView(int position) {
+            String currentKey=titles.get(position).toString();
+            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_default_layout, null);
+            TextView tvTitle = (TextView) v.findViewById(R.id.title);
+            tvTitle.setText(currentKey);
+            TextView tvCount = (TextView) v.findViewById(R.id.count);
+            tvCount.setText(categories.get(currentKey).toString());
+            return v;
+        }
+
     }
 
 

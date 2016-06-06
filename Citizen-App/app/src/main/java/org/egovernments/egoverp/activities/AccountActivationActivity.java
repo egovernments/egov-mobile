@@ -49,6 +49,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -97,7 +98,7 @@ public class AccountActivationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accountactivation);
 
-        sessionManager = new SessionManager(this);
+        sessionManager = new SessionManager(getApplicationContext());
 
         progressBar = (ProgressBar) findViewById(R.id.activateprogressBar);
         resendButton = (Button) findViewById(R.id.activate_resend);
@@ -206,9 +207,13 @@ public class AccountActivationActivity extends AppCompatActivity {
                         public void success(JsonObject jsonObject, Response response) {
 
                             sessionManager.loginUser(password, username, jsonObject.get("access_token").toString());
+
                             startService(new Intent(AccountActivationActivity.this, UpdateService.class)
                                     .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
-                            startActivity(new Intent(AccountActivationActivity.this, HomeActivity.class));
+
+                            Intent openHomeScreen=new Intent(AccountActivationActivity.this, HomeActivity.class);
+                            openHomeScreen.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(openHomeScreen);
                             finish();
                         }
 

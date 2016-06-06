@@ -82,7 +82,7 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
 
         supportDocs=(ArrayList<SupportDoc>)getIntent().getExtras().get(COMPLAINT_SUPPORT_DOCS);
 
-        sessionManager = new SessionManager(this);
+        sessionManager = new SessionManager(getApplicationContext());
 
         ImageFragmentPagerAdapter imageFragmentPagerAdapter = new ImageFragmentPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.fullview_viewpager);
