@@ -159,7 +159,7 @@
                     android:textColor="#000"
                     android:textColorHint="#a8a5a5"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@+id/complaint_locationname"
+                    android:nextFocusDown="@+id/autoCompleteComplaintType"
                     android:textSize="16sp"
                     />
 
