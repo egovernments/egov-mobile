@@ -143,9 +143,6 @@
             android:name=".activities.PropertyTaxBreakupsDetails"
             android:label="@string/title_activity_property_tax_breakups_details"
             android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.PropertyTaxViewActivity" />
         </activity>
         <activity
             android:name=".activities.WaterTaxSearchActivity"

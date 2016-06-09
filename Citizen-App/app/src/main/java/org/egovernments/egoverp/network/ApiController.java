@@ -217,7 +217,7 @@ public class ApiController {
                                  @Query(value = "access_token", encodeValue = false) String access_token,
                                  Callback<GrievanceAPIResponse> complaintAPIResponseCallback);
 
-        @GET(ApiUrl.COMPLAINT_GET_TYPES)
+        @GET(ApiUrl.COMPLAINT_CATEGORIES_TYPES)
         void getComplaintTypes(@Query(value = "access_token", encodeValue = false) String access_token,
                                Callback<GrievanceTypeAPIResponse> grievanceTypeAPIResponseCallback);
 

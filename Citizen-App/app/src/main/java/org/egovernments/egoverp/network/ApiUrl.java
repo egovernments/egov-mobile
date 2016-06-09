@@ -61,6 +61,8 @@ public class ApiUrl {
 
     public final static String COMPLAINT_GET_TYPES = "/api/v1.0/complaint/getAllTypes";
 
+    public final static String COMPLAINT_CATEGORIES_TYPES = "/api/v1.0/complaint/getComplaintCategories";
+
     public final static String COMPLAINT_GET_FREQUENTLY_FILED_TYPES = "/api/v1.0/complaint/getFrequentlyFiledTypes";
 
     public final static String COMPLAINT_CREATE = "/api/v1.0/complaint/create";

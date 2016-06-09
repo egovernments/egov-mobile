@@ -137,18 +137,47 @@
                 </FrameLayout>
             </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="15dp">
+
+
+
+                <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
+                    android:id="@+id/autoCompleteComplaintCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="@string/complaint_category"
+                    android:singleLine="true"
+                    android:textColor="#000"
+                    android:textColorHint="#a8a5a5"
+                    android:imeOptions="actionNext"
+                    android:nextFocusDown="@+id/complaint_locationname"
+                    android:textSize="16sp"
+                    />
+
+
+            </LinearLayout>
+
+            <View style="@style/Divider"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="15dp"
-                android:paddingTop="5dp">
+                android:padding="15dp">
 
 
 
                     <org.egovernments.egoverp.helper.CustomAutoCompleteTextView
-                        android:id="@+id/grievancetype_spinner_placeholder"
+                        android:id="@+id/autoCompleteComplaintType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"

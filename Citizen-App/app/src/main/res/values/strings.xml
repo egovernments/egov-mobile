@@ -128,6 +128,7 @@
     <string name="grievancedetails_label">View Grievance</string>
     <string name="editprofile_label">Edit Profile</string>
     <string name="loading_label">Loading…</string>
+    <string name="loading_failed">Loading failed</string>
     <string name="city_hint">Municipality</string>
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
@@ -163,5 +164,6 @@
     <string name="nocomplaints">No Complaints</string>
     <string name="title_activity_property_tax_search">PropertyTaxSearchActivity</string>
     <string name="title_activity_search_result">Results</string>
+    <string name="complaint_category">Complaint Type Category</string>
 
 </resources>

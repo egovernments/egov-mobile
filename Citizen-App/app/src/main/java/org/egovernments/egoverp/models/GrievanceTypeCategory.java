@@ -1,4 +1,3 @@
-
 /*
  * ******************************************************************************
  *  eGov suite of products aim to improve the internal efficiency,transparency,
@@ -47,31 +46,35 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * POJO class, response to getComplaintType, used in spinner of NewGrievanceActivity
- **/
+ * Created by egov on 9/6/16.
+ */
+public class GrievanceTypeCategory{
 
-public class GrievanceTypeAPIResponse {
-
-    @SerializedName("result")
+    @SerializedName("categoryId")
     @Expose
-    private ApiResponse result;
+    int categoryId;
 
-    public ApiResponse getResult() {
-        return result;
+    @SerializedName("categoryName")
+    @Expose
+    String categoryName;
+
+    @SerializedName("complaintTypes")
+    @Expose
+    private List<GrievanceType> grievanceTypes = new ArrayList<>();
+
+    public int getCategoryId() {
+        return categoryId;
     }
 
-    public class ApiResponse{
-
-        @SerializedName("complaintCategories")
-        @Expose
-        ArrayList<GrievanceTypeCategory> grievanceTypeCategories=new ArrayList<>();
-
-        public ArrayList<GrievanceTypeCategory> getGrievanceTypeCategories() {
-            return grievanceTypeCategories;
-        }
+    public String getCategoryName() {
+        return categoryName;
     }
 
+    public List<GrievanceType> getGrievanceTypes() {
+        return grievanceTypes;
+    }
 
 }

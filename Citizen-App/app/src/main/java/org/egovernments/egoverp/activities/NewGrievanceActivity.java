@@ -72,6 +72,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -119,6 +120,7 @@ import org.egovernments.egoverp.models.GrievanceLocationAPIResponse;
 import org.egovernments.egoverp.models.GrievanceRequest;
 import org.egovernments.egoverp.models.GrievanceType;
 import org.egovernments.egoverp.models.GrievanceTypeAPIResponse;
+import org.egovernments.egoverp.models.GrievanceTypeCategory;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
 import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
@@ -145,7 +147,10 @@ import retrofit.mime.TypedString;
 
 public class NewGrievanceActivity extends AppCompatActivity implements LocationListener {
 
-    private List<GrievanceType> grievanceTypes = new ArrayList<>();
+    private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
+    private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
+    private List<String> grievanceTypes = new ArrayList<>(); //stores grievance types string for adapter
+    private List<String> grievanceTypeCategories = new ArrayList<>(); //stores grievance categories string for adapter
 
     private ProgressDialog progressDialog;
 
@@ -158,13 +163,14 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     private AutoCompleteTextView autoCompleteComplaintLoc;
 
     private CustomAutoCompleteTextView autocompleteComplaintType;
+    private CustomAutoCompleteTextView autoCompleteComplaintCategory;
 
     private SessionManager sessionManager;
 
     private List<GrievanceLocation> grievanceLocations;
 
     private int locationID = 0;
-    private int typeID;
+    private int complaintTypeID;
 
     private Marker marker;
 
@@ -196,8 +202,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
     final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
 
-    private ImageView imgMapPick;
-    private ImageView imgClear;
+    ImageView imgMapPick;
+    ImageView imgClear;
 
     private boolean isPickedLocationFromMap=false;
 
@@ -247,7 +253,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         progressDialog.setMessage("Processing request");
         progressDialog.setCanceledOnTouchOutside(true);
 
-        autocompleteComplaintType = (CustomAutoCompleteTextView) findViewById(R.id.grievancetype_spinner_placeholder);
+        autocompleteComplaintType = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintType);
+        autoCompleteComplaintCategory = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintCategory);
 
         autocompleteComplaintType.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -405,157 +412,13 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             }
         });
 
-        //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
-        ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
-                    @Override
-                    public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
-                        grievanceTypes = grievanceTypeAPIResponse.getGrievanceType();
-                        final List<String> strings = new ArrayList<>();
-                        for (int i = 0; i < grievanceTypes.size(); i++) {
-                            strings.add(grievanceTypes.get(i).getName());
-                        }
 
-                        final ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, strings);
-                        autocompleteComplaintType.setHint(R.string.complaint_type_label);
-                        autocompleteComplaintType.setOnClickListener(null);
-                        autocompleteComplaintType.setAdapter(autoCompleteAdapter);
-                        autocompleteComplaintType.setThreshold(1);
-                        autocompleteComplaintType.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                        autocompleteComplaintType.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                            @Override
-                            public void onClick(DrawablePosition target) {
-                                if (target == DrawablePosition.RIGHT) {
-                                    autocompleteComplaintType.showDropDown();
-                                }
-                            }
-                        });
-                        autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                                             @Override
-                                                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                                                                 String s = autocompleteComplaintType.getText().toString();
-                                                                                 for (GrievanceType grievanceType : grievanceTypes) {
-                                                                                     if (s.equals(grievanceType.getName()))
-                                                                                         typeID = grievanceType.getId();
-                                                                                 }
-                                                                             }
-                                                                         }
-
-                        );
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        autocompleteComplaintType.setOnClickListener(null);
-                        autocompleteComplaintType.setHint("Loading Failed");
-                        autocompleteComplaintType.setCompoundDrawables(null, null, null, null);
-                        if (error.getLocalizedMessage() != null)
-                            if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                                sessionManager.logoutUser();
-                                startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                            } else {
-                                Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        else {
-                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-                        autocompleteComplaintType.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_refresh_black_24dp, 0);
-                        autocompleteComplaintType.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                            @Override
-                            public void onClick(DrawablePosition target) {
-                                if (target == DrawablePosition.RIGHT) {
-                                    autocompleteComplaintType.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                    autocompleteComplaintType.setDrawableClickListener(null);
-                                    autocompleteComplaintType.setHint(getString(R.string.loading_label));
-
-                                    //Same code as above because I'm stupid
-                                    ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
-                                                @Override
-                                                public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
-                                                    grievanceTypes = grievanceTypeAPIResponse.getGrievanceType();
-                                                    List<String> strings = new ArrayList<>();
-                                                    for (int i = 0; i < grievanceTypes.size(); i++) {
-                                                        strings.add(grievanceTypes.get(i).getName());
-                                                    }
-
-                                                    final ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, strings);
-                                                    autocompleteComplaintType.setHint("Complaint Type*");
-                                                    autocompleteComplaintType.setOnClickListener(null);
-                                                    autocompleteComplaintType.setAdapter(autoCompleteAdapter);
-                                                    autocompleteComplaintType.setThreshold(1);
-                                                    autocompleteComplaintType.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
-                                                    autocompleteComplaintType.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                                        @Override
-                                                        public void onClick(DrawablePosition target) {
-                                                            if (target == DrawablePosition.RIGHT) {
-                                                                autocompleteComplaintType.showDropDown();
-                                                            }
-                                                        }
-                                                    });
-                                                    autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                                                                         @Override
-                                                                                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                                                                                                             String s = autocompleteComplaintType.getText().toString();
-                                                                                                             for (GrievanceType grievanceType : grievanceTypes) {
-                                                                                                                 if (s.equals(grievanceType.getName()))
-                                                                                                                     typeID = grievanceType.getId();
-                                                                                                             }
-                                                                                                         }
-                                                                                                     }
-
-                                                    );
-
-                                                }
-
-                                                @Override
-                                                public void failure(RetrofitError error) {
-                                                    autocompleteComplaintType.setOnClickListener(null);
-                                                    autocompleteComplaintType.setCompoundDrawables(null, null, null, null);
-                                                    if (error.getLocalizedMessage() != null)
-                                                        if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
-                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                            toast.show();
-                                                            sessionManager.logoutUser();
-                                                            startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                                                        } else {
-                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
-                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                            toast.show();
-                                                        }
-                                                    else {
-                                                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
-                                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                        toast.show();
-                                                    }
-                                                    autocompleteComplaintType.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_refresh_black_24dp, 0);
-                                                    autocompleteComplaintType.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
-                                                        @Override
-                                                        public void onClick(DrawablePosition target) {
-
-                                                        }
-                                                    });
-                                                }
-                                            }
-
-                                    );
-                                }
-                            }
-                        });
-                    }
-                }
-
-        );
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadComplaintCategoriesAndTypes();
+            }
+        });
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -653,7 +516,17 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         double lng;
         String landmarkDetails = landmark.getText().toString().trim();
 
-        if (typeID == 0) {
+        complaintTypeID =0;
+
+        for(GrievanceType grievanceType:grievanceAllTypes)
+        {
+            if(autocompleteComplaintType.getText().toString().toUpperCase().equals(grievanceType.getName().toUpperCase()))
+            {
+                complaintTypeID =grievanceType.getId();
+            }
+        }
+
+        if (complaintTypeID == 0) {
             Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
@@ -671,10 +544,10 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                 lat = marker.getPosition().latitude;
                 lng = marker.getPosition().longitude;
                 progressDialog.show();
-                submit(new GrievanceRequest(lat, lng, complaintDetails, typeID, landmarkDetails));
+                submit(new GrievanceRequest(lat, lng, complaintDetails, complaintTypeID, landmarkDetails));
             } else {
                 progressDialog.show();
-                submit(new GrievanceRequest(locationID, complaintDetails, typeID, landmarkDetails));
+                submit(new GrievanceRequest(locationID, complaintDetails, complaintTypeID, landmarkDetails));
             }
         }
     }
@@ -856,6 +729,221 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
     }
 
+    private void loadComplaintCategoriesAndTypes()
+    {
+
+        setLoadingHintCustomAutoComplete(autoCompleteComplaintCategory);
+        setLoadingHintCustomAutoComplete(autocompleteComplaintType);
+
+        //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
+        ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
+                    @Override
+                    public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
+
+                        grievanceAllCategories=grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
+
+                        grievanceTypeCategories=new ArrayList<>();
+                        grievanceTypes=new ArrayList<>();
+
+                        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
+                        {
+                            grievanceTypeCategories.add(grievanceTypeCategory.getCategoryName());
+                            grievanceAllTypes.addAll(grievanceTypeCategory.getGrievanceTypes());
+
+                            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
+                            {
+                                grievanceTypes.add(grievanceType.getName());
+                            }
+                        }
+
+                        final ArrayAdapter<String> adapterGrievanceCategories = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypeCategories);
+                        final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
+
+                        setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
+                        setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
+
+                        autocompleteComplaintType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if(hasFocus)
+                                {
+                                    refreshGrievanceTypeAutoComplete();
+                                }
+                            }
+                        });
+
+                        autoCompleteComplaintCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                              @Override
+                              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                  if(!autoCompleteComplaintCategory.hasFocus())
+                                  {
+                                      autocompleteComplaintType.setText("");
+                                      refreshGrievanceTypeAutoComplete();
+                                  }
+                                  autocompleteComplaintType.requestFocus();
+                              }
+                        });
+
+                        autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                setGrievanceCategoryText();
+                                autoCompleteComplaintLoc.requestFocus();
+                            }
+                        });
+
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                        if (error.getLocalizedMessage() != null)
+                            if (error.getLocalizedMessage().equals("Invalid access token")) {
+                                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                                sessionManager.logoutUser();
+                                Intent openLoginPage=new Intent(NewGrievanceActivity.this, LoginActivity.class);
+                                openLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(openLoginPage);
+                            } else {
+                                Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
+                        else {
+                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                        }
+
+                        setLoadingFailedHintCustomAutoComplete(autoCompleteComplaintCategory);
+                        setLoadingFailedHintCustomAutoComplete(autocompleteComplaintType);
+
+                    }
+                }
+
+        );
+    }
+
+    private void setLoadingHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete)
+    {
+        customAutoComplete.setOnClickListener(null);
+        customAutoComplete.setHint(R.string.loading_label);
+        customAutoComplete.setCompoundDrawables(null, null, null, null);
+    }
+
+    private void setLoadingFailedHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete)
+    {
+        customAutoComplete.setHint(R.string.loading_failed);
+        customAutoComplete.setDrawableClickListener(null);
+        customAutoComplete.setOnClickListener(null);
+        customAutoComplete.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_refresh_black_24dp, 0);
+        customAutoComplete.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+            @Override
+            public void onClick(DrawablePosition target) {
+                if (target == DrawablePosition.RIGHT) {
+                    loadComplaintCategoriesAndTypes();
+                }
+            }
+        });
+    }
+
+    private void refreshGrievanceTypeAutoComplete()
+    {
+
+        String complaintCategoryTypedText=autoCompleteComplaintCategory.getText().toString();
+
+        ArrayList<String> tempGrievanceTypes=new ArrayList<>();
+
+        int selectedIdx=-1;
+        int idx=0;
+        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
+        {
+            if(grievanceTypeCategory.getCategoryName().toUpperCase().equals(complaintCategoryTypedText.toUpperCase()))
+            {
+                selectedIdx=idx;
+                grievanceTypes.clear();
+                for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
+                {
+                    grievanceTypes.add(grievanceType.getName());
+                }
+                break;
+            }
+
+            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
+            {
+                tempGrievanceTypes.add(grievanceType.getName());
+            }
+
+            idx++;
+        }
+
+        if(selectedIdx==-1)
+        {
+            autocompleteComplaintType.setText("");
+            autoCompleteComplaintCategory.setText("");
+            grievanceTypes.clear();
+            grievanceTypes.addAll(tempGrievanceTypes);
+        }
+
+        final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
+        setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
+
+    }
+
+    private void setGrievanceCategoryText() {
+
+        ArrayList<String> tempGrievanceTypes=new ArrayList<>();
+        boolean isPickedCategory=false;
+        String complaintTypeText = autocompleteComplaintType.getText().toString();
+        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
+        {
+            if(isPickedCategory)
+            {
+                break;
+            }
+            tempGrievanceTypes.clear();
+            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
+            {
+                tempGrievanceTypes.add(grievanceType.getName());
+                if(grievanceType.getName().toUpperCase().equals(complaintTypeText.toUpperCase()))
+                {
+                    autoCompleteComplaintCategory.setText(grievanceTypeCategory.getCategoryName());
+                    isPickedCategory=true;
+                }
+            }
+        }
+
+        if(isPickedCategory)
+        {
+            grievanceTypes.clear();
+            grievanceTypes.addAll(tempGrievanceTypes);
+        }
+
+        final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
+        setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
+
+    }
+
+    private void setCustomAutoCompleteTextViewWithAdapter(final CustomAutoCompleteTextView autoCompleteTextView, int hint, ArrayAdapter<?> adapter)
+    {
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setHint(hint);
+        autoCompleteTextView.setOnClickListener(null);
+        autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
+        autoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
+            @Override
+            public void onClick(DrawablePosition target) {
+                if (target == DrawablePosition.RIGHT) {
+                    autoCompleteTextView.showDropDown();
+                }
+            }
+        });
+    }
+
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
     public interface RemoveImageInterface {
         void removeFragmentImage(int position, UploadImageFragment fragment);
@@ -864,7 +952,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     //Custom adapter for viewpager
     private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
 
-        public                      GrievanceImagePagerAdapter(FragmentManager fm) {
+        public GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
