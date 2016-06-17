@@ -53,12 +53,14 @@ import com.squareup.okhttp.Response;
 import org.egov.employee.config.AppPreference;
 import org.egov.employee.data.ComplaintViewAPIResponse;
 import org.egov.employee.data.TaskAPIResponse;
+import org.egov.employee.data.TaskAPISearchResponse;
 
 import java.util.Map;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -187,6 +189,9 @@ public class ApiController {
 
         @GET(ApiUrl.EMPLOYEE_WORKLIST)
         Call<TaskAPIResponse> getInboxItemsByCategory(@Path("worklisttype") String worklisttype, @Path("from") int from, @Path("to") int to, @Query("access_token") String accessToken);
+
+        @POST(ApiUrl.EMPLOYEE_SEARCH_INBOX)
+        Call<TaskAPISearchResponse> searchInboxItems(@Header("Content-Type") String contentType, @Body JsonObject jsonObject, @Path("pageno") int from, @Path("limit") int to, @Query("access_token") String accessToken);
 
         @GET(ApiUrl.EMPLOYEE_FORWARD_DETAILS)
         Call<JsonObject> getForwardDetails(@Query(value = "department") String departmentId, @Query(value = "designation") String designationId, @Query(value = "access_token") String accessToken);

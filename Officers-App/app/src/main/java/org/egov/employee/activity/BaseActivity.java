@@ -159,6 +159,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "No connection", Snackbar.LENGTH_LONG);
         snackbar.show();
 
+
+
         return false;
     }
 

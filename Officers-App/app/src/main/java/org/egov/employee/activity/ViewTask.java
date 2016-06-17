@@ -57,6 +57,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -974,6 +975,17 @@ public class ViewTask extends BaseActivity {
 
         new GetAddressFromLatLng().execute(locationDetails);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
 

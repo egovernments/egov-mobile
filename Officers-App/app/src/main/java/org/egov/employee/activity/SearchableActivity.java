@@ -44,11 +44,15 @@ package org.egov.employee.activity;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -58,13 +62,37 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import com.google.gson.JsonObject;
+
+import org.egov.employee.adapter.SearchListAdapater;
+import org.egov.employee.api.ApiController;
+import org.egov.employee.api.LoggingInterceptor;
+import org.egov.employee.data.SearchResultItem;
+import org.egov.employee.data.Task;
+import org.egov.employee.data.TaskAPISearchResponse;
+import org.egov.employee.utils.EndlessRecyclerOnScrollListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import offices.org.egov.egovemployees.R;
+import retrofit.Call;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class SearchableActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     CoordinatorLayout rootLayout;
     SearchView searchView;
+    SearchRunnable searchRunnable;
+    Handler appHandler;
+    RecyclerView recyclerView;
+    ImageView searchLoadingImage;
+    ProgressBar pbSearch;
+    SearchListAdapater.ItemClickListener itemClickListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +101,19 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        appHandler=new Handler();
+
         rootLayout=(CoordinatorLayout)findViewById(R.id.rootLayout);
+
+        recyclerView=(RecyclerView)findViewById(R.id.recyclerViewResults);
+
+        searchLoadingImage=(ImageView)findViewById(R.id.searchImage);
+
+        pbSearch=(ProgressBar)findViewById(R.id.pbsearch);
+
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(SearchableActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -82,6 +122,16 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
             startAnimation(savedInstanceState);
         }
 
+        itemClickListener=new SearchListAdapater.ItemClickListener() {
+            @Override
+            public void onClick(Task task) {
+
+                Intent openTaskScreen=new Intent(SearchableActivity.this, ViewTask.class);
+                openTaskScreen.putExtra("task", task);
+                startActivityForResult(openTaskScreen, Homepage.ACTION_UPDATE_REQUIRED);
+
+            }
+        };
 
     }
 
@@ -161,11 +211,132 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
     @Override
     public boolean onQueryTextSubmit(String query) {
         searchView.clearFocus();
+        recyclerView.setVisibility(View.GONE);
+        searchLoadingImage.setVisibility(View.GONE);
+        pbSearch.setVisibility(View.VISIBLE);
+        searchInboxItems(query);
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        recyclerView.setVisibility(View.GONE);
+        searchLoadingImage.setVisibility(View.VISIBLE);
+        pbSearch.setVisibility(View.GONE);
         return true;
     }
+
+    private void searchInboxItems(String searchText)
+    {
+
+        if(searchRunnable!=null)
+        {
+            appHandler.removeCallbacks(searchRunnable);
+        }
+
+        JsonObject searchJson=new JsonObject();
+        searchJson.addProperty("searchText", searchText);
+        searchRunnable=new SearchRunnable(SearchableActivity.this, searchJson);
+        searchRunnable.run();
+
+    }
+
+    class SearchRunnable implements Runnable {
+
+        JsonObject searchJsonObject;
+        LoggingInterceptor.ErrorListener listener;
+        SearchListAdapater searchListAdapater;
+        boolean hasNextPage=false;
+        List<SearchResultItem> searchResultItemList;
+
+        EndlessRecyclerOnScrollListener scrollListener=null;
+
+        int pageNo=1;
+        int resultLimit=10;
+
+        public SearchRunnable(LoggingInterceptor.ErrorListener listener, JsonObject searchJsonObject)
+        {
+            this.listener=listener;
+            this.searchJsonObject=searchJsonObject;
+            hasNextPage=false;
+            searchListAdapater=null;
+            searchResultItemList=new ArrayList<>();
+            pageNo=1;
+            scrollListener=new EndlessRecyclerOnScrollListener((LinearLayoutManager) recyclerView.getLayoutManager()) {
+                @Override
+                public void onLoadMore(int current_page) {
+                    loadMoreSearchResults();
+                }
+            };
+            recyclerView.setOnScrollListener(scrollListener);
+        }
+
+        @Override
+        public void run() {
+            loadSearchResults();
+        }
+
+        public void loadMoreSearchResults()
+        {
+            if(hasNextPage){
+                pageNo=pageNo+1;
+                loadSearchResults();
+            }
+        }
+
+        public void loadSearchResults()
+        {
+            if(searchListAdapater!=null) {
+
+                recyclerView.setOnScrollListener(null);
+
+                if(searchResultItemList.get(searchResultItemList.size()-1) == null)
+                {
+                    searchResultItemList.remove(searchResultItemList.size() - 1);
+                    searchListAdapater.notifyItemRemoved(searchResultItemList.size());
+                }
+
+                searchResultItemList.add(null);
+                searchListAdapater.notifyItemInserted(searchResultItemList.size());
+            }
+
+
+            Call<TaskAPISearchResponse> searchInboxItemsCall = ApiController.getAPI(getApplicationContext(), listener).searchInboxItems("application/json",searchJsonObject, pageNo, resultLimit, preference.getApiAccessToken());
+            retrofit.Callback<TaskAPISearchResponse> searchInboxItemsCallBack = new retrofit.Callback<TaskAPISearchResponse>() {
+
+                @Override
+                public void onResponse(Response<TaskAPISearchResponse> response, Retrofit retrofit) {
+                    hasNextPage=response.body().getResult().isHasNextPage();
+
+
+                    if (searchListAdapater == null) {
+                        searchResultItemList=response.body().getResult().getSearchItems();
+                        searchListAdapater = new SearchListAdapater(getApplicationContext(),searchResultItemList, itemClickListener);
+                        recyclerView.setAdapter(searchListAdapater);
+
+                        recyclerView.setVisibility(View.VISIBLE);
+                        searchLoadingImage.setVisibility(View.GONE);
+                        pbSearch.setVisibility(View.GONE);
+
+
+                    } else {
+                        searchResultItemList.remove(searchResultItemList.size() - 1);
+                        searchListAdapater.notifyItemRemoved(searchResultItemList.size());
+                        searchResultItemList.addAll(response.body().getResult().getSearchItems());
+                        searchListAdapater.notifyItemInserted(searchResultItemList.size());
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            };
+            searchInboxItemsCall.enqueue(searchInboxItemsCallBack);
+        }
+
+    }
+
+
+
 }

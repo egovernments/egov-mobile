@@ -50,10 +50,10 @@
         app:showAsAction="ifRoom"
         android:title="Refresh"/>
 
-    <!--<item android:id="@+id/action_search"
+    <item android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="ifRoom"
-        android:title="Search"/>-->
+        android:title="Search"/>
 
     <item
         android:id="@+id/action_logout"

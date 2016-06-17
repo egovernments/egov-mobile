@@ -45,10 +45,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="org.egov.employee.activity.SearchableActivity"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_searchable">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+
     <ImageView
+        android:id="@+id/searchImage"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_search_white_48dp"
@@ -56,6 +67,13 @@
         android:tint="@color/edittextbordercolor"
         android:layout_centerHorizontal="true" />
 
+    <ProgressBar
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/pbsearch"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

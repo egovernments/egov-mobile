@@ -58,6 +58,8 @@ public class ApiUrl {
 
     public final static String EMPLOYEE_WORKLIST = "api/v1.0/employee/inbox/{worklisttype}/{from}/{to}";
 
+    public final static String EMPLOYEE_SEARCH_INBOX = "api/v1.0/employee/inbox/search/{pageno}/{limit}";
+
     public final static String EMPLOYEE_FORWARD_DETAILS = "/api/v1.0/employee/forwardDetails";
 
     public final static String PGR_COMPLAINT_DETAILS = "api/v1.0/complaint/{complaintNo}/detail";

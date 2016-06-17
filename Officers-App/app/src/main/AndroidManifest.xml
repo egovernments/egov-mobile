@@ -87,9 +87,6 @@
             android:label="@string/title_activity_view_task"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.egov.employee.activity.Homepage" />
         </activity>
         <activity
             android:name="org.egov.employee.activity.ImageViewerActivity"

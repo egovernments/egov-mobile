@@ -40,60 +40,78 @@
  *  *****************************************************************************
  */
 
-package org.egov.employee.utils;
-
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+package org.egov.employee.data;
 
 /**
  * Created by egov on 11/2/16.
  */
-public abstract class EndlessRecyclerOnScrollListener extends RecyclerView.OnScrollListener {
-    public static String TAG = EndlessRecyclerOnScrollListener.class.getSimpleName();
 
-    private int previousTotal = 0; // The total number of items in the dataset after the last load
-    private boolean loading = true; // True if we are still waiting for the last set of data to load.
-    private int visibleThreshold = 1; // The minimum amount of items to have below your current scroll position before loading more.
-    int firstVisibleItem, visibleItemCount, totalItemCount;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-    private int current_page = 1;
+import java.util.ArrayList;
+import java.util.List;
 
-    private LinearLayoutManager mLinearLayoutManager;
+public class TaskAPISearchResponse {
 
-    public EndlessRecyclerOnScrollListener(LinearLayoutManager linearLayoutManager) {
-        this.mLinearLayoutManager = linearLayoutManager;
+    @SerializedName("status")
+    @Expose
+    private Status status;
+    @SerializedName("result")
+    @Expose
+    private Result result;
+
+    /**
+     *
+     * @return
+     * The status
+     */
+    public Status getStatus() {
+        return status;
     }
 
-    @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-
-        visibleItemCount = recyclerView.getChildCount();
-        totalItemCount = mLinearLayoutManager.getItemCount();
-        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
-
-        if (loading) {
-            if (totalItemCount > previousTotal+1) {
-                loading = false;
-                previousTotal = totalItemCount;
-            }
-        }
-        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-            // End has been reached
-            // Do something
-            current_page++;
-            onLoadMore(current_page);
-            loading = true;
-        }
+    /**
+     *
+     * @param status
+     * The status
+     */
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
-    public abstract void onLoadMore(int current_page);
+    public Result getResult() {
+        return result;
+    }
 
-    public void resetScrollListenerValues()
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
+    public class Result
     {
-        loading=false;
-        current_page=1;
-        previousTotal=0;
+        @SerializedName("hasNextPage")
+        @Expose
+        boolean hasNextPage;
+
+        @SerializedName("searchItems")
+        @Expose
+        List<SearchResultItem> searchItems=new ArrayList<>();
+
+        public boolean isHasNextPage() {
+            return hasNextPage;
+        }
+
+        public void setHasNextPage(boolean hasNextPage) {
+            this.hasNextPage = hasNextPage;
+        }
+
+        public List<SearchResultItem> getSearchItems() {
+            return searchItems;
+        }
+
+        public void setSearchItems(List<SearchResultItem> searchItems) {
+            this.searchItems = searchItems;
+        }
     }
 
 }

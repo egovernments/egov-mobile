@@ -44,14 +44,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/cardbg"
-    android:padding="10dp">
+    android:clickable="true"
+    android:focusable="true"
+    android:id="@+id/resultItemView"
+    android:background="?android:attr/selectableItemBackground">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
         android:weightSum="3">
 
 
@@ -82,6 +87,7 @@
                 android:layout_gravity="top"
                 android:background="@drawable/colorprimarybg"
                 android:layout_marginLeft="5dp"
+                android:visibility="gone"
                 android:textColor="@android:color/white"/>
 
         </LinearLayout>
@@ -100,17 +106,23 @@
             android:textColor="@color/cardsubtitlecolor"
             android:visibility="visible" />
 
-
-
-
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvCitizen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Dinesh"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:layout_marginBottom="5dp"
         android:textColor="@android:color/white" />
 
@@ -139,6 +151,8 @@
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Broken Bin"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@android:color/white" />
 
         <TextView
@@ -146,14 +160,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
             android:text="REGISTERED"
             android:gravity="right"
             android:textColor="@color/cardstatustextcolor" />
 
     </LinearLayout>
+    </LinearLayout>
 
-
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/colorPrimaryDark"/>
 
 </LinearLayout>
