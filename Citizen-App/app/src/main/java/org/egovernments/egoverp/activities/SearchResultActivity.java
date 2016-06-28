@@ -166,7 +166,7 @@ public class SearchResultActivity extends AppCompatActivity {
     void openViewPropertyTaxScreen(String assessmentNo)
     {
         Intent openPropertyTaxIntent=new Intent(SearchResultActivity.this, PropertyTaxViewActivity.class);
-        openPropertyTaxIntent.putExtra("ulbCode", 1016);
+        openPropertyTaxIntent.putExtra("ulbCode", ulbCode);
         openPropertyTaxIntent.putExtra("assessmentNo",  assessmentNo);
         startActivity(openPropertyTaxIntent);
     }
@@ -263,17 +263,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
        });
 
-
-        /*
-
-        ArrayList<String> grievances=new ArrayList<>();
-        grievances.add("1016034288");
-        grievances.add("1016034289");
-        grievances.add("1016034290");
-        grievances.add("1016034291");
-        grievances.add("1016034292");
-        SearchListAdapater adapater= new SearchListAdapater(getApplicationContext(), grievances, itemClickListener);
-        recyclerViewSearchResult.setAdapter(adapater);*/
     }
 
 
