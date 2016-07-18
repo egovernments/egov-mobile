@@ -65,6 +65,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
 import org.egovernments.egoverp.network.SessionManager;
@@ -206,7 +207,9 @@ public class AccountActivationActivity extends AppCompatActivity {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
-                            sessionManager.loginUser(password, username, jsonObject.get("access_token").toString());
+                            sessionManager.loginUser(username, password, AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                                    AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
+                                    jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
 
                             startService(new Intent(AccountActivationActivity.this, UpdateService.class)
                                     .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));

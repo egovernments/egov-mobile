@@ -251,7 +251,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Processing request");
-        progressDialog.setCanceledOnTouchOutside(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
 
         autocompleteComplaintType = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintType);
         autoCompleteComplaintCategory = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintCategory);
@@ -707,11 +708,18 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-        if (googleMap != null)
-            googleMap.animateCamera(cameraUpdate);
-        removeLocationListener();
+        try {
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            if (googleMap != null) {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+                googleMap.animateCamera(cameraUpdate);
+            }
+            removeLocationListener();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     @Override
