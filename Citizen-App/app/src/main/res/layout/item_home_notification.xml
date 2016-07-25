@@ -1,0 +1,134 @@
+<!--
+  ~ /*******************************************************************************
+  ~  eGov suite of products aim to improve the internal efficiency,transparency,
+  ~      accountability and the service delivery of the government  organizations.
+  ~
+  ~        Copyright (C) <2016>  eGovernments Foundation
+  ~
+  ~        The updated version of eGov suite of products as by eGovernments Foundation
+  ~        is available at http://www.egovernments.org
+  ~
+  ~        This program is free software: you can redistribute it and/or modify
+  ~        it under the terms of the GNU General Public License as published by
+  ~        the Free Software Foundation, either version 3 of the License, or
+  ~        any later version.
+  ~
+  ~        This program is distributed in the hope that it will be useful,
+  ~        but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~        GNU General Public License for more details.
+  ~
+  ~        You should have received a copy of the GNU General Public License
+  ~        along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~        http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~        In addition to the terms of the GPL license to be adhered to in using this
+  ~        program, the following additional terms are to be complied with:
+  ~
+  ~    	1) All versions of this program, verbatim or modified must carry this
+  ~    	   Legal Notice.
+  ~
+  ~    	2) Any misrepresentation of the origin of the material is prohibited. It
+  ~    	   is required that all modified versions of this material be marked in
+  ~    	   reasonable ways as different from the original version.
+  ~
+  ~    	3) This license does not grant any rights to any user of the program
+  ~    	   with regards to rights under trademark law for use of the trade names
+  ~    	   or trademarks of eGovernments Foundation.
+  ~
+  ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  ******************************************************************************/
+  -->
+
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/notification_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="2dp"
+    android:layout_margin="2dp"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/notify_item_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/notify_item_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/notify_item_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="0dp"
+                    android:layout_gravity="right"
+                    android:tint="@android:color/white"
+                    android:src="@drawable/ic_camera_alt_black_36dp"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:gravity="right">
+
+            <Button
+                android:id="@+id/positiveButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/negativeButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>

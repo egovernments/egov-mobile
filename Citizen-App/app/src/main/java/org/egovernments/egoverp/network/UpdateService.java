@@ -140,7 +140,9 @@ public class UpdateService extends Service {
                 public void success(ProfileAPIResponse profileAPIResponse, Response response) {
 
                     ProfileActivity.profile = profileAPIResponse.getProfile();
-                    EventBus.getDefault().post(new ProfileUpdatedEvent());
+                    ProfileUpdatedEvent profileUpdatedEvent=new ProfileUpdatedEvent();
+                    profileUpdatedEvent.setProfile(profileAPIResponse.getProfile());
+                    EventBus.getDefault().post(profileUpdatedEvent);
 
                 }
 

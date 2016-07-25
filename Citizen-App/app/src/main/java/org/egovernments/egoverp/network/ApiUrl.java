@@ -49,7 +49,6 @@ package org.egovernments.egoverp.network;
 
 public class ApiUrl {
 
-    public final static String REFERRER_URL = "125.16.9.130";
     public final static String AUTHORIZATION = "Basic ZWdvdi1hcGk6ZWdvd i1hcGk=";
 
 

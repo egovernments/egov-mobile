@@ -68,7 +68,7 @@ public class SplashScreenActivity extends Activity {
     /**
      * Duration of wait
      **/
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
 
     private ConfigManager configManager;
 
@@ -97,8 +97,13 @@ public class SplashScreenActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
-                    finish();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    });
                 }
             }
         };

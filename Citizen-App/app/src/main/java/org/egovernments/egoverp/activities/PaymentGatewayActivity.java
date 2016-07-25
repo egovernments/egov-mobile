@@ -40,24 +40,43 @@
  *  *****************************************************************************
  */
 
-package org.egovernments.egoverp.events;
+package org.egovernments.egoverp.activities;
 
-import org.egovernments.egoverp.models.Profile;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
-/**
- * Intentionally empty. Used by eventbus to post events
- * Posted when updateService updates profile
- **/
-public class ProfileUpdatedEvent {
+import org.egovernments.egoverp.R;
 
-    Profile profile;
+public class PaymentGatewayActivity extends AppCompatActivity {
 
-    public Profile getProfile() {
-        return profile;
+    public static String PAYMENT_GATEWAY_URL="paymentGatewayURL";
+    ProgressBar progressBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_payment_gateway);
+        String url=getIntent().getStringExtra(PAYMENT_GATEWAY_URL);
+        WebView webView=(WebView)findViewById(R.id.webview);
+
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        webView.clearCache(true);
+        webView.clearHistory();
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        webView.loadUrl(url);
+
     }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
-
 }

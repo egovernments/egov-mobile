@@ -182,7 +182,7 @@
                             android:ems="10"
                             android:hint="@string/phone_label_editprofile"
                             android:imeOptions="actionNext"
-                            android:inputType="phone"
+                            android:inputType="none"
                             android:maxLength="10"
                             android:paddingTop="5dp"
                             android:singleLine="true"

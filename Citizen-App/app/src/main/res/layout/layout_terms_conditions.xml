@@ -42,51 +42,27 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:id="@+id/container">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <FrameLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:text="@string/terms_and_condition"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:padding="15dp"/>
 
-        <ScrollView
-            android:id="@+id/scrollviewpropertytax"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="20dp"
-            android:clipToPadding="false">
+            android:layout_height="wrap_content"
+            android:text="@string/terms_content"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <include layout="@layout/header_propertytax_list"/>
-                <include layout="@layout/payment_layout"/>
-
-            </LinearLayout>
-
-
-
-        </ScrollView>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                android:id="@+id/propertytax_progressbar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_centerInParent="true"
-                android:layout_margin="20dp"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-    </FrameLayout>
+    </ScrollView>
 
 </LinearLayout>

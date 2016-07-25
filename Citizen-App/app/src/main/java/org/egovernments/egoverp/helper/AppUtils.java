@@ -44,11 +44,13 @@ package org.egovernments.egoverp.helper;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Patterns;
 
 import com.google.gson.JsonElement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 /**
  * Created by egov on 5/4/16.
@@ -70,6 +72,12 @@ public class AppUtils {
     public static String getNullAsEmptyString(JsonElement jsonElement) {
         return jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
     }
+
+    public static boolean isValidEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
+    }
+
 
 
 }

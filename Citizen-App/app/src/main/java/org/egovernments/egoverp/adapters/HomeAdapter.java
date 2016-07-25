@@ -42,6 +42,7 @@
 
 package org.egovernments.egoverp.adapters;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
@@ -49,6 +50,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
@@ -56,6 +59,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -68,6 +72,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.HomeActivity;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
 import org.egovernments.egoverp.models.HomeItem;
+import org.egovernments.egoverp.models.NotificationItem;
 import org.egovernments.egoverp.network.UpdateService;
 
 import java.util.List;
@@ -76,11 +81,14 @@ import java.util.List;
  * Custom adapter for the home activity recycler view
  **/
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder> {
+public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<HomeItem> homeItemList;
     private CardViewOnClickListener.OnItemClickCallback onItemClickCallback;
     private Context context;
+
+    private int ITEM_MENU=1;
+    private int ITEM_NOTIFICATION=2;
 
     public HomeAdapter(Context context, List<HomeItem> homeItemList, CardViewOnClickListener.OnItemClickCallback onItemClickCallback) {
         this.homeItemList = homeItemList;
@@ -99,72 +107,154 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final HomeViewHolder viewHolder, final int i) {
+    public int getItemViewType(int position) {
+        return (getItem(position).isNotificationItem()?ITEM_NOTIFICATION:ITEM_MENU);
+    }
 
-        HomeItem homeItem = homeItemList.get(i);
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
-        viewHolder.title.setText(homeItem.getTitle());
-        //viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
-        viewHolder.cardIcon.setImageResource(homeItem.getIcon());
-        viewHolder.description.setText(homeItem.getDescription());
-
-        if(homeItem.isGrievanceItem())
+        if(getItemViewType(position) == ITEM_MENU)
         {
-            viewHolder.layoutGrievance.setVisibility(View.VISIBLE);
-            DrawableCompat.setTint(viewHolder.pbGrievanceFiled.getProgressDrawable(), context.getResources().getColor(R.color.blue));
-            DrawableCompat.setTint(viewHolder.pbGrievanceResolved.getProgressDrawable(), context.getResources().getColor(R.color.green));
+            final HomeViewHolder viewHolder=(HomeViewHolder)holder;
+            HomeItem homeItem = homeItemList.get(position);
 
-            viewHolder.pbGrievanceFiled.setIndeterminate(true);
-            viewHolder.pbGrievanceResolved.setIndeterminate(true);
+            viewHolder.title.setText(homeItem.getTitle());
+            //viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
+            viewHolder.description.setText(homeItem.getDescription());
 
-            //service receiver event
-            BroadcastReceiver mGrievanceInfoReceiver=new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
+            Drawable drawable=context.getResources().getDrawable(homeItem.getIcon());
+            drawable.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
+            viewHolder.cardIcon.setImageDrawable(drawable);
 
 
-                    boolean isSuccess=intent.getBooleanExtra("success",false);
-                    if(isSuccess)
-                    {
-                        JsonObject data=new JsonParser().parse(intent.getStringExtra("data")).getAsJsonObject();
-                        int totalComplaint=data.get("FILED").getAsInt();
-                        int totalResolvedComplaint=data.get("RESOLVED").getAsInt();
+            if(homeItem.isGrievanceItem())
+            {
+                viewHolder.layoutGrievance.setVisibility(View.VISIBLE);
+                DrawableCompat.setTint(viewHolder.pbGrievanceFiled.getProgressDrawable(), context.getResources().getColor(R.color.blue));
+                DrawableCompat.setTint(viewHolder.pbGrievanceResolved.getProgressDrawable(), context.getResources().getColor(R.color.green));
 
-                        viewHolder.pbGrievanceFiled.setIndeterminate(false);
-                        viewHolder.pbGrievanceResolved.setIndeterminate(false);
+                viewHolder.pbGrievanceFiled.setIndeterminate(true);
+                viewHolder.pbGrievanceResolved.setIndeterminate(true);
 
-                        animateTextView(viewHolder.tvGrievanceFiledCount, totalComplaint);
-                        animateTextView(viewHolder.tvGrievanceResolvedCount, totalResolvedComplaint);
-                        animateProgressBar(viewHolder.pbGrievanceFiled, totalComplaint, totalComplaint);
-                        animateProgressBar(viewHolder.pbGrievanceResolved, totalComplaint, totalResolvedComplaint);
+                //service receiver event
+                BroadcastReceiver mGrievanceInfoReceiver=new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+
+
+                        boolean isSuccess=intent.getBooleanExtra("success",false);
+                        if(isSuccess)
+                        {
+                            JsonObject data=new JsonParser().parse(intent.getStringExtra("data")).getAsJsonObject();
+                            int totalComplaint=data.get("FILED").getAsInt();
+                            int totalResolvedComplaint=data.get("RESOLVED").getAsInt();
+
+                            viewHolder.pbGrievanceFiled.setIndeterminate(false);
+                            viewHolder.pbGrievanceResolved.setIndeterminate(false);
+
+                            animateTextView(viewHolder.tvGrievanceFiledCount, totalComplaint);
+                            animateTextView(viewHolder.tvGrievanceResolvedCount, totalResolvedComplaint);
+                            animateProgressBar(viewHolder.pbGrievanceFiled, totalComplaint, totalComplaint);
+                            animateProgressBar(viewHolder.pbGrievanceResolved, totalComplaint, totalResolvedComplaint);
+
+                        }
+                        else{
+                            viewHolder.pbGrievanceFiled.setIndeterminate(false);
+                            viewHolder.pbGrievanceResolved.setIndeterminate(false);
+                            viewHolder.tvGrievanceFiledCount.setText("<ERROR>");
+                            viewHolder.tvGrievanceResolvedCount.setText("<ERROR>");
+                        }
 
                     }
-                    else{
-                        viewHolder.pbGrievanceFiled.setIndeterminate(false);
-                        viewHolder.pbGrievanceResolved.setIndeterminate(false);
-                        viewHolder.tvGrievanceFiledCount.setText("<ERROR>");
-                        viewHolder.tvGrievanceResolvedCount.setText("<ERROR>");
-                    }
+                };
 
-                }
-            };
+                LocalBroadcastManager.getInstance(context).registerReceiver(mGrievanceInfoReceiver,
+                        new IntentFilter(HomeActivity.GRIEVANCE_INFO_BROADCAST));
 
-            LocalBroadcastManager.getInstance(context).registerReceiver(mGrievanceInfoReceiver,
-                    new IntentFilter(HomeActivity.GRIEVANCE_INFO_BROADCAST));
-
-            //start service for get complaints total count info
-            context.startService(new Intent(context, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.GET_GRIEVANCE_COUNT_INFO));
-
+                //start service for get complaints total count info
+                context.startService(new Intent(context, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.GET_GRIEVANCE_COUNT_INFO));
 
             /*animateProgressBar(viewHolder.pbGrievanceFiled, 6000, 4850);
             animateProgressBar(viewHolder.pbGrievanceResolved, 6000, 1250);
             animateTextView(viewHolder.tvGrievanceFiledCount, 4850);
             animateTextView(viewHolder.tvGrievanceResolvedCount, 1250);*/
 
+            }
+
+            viewHolder.cardView.setOnClickListener(new CardViewOnClickListener(position, onItemClickCallback));
+        }
+        else
+        {
+
+            final NotificationViewHolder viewHolder=(NotificationViewHolder)holder;
+            HomeItem homeItem = homeItemList.get(position);
+            final NotificationItem notificationItem=homeItem.getNotificationItem();
+
+            viewHolder.imageViewIcon.setImageResource(homeItem.getIcon());
+            viewHolder.tvTitle.setText(notificationItem.getTitle());
+            viewHolder.tvDesc.setText(notificationItem.getDesc());
+
+            viewHolder.btnPositive.setText(notificationItem.getPositiveButtonText());
+            viewHolder.btnNegative.setText(notificationItem.getNegativeButtonText());
+
+            viewHolder.cardViewNotification.setBackgroundColor(notificationItem.getBgColor());
+
+            viewHolder.btnPositive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notificationItem.getNotificationCallBackInterface().positiveButtonClicked(position);
+                    if(removeItem(position)){
+                        notifyDataSetChanged();
+                    }
+                }
+            });
+            viewHolder.btnNegative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ObjectAnimator objectAnimator=ObjectAnimator.ofFloat(viewHolder.cardViewNotification,"ScaleY",1,0);
+                    objectAnimator.setDuration(300);
+                    objectAnimator.start();
+                    objectAnimator.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            if(removeItem(position)){
+                                notifyDataSetChanged();
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+
+                    notificationItem.getNotificationCallBackInterface().negativeNegativeButtonClicked(position);
+                }
+            });
+
         }
 
-        viewHolder.cardView.setOnClickListener(new CardViewOnClickListener(i, onItemClickCallback));
 
+
+    }
+
+    public boolean removeItem(int position) {
+        if (homeItemList.size() >= position + 1) {
+            homeItemList.remove(position);
+            return true;
+        }
+        return false;
     }
 
     public void animateProgressBar(ProgressBar progressBar, int max, int progress)
@@ -194,13 +284,21 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
     //ViewHolder for the recycler view. Inflates view to be grievance or progress indicator depending on type
     @Override
-    public HomeViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        View itemView = LayoutInflater.
-                from(viewGroup.getContext()).
-                inflate(R.layout.item_home, viewGroup, false);
-        return new HomeViewHolder(itemView);
-
+        if(viewType==ITEM_MENU) {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.item_home, viewGroup, false);
+            return new HomeViewHolder(itemView);
+        }
+        else
+        {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.item_home_notification, viewGroup, false);
+            return new NotificationViewHolder(itemView);
+        }
     }
 
     public static class HomeViewHolder extends RecyclerView.ViewHolder {
@@ -229,6 +327,29 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
             tvGrievanceResolvedCount =(TextView)v.findViewById(R.id.tvTotResolCompCount);
             pbGrievanceFiled =(ProgressBar) v.findViewById(R.id.pbCompFiled);
             pbGrievanceResolved =(ProgressBar) v.findViewById(R.id.pbCompResolved);
+        }
+
+    }
+
+    public static class NotificationViewHolder extends RecyclerView.ViewHolder{
+
+        private CardView cardViewNotification;
+        private ImageView imageViewIcon;
+        private TextView tvTitle;
+        private TextView tvDesc;
+        private Button btnPositive;
+        private Button btnNegative;
+
+        public NotificationViewHolder(View v)
+        {
+            super(v);
+
+            cardViewNotification=(CardView)v.findViewById(R.id.notification_card);
+            imageViewIcon=(ImageView)v.findViewById(R.id.notify_item_icon);
+            tvTitle=(TextView)v.findViewById(R.id.notify_item_title);
+            tvDesc=(TextView)v.findViewById(R.id.notify_item_desc);
+            btnPositive=(Button) v.findViewById(R.id.positiveButton);
+            btnNegative=(Button) v.findViewById(R.id.negativeButton);
         }
 
     }

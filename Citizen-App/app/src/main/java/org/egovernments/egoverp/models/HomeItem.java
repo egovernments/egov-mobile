@@ -49,11 +49,29 @@ public class HomeItem {
     private String description;
     private int icon;
     private boolean isGrievanceItem=false;
+    private boolean isNotificationItem =false;
+    private NotificationItem notificationItem;
+    int iconColor;
 
     public HomeItem(String title, int icon, String description) {
         this.title = title;
         this.description = description;
         this.icon = icon;
+    }
+
+    public HomeItem(String title, int icon, String description, int iconColor) {
+        this.title = title;
+        this.icon = icon;
+        this.description = description;
+        this.iconColor = iconColor;
+    }
+
+    public HomeItem(String title, int icon, String description, boolean isNotificationItem, NotificationItem notificationItem) {
+        this.title = title;
+        this.description = description;
+        this.icon = icon;
+        this.isNotificationItem = isNotificationItem;
+        this.notificationItem=notificationItem;
     }
 
     public String getTitle() {
@@ -74,5 +92,29 @@ public class HomeItem {
 
     public void setGrievanceItem(boolean grievanceItem) {
         isGrievanceItem = grievanceItem;
+    }
+
+    public boolean isNotificationItem() {
+        return isNotificationItem;
+    }
+
+    public void setNotificationItem(boolean notificationItem) {
+        isNotificationItem = notificationItem;
+    }
+
+    public NotificationItem getNotificationItem() {
+        return notificationItem;
+    }
+
+    public void setNotificationItem(NotificationItem notificationItem) {
+        this.notificationItem = notificationItem;
+    }
+
+    public int getIconColor() {
+        return iconColor;
+    }
+
+    public void setIconColor(int iconColor) {
+        this.iconColor = iconColor;
     }
 }

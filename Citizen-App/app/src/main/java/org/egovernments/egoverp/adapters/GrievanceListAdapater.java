@@ -94,7 +94,6 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         RecyclerView.ViewHolder vh;
         if(viewType==VIEW_ITEM) {
-
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_grievance, viewGroup, false);
             vh = new GrievanceViewHolder(v);
         }
@@ -262,6 +261,5 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
         return df.format(infoDate);
 
     }
-
 
 }

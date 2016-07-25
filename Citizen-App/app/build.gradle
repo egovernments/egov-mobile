@@ -109,6 +109,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.greenrobot:eventbus:2.4.1'
     compile 'com.viewpagerindicator:library:2.4.1@aar'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 }
 
 apply plugin: 'com.android.application'

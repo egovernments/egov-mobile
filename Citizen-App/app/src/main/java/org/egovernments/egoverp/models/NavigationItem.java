@@ -49,13 +49,20 @@ public class NavigationItem {
 
     private final int NavIcon;
     private final String NavTitle;
-
+    private int MenuColor;
     private boolean isActive=false;
 
     public NavigationItem(int navIcon, String navTitle, boolean IsActive) {
         NavIcon = navIcon;
         NavTitle = navTitle;
         isActive=IsActive;
+    }
+
+    public NavigationItem(int navIcon, String navTitle, boolean IsActive, int menuColor) {
+        NavIcon = navIcon;
+        NavTitle = navTitle;
+        isActive=IsActive;
+        MenuColor=menuColor;
     }
 
     public int getNavIcon() {
@@ -73,4 +80,13 @@ public class NavigationItem {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public int getMenuColor() {
+        return MenuColor;
+    }
+
+    public void setMenuColor(int menuColor) {
+        this.MenuColor = menuColor;
+    }
+
 }

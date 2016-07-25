@@ -48,15 +48,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
+import org.egovernments.egoverp.helper.ConfigManager;
 
 public class PropertyTaxSearchActivity extends BaseActivity {
 
     EditText etAssessmentNo;
     EditText etOwnerName;
     EditText etMobileNo;
+    TextView tvSearchTitle;
     FloatingActionButton fabSearchProperty;
 
     public static String paramUlbCode="ulbCode";
@@ -64,6 +68,11 @@ public class PropertyTaxSearchActivity extends BaseActivity {
     public static String paramOwnerName="ownerName";
     public static String paramMobileNo="mobileNo";
 
+    public static String IS_VACANT_LAND="isVacantLand";
+
+    boolean isVacantLand=false;
+
+    ConfigManager configManager;
 
 
     @Override
@@ -74,6 +83,22 @@ public class PropertyTaxSearchActivity extends BaseActivity {
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
         etMobileNo=(EditText)findViewById(R.id.etMobileNo);
+
+        try
+        {
+            configManager= AppUtils.getConfigManager(getApplicationContext());
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+        tvSearchTitle=(TextView)findViewById(R.id.tvSearchTitle);
+
+        if(isVacantLand)
+        {
+            tvSearchTitle.setText(R.string.search_vacant_land);
+        }
 
         fabSearchProperty=(FloatingActionButton)findViewById(R.id.fabSearchProperty);
 
@@ -89,6 +114,8 @@ public class PropertyTaxSearchActivity extends BaseActivity {
                     openSearchResult.putExtra(paramAssessmentNo,etAssessmentNo.getText().toString());
                     openSearchResult.putExtra(paramOwnerName,etOwnerName.getText().toString());
                     openSearchResult.putExtra(paramMobileNo,etMobileNo.getText().toString());
+                    openSearchResult.putExtra(IS_VACANT_LAND, isVacantLand);
+                    openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
                     startActivity(openSearchResult);
                 }
                 else
@@ -101,6 +128,15 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
     }
 
+    @Override
+    public String getToolbarTitle(String titleFromResource) {
+        isVacantLand=getIntent().getBooleanExtra(IS_VACANT_LAND, false);
+        if(isVacantLand)
+        {
+            return getString(R.string.vacantlandtax_label);
+        }
+        return getString(R.string.propertytax_label);
+    }
 
     boolean validateInputSearchFields()
     {
@@ -111,6 +147,4 @@ public class PropertyTaxSearchActivity extends BaseActivity {
     {
         return !TextUtils.isEmpty(string);
     }
-
-
 }

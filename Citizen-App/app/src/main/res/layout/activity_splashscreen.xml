@@ -70,11 +70,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/egov_logo"
-                android:layout_centerHorizontal="true"
                 android:text="@string/splashscreen_loading"
                 android:textColor="@android:color/white"
-                android:textSize="17sp" />
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/textView5" />
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar2"
+                android:layout_margin="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@+id/textView5" />
 
         </RelativeLayout>
     </FrameLayout>

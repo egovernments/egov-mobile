@@ -89,6 +89,10 @@ public class SessionManager {
 
     public static final String KEY_DEBUG_LOG="isLogEnabled";
 
+    public static final String KEY_TERMS_AGREED="isTermsAgreed";
+
+    public static final String KEY_PROFILE_NOTIFY_DIMISSED="isProfileDismissed";
+
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
     }
@@ -213,6 +217,31 @@ public class SessionManager {
         return pref.getBoolean(KEY_DEMO_MODE, false);
     }
 
+    public void setProfileNotifyDimissed(boolean isAgreed)
+    {
+        editor = pref.edit();
+        editor.putBoolean(KEY_PROFILE_NOTIFY_DIMISSED, isAgreed);
+        editor.apply();
+    }
+
+    public boolean isProfileNotifyDismissed()
+    {
+        return pref.getBoolean(KEY_PROFILE_NOTIFY_DIMISSED, false);
+    }
+
+    public void setTermsAgreed(boolean isAgreed)
+    {
+        editor = pref.edit();
+        editor.putBoolean(KEY_TERMS_AGREED, isAgreed);
+        editor.apply();
+    }
+
+    public boolean isTermsAgreed()
+    {
+        return pref.getBoolean(KEY_TERMS_AGREED, false);
+    }
+
+
     public void setKeyDebugLog(boolean isEnabled)
     {
         editor = pref.edit();
@@ -222,6 +251,13 @@ public class SessionManager {
 
     public boolean getKeyDebugLog() {
         return pref.getBoolean(KEY_DEBUG_LOG, false);
+    }
+
+    public void setName(String name)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_NAME, name);
+        editor.apply();
     }
 
     public String getName() {

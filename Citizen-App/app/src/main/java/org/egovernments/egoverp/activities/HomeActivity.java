@@ -43,8 +43,12 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -54,6 +58,7 @@ import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.HomeItem;
+import org.egovernments.egoverp.models.NotificationItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,13 +74,21 @@ public class HomeActivity extends BaseActivity {
 
         setContentView(R.layout.activity_home);
 
+        if(!sessionManager.isTermsAgreed())
+        {
+            showTermsAndCondition();
+        }
+
         List<HomeItem> homeItemList = new ArrayList<>();
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(linearLayoutManager);*/
+
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, 2);
+        recyclerView.setLayoutManager(gridLayoutManager);
 
         CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
             @Override
@@ -91,10 +104,29 @@ public class HomeActivity extends BaseActivity {
 
             ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
+            if(!sessionManager.isProfileNotifyDismissed()) {
+
+                NotificationItem.NotificationCallBackInterface notificationCallBackInterface=new NotificationItem.NotificationCallBackInterface() {
+                    @Override
+                    public void positiveButtonClicked(int position) {
+                        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                        sessionManager.setProfileNotifyDimissed(true);
+                    }
+
+                    @Override
+                    public void negativeNegativeButtonClicked(int position) {
+                        sessionManager.setProfileNotifyDimissed(true);
+                    }
+                };
+
+                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#0288D1"), "Update your profile", "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
+                homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details.", true, notificationItem));
+            }
+
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), R.drawable.ic_error_outline_black_36dp, "File grievances or review and update previously filed grievances");
+                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), R.drawable.ic_archive_black_36dp, "File grievances or review and update previously filed grievances", getResources().getColor(R.color.grievance_color));
                 //grievanceItem.setGrievanceItem(true);
                 homeItemList.add(grievanceItem);
 
@@ -103,16 +135,37 @@ public class HomeActivity extends BaseActivity {
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number"));
+                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
+            }
+
+            //check for vacant land tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), R.drawable.ic_vacant_land_36dp, "", getResources().getColor(R.color.vacand_land_color)));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.watertax_label), R.drawable.ic_local_drink_black_36dp, "View water tax details for a consumer code"));
+                homeItemList.add(new HomeItem(getString(R.string.watertax_label), R.drawable.ic_water_tab_black_36dp, "View water tax details for a consumer code", getResources().getColor(R.color.watertax_color)));
             }
 
-            homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details."));
+
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")))
+            {
+                homeItemList.add(new HomeItem("Building Plan Approval", R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.bpacolor)));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.birthdeathcertificate","true")))
+            {
+                homeItemList.add(new HomeItem("Birth & Death Certificate", R.drawable.ic_certificate_36dp, "", getResources().getColor(R.color.birthdeathcolor)));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), R.drawable.ic_grid_on_black_36dp, "", getResources().getColor(R.color.citizen_charter_color)));
+            }
+
 
         }
         catch (IOException ex)
@@ -120,8 +173,58 @@ public class HomeActivity extends BaseActivity {
             ex.printStackTrace();
         }
 
-        HomeAdapter homeAdapter = new HomeAdapter(HomeActivity.this, homeItemList, onItemClickCallback);
+        final HomeAdapter homeAdapter = new HomeAdapter(HomeActivity.this, homeItemList, onItemClickCallback);
         recyclerView.setAdapter(homeAdapter);
 
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(homeAdapter.getItem(position).isNotificationItem()){
+                  return 2;
+                }
+                return 1;
+            }
+        });
+
+    }
+
+    public void showTermsAndCondition()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setCancelable(false);
+
+        View viewTermsAndConditions=getLayoutInflater().inflate(R.layout.layout_terms_conditions, null, false);
+
+       /* wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });*/
+
+        alert.setView(viewTermsAndConditions);
+
+        alert.setPositiveButton(R.string.i_agree, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                sessionManager.setTermsAgreed(true);
+                dialog.dismiss();
+            }
+        });
+
+        alert.setNegativeButton(R.string.dont_agree, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                finish();
+            }
+        });
+
+        alert.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        recreate();
     }
 }

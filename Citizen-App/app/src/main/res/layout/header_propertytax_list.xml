@@ -41,6 +41,10 @@
   ~  ******************************************************************************/
   -->
 
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/propertypropertytax_layout"
@@ -48,9 +52,9 @@
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="2dp"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     card_view:cardUseCompatPadding="true"
     android:layout_margin="5dp"
-    android:layout_marginBottom="10dp"
     card_view:cardElevation="2dp">
 
     <LinearLayout
@@ -116,8 +120,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="2dp"
                 android:text="@string/balance_due"
+                android:fontFamily="sans-serif"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/data_labelSize" />
 
@@ -306,3 +311,5 @@
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -63,7 +63,6 @@ import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.SearchResultItem;
 import org.egovernments.egoverp.models.TaxOwnerDetail;
 import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +84,14 @@ public class SearchResultActivity extends AppCompatActivity {
 
     int ulbCode;
 
+    boolean isExited=false;
+    String referrerIp;
+    boolean isVacantLand=false;
+
+    public static String ULB_CODE="ulbCode";
+    public static String ASSESSMENT_NO="assessmentNo";
+    public static String REFERER_IP_CONFIG_KEY="app.referrer.ip";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +101,10 @@ public class SearchResultActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        isVacantLand=getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false);
+        referrerIp=getIntent().getStringExtra(REFERER_IP_CONFIG_KEY);
 
         progressBar=(ProgressBar)findViewById(R.id.pbPropSearch);
 
@@ -165,10 +176,15 @@ public class SearchResultActivity extends AppCompatActivity {
 
     void openViewPropertyTaxScreen(String assessmentNo)
     {
-        Intent openPropertyTaxIntent=new Intent(SearchResultActivity.this, PropertyTaxViewActivity.class);
-        openPropertyTaxIntent.putExtra("ulbCode", ulbCode);
-        openPropertyTaxIntent.putExtra("assessmentNo",  assessmentNo);
-        startActivity(openPropertyTaxIntent);
+        if(!TextUtils.isEmpty(assessmentNo)){
+            Intent openPropertyTaxIntent=new Intent(SearchResultActivity.this, PropertyTaxViewActivity.class);
+            openPropertyTaxIntent.putExtra(ULB_CODE, ulbCode);
+            openPropertyTaxIntent.putExtra(ASSESSMENT_NO,  assessmentNo);
+            openPropertyTaxIntent.putExtra(REFERER_IP_CONFIG_KEY,  referrerIp);
+            openPropertyTaxIntent.putExtra(PropertyTaxSearchActivity.IS_VACANT_LAND,  isVacantLand);
+            startActivity(openPropertyTaxIntent);
+        }
+
     }
 
     void loadRecylerView(List<PropertyTaxCallback> properties)
@@ -213,55 +229,72 @@ public class SearchResultActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSearchResults(int ulbCode, String assessmentNo, String ownerName, String mobileNo)
+    private void showSearchResults(final int ulbCode, final String assessmentNo, final String ownerName, final String mobileNo)
     {
 
         showLoadingIndicator();
 
+
         ApiController.getAPI(SearchResultActivity.this)
-                .searchProperty(ApiUrl.REFERRER_URL, new PropertySearchRequest(ulbCode, assessmentNo, ownerName, mobileNo),
+                .searchProperty(referrerIp, new PropertySearchRequest(ulbCode, assessmentNo, ownerName, mobileNo),
                         new Callback<List<PropertyTaxCallback>>() {
-                @Override
-                public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
+                            @Override
+                            public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
 
-                    resultProperties=propertyTaxCallbacks;
+                                if(isExited){
+                                    return;
+                                }
 
-                    if(propertyTaxCallbacks.size()>0)
-                    {
-                        if(propertyTaxCallbacks.size()==1)
-                        {
-                            PropertyTaxCallback propertyTaxCallback=propertyTaxCallbacks.get(0);
+                                resultProperties=propertyTaxCallbacks;
 
-                            if (propertyTaxCallback.getTaxErrorDetails()==null) {
-                                SearchResultActivity.this.finish();
-                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                if(propertyTaxCallbacks.size()>0)
+                                {
+                                    if(propertyTaxCallbacks.size()==1)
+                                    {
+                                        PropertyTaxCallback propertyTaxCallback=propertyTaxCallbacks.get(0);
+
+                                        if (propertyTaxCallback.getTaxErrorDetails()==null) {
+                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                                SearchResultActivity.this.finish();
+                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                            }
+                                            else
+                                            {
+                                                showSearchResults(getIntegerParam(PropertyTaxSearchActivity.paramUlbCode), getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo));
+                                            }
+                                        }
+                                        else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
+                                        {
+                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                                SearchResultActivity.this.finish();
+                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                            }
+                                        }
+                                        else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
+                                        {
+                                            showEmptyMessage();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        loadRecylerView(propertyTaxCallbacks);
+                                    }
+                                }
+                                else
+                                {
+                                    showEmptyMessage();
+                                }
                             }
-                            else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                            {
-                                SearchResultActivity.this.finish();
-                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                            }
-                            else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                            {
-                                showEmptyMessage();
-                            }
-                        }
-                        else
-                        {
-                            loadRecylerView(propertyTaxCallbacks);
-                        }
-                    }
-                    else
-                    {
-                        showEmptyMessage();
-                    }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
-                    showErrorMessage(error.getLocalizedMessage());
-                }
-       });
+                            @Override
+                            public void failure(RetrofitError error) {
+
+                                showErrorMessage(error.getLocalizedMessage());
+                            }
+         });
+
+
+
 
     }
 
@@ -271,5 +304,9 @@ public class SearchResultActivity extends AppCompatActivity {
         return (TextUtils.isEmpty(string)?"":string);
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isExited=true;
+    }
 }

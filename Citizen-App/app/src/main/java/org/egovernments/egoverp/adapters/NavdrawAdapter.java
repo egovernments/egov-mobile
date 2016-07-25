@@ -43,6 +43,8 @@
 package org.egovernments.egoverp.adapters;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -169,7 +171,9 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
 
             final NavigationItem navigationItem=navigationItems.get(position);
             holder.textView.setText(navigationItem.getNavTitle()); // Setting the Text with the array of our Titles
-            holder.imageView.setImageResource(navigationItem.getNavIcon());// Settimg the image with array of our icons
+            Drawable drawable=context.getResources().getDrawable(navigationItem.getNavIcon());
+            drawable.setColorFilter(context.getResources().getColor(navigationItem.getMenuColor()), PorterDuff.Mode.SRC_ATOP);
+
             holder.parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -181,6 +185,8 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
             {
                 holder.parent.setBackgroundColor(context.getResources().getColor(R.color.navhighlight));
             }
+
+            holder.imageView.setImageDrawable(drawable);// Settimg the image with array of our icons
 
         }
         else{

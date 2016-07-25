@@ -40,24 +40,80 @@
  *  *****************************************************************************
  */
 
-package org.egovernments.egoverp.events;
-
-import org.egovernments.egoverp.models.Profile;
+package org.egovernments.egoverp.models;
 
 /**
- * Intentionally empty. Used by eventbus to post events
- * Posted when updateService updates profile
- **/
-public class ProfileUpdatedEvent {
+ * Created by egov on 19/7/16.
+ */
+public class NotificationItem {
 
-    Profile profile;
+    int bgColor;
+    String title;
+    String desc;
+    String positiveButtonText;
+    String negativeButtonText;
+    NotificationCallBackInterface notificationCallBackInterface;
 
-    public Profile getProfile() {
-        return profile;
+    public NotificationItem(int bgColor, String title, String desc, String positiveButtonText, String negativeButtonText, NotificationCallBackInterface notificationCallBackInterface) {
+        this.bgColor=bgColor;
+        this.title = title;
+        this.desc = desc;
+        this.positiveButtonText = positiveButtonText;
+        this.negativeButtonText = negativeButtonText;
+        this.notificationCallBackInterface=notificationCallBackInterface;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public int getBgColor() {
+        return bgColor;
+    }
+
+    public void setBgColor(int bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getPositiveButtonText() {
+        return positiveButtonText;
+    }
+
+    public void setPositiveButtonText(String positiveButtonText) {
+        this.positiveButtonText = positiveButtonText;
+    }
+
+    public String getNegativeButtonText() {
+        return negativeButtonText;
+    }
+
+    public void setNegativeButtonText(String negativeButtonText) {
+        this.negativeButtonText = negativeButtonText;
+    }
+
+    public NotificationCallBackInterface getNotificationCallBackInterface() {
+        return notificationCallBackInterface;
+    }
+
+    public void setNotificationCallBackInterface(NotificationCallBackInterface notificationCallBackInterface) {
+        this.notificationCallBackInterface = notificationCallBackInterface;
+    }
+
+    public interface NotificationCallBackInterface{
+        void positiveButtonClicked(int position);
+        void negativeNegativeButtonClicked(int position);
     }
 
 }

@@ -49,10 +49,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -61,12 +64,14 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
+import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.PropertyTaxRequest;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.TaxOwnerDetail;
 import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
+import org.egovernments.egoverp.network.SessionManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -89,9 +94,20 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     List<TaxDetail> listBreakups;
     FloatingActionButton fabPayPropertyTax;
     CardView propertyTaxDetailsView;
+    CardView paymentCardView;
     ScrollView scrollViewPropertyTax;
+    EditText etAmountToPay;
+    EditText etMobileNo;
+    EditText etMailAddress;
 
     private ProgressBar progressBar;
+
+    SessionManager sessionManager;
+
+    ConfigManager configManager;
+
+    double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
+    String referrerIp;
 
     int ulbCode;
 
@@ -105,16 +121,71 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        referrerIp=getIntent().getStringExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY);
+
         listBreakups= new ArrayList<>();
         progressBar = (ProgressBar) findViewById(R.id.propertytax_progressbar);
 
-        fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpaypropertytax);
+        fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpay);
         fabPayPropertyTax.setVisibility(View.GONE);
+
+        try
+        {
+            configManager= AppUtils.getConfigManager(getApplicationContext());
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
 
         fabPayPropertyTax.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(PropertyTaxViewActivity.this,"Payment feature is coming soon!", Toast.LENGTH_SHORT).show();
+
+                if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
+                {
+                    Toast.makeText(getApplicationContext(), "Please fill all payment input details", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
+                {
+                    Toast.makeText(getApplicationContext(), "Please enter valid email address", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(etMobileNo.getText().toString().length()<10)
+                {
+                    Toast.makeText(getApplicationContext(), "Please enter valid mobile no", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
+                if(amountToPay<=0)
+                {
+                    Toast.makeText(getApplicationContext(), "Payment amount should be greater than 0", Toast.LENGTH_SHORT).show();
+                }
+                else if(amountToPay> total)
+                {
+                    Toast.makeText(getApplicationContext(), "Payment amount should not be greater than payable amount ("+Math.round(total)+")", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+
+
+                    String paymentGatewayUrl=sessionManager.getBaseURL()+configManager.getString("app.payment.gateway.property.tax");
+
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{assessmentNo}", tvAssessmentNo.getText().toString());
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{ulbCode}", String.valueOf(ulbCode));
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{amountToPay}", String.valueOf(amountToPay));
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{mobileNo}", etMobileNo.getText().toString());
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{emailId}", etMailAddress.getText().toString());
+
+                    Log.v("URL", paymentGatewayUrl);
+
+                    Intent intent=new Intent(PropertyTaxViewActivity.this, PaymentGatewayActivity.class);
+                    intent.putExtra(PaymentGatewayActivity.PAYMENT_GATEWAY_URL, paymentGatewayUrl);
+                    startActivityForResult(intent,1);
+                }
+
             }
         });
 
@@ -122,6 +193,9 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
         propertyTaxDetailsView = (CardView)findViewById(R.id.propertypropertytax_layout);
         propertyTaxDetailsView.setVisibility(View.GONE);
+
+        paymentCardView = (CardView)findViewById(R.id.cvPayment);
+        paymentCardView.setVisibility(View.GONE);
 
         tvAssessmentNo = (TextView) findViewById(R.id.propertytax_assessmentno);
         tvAddress = (TextView) findViewById(R.id.propertytax_address);
@@ -134,6 +208,12 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         tvTotal = (TextView) findViewById(R.id.propertytax_total);
 
         btnBreakups=(Button)findViewById(R.id.btnbreakups);
+
+        etAmountToPay=(EditText) findViewById(R.id.etAmount);
+        etMobileNo=(EditText) findViewById(R.id.etMobileNo);
+        etMailAddress=(EditText)findViewById(R.id.etMail);
+
+        sessionManager=new SessionManager(getApplicationContext());
 
         btnBreakups.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -149,8 +229,13 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
 
         //load assessment details from intent param
-        ulbCode=getIntent().getIntExtra("ulbCode", 0);
-        submit(getIntent().getStringExtra("assessmentNo"));
+        ulbCode=getIntent().getIntExtra(SearchResultActivity.ULB_CODE, 0);
+        submit(getIntent().getStringExtra(SearchResultActivity.ASSESSMENT_NO));
+
+        if(getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false))
+        {
+            getSupportActionBar().setTitle(R.string.view_vacantlandtax);
+        }
 
 
     }
@@ -158,6 +243,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     private void submit(final String code) {
 
         propertyTaxDetailsView.setVisibility(View.GONE);
+        paymentCardView.setVisibility(View.GONE);
         fabPayPropertyTax.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -170,7 +256,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         }
 
         ApiController.getAPI(PropertyTaxViewActivity.this)
-                .getPropertyTax(ApiUrl.REFERRER_URL,
+                .getPropertyTax(referrerIp,
                         new PropertyTaxRequest(String.format("%04d", ulbCode), code),
                         new Callback<PropertyTaxCallback>() {
                             @Override
@@ -190,14 +276,26 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                             ownersMobileNos += ", ";
                                         }
 
-                                        ownersMobileNos += taxOwnerDetail.getOwnerName()+"/"+taxOwnerDetail.getMobileNo();
+                                        if(check==0)
+                                        {
+                                            if(!TextUtils.isEmpty(taxOwnerDetail.getMobileNo()))
+                                            {
+                                                etMobileNo.setText(taxOwnerDetail.getMobileNo());
+                                            }
+                                        }
+
+                                        ownersMobileNos += taxOwnerDetail.getOwnerName()+(TextUtils.isEmpty(taxOwnerDetail.getMobileNo())?"": "/"+taxOwnerDetail.getMobileNo());
                                         check++;
                                     }
 
 
                                     String currentInstallmentText=getCurrentInstallmentText();
 
-                                    double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, Total=0;
+                                    arrearsTotal=0;
+                                    arrearsPenalty=0;
+                                    currentTotal=0;
+                                    currentPenalty=0;
+                                    total =0;
 
                                     for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
                                         if(currentInstallmentText.equals(taxDetail.getInstallment()))
@@ -210,7 +308,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                             arrearsTotal+=taxDetail.getTaxAmount();
                                             arrearsPenalty+=taxDetail.getPenalty();
                                         }
-                                        Total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
+                                        total =arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
                                     }
 
                                     NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
@@ -221,11 +319,22 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                     tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
                                     tvCurrentTotal.setText(nf1.format(currentTotal));
                                     tvCurrentPenalty.setText(nf1.format(currentPenalty));
-                                    tvTotal.setText(nf1.format(Total));
+                                    tvTotal.setText(nf1.format(Math.round(total)));
 
-                                    if(Total>0)
+                                    if(total >0)
                                     {
-                                      fabPayPropertyTax.setVisibility(View.VISIBLE);
+                                      etAmountToPay.setText(String.valueOf(Math.round(total)));
+                                      if(TextUtils.isEmpty(etMobileNo.getText()))
+                                      {
+                                          etMobileNo.setText(sessionManager.getMobile());
+                                      }
+
+                                      if(!TextUtils.isEmpty(sessionManager.getEmail())) {
+                                          etMailAddress.setText(sessionManager.getEmail());
+                                      }
+
+                                        fabPayPropertyTax.setVisibility(View.VISIBLE);
+                                        paymentCardView.setVisibility(View.VISIBLE);
                                     }
                                     else
                                     {
@@ -237,6 +346,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                     tvOwnerNamePhone.setText(ownersMobileNos);
                                     listBreakups=propertyTaxCallback.getTaxDetails();
                                     propertyTaxDetailsView.setVisibility(View.VISIBLE);
+                                    propertyTaxDetailsView.requestFocus();
 
                                 } else {
                                     Toast toast = Toast.makeText(PropertyTaxViewActivity.this, propertyTaxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
@@ -310,6 +420,10 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        submit(getIntent().getStringExtra("assessmentNo"));
+    }
 }
 

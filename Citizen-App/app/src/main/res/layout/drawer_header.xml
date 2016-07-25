@@ -50,7 +50,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="65dp"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -63,7 +63,9 @@
             android:layout_marginLeft="16dp"
             android:textColor="#ffffff"
             android:text=""
-            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            style="@style/TextAppearance.AppCompat.Medium"
+
             />
 
         <TextView
@@ -72,10 +74,10 @@
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:text=""
-            android:textSize="14sp"
             android:textStyle="normal"
+            style="@style/TextAppearance.AppCompat.Small"
 
             />
     </LinearLayout>
@@ -85,7 +87,7 @@
         android:layout_height="70dp"
         android:src="@drawable/ic_person_black_24dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/circle_background"
         android:padding="20dp"
         android:id="@+id/circleView"

@@ -73,7 +73,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBUXMcf50iTY1ekEJyFU-a27s03ZjLaVGs" />
+            android:value="AIzaSyAcKReDsZC32qkAEUWqyIpoNSXfA420cN8" />
 
         <activity
             android:name=".activities.SplashScreenActivity"
@@ -137,13 +137,11 @@
             android:label="@string/view_propertytax"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.PropertyTaxBreakupsDetails"
             android:label="@string/title_activity_property_tax_breakups_details"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.WaterTaxSearchActivity"
             android:label="@string/watertax_label"
@@ -226,8 +224,16 @@
         <activity
             android:name=".activities.SearchResultActivity"
             android:label="@string/title_activity_search_result"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".activities.PaymentGatewayActivity" />
+        <activity
+            android:name=".activities.CitizenCharterActivity"
+            android:label="@string/citizen_charter_label"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.PdfViewerActivity"
+            android:label="@string/title_activity_pdf_viewer"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

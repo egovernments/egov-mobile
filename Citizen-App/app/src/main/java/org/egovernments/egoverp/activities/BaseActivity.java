@@ -97,8 +97,6 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.baselayout);
-
-
     }
 
     public void setContentViewWithTabs(final int layoutResID)
@@ -142,7 +140,7 @@ public class BaseActivity extends AppCompatActivity {
 
         if(isTabSupport)
         {
-            if (Build.VERSION.SDK_INT >= 22) {
+            if (Build.VERSION.SDK_INT >= 21) {
                 toolbar.setElevation(0);
             }
             tabLayout.setVisibility(View.VISIBLE);
@@ -159,6 +157,7 @@ public class BaseActivity extends AppCompatActivity {
 
         assert actionBar != null;
 
+        actionBar.setTitle(getToolbarTitle(actionBar.getTitle().toString()));
         mActionBarTitle = actionBar.getTitle();
 
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
@@ -202,6 +201,11 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
+    public String getToolbarTitle(String titleFromResource)
+    {
+        return titleFromResource;
+    }
+
     public void openPage(String menuItemText)
     {
         if(getString(R.string.home_label).equals(menuItemText))
@@ -216,9 +220,17 @@ public class BaseActivity extends AppCompatActivity {
         {
             openPropertyPage();
         }
+        else if(getString(R.string.vacantlandtax_label).equals(menuItemText))
+        {
+            openVacandLandPage();
+        }
         else if(getString(R.string.watertax_label).equals(menuItemText))
         {
             openWaterTaxPage();
+        }
+        else if(getString(R.string.citizen_charter_label).equals(menuItemText))
+        {
+            openCitizenCharterPage();
         }
         else if(getString(R.string.profile_label).equals(menuItemText))
         {
@@ -252,12 +264,25 @@ public class BaseActivity extends AppCompatActivity {
     public void openPropertyPage()
     {
         Intent intent;
-        if (!getTitle().toString().equals(getString(R.string.propertytax_label))) {
+        if (!mActionBarTitle.equals(getString(R.string.propertytax_label))) {
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
             intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+        }
+    }
+
+    public void openVacandLandPage()
+    {
+        Intent intent;
+        if (!mActionBarTitle.equals(getString(R.string.vacantlandtax_label))) {
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
+            intent = new Intent(BaseActivity.this, PropertyTaxSearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, true);
+            startActivity(intent);
         }
     }
 
@@ -273,13 +298,25 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void openCitizenCharterPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.citizen_charter_label))) {
+            intent = new Intent(BaseActivity.this, CitizenCharterActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
     public void openProfilePage()
     {
         Intent intent;
         if (!getTitle().toString().equals(getString(R.string.profile_label))) {
             intent = new Intent(BaseActivity.this, ProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            startActivityForResult(intent, 0);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
         }
@@ -335,28 +372,40 @@ public class BaseActivity extends AppCompatActivity {
             ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
 
-            arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle))));
+            arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle)), R.color.home_color));
 
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_error_outline_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle))));
+                arrayList.add(new NavigationItem(R.drawable.ic_archive_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle)), R.color.grievance_color));
             }
 
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle))));
+                arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
+            }
+
+            //check for vacant land tax module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_local_drink_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle))));
+                arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }
 
-            arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label), (getString(R.string.profile_label).equals(mActionBarTitle))));
-            arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label), (getString(R.string.logout_label).equals(mActionBarTitle))));
+            if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));
+            }
+
+            arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label), (getString(R.string.profile_label).equals(mActionBarTitle)), R.color.profile_color));
+
+            arrayList.add(new NavigationItem(R.drawable.ic_backspace_black_24dp, getString(R.string.logout_label), (getString(R.string.logout_label).equals(mActionBarTitle)), R.color.logout_color));
         }
         catch (Exception ex)
         {
