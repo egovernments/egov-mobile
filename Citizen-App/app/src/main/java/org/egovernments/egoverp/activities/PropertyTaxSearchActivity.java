@@ -70,6 +70,9 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
     public static String IS_VACANT_LAND="isVacantLand";
 
+    public static String PT_CATEGORY_VALUE="PT";
+    public static String VLT_CATEGORY_VALUE="VLT";
+
     boolean isVacantLand=false;
 
     ConfigManager configManager;

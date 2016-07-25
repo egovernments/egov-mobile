@@ -49,11 +49,20 @@ public class PropertySearchRequest {
     String assessmentNo;
     String ownerName;
     String mobileNumber;
+    String category;
 
     public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber) {
         this.ulbCode = ulbCode;
         this.assessmentNo = assessmentNo;
         this.ownerName = ownerName;
         this.mobileNumber = mobileNumber;
+    }
+
+    public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber, String category) {
+        this.ulbCode = ulbCode;
+        this.assessmentNo = assessmentNo;
+        this.ownerName = ownerName;
+        this.mobileNumber = mobileNumber;
+        this.category = category;
     }
 }

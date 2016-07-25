@@ -86,6 +86,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     boolean isExited=false;
     String referrerIp;
+    String category;
     boolean isVacantLand=false;
 
     public static String ULB_CODE="ulbCode";
@@ -119,6 +120,7 @@ public class SearchResultActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewSearchResult.setLayoutManager(linearLayoutManager);
 
+        category=(isVacantLand?PropertyTaxSearchActivity.VLT_CATEGORY_VALUE:PropertyTaxSearchActivity.PT_CATEGORY_VALUE);
 
         itemClickListener=new SearchListAdapater.SearchItemClickListener() {
             @Override
@@ -128,7 +130,7 @@ public class SearchResultActivity extends AppCompatActivity {
         };
 
         ulbCode=getIntegerParam(PropertyTaxSearchActivity.paramUlbCode);
-        showSearchResults(ulbCode, getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo));
+        showSearchResults(ulbCode, getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo), category);
 
     }
 
@@ -229,14 +231,14 @@ public class SearchResultActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSearchResults(final int ulbCode, final String assessmentNo, final String ownerName, final String mobileNo)
+    private void showSearchResults(final int ulbCode, final String assessmentNo, final String ownerName, final String mobileNo, final String category)
     {
 
         showLoadingIndicator();
 
 
         ApiController.getAPI(SearchResultActivity.this)
-                .searchProperty(referrerIp, new PropertySearchRequest(ulbCode, assessmentNo, ownerName, mobileNo),
+                .searchProperty(referrerIp, new PropertySearchRequest(ulbCode, assessmentNo, ownerName, mobileNo, category),
                         new Callback<List<PropertyTaxCallback>>() {
                             @Override
                             public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
@@ -260,7 +262,7 @@ public class SearchResultActivity extends AppCompatActivity {
                                             }
                                             else
                                             {
-                                                showSearchResults(getIntegerParam(PropertyTaxSearchActivity.paramUlbCode), getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo));
+                                                showSearchResults(getIntegerParam(PropertyTaxSearchActivity.paramUlbCode), getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo), category);
                                             }
                                         }
                                         else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))

@@ -50,7 +50,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -105,11 +104,13 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     SessionManager sessionManager;
 
     ConfigManager configManager;
+    boolean isVacantLand=false;
 
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
     String referrerIp;
 
     int ulbCode;
+    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,16 +171,14 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                 else
                 {
 
-
-                    String paymentGatewayUrl=sessionManager.getBaseURL()+configManager.getString("app.payment.gateway.property.tax");
+                    String paymentGatewayUrl=(isVacantLand? configManager.getString("app.payment.gateway.vacantland.tax"):configManager.getString("app.payment.gateway.property.tax"));
+                    paymentGatewayUrl=sessionManager.getBaseURL()+paymentGatewayUrl;
 
                     paymentGatewayUrl=paymentGatewayUrl.replace("{assessmentNo}", tvAssessmentNo.getText().toString());
                     paymentGatewayUrl=paymentGatewayUrl.replace("{ulbCode}", String.valueOf(ulbCode));
                     paymentGatewayUrl=paymentGatewayUrl.replace("{amountToPay}", String.valueOf(amountToPay));
                     paymentGatewayUrl=paymentGatewayUrl.replace("{mobileNo}", etMobileNo.getText().toString());
                     paymentGatewayUrl=paymentGatewayUrl.replace("{emailId}", etMailAddress.getText().toString());
-
-                    Log.v("URL", paymentGatewayUrl);
 
                     Intent intent=new Intent(PropertyTaxViewActivity.this, PaymentGatewayActivity.class);
                     intent.putExtra(PaymentGatewayActivity.PAYMENT_GATEWAY_URL, paymentGatewayUrl);
@@ -228,19 +227,25 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
 
-        //load assessment details from intent param
-        ulbCode=getIntent().getIntExtra(SearchResultActivity.ULB_CODE, 0);
-        submit(getIntent().getStringExtra(SearchResultActivity.ASSESSMENT_NO));
-
-        if(getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false))
+        isVacantLand=getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false);
+        if(isVacantLand)
         {
             getSupportActionBar().setTitle(R.string.view_vacantlandtax);
+            category=PropertyTaxSearchActivity.VLT_CATEGORY_VALUE;
         }
+        else
+        {
+            category=PropertyTaxSearchActivity.PT_CATEGORY_VALUE;
+        }
+
+        //load assessment details from intent param
+        ulbCode=getIntent().getIntExtra(SearchResultActivity.ULB_CODE, 0);
+        submit(getIntent().getStringExtra(SearchResultActivity.ASSESSMENT_NO),category);
 
 
     }
 
-    private void submit(final String code) {
+    private void submit(final String code, final String category) {
 
         propertyTaxDetailsView.setVisibility(View.GONE);
         paymentCardView.setVisibility(View.GONE);
@@ -423,7 +428,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        submit(getIntent().getStringExtra("assessmentNo"));
+        submit(getIntent().getStringExtra("assessmentNo"), category);
     }
 }
 
