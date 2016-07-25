@@ -43,6 +43,7 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -77,6 +78,8 @@ public class ProfileActivity extends BaseActivity {
 
     private ProgressBar progressBar;
 
+    //private ProgressDialog progressDialog;
+
     public static boolean isUpdateFailed = false;
 
     private final int ACTION_UPDATE_REQUIRED = 111;
@@ -87,11 +90,15 @@ public class ProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_profile);
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
+        progressDialog=new ProgressDialog(ProfileActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 /*
         final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
 */
 
-        progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
+        //progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -110,11 +117,16 @@ public class ProfileActivity extends BaseActivity {
             profileEditButtonCompat.setVisibility(View.VISIBLE);
             profileEditButtonCompat.setOnClickListener(onClickListener);
         }*/
-        if (profile != null)
-            updateProfile();
+        if (profile != null) {
+            updateProfile(profile);
+        }
+        else
+        {
+            getProfileDetailsFromServer();
+        }
 
         if (isUpdateFailed) {
-            progressBar.setVisibility(View.GONE);
+            //progressBar.setVisibility(View.GONE);
             isUpdateFailed = false;
         }
 
@@ -140,11 +152,15 @@ public class ProfileActivity extends BaseActivity {
     }
 
     //Cause the layout items to be refreshed
-    private void updateProfile() {
+    private void updateProfile(Profile profile) {
 
-        progressBar.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.GONE);
 
-        setTitle(profile.getName());
+        progressDialog.dismiss();
+
+        sessionManager.setName(profile.getName());
+
+        getSupportActionBar().setTitle(sessionManager.getName());
 
         final TextView name = (TextView) findViewById(R.id.profile_name);
         final TextView emailId = (TextView) findViewById(R.id.profile_email);
@@ -199,8 +215,7 @@ public class ProfileActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
-            Intent intent = new Intent(ProfileActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE);
-            startService(intent);
+            recreate();
         }
 
     }
@@ -231,12 +246,20 @@ public class ProfileActivity extends BaseActivity {
     //Updates the profile page when subscribed and a ProfileUpdatedEvent is posted by the UpdateService
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
-        updateProfile();
+        updateProfile(profileUpdatedEvent.getProfile());
     }
 
     @SuppressWarnings("unused")
     public void onEvent(ProfileUpdateFailedEvent profileUpdateFailedEvent) {
-        progressBar.setVisibility(View.GONE);
+        finish();
+        //progressBar.setVisibility(View.GONE);
+        //progressDialog.show();
+    }
+
+    void getProfileDetailsFromServer()
+    {
+        Intent intent = new Intent(ProfileActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE);
+        startService(intent);
     }
 
 }

@@ -51,7 +51,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
@@ -123,9 +122,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
             viewHolder.description.setText(homeItem.getDescription());
 
-            Drawable drawable=context.getResources().getDrawable(homeItem.getIcon());
-            drawable.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
-            viewHolder.cardIcon.setImageDrawable(drawable);
+            viewHolder.cardIcon.setImageResource(homeItem.getIcon());
+            viewHolder.cardIcon.getDrawable().setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
 
 
             if(homeItem.isGrievanceItem())
