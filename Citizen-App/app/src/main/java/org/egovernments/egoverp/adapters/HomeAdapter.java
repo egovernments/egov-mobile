@@ -196,7 +196,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder.btnPositive.setText(notificationItem.getPositiveButtonText());
             viewHolder.btnNegative.setText(notificationItem.getNegativeButtonText());
 
-            viewHolder.cardViewNotification.setBackgroundColor(notificationItem.getBgColor());
+            viewHolder.cardViewNotification.setCardBackgroundColor(notificationItem.getBgColor());
 
             viewHolder.btnPositive.setOnClickListener(new View.OnClickListener() {
                 @Override
