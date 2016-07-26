@@ -47,6 +47,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/view_toolbar" />
@@ -290,6 +296,9 @@
 
     </ScrollView>
 
+    </LinearLayout>
+
+    <include layout="@layout/layout_powered_by"/>
 
     <!--<com.viewpagerindicator.LinePageIndicator
         android:id="@+id/new_indicator"

@@ -41,10 +41,16 @@
   ~  ******************************************************************************/
   -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+
+      <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="0dp"
+          android:layout_weight="1">
 
 
         <LinearLayout
@@ -187,4 +193,8 @@
 
         </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+
+    <include layout="@layout/layout_powered_by"/>
+
+</LinearLayout>

@@ -46,17 +46,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical"
     android:id="@+id/container">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ScrollView
             android:id="@+id/scrollviewpropertytax"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="20dp"
+            android:paddingBottom="5dp"
             android:clipToPadding="false">
 
             <LinearLayout
@@ -88,5 +90,7 @@
 
         </RelativeLayout>
     </FrameLayout>
+
+    <include layout="@layout/layout_powered_by"/>
 
 </LinearLayout>

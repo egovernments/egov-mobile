@@ -42,21 +42,20 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="org.egovernments.egoverp.activities.CitizenCharterActivity"
-    tools:showIn="@layout/activity_citizen_charter">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/cardview_light_background">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/menu_recyclerview"
+    <View
+        style="@style/Divider"/>
+
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
-
-    <include layout="@layout/layout_powered_by"/>
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/powered_by"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
