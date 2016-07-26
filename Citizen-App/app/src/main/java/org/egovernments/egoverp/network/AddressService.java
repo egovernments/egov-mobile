@@ -99,6 +99,7 @@ public class AddressService extends IntentService {
         // Handle case where no address was found.
         if (addresses == null || addresses.size() == 0) {
             Log.e("Address null", "");
+            EventBus.getDefault().post(new AddressReadyEvent(true));
         } else {
             Address address = addresses.get(0);
             ArrayList<String> addressFragments = new ArrayList<>();

@@ -47,4 +47,22 @@ package org.egovernments.egoverp.events;
  * Posted when address service retrieves an address
  **/
 public class AddressReadyEvent {
+
+    boolean isFailed=false;
+
+    public AddressReadyEvent(boolean isFailed) {
+        this.isFailed = isFailed;
+    }
+
+    public AddressReadyEvent() {
+
+    }
+
+    public boolean isFailed() {
+        return isFailed;
+    }
+
+    public void setFailed(boolean failed) {
+        isFailed = failed;
+    }
 }

@@ -93,7 +93,6 @@ public class ProfileActivity extends BaseActivity {
         progressDialog=new ProgressDialog(ProfileActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
-        progressDialog.show();
 /*
         final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
 */
@@ -122,6 +121,7 @@ public class ProfileActivity extends BaseActivity {
         }
         else
         {
+            progressDialog.show();
             getProfileDetailsFromServer();
         }
 
@@ -156,57 +156,61 @@ public class ProfileActivity extends BaseActivity {
 
         //progressBar.setVisibility(View.GONE);
 
-        progressDialog.dismiss();
-
-        sessionManager.setName(profile.getName());
-
-        getSupportActionBar().setTitle(sessionManager.getName());
-
-        final TextView name = (TextView) findViewById(R.id.profile_name);
-        final TextView emailId = (TextView) findViewById(R.id.profile_email);
-        final TextView mobileNo = (TextView) findViewById(R.id.profile_phoneno);
-        final TextView altMobileNo = (TextView) findViewById(R.id.profile_altphoneno);
-        final TextView dob = (TextView) findViewById(R.id.profile_dateofbirth);
-        final TextView aadhaar = (TextView) findViewById(R.id.profile_aadhaarcardno);
-        final TextView pan = (TextView) findViewById(R.id.profile_PANcardno);
-        final TextView gender = (TextView) findViewById(R.id.profile_gender);
-
-        name.setText(validateIsEmpty(profile.getName()));
-        emailId.setText(validateIsEmpty(profile.getEmailId()));
-        mobileNo.setText(validateIsEmpty(profile.getMobileNumber()));
-        altMobileNo.setText(validateIsEmpty(profile.getAltContactNumber()));
-        if (!TextUtils.isEmpty(profile.getDob())) {
-            try {
-                dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if(progressDialog.isShowing()) {
+                sessionManager.setName(profile.getName());
+                progressDialog.dismiss();
+                finish();
+                startActivity(getIntent());
+                return;
             }
-        }
-        else
-        {
-            dob.setText("-");
-        }
-        aadhaar.setText(validateIsEmpty(profile.getAadhaarCard()));
-        pan.setText(validateIsEmpty(profile.getPanCard()));
-        if (profile.getGender() != null) {
-            switch (profile.getGender()) {
-                case "MALE":
-                    gender.setText(R.string.gender_male_label);
-                    break;
 
-                case "FEMALE":
-                    gender.setText(R.string.gender_female_label);
-                    break;
+            sessionManager.setName(profile.getName());
 
-                case "OTHERS":
-                    gender.setText(R.string.gender_unmentioned_label);
-                    break;
-                default:
-                    gender.setText("-");
-                    break;
+            getSupportActionBar().setTitle(sessionManager.getName());
+            final TextView name = (TextView) findViewById(R.id.profile_name);
+            final TextView emailId = (TextView) findViewById(R.id.profile_email);
+            final TextView mobileNo = (TextView) findViewById(R.id.profile_phoneno);
+            final TextView altMobileNo = (TextView) findViewById(R.id.profile_altphoneno);
+            final TextView dob = (TextView) findViewById(R.id.profile_dateofbirth);
+            final TextView aadhaar = (TextView) findViewById(R.id.profile_aadhaarcardno);
+            final TextView pan = (TextView) findViewById(R.id.profile_PANcardno);
+            final TextView gender = (TextView) findViewById(R.id.profile_gender);
 
+            name.setText(validateIsEmpty(profile.getName()));
+            emailId.setText(validateIsEmpty(profile.getEmailId()));
+            mobileNo.setText(validateIsEmpty(profile.getMobileNumber()));
+            altMobileNo.setText(validateIsEmpty(profile.getAltContactNumber()));
+            if (!TextUtils.isEmpty(profile.getDob())) {
+                try {
+                    dob.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(profile.getDob())));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                dob.setText("-");
             }
-        }
+            aadhaar.setText(validateIsEmpty(profile.getAadhaarCard()));
+            pan.setText(validateIsEmpty(profile.getPanCard()));
+            if (profile.getGender() != null) {
+                switch (profile.getGender()) {
+                    case "MALE":
+                        gender.setText(R.string.gender_male_label);
+                        break;
+
+                    case "FEMALE":
+                        gender.setText(R.string.gender_female_label);
+                        break;
+
+                    case "OTHERS":
+                        gender.setText(R.string.gender_unmentioned_label);
+                        break;
+                    default:
+                        gender.setText("-");
+                        break;
+
+                }
+            }
+
     }
 
     @Override

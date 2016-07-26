@@ -111,6 +111,7 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.events.AddressReadyEvent;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
 import org.egovernments.egoverp.helper.NoFilterAdapter;
@@ -1385,14 +1386,23 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
     //Handles AddressReadyEvent posted by AddressService on success
     @SuppressWarnings("unused")
-    public void onEvent(AddressReadyEvent addressReadyEvent) {
+    public void onEvent(final AddressReadyEvent addressReadyEvent) {
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 progressDialog.dismiss();
                 isPickedLocationFromMap=true;
-                autoCompleteComplaintLoc.setText(AddressService.addressResult);
+                if(addressReadyEvent.isFailed())
+                {
+                    Toast.makeText(getApplicationContext(), "Address not found", Toast.LENGTH_SHORT).show();
+                    autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(marker.getPosition().latitude, 2) +", "+AppUtils.round(marker.getPosition().longitude, 2)+")");
+                }
+                else
+                {
+                    autoCompleteComplaintLoc.setText(AddressService.addressResult);
+                }
+
             }
         });
 

@@ -50,6 +50,8 @@ import com.google.gson.JsonElement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 /**
@@ -78,6 +80,13 @@ public class AppUtils {
         return pattern.matcher(email).matches();
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
 
 }
