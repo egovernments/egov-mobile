@@ -49,5 +49,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="tab_max_width">264dp</dimen>
     <dimen name="splashscreenlogowidth">180dp</dimen>
-    <integer name="homegridcolumns">2</integer>
+    <integer name="homegridcolumns">3</integer>
 </resources>

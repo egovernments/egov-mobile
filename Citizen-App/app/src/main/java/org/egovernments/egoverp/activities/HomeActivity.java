@@ -87,7 +87,7 @@ public class HomeActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);*/
 
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, 2);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, getResources().getInteger(R.integer.homegridcolumns));
         recyclerView.setLayoutManager(gridLayoutManager);
 
         CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
