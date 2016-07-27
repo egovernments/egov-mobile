@@ -788,7 +788,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                                 {
                                     if(TextUtils.isEmpty(autoCompleteComplaintCategory.getText()))
                                     {
-                                        focusOutHandler.postDelayed(nextFocusRunnable, 200);
+                                        focusOutHandler.postDelayed(nextFocusRunnable, 100);
                                     }
                                 }
                             }
@@ -979,20 +979,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             @Override
             public void onClick(DrawablePosition target) {
                 if (target == DrawablePosition.RIGHT) {
-
-                    /*if(autoCompleteTextView == autoCompleteComplaintCategory && TextUtils.isEmpty(autoCompleteTextView.getText()))
-                    {
-                        final String prevText=autoCompleteTextView.getText().toString();
-                        autoCompleteTextView.setText("");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                autoCompleteTextView.showDropDown();
-                                autoCompleteTextView.setText(prevText);
-                            }
-                        }, 50);
-                    }
-                    else*/
                     autoCompleteTextView.showDropDown();
                     autoCompleteTextView.requestFocus();
                 }
