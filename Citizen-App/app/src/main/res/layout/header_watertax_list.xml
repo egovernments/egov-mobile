@@ -48,6 +48,7 @@
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="2dp"
     android:focusable="true"
+    android:focusableInTouchMode="true"
     card_view:cardUseCompatPadding="true"
     android:layout_margin="5dp"
     android:layout_marginBottom="10dp"
@@ -63,7 +64,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:paddingBottom="5dp">
 
             <TextView
                 android:id="@+id/watertax_assessmentno_label"
@@ -161,7 +163,7 @@
                         android:id="@+id/watertax_arrears_total_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right"
                         android:text="@string/arrears_total"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -170,6 +172,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/dataLabelColor"
+                        android:gravity="right"
                         android:layout_marginBottom="5dp"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -185,7 +188,7 @@
                         android:id="@+id/watertax_arrears_penalty_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right"
                         android:text="@string/arrears_penalty"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -193,6 +196,7 @@
                         android:id="@+id/watertax_arrears_penalty"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:textColor="@color/dataLabelColor"
                         android:layout_marginBottom="5dp"
                         android:textSize="@dimen/data_labelSize" />
@@ -216,7 +220,7 @@
                         android:id="@+id/watertax_current_total_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right"
                         android:text="@string/current_total"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -225,6 +229,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/dataLabelColor"
+                        android:gravity="right"
                         android:layout_marginBottom="5dp"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -240,7 +245,7 @@
                         android:id="@+id/watertax_current_penalty_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right"
                         android:text="@string/current_penalty"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -249,6 +254,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/dataLabelColor"
+                        android:gravity="right"
                         android:layout_marginBottom="5dp"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -280,7 +286,7 @@
                         android:id="@+id/watertax_total_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
+                        android:gravity="right"
                         android:text="@string/total"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -288,6 +294,7 @@
                         android:id="@+id/watertax_total"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="right"
                         android:textColor="@color/dataLabelColor"
                         android:textSize="24sp" />
 

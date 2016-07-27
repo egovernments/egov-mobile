@@ -48,12 +48,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -62,12 +65,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
+import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomEditText;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
 import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -82,7 +86,7 @@ import retrofit.client.Response;
 
 public class WaterTaxSearchActivity extends BaseActivity {
 
-    private TextView assessmentNo;
+    private TextView tvConsumerNo;
     private TextView address;
     private TextView locality;
     private TextView ownerContact;
@@ -93,6 +97,18 @@ public class WaterTaxSearchActivity extends BaseActivity {
     Button btnBreakups;
     FloatingActionButton fabPayWaterTax;
     ScrollView scrollViewWaterTax;
+    CardView paymentCardView;
+    EditText etAmountToPay;
+    EditText etMobileNo;
+    EditText etMailAddress;
+
+    CustomEditText searchEditText;
+
+    double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
+
+    String consumerNo;
+
+    ConfigManager configManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,17 +120,69 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
         scrollViewWaterTax = (ScrollView) findViewById(R.id.scrollviewwatertax);
 
-        fabPayWaterTax=(FloatingActionButton)findViewById(R.id.fabpaywatertax);
+        fabPayWaterTax=(FloatingActionButton)findViewById(R.id.fabpay);
         fabPayWaterTax.setVisibility(View.GONE);
+
+        try
+        {
+            configManager= AppUtils.getConfigManager(getApplicationContext());
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
 
         fabPayWaterTax.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
+                {
+                    Toast.makeText(getApplicationContext(), "Please fill all payment input details", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
+                {
+                    Toast.makeText(getApplicationContext(), "Please enter valid email address", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if(etMobileNo.getText().toString().length()<10)
+                {
+                    Toast.makeText(getApplicationContext(), "Please enter valid mobile no", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
+                if(amountToPay<=0)
+                {
+                    Toast.makeText(getApplicationContext(), "Payment amount should be greater than 0", Toast.LENGTH_SHORT).show();
+                }
+                else if(amountToPay> total)
+                {
+                    Toast.makeText(getApplicationContext(), "Payment amount should not be greater than payable amount ("+Math.round(total)+")", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    String paymentGatewayUrl=configManager.getString("app.payment.gateway.water.tax");
+                    paymentGatewayUrl=sessionManager.getBaseURL()+paymentGatewayUrl;
+
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{consumerNo}", tvConsumerNo.getText().toString());
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{ulbCode}", String.format("%04d", sessionManager.getUrlLocationCode()));
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{amountToPay}", String.valueOf(amountToPay));
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{mobileNo}", etMobileNo.getText().toString());
+                    paymentGatewayUrl=paymentGatewayUrl.replace("{emailId}", etMailAddress.getText().toString());
+
+                    Log.v("URL 1212", paymentGatewayUrl);
+
+                    Intent intent=new Intent(WaterTaxSearchActivity.this, PaymentGatewayActivity.class);
+                    intent.putExtra(PaymentGatewayActivity.PAYMENT_GATEWAY_URL, paymentGatewayUrl);
+                    startActivityForResult(intent,1);
+                }
+
             }
         });
 
-        assessmentNo = (TextView) findViewById(R.id.watertax_assessmentno);
+        tvConsumerNo = (TextView) findViewById(R.id.watertax_assessmentno);
         address = (TextView) findViewById(R.id.watertax_address);
         locality = (TextView) findViewById(R.id.watertax_locality);
         ownerContact=(TextView)findViewById(R.id.watertax_ownernamecontact);
@@ -125,10 +193,17 @@ public class WaterTaxSearchActivity extends BaseActivity {
         tvCurrentPenalty = (TextView) findViewById(R.id.watertax_current_penalty);
         tvTotal = (TextView) findViewById(R.id.watertax_total);
 
+        paymentCardView = (CardView)findViewById(R.id.cvPayment);
+        paymentCardView.setVisibility(View.GONE);
+
+        etAmountToPay=(EditText) findViewById(R.id.etAmount);
+        etMobileNo=(EditText) findViewById(R.id.etMobileNo);
+        etMailAddress=(EditText)findViewById(R.id.etMail);
+
 
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        final CustomEditText searchEditText = (CustomEditText) findViewById(R.id.editTextSearch);
+        searchEditText = (CustomEditText) findViewById(R.id.editTextSearch);
         searchEditText.setVisibility(View.VISIBLE);
         searchEditText.setHint(R.string.watertax_search_hint);
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -179,6 +254,7 @@ public class WaterTaxSearchActivity extends BaseActivity {
     private void submit(final String code) {
 
         fabPayWaterTax.setVisibility(View.GONE);
+        paymentCardView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
         if (code.length() < 10) {
@@ -192,7 +268,7 @@ public class WaterTaxSearchActivity extends BaseActivity {
         waterTaxCardView.setVisibility(View.GONE);
 
         ApiController.getAPI(WaterTaxSearchActivity.this)
-                .getWaterTax(ApiUrl.REFERRER_URL,
+                .getWaterTax(configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY),
                         new WaterTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
                         new Callback<WaterTaxCallback>() {
                             @Override
@@ -200,14 +276,20 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
                                 if (taxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
 
-                                    assessmentNo.setText(taxCallback.getConsumerNo());
+                                    tvConsumerNo.setText(taxCallback.getConsumerNo());
                                     address.setText(taxCallback.getPropertyAddress());
                                     locality.setText(taxCallback.getLocalityName());
+
                                     ownerContact.setText(taxCallback.getOwnerName()+" / "+taxCallback.getMobileNo());
+
+                                    if(!TextUtils.isEmpty(taxCallback.getMobileNo()))
+                                    {
+                                        etMobileNo.setText(taxCallback.getMobileNo());
+                                    }
 
                                     String currentInstallmentText=getCurrentInstallmentText();
 
-                                    double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, Total=0;
+                                    arrearsTotal=0; arrearsPenalty=0; currentTotal=0; currentPenalty=0; total=0;
 
                                     for (TaxDetail taxDetail : taxCallback.getTaxDetails()) {
                                         if(currentInstallmentText.equals(taxDetail.getInstallment()))
@@ -220,12 +302,13 @@ public class WaterTaxSearchActivity extends BaseActivity {
                                             arrearsTotal+=taxDetail.getTaxAmount();
                                             arrearsPenalty+=taxDetail.getPenalty();
                                         }
-                                        Total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
+                                        total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
                                     }
 
-                                    if(Total>0)
+                                    if(total>0)
                                     {
                                         fabPayWaterTax.setVisibility(View.VISIBLE);
+                                        paymentCardView.setVisibility(View.VISIBLE);
                                     }
                                     else
                                     {
@@ -235,16 +318,27 @@ public class WaterTaxSearchActivity extends BaseActivity {
                                     }
 
                                     NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-                                    nf1.setMinimumFractionDigits(2);
-                                    nf1.setMaximumFractionDigits(2);
+                                    nf1.setMinimumFractionDigits(0);
+                                    nf1.setMaximumFractionDigits(0);
+
+                                    etAmountToPay.setText(String.valueOf(Math.round(total)));
+                                    if(TextUtils.isEmpty(etMobileNo.getText()))
+                                    {
+                                        etMobileNo.setText(sessionManager.getMobile());
+                                    }
+
+                                    if(!TextUtils.isEmpty(sessionManager.getEmail())) {
+                                        etMailAddress.setText(sessionManager.getEmail());
+                                    }
 
                                     tvArrearsTotal.setText(nf1.format(arrearsTotal));
                                     tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
                                     tvCurrentTotal.setText(nf1.format(currentTotal));
                                     tvCurrentPenalty.setText(nf1.format(currentPenalty));
-                                    tvTotal.setText(nf1.format(Total));
+                                    tvTotal.setText(nf1.format(Math.round(total)));
                                     listBreakups=taxCallback.getTaxDetails();
                                     waterTaxCardView.setVisibility(View.VISIBLE);
+                                    waterTaxCardView.requestFocus();
 
                                 } else {
                                     Toast toast = Toast.makeText(WaterTaxSearchActivity.this, taxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
@@ -305,6 +399,12 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
         return installmentText;
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        submit(searchEditText.getText().toString().trim());
     }
 
 }
