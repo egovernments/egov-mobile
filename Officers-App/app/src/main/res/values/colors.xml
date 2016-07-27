@@ -61,4 +61,6 @@
     <color name="greencolor">#648f2f</color>
     <color name="lightgreencolor">#CC648f2f</color>
     <color name="redcolor">#D32F2E</color>
+    <color name="dividercolor">#2E2E2E</color>
+
 </resources>

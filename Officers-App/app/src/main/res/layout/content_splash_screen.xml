@@ -41,7 +41,7 @@
   ~  ******************************************************************************/
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -54,8 +54,13 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.egov.employee.activity.SplashScreen"
     tools:showIn="@layout/activity_splash_screen"
-    android:orientation="vertical"
     android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
 
     <ImageView
         android:layout_width="250dp"
@@ -132,5 +137,24 @@
     </LinearLayout>
 
 
+    </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/powered_by"
+            android:id="@+id/textView"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+
+</FrameLayout>

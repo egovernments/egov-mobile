@@ -41,15 +41,21 @@
   ~  ******************************************************************************/
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/pagebgcolor"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.egov.employee.activity.ViewTask"
     tools:showIn="@layout/activity_view_task">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -759,5 +765,8 @@
 
     </ScrollView>
 
+    </RelativeLayout>
 
-</RelativeLayout>
+    <include layout="@layout/layout_powered_by" />
+
+</LinearLayout>
