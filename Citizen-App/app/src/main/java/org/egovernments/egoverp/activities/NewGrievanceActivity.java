@@ -65,6 +65,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -771,12 +772,35 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                         setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
                         setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
 
+                        final Runnable nextFocusRunnable=new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshGrievanceTypeAutoComplete(true);
+                            }
+                        };
+
+                        final Handler focusOutHandler=new Handler();
+
+                        autoCompleteComplaintCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                            @Override
+                            public void onFocusChange(View v, boolean hasFocus) {
+                                if(!hasFocus)
+                                {
+                                    if(TextUtils.isEmpty(autoCompleteComplaintCategory.getText()))
+                                    {
+                                        focusOutHandler.postDelayed(nextFocusRunnable, 200);
+                                    }
+                                }
+                            }
+                        });
+
                         autocompleteComplaintType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
                             public void onFocusChange(View v, boolean hasFocus) {
                                 if(hasFocus)
                                 {
-                                    refreshGrievanceTypeAutoComplete();
+                                    focusOutHandler.removeCallbacks(nextFocusRunnable);
+                                    refreshGrievanceTypeAutoComplete(false);
                                 }
                             }
                         });
@@ -784,11 +808,12 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                         autoCompleteComplaintCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                               @Override
                               public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                  if(!autoCompleteComplaintCategory.hasFocus())
+                                  /*if(!autoCompleteComplaintCategory.hasFocus())
                                   {
                                       autocompleteComplaintType.setText("");
-                                      refreshGrievanceTypeAutoComplete();
-                                  }
+                                      refreshGrievanceTypeAutoComplete(true);
+                                  }*/
+                                  refreshGrievanceTypeAutoComplete(true);
                                   autocompleteComplaintType.requestFocus();
                               }
                         });
@@ -859,7 +884,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         });
     }
 
-    private void refreshGrievanceTypeAutoComplete()
+    private void refreshGrievanceTypeAutoComplete(boolean isClearComplaintType)
     {
 
         String complaintCategoryTypedText=autoCompleteComplaintCategory.getText().toString();
@@ -874,6 +899,10 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             {
                 selectedIdx=idx;
                 grievanceTypes.clear();
+                if(isClearComplaintType)
+                {
+                    autocompleteComplaintType.setText("");
+                }
                 for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
                 {
                     grievanceTypes.add(grievanceType.getName());
@@ -931,6 +960,9 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             grievanceTypes.addAll(tempGrievanceTypes);
         }
 
+        final ArrayAdapter<String> adapterGrievanceCategories = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypeCategories);
+        setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
+
         final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
         setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
 
@@ -947,7 +979,22 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             @Override
             public void onClick(DrawablePosition target) {
                 if (target == DrawablePosition.RIGHT) {
+
+                    /*if(autoCompleteTextView == autoCompleteComplaintCategory && TextUtils.isEmpty(autoCompleteTextView.getText()))
+                    {
+                        final String prevText=autoCompleteTextView.getText().toString();
+                        autoCompleteTextView.setText("");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                autoCompleteTextView.showDropDown();
+                                autoCompleteTextView.setText(prevText);
+                            }
+                        }, 50);
+                    }
+                    else*/
                     autoCompleteTextView.showDropDown();
+                    autoCompleteTextView.requestFocus();
                 }
             }
         });

@@ -265,6 +265,13 @@ public class SearchResultActivity extends AppCompatActivity {
                                                 showSearchResults(getIntegerParam(PropertyTaxSearchActivity.paramUlbCode), getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo), category);
                                             }
                                         }
+                                        else if(TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage()))
+                                        {
+                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                                SearchResultActivity.this.finish();
+                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                            }
+                                        }
                                         else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
                                         {
                                             if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
