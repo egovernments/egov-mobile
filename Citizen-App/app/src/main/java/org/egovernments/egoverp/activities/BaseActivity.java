@@ -228,6 +228,10 @@ public class BaseActivity extends AppCompatActivity {
         {
             openWaterTaxPage();
         }
+        else if(getString(R.string.building_plan_label).equals(menuItemText))
+        {
+            openBuildingPlanApprovalPage();
+        }
         else if(getString(R.string.citizen_charter_label).equals(menuItemText))
         {
             openCitizenCharterPage();
@@ -291,6 +295,18 @@ public class BaseActivity extends AppCompatActivity {
         Intent intent;
         if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
             intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
+    public void openBuildingPlanApprovalPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.building_plan_label))) {
+            intent = new Intent(BaseActivity.this, BuildingPlanActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
@@ -396,6 +412,12 @@ public class BaseActivity extends AppCompatActivity {
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
+            }
+
+            //check for building plan module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))

@@ -64,6 +64,7 @@
     <string name="complaintpicture_label">Please upload supporting picture(s)</string>
     <string name="propertytax_search_hint">Property No, Owner Name, Mobile No</string>
     <string name="watertax_search_hint">Enter consumer number</string>
+    <string name="bpa_search_hint">Enter application number</string>
     <string name="name_label">NAME</string>
     <string name="name_label_editprofile">NAME*</string>
     <string name="address_label">ADDRESS</string>
@@ -135,6 +136,7 @@
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
     <string name="watertax_label">Water Tax</string>
+    <string name="building_plan_label">Building Plan Approval</string>
     <string name="vacantlandtax_label">Vacant Land Tax</string>
     <string name="citizen_charter_label">Citizen Charter</string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
@@ -194,5 +196,6 @@ Links to:</string>
     <string name="app_name_launch_screen">MeGov</string>
     <string name="powered_by">Powered by eGovernments Foundation</string>
     <string name="title_activity_pdf_viewer">PdfViewerActivity</string>
+    <string name="title_activity_building_plan">BuildingPlanActivity</string>
 
 </resources>

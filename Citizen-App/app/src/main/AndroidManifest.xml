@@ -38,7 +38,7 @@
   ~
   ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~  ******************************************************************************/
--->
+  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.egovernments.egoverp"
@@ -233,6 +233,10 @@
         <activity
             android:name=".activities.PdfViewerActivity"
             android:label="@string/title_activity_pdf_viewer"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.BuildingPlanActivity"
+            android:label="@string/building_plan_label"
             android:theme="@style/AppTheme"></activity>
     </application>
 
