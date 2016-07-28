@@ -90,6 +90,7 @@ import org.egovernments.egoverp.models.GrievanceUpdate;
 import org.egovernments.egoverp.models.SupportDoc;
 import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
+import org.egovernments.egoverp.network.CustomErrorHandler;
 import org.egovernments.egoverp.network.SessionManager;
 
 import java.text.ParseException;
@@ -362,8 +363,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                                     @Override
                                     public void failure(RetrofitError error) {
                                         if (error.getLocalizedMessage() != null)
-                                            if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                            if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
                                                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                 toast.show();
                                                 sessionManager.logoutUser();
@@ -388,8 +389,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                             public void failure(RetrofitError error) {
 
                                 if (error.getLocalizedMessage() != null)
-                                    if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
                                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                         toast.show();
                                         sessionManager.logoutUser();
@@ -467,8 +468,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
             @Override
             public void failure(RetrofitError error) {
                 if (error.getLocalizedMessage() != null) {
-                    if (error.getLocalizedMessage().equals("Invalid access token")) {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
 

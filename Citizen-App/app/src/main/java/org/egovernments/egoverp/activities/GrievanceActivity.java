@@ -66,6 +66,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.fragments.GrievanceFragment;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
+import org.egovernments.egoverp.network.CustomErrorHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,7 +166,16 @@ public class GrievanceActivity extends BaseActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+
+
+                if(error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE))
+                {
+                    Toast.makeText(getApplicationContext(),  R.string.session_timeout, Toast.LENGTH_SHORT).show();
+                    logoutUser();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

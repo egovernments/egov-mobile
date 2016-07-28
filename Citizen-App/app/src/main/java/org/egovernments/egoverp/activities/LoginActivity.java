@@ -130,6 +130,8 @@ public class LoginActivity extends Activity {
 
     ImageView imgLogo;
 
+    List<String> districts;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -421,7 +423,7 @@ public class LoginActivity extends Activity {
 
         if (districtsList != null) {
 
-            final List<String> districts = new ArrayList<>();
+            districts = new ArrayList<>();
 
             for (int i = 0; i < districtsList.size(); i++) {
                 districts.add(districtsList.get(i).getDistrictName());
@@ -484,6 +486,7 @@ public class LoginActivity extends Activity {
                         if ((position - 1) > -1) {
                             if (isDistrict) {
                                 autocompleteTextBox.setText(districtsList.get(position - 1).getDistrictName());
+                                loadDropdownsWithData(districts, spinnerDistrict, districtAutocompleteTextBox, true);
                                 loadCityDropdown();
                             } else {
                                 City selectedCity = citiesList.get(position - 1);

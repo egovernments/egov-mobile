@@ -65,6 +65,7 @@ import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
 import org.egovernments.egoverp.network.ApiController;
+import org.egovernments.egoverp.network.CustomErrorHandler;
 import org.egovernments.egoverp.network.SessionManager;
 
 import java.text.ParseException;
@@ -301,8 +302,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                 public void failure(RetrofitError error) {
 
                     if (error.getLocalizedMessage() != null)
-                        if (error.getLocalizedMessage().equals("Invalid access token")) {
-                            Toast toast = Toast.makeText(ProfileEditActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                        if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                            Toast toast = Toast.makeText(ProfileEditActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
                             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                             toast.show();
                             sessionManager.logoutUser();

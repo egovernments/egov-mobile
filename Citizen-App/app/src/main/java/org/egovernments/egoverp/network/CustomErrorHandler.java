@@ -57,6 +57,8 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
     String errorDescription;
     ErrorResponse errorMessage;
 
+    public static String SESSION_EXPRIED_MESSAGE="Invalid access token";
+
     @Override
     public Throwable handleError(RetrofitError cause) {
 
@@ -105,9 +107,9 @@ public class CustomErrorHandler implements retrofit.ErrorHandler {
                         if (jsonObject != null) {
                             //If failure due to invalid access token, attempt to renew token
                             String message = jsonObject.get("error_description").toString().trim();
-                            if (message.contains("Invalid access token")) {
+                            if (message.contains(SESSION_EXPRIED_MESSAGE)) {
 
-                                errorDescription = "Invalid access token";
+                                errorDescription = SESSION_EXPRIED_MESSAGE;
 
                             } else return cause;
                         } else return cause;

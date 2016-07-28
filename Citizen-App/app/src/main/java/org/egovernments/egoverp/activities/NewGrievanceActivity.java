@@ -126,6 +126,7 @@ import org.egovernments.egoverp.models.GrievanceTypeCategory;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
 import org.egovernments.egoverp.network.AddressService;
 import org.egovernments.egoverp.network.ApiController;
+import org.egovernments.egoverp.network.CustomErrorHandler;
 import org.egovernments.egoverp.network.SessionManager;
 
 import java.io.File;
@@ -370,8 +371,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                                                                                 @Override
                                                                                 public void failure(RetrofitError error) {
                                                                                     if (error.getLocalizedMessage() != null)
-                                                                                        if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                                                                                        if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                                                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this,  R.string.session_timeout, Toast.LENGTH_SHORT);
                                                                                             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                                                                             toast.show();
                                                                                             sessionManager.logoutUser();
@@ -675,8 +676,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
                 progressDialog.dismiss();
                 if (error.getLocalizedMessage() != null)
-                    if (error.getLocalizedMessage().equals("Invalid access token")) {
-                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                        Toast toast = Toast.makeText(NewGrievanceActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
                         sessionManager.logoutUser();
@@ -833,8 +834,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                     public void failure(RetrofitError error) {
 
                         if (error.getLocalizedMessage() != null)
-                            if (error.getLocalizedMessage().equals("Invalid access token")) {
-                                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Session expired", Toast.LENGTH_SHORT);
+                            if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
+                                Toast toast = Toast.makeText(NewGrievanceActivity.this,  R.string.session_timeout, Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                 toast.show();
                                 sessionManager.logoutUser();
