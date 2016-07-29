@@ -46,7 +46,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.egovernments.egoverp.activities.BuildingPlanActivity">
 
     <FrameLayout
@@ -55,21 +54,20 @@
         android:layout_weight="1">
 
         <ScrollView
-            android:id="@+id/scrollviewwatertax"
+            android:id="@+id/sv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="5dp">
+            android:clipToPadding="false">
 
-            <!--<LinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/header_watertax_list" />
-                <include layout="@layout/payment_layout" />
+                <include layout="@layout/layout_bpa_details"/>
 
-            </LinearLayout>-->
+
+            </LinearLayout>
 
 
         </ScrollView>

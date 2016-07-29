@@ -381,7 +381,7 @@
                             android:ems="10"
                             android:hint="@string/pan_label"
                             android:imeOptions="actionNext"
-                            android:inputType="text"
+                            android:inputType="textCapSentences|textFilter|textNoSuggestions|textVisiblePassword"
                             android:maxLength="10"
                             android:paddingTop="5dp"
                             android:singleLine="true"

@@ -68,6 +68,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomEditText;
+import org.egovernments.egoverp.helper.KeyboardUtils;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
@@ -106,6 +107,8 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
 
+    boolean isKeyboardVisible=false;
+
     String consumerNo;
 
     ConfigManager configManager;
@@ -122,6 +125,15 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
         fabPayWaterTax=(FloatingActionButton)findViewById(R.id.fabpay);
         fabPayWaterTax.setVisibility(View.GONE);
+
+        KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
+        {
+            @Override
+            public void onToggleSoftKeyboard(boolean isVisible)
+            {
+                isKeyboardVisible=isVisible;
+            }
+        });
 
         try
         {
@@ -246,7 +258,7 @@ public class WaterTaxSearchActivity extends BaseActivity {
 
     private void hideSoftKeyboard(InputMethodManager imm)
     {
-        if(imm != null){
+        if(imm != null && isKeyboardVisible){
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
         }
     }

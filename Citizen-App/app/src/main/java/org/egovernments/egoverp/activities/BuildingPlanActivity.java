@@ -44,19 +44,38 @@ package org.egovernments.egoverp.activities;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.CustomEditText;
+import org.egovernments.egoverp.helper.KeyboardUtils;
+import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
+import org.egovernments.egoverp.network.ApiController;
+import org.egovernments.egoverp.network.ApiUrl;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class BuildingPlanActivity extends BaseActivity {
 
     CustomEditText searchEditText;
+    ApiController.APIInterface buildingPlanApi;
+    ProgressBar progressBar;
+    boolean isKeyboardVisible=false;
+    CardView cvApplicationDetails;
+
+    TextView tvApplicationNo, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
+            tvNatureOfSite, tvPermissionType, tvApplicantName, tvApplicantMobNo, tvApplicantEmailId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +84,30 @@ public class BuildingPlanActivity extends BaseActivity {
 
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        tvApplicationNo=(TextView)findViewById(R.id.tvApplicationNo);
+        tvApplicationStatus=(TextView)findViewById(R.id.tvApplicationStatus);
+        tvOwnerName=(TextView)findViewById(R.id.tvOwnerName);
+        tvOwnerMobNo=(TextView)findViewById(R.id.tvOwnerMobNo);
+        tvOwnerEmailId=(TextView)findViewById(R.id.tvOwnerEmailId);
+        tvOwnerAddress=(TextView)findViewById(R.id.tvOwnerAddress);
+        tvSiteAddress=(TextView)findViewById(R.id.tvSiteAddress);
+        tvNatureOfSite=(TextView)findViewById(R.id.tvNatureOfSite);
+        tvPermissionType=(TextView)findViewById(R.id.tvPermissionType);
+        tvApplicantName=(TextView)findViewById(R.id.tvApplicantName);
+        tvApplicantMobNo=(TextView)findViewById(R.id.tvApplicantMobNo);
+        tvApplicantEmailId=(TextView)findViewById(R.id.tvApplicantEmailId);
+        cvApplicationDetails=(CardView)findViewById(R.id.cvApplicationDetails);
+
+        KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
+        {
+            @Override
+            public void onToggleSoftKeyboard(boolean isVisible)
+            {
+                isKeyboardVisible=isVisible;
+            }
+        });
+
         searchEditText = (CustomEditText) findViewById(R.id.editTextSearch);
         searchEditText.setVisibility(View.VISIBLE);
         searchEditText.setHint(R.string.bpa_search_hint);
@@ -72,7 +115,7 @@ public class BuildingPlanActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    //submit(searchEditText.getText().toString().trim());
+                    findBuildingPlanApplication(searchEditText.getText().toString().trim());
                     hideSoftKeyboard(imm);
                 }
                 return true;
@@ -82,7 +125,7 @@ public class BuildingPlanActivity extends BaseActivity {
             @Override
             public void onClick(DrawablePosition target) {
                 if (target == DrawablePosition.RIGHT) {
-                    //submit(searchEditText.getText().toString().trim());
+                    findBuildingPlanApplication(searchEditText.getText().toString().trim());
                     hideSoftKeyboard(imm);
                 }
             }
@@ -91,13 +134,67 @@ public class BuildingPlanActivity extends BaseActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setElevation(0);
 
+        buildingPlanApi=ApiController.getCustomAPI(BuildingPlanActivity.this, ApiUrl.BPA_SERVER_ADDRESS);
+
     }
 
     private void hideSoftKeyboard(InputMethodManager imm)
     {
-        if(imm != null){
+        if(imm != null && isKeyboardVisible){
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
         }
+    }
+
+    public void findBuildingPlanApplication(String applicationNo)
+    {
+
+        if(TextUtils.isEmpty(applicationNo.trim()))
+        {
+            Toast.makeText(getApplicationContext(),"Please enter application no", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressBar.setVisibility(View.VISIBLE);
+        cvApplicationDetails.setVisibility(View.GONE);
+
+        applicationNo=applicationNo.replaceAll("/","$");
+
+        buildingPlanApi.getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY, new Callback<BuildingPlanAPIResponse>() {
+            @Override
+            public void success(BuildingPlanAPIResponse buildingPlanAPIResponse, Response response) {
+
+                progressBar.setVisibility(View.GONE);
+                if(TextUtils.isEmpty(buildingPlanAPIResponse.getSuccess()))
+                {
+                    Toast.makeText(getApplicationContext(), buildingPlanAPIResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    BuildingPlanAPIResponse.Response bpadetails=buildingPlanAPIResponse.getResponse().get(0);
+                    tvApplicationNo.setText(searchEditText.getText());
+                    tvApplicationStatus.setText(bpadetails.getStatus());
+                    tvOwnerName.setText(bpadetails.getOwnerName());
+                    tvOwnerEmailId.setText(bpadetails.getOwnerEmailID());
+                    tvOwnerMobNo.setText(bpadetails.getOwnerMobileNo());
+                    tvOwnerAddress.setText(bpadetails.getOwnerAddress());
+                    tvSiteAddress.setText(bpadetails.getSiteAddress());
+                    tvNatureOfSite.setText(bpadetails.getNatureOfSite());
+                    tvPermissionType.setText(bpadetails.getPermissionType());
+                    tvApplicantName.setText(bpadetails.getLTPName());
+                    tvApplicantEmailId.setText(bpadetails.getLTPEmailID());
+                    tvApplicantMobNo.setText(bpadetails.getLTPMobileNo());
+                    cvApplicationDetails.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+                progressBar.setVisibility(View.GONE);
+
+            }
+        });
+
     }
 
 }

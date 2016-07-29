@@ -123,7 +123,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             viewHolder.description.setText(homeItem.getDescription());
 
             viewHolder.cardIcon.setImageResource(homeItem.getIcon());
-            viewHolder.cardIcon.getDrawable().setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
+            viewHolder.cardIcon.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
 
 
             if(homeItem.isGrievanceItem())

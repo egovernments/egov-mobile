@@ -336,7 +336,7 @@ public class LoginActivity extends Activity {
                     public void success(JsonObject jsonObject, Response response) {
 
                         //Stores access token in session manager
-                        sessionManager.loginUser(username, password,AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                        sessionManager.loginUser(username, password, AppUtils.getNullAsEmptyString(jsonObject.get("name")),
                                 AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
                                 jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                         startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
@@ -357,7 +357,7 @@ public class LoginActivity extends Activity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                if (jsonObject != null) {
+                                if (jsonObject != null && jsonObject.get("error_description")!=null) {
                                     String errorDescription = jsonObject.get("error_description").getAsString().trim();
                                     //If user has attempted to log into a yet to be activated account,
                                     // automatically redirect the user to account activation screen

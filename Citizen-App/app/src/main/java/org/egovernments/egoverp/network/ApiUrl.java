@@ -121,4 +121,15 @@ public class ApiUrl {
      */
 
     public final static String WATER_TAX_DETAILS = "/restapi/watercharges/getwatertaxdetails";
+
+    /**
+     *  Building plan approval
+     */
+
+    public final static String BPA_AUTH_KEY = "PuraSevaADCR@123";
+
+    public final static String BPA_SERVER_ADDRESS="http://apdpms.ap.gov.in:8082";
+
+    public final static String BPA_DETAILS = "/AutoDCR.APServices/PuraSeva/PuraSeva.svc/GetDetailByFileNo/{applicationNo}/{authKey}";
+
 }

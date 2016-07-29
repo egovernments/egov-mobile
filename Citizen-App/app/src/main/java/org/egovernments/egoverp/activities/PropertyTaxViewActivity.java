@@ -262,7 +262,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
         ApiController.getAPI(PropertyTaxViewActivity.this)
                 .getPropertyTax(referrerIp,
-                        new PropertyTaxRequest(String.format("%04d", ulbCode), code),
+                        new PropertyTaxRequest(String.format("%04d", ulbCode), code, category),
                         new Callback<PropertyTaxCallback>() {
                             @Override
                             public void success(PropertyTaxCallback propertyTaxCallback, Response response) {

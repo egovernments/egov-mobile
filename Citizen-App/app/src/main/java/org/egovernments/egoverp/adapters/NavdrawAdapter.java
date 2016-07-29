@@ -184,7 +184,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
             }
 
             holder.imageView.setImageResource(navigationItem.getNavIcon());
-            holder.imageView.getDrawable().setColorFilter(context.getResources().getColor(navigationItem.getMenuColor()), PorterDuff.Mode.SRC_ATOP);
+            holder.imageView.setColorFilter(context.getResources().getColor(navigationItem.getMenuColor()), PorterDuff.Mode.SRC_ATOP);
 
         }
         else{

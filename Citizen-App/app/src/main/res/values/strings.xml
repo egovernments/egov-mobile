@@ -135,7 +135,7 @@
     <string name="city_hint">Municipality</string>
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
-    <string name="watertax_label">Water Tax</string>
+    <string name="watertax_label">Water Charges</string>
     <string name="building_plan_label">Building Plan Approval</string>
     <string name="vacantlandtax_label">Vacant Land Tax</string>
     <string name="citizen_charter_label">Citizen Charter</string>
@@ -198,5 +198,6 @@ Links to:</string>
     <string name="title_activity_pdf_viewer">PdfViewerActivity</string>
     <string name="title_activity_building_plan">BuildingPlanActivity</string>
     <string name="session_timeout">Session expired</string>
+    <string name="application_no">APPLICATION NO</string>
 
 </resources>

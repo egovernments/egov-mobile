@@ -84,6 +84,13 @@
                     android:text="@string/nocomplaints"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(Please click on + circle below to register a complaint)"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
 
             </LinearLayout>
 

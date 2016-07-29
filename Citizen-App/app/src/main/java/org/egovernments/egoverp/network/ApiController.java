@@ -52,6 +52,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
@@ -177,6 +178,22 @@ public class ApiController {
         return apiInterface;
     }
 
+    //For Third Party Servers
+    public static APIInterface getCustomAPI(Context context, String url) {
+        SessionManager sessionManager = new SessionManager(context);
+        APIInterface apiInterface=null;
+        RestAdapter restAdapter = new RestAdapter
+                .Builder()
+                .setClient(new OkClient(client))
+                .setEndpoint(url)
+                .setErrorHandler(new CustomErrorHandler())
+                .build();
+        //logger enable or disable based on app config
+        restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
+        apiInterface = restAdapter.create(APIInterface.class);
+        return apiInterface;
+    }
+
     public interface APIInterface {
 
         @POST(ApiUrl.CITIZEN_REGISTER)
@@ -256,6 +273,9 @@ public class ApiController {
         void getWaterTax(@Header("Referer") String referer,
                          @Body WaterTaxRequest waterTaxRequest,
                          Callback<WaterTaxCallback> taxCallback);
+
+        @GET(ApiUrl.BPA_DETAILS)
+        void getBuildingPlanApprovalDetails(@Path(value = "applicationNo", encode = false) String applicationNo, @Path(value = "authKey", encode = false) String authKey, Callback<BuildingPlanAPIResponse> bpaDetails);
 
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_ACTIVATE)
