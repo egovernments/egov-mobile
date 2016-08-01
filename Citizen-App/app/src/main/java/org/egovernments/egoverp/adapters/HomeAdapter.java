@@ -55,6 +55,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,7 +121,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             viewHolder.title.setText(homeItem.getTitle());
             //viewHolder.title.setCompoundDrawablesWithIntrinsicBounds(homeItem.getIcon(),0,0,0);
-            viewHolder.description.setText(homeItem.getDescription());
+
+            if(!TextUtils.isEmpty(homeItem.getTitle2()))
+            {
+                viewHolder.title2.setText(homeItem.getTitle2());
+                viewHolder.title2.setVisibility(View.VISIBLE);
+            }
 
             viewHolder.cardIcon.setImageResource(homeItem.getIcon());
             viewHolder.cardIcon.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
@@ -302,7 +308,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class HomeViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private TextView description;
+        private TextView title2;
         private ImageView cardIcon;
 
         private CardView cardView;
@@ -316,7 +322,7 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public HomeViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.home_item_title);
-            description = (TextView) v.findViewById(R.id.home_item_text);
+            title2 = (TextView) v.findViewById(R.id.home_item_text);
             cardIcon=(ImageView)v.findViewById(R.id.home_item_icon);
             cardView = (CardView) v.findViewById(R.id.home_card);
             layoutGrievance=(LinearLayout)v.findViewById(R.id.layout_grievance);

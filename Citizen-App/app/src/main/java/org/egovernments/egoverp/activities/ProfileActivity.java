@@ -165,6 +165,7 @@ public class ProfileActivity extends BaseActivity {
             }
 
             sessionManager.setName(profile.getName());
+            sessionManager.setMobileNo(profile.getMobileNumber());
 
             getSupportActionBar().setTitle(sessionManager.getName());
             final TextView name = (TextView) findViewById(R.id.profile_name);

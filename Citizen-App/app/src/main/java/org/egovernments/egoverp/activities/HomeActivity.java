@@ -126,7 +126,7 @@ public class HomeActivity extends BaseActivity {
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), R.drawable.ic_archive_black_36dp, "File grievances or review and update previously filed grievances", getResources().getColor(R.color.grievance_color));
+                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp, "File grievances or review and update previously filed grievances", getResources().getColor(R.color.grievance_color));
                 //grievanceItem.setGrievanceItem(true);
                 homeItemList.add(grievanceItem);
 
@@ -135,35 +135,40 @@ public class HomeActivity extends BaseActivity {
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
+                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertax_label2), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
             }
 
             //check for vacant land tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), R.drawable.ic_vacant_land_36dp, "", getResources().getColor(R.color.vacand_land_color)));
+                homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), getString(R.string.vacantlandtax_label2), R.drawable.ic_vacant_land_36dp, "", getResources().getColor(R.color.vacand_land_color)));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.watertax_label), R.drawable.ic_water_tab_black_36dp, "View water tax details for a consumer code", getResources().getColor(R.color.watertax_color)));
+                homeItemList.add(new HomeItem(getString(R.string.watertax_label), getString(R.string.watertax_label2), R.drawable.ic_water_tab_black_36dp, "View water tax details for a consumer code", getResources().getColor(R.color.watertax_color)));
             }
 
 
             if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")))
             {
-                homeItemList.add(new HomeItem("Building Plan Approval", R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.bpacolor)));
+                homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2), R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.bpacolor)));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp, "", getResources().getColor(R.color.bpcolor)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.birthdeathcertificate","true")))
             {
-                homeItemList.add(new HomeItem("Birth & Death Certificate", R.drawable.ic_certificate_36dp, "", getResources().getColor(R.color.birthdeathcolor)));
+                homeItemList.add(new HomeItem(getString(R.string.birth_death_certificate_label), getString(R.string.birth_death_certificate_label2), R.drawable.ic_certificate_36dp, "", getResources().getColor(R.color.birthdeathcolor)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), R.drawable.ic_grid_on_black_36dp, "", getResources().getColor(R.color.citizen_charter_color)));
+                homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp, "", getResources().getColor(R.color.citizen_charter_color)));
             }
 
 

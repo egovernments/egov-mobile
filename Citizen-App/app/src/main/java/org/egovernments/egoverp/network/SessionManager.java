@@ -264,6 +264,13 @@ public class SessionManager {
         return pref.getString(KEY_NAME, "UNKOWN");
     }
 
+    public void setMobileNo(String mobileNo)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_MOBILE, mobileNo);
+        editor.apply();
+    }
+
     public String getMobile() {
         return pref.getString(KEY_MOBILE, "----");
     }

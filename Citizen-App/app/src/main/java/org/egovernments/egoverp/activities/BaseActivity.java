@@ -420,6 +420,12 @@ public class BaseActivity extends AppCompatActivity {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
+            //check for building plan module enabled or not
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
+            }
+
             if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));

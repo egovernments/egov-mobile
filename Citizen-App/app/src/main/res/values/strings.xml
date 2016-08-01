@@ -108,9 +108,11 @@
     <string name="menu_label">Menu</string>
     <string name="home_label">Home</string>
     <string name="grievances_label">Grievances</string>
+    <string name="grievances_label2"></string>
     <string name="search_property">Search Property</string>
     <string name="search_vacant_land">Search Vacant Land</string>
     <string name="propertytax_label">Property Tax</string>
+    <string name="propertax_label2"></string>
     <string name="view_propertytax">View Property Tax</string>
     <string name="view_vacantlandtax">View Vacant Land Tax</string>
     <string name="profile_label">My Profile</string>
@@ -136,9 +138,13 @@
     <string name="register_profile_municipality_info">Your account is specific to a municipality. You must register a new account if you wish to change to a new municipality.</string>
     <string name="splashscreen_loading">Preparing resources…</string>
     <string name="watertax_label">Water Charges</string>
+    <string name="watertax_label2"></string>
     <string name="building_plan_label">Building Plan Approval</string>
+    <string name="building_plan_label2"></string>
     <string name="vacantlandtax_label">Vacant Land Tax</string>
+    <string name="vacantlandtax_label2"></string>
     <string name="citizen_charter_label">Citizen Charter</string>
+    <string name="citizen_charter_label2"></string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">DATE OF BIRTH</string>
@@ -199,5 +205,9 @@ Links to:</string>
     <string name="title_activity_building_plan">BuildingPlanActivity</string>
     <string name="session_timeout">Session expired</string>
     <string name="application_no">APPLICATION NO</string>
+    <string name="building_penalization_label">Building Penalization</string>
+    <string name="birth_death_certificate_label"><![CDATA[Birth & Death Certificate]]></string>
+    <string name="birth_death_certificate_label2"></string>
+    <string name="building_penalization_label2"></string>
 
 </resources>

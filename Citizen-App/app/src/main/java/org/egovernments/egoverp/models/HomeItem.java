@@ -52,6 +52,7 @@ public class HomeItem {
     private boolean isNotificationItem =false;
     private NotificationItem notificationItem;
     int iconColor;
+    String title2;
 
     public HomeItem(String title, int icon, String description) {
         this.title = title;
@@ -61,6 +62,14 @@ public class HomeItem {
 
     public HomeItem(String title, int icon, String description, int iconColor) {
         this.title = title;
+        this.icon = icon;
+        this.description = description;
+        this.iconColor = iconColor;
+    }
+
+    public HomeItem(String title, String title2, int icon, String description, int iconColor) {
+        this.title = title;
+        this.title2 = title2;
         this.icon = icon;
         this.description = description;
         this.iconColor = iconColor;
@@ -117,4 +126,13 @@ public class HomeItem {
     public void setIconColor(int iconColor) {
         this.iconColor = iconColor;
     }
+
+    public String getTitle2() {
+        return title2;
+    }
+
+    public void setTitle2(String title2) {
+        this.title2 = title2;
+    }
+
 }

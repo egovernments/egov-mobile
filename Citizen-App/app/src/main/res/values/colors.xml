@@ -63,9 +63,10 @@
     <color name="grievance_color">#F85555</color>
     <color name="propertytax_color">#009588</color>
     <color name="vacand_land_color">#FB9500</color>
-    <color name="watertax_color">#64B5F6</color>
+    <color name="watertax_color">#26C6DA</color>
     <color name="citizen_charter_color">#BA68C8</color>
     <color name="bpacolor">#795548</color>
+    <color name="bpcolor">#FF8A65</color>
     <color name="birthdeathcolor">#607D8B</color>
     <color name="profile_color">#899BA6</color>
     <color name="logout_color">#899BA6</color>
