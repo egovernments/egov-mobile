@@ -135,7 +135,7 @@ public class HomeActivity extends BaseActivity {
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertax_label2), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
+                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertytax_label2), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
             }
 
             //check for vacant land tax module enabled or not

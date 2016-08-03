@@ -45,7 +45,10 @@ package org.egovernments.egoverp.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -55,11 +58,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.adapters.FilesDownloadAdapter;
 import org.egovernments.egoverp.helper.CustomEditText;
 import org.egovernments.egoverp.helper.KeyboardUtils;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
+import org.egovernments.egoverp.models.DownloadDoc;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
+
+import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -74,8 +81,10 @@ public class BuildingPlanActivity extends BaseActivity {
     boolean isKeyboardVisible=false;
     CardView cvApplicationDetails;
 
-    TextView tvApplicationNo, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
+    TextView tvApplicationNo, tvApplicationType, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
             tvNatureOfSite, tvPermissionType, tvApplicantName, tvApplicantMobNo, tvApplicantEmailId;
+
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +95,7 @@ public class BuildingPlanActivity extends BaseActivity {
 
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
         tvApplicationNo=(TextView)findViewById(R.id.tvApplicationNo);
+        tvApplicationType=(TextView)findViewById(R.id.tvApplicationType);
         tvApplicationStatus=(TextView)findViewById(R.id.tvApplicationStatus);
         tvOwnerName=(TextView)findViewById(R.id.tvOwnerName);
         tvOwnerMobNo=(TextView)findViewById(R.id.tvOwnerMobNo);
@@ -98,6 +108,9 @@ public class BuildingPlanActivity extends BaseActivity {
         tvApplicantMobNo=(TextView)findViewById(R.id.tvApplicantMobNo);
         tvApplicantEmailId=(TextView)findViewById(R.id.tvApplicantEmailId);
         cvApplicationDetails=(CardView)findViewById(R.id.cvApplicationDetails);
+
+        recyclerView=(RecyclerView)findViewById(R.id.recylerViewFiles);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
         {
@@ -157,20 +170,26 @@ public class BuildingPlanActivity extends BaseActivity {
         progressBar.setVisibility(View.VISIBLE);
         cvApplicationDetails.setVisibility(View.GONE);
 
-        applicationNo=applicationNo.replaceAll("/","$");
+        applicationNo=applicationNo.replaceAll("/","\\$");
+
+        Log.v("Application No", applicationNo);
 
         buildingPlanApi.getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY, new Callback<BuildingPlanAPIResponse>() {
             @Override
             public void success(BuildingPlanAPIResponse buildingPlanAPIResponse, Response response) {
 
                 progressBar.setVisibility(View.GONE);
-                if(TextUtils.isEmpty(buildingPlanAPIResponse.getSuccess()))
+                if(TextUtils.isEmpty(buildingPlanAPIResponse.getStatus()))
                 {
+                    Toast.makeText(getApplicationContext(), buildingPlanAPIResponse.getError(), Toast.LENGTH_SHORT).show();
+                }
+                else if(!buildingPlanAPIResponse.getStatus().equals("success")){
                     Toast.makeText(getApplicationContext(), buildingPlanAPIResponse.getError(), Toast.LENGTH_SHORT).show();
                 }
                 else{
                     BuildingPlanAPIResponse.Response bpadetails=buildingPlanAPIResponse.getResponse().get(0);
                     tvApplicationNo.setText(searchEditText.getText());
+                    tvApplicationType.setText(bpadetails.getCaseType());
                     tvApplicationStatus.setText(bpadetails.getStatus());
                     tvOwnerName.setText(bpadetails.getOwnerName());
                     tvOwnerEmailId.setText(bpadetails.getOwnerEmailID());
@@ -183,8 +202,30 @@ public class BuildingPlanActivity extends BaseActivity {
                     tvApplicantEmailId.setText(bpadetails.getLTPEmailID());
                     tvApplicantMobNo.setText(bpadetails.getLTPMobileNo());
                     cvApplicationDetails.setVisibility(View.VISIBLE);
-                }
 
+
+
+                    ArrayList<DownloadDoc> downloadDocs=new ArrayList<>();
+
+                    if(!TextUtils.isEmpty(bpadetails.getDrawingPlain()))
+                    {
+                      downloadDocs.add(new DownloadDoc("Drawing-Plan-Document", bpadetails.getDrawingPlain()));
+                    }
+
+                    if(!TextUtils.isEmpty(bpadetails.getProceedingLetter()))
+                    {
+                        downloadDocs.add(new DownloadDoc("Proceeding-Letter", bpadetails.getProceedingLetter()));
+                    }
+
+                    if(!TextUtils.isEmpty(bpadetails.getScrutinyReport()))
+                    {
+                        downloadDocs.add(new DownloadDoc("Scrutiny-Report", bpadetails.getScrutinyReport()));
+                    }
+
+                    recyclerView.setAdapter(new FilesDownloadAdapter(BuildingPlanActivity.this, downloadDocs));
+
+
+                }
             }
 
             @Override

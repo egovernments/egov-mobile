@@ -60,9 +60,9 @@ public class BuildingPlanAPIResponse {
     @SerializedName("response")
     @Expose
     private List<Response> response = new ArrayList<Response>();
-    @SerializedName("success")
+    @SerializedName("Status")
     @Expose
-    private String success;
+    private String status;
 
     /**
      *
@@ -103,19 +103,19 @@ public class BuildingPlanAPIResponse {
     /**
      *
      * @return
-     * The success
+     * The status
      */
-    public String getSuccess() {
-        return success;
+    public String getStatus() {
+        return status;
     }
 
     /**
      *
-     * @param success
-     * The success
+     * @param status
+     * The status
      */
-    public void setSuccess(String success) {
-        this.success = success;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public class Response {
@@ -153,10 +153,18 @@ public class BuildingPlanAPIResponse {
         @SerializedName("SiteAddress")
         @Expose
         private String siteAddress;
-        @SerializedName("Status")
+        @SerializedName("ProposalStatus")
         @Expose
         private String status;
-
+        @SerializedName("DrawingPlain")
+        @Expose
+        private String drawingPlain;
+        @SerializedName("ProceedingLetter")
+        @Expose
+        private String proceedingLetter;
+        @SerializedName("ScrutinyReport")
+        @Expose
+        private String scrutinyReport;
         /**
          *
          * @return
@@ -371,6 +379,60 @@ public class BuildingPlanAPIResponse {
          */
         public void setStatus(String status) {
             this.status = status;
+        }
+
+        /**
+         *
+         * @return
+         * The drawingPlain
+         */
+        public String getDrawingPlain() {
+            return drawingPlain;
+        }
+
+        /**
+         *
+         * @param drawingPlain
+         * The DrawingPlain
+         */
+        public void setDrawingPlain(String drawingPlain) {
+            this.drawingPlain = drawingPlain;
+        }
+
+        /**
+         *
+         * @return
+         * The proceedingLetter
+         */
+        public String getProceedingLetter() {
+            return proceedingLetter;
+        }
+
+        /**
+         *
+         * @param proceedingLetter
+         * The ProceedingLetter
+         */
+        public void setProceedingLetter(String proceedingLetter) {
+            this.proceedingLetter = proceedingLetter;
+        }
+
+        /**
+         *
+         * @return
+         * The scrutinyReport
+         */
+        public String getScrutinyReport() {
+            return scrutinyReport;
+        }
+
+        /**
+         *
+         * @param scrutinyReport
+         * The ScrutinyReport
+         */
+        public void setScrutinyReport(String scrutinyReport) {
+            this.scrutinyReport = scrutinyReport;
         }
 
     }
