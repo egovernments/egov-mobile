@@ -306,31 +306,22 @@ public class RegisterActivity extends AppCompatActivity {
 
         City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
 
-        if ((selectedCity == null && isMultiCity) || TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneno) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmpassword)) {
-            Toast toast = Toast.makeText(RegisterActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+        if ((selectedCity == null && isMultiCity)) {
+            showValidationErrorMessage("Please select the your district and city");
+        } else if(TextUtils.isEmpty(name)){
+            showValidationErrorMessage("Please enter your name");
+        } else if(TextUtils.isEmpty(phoneno)){
+            showValidationErrorMessage("Please enter your phone no");
         } else if (phoneno.length() != 10) {
-            Toast toast = Toast.makeText(RegisterActivity.this, "Phone no. must be 10 digits", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
-        } else if (!isValidEmail(email)) {
-            Toast toast = Toast.makeText(RegisterActivity.this, "Please enter a valid email ID", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showValidationErrorMessage("Phone no. must be 10 digits");
+        } else if(!TextUtils.isEmpty(email) && !isValidEmail(email)){
+            showValidationErrorMessage("Please enter a valid email ID");
+        } else if(TextUtils.isEmpty(password)){
+            showValidationErrorMessage("Please enter the password");
         } else if (!isValidPassword(password)) {
-            Toast toast = Toast.makeText(RegisterActivity.this, getPasswordConstraintInformation(), Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showValidationErrorMessage(getPasswordConstraintInformation());
         } else if (!password.equals(confirmpassword)) {
-            Toast toast = Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showValidationErrorMessage("Passwords do not match");
         } else {
 
             if(isMultiCity)
@@ -657,6 +648,13 @@ public class RegisterActivity extends AppCompatActivity {
         return null;
     }
 
+    public void showValidationErrorMessage(String message)
+    {
+        Toast toast = Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
+        progressDialog.dismiss();
+    }
 
 
 
