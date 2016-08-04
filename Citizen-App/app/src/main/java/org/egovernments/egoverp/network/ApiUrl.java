@@ -132,4 +132,16 @@ public class ApiUrl {
 
     public final static String BPA_DETAILS = "/AutoDCR.APServices/PuraSeva/PuraSeva.svc/GetDetailByFileNo/{applicationNo}/{authKey}";
 
+    /**
+     *  Building penalization
+     */
+
+    public final static String BPS_SOAP_ACTION = "http://103.231.212.217/AppStatus/Status";
+
+    public final static String BPS_SOAP_METHOD_NAME = "Status";
+
+    public final static String BPS_SOAP_NAMESPACE = "http://103.231.212.217/AppStatus/";
+
+    public final static String BPS_URL = "http://103.231.212.217/AppStatus/AppStatus.svc?wsdl";
+
 }
