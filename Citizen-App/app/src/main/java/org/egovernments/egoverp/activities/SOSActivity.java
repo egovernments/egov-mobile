@@ -87,11 +87,6 @@ public class SOSActivity extends BaseActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(SOSActivity.this));
 
-        /*ArrayList<EmergencyContact> emergencyContacts=new ArrayList<>();
-        emergencyContacts.add(new EmergencyContact("108", "Ambulance"));
-        emergencyContacts.add(new EmergencyContact("108", "Fire Station"));
-        emergencyContacts.add(new EmergencyContact("1234567890", "Police Station"));*/
-
         JsonParser parser=new JsonParser();
         Gson gson=new Gson();
         ArrayList<EmergencyContact> emergencyContacts=gson.fromJson(parser.parse(loadJSONFromAsset()), new TypeToken<List<EmergencyContact>>(){}.getType());
