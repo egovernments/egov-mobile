@@ -145,6 +145,8 @@
     <string name="vacantlandtax_label2"></string>
     <string name="citizen_charter_label">Citizen Charter</string>
     <string name="citizen_charter_label2"></string>
+    <string name="sos_label">Emergency</string>
+    <string name="aboutus_label">About us</string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">DATE OF BIRTH</string>
@@ -211,5 +213,6 @@ Links to:</string>
     <string name="building_penalization_label2"></string>
     <string name="title_activity_reset_password">Reset Password</string>
     <string name="title_activity_sos">SOSActivity</string>
+    <string name="title_activity_about_us">AboutUsActivity</string>
 
 </resources>

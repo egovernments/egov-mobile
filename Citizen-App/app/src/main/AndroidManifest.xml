@@ -52,8 +52,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CALL_PHONE" android:required="false" />
-
+    <uses-permission
+        android:name="android.permission.CALL_PHONE"
+        android:required="false" />
     <uses-permission
         android:name="android.permission.CAMERA"
         android:required="false" />
@@ -253,6 +254,10 @@
         <activity
             android:name=".activities.SOSActivity"
             android:label="@string/sos_label"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.AboutUsActivity"
+            android:label="@string/aboutus_label"
             android:theme="@style/AppTheme"></activity>
     </application>
 

@@ -244,6 +244,10 @@ public class BaseActivity extends AppCompatActivity {
         {
             openSOSPage();
         }
+        else if(getString(R.string.aboutus_label).equals(menuItemText))
+        {
+            openAboutUsPage();
+        }
         else if(getString(R.string.profile_label).equals(menuItemText))
         {
             openProfilePage();
@@ -371,6 +375,18 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void openAboutUsPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.aboutus_label))) {
+            intent = new Intent(BaseActivity.this, AboutUsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(intent, 0);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
     public void logoutUser()
     {
         progressDialog.show();
@@ -466,7 +482,12 @@ public class BaseActivity extends AppCompatActivity {
 
             if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
             {
-                arrayList.add(new NavigationItem(R.drawable.ic_call_black_24dp, getString(R.string.sos_label), (getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
+                arrayList.add(new NavigationItem(R.drawable.ic_call_black_36dp, getString(R.string.sos_label),(getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.aboutus","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_info_black_24dp, getString(R.string.aboutus_label),(getString(R.string.aboutus_label).equals(mActionBarTitle)), R.color.aboutus_color));
             }
 
             arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label), (getString(R.string.profile_label).equals(mActionBarTitle)), R.color.profile_color));
