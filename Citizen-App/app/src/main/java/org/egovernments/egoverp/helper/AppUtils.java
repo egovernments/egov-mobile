@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -88,5 +89,49 @@ public class AppUtils {
         return bd.doubleValue();
     }
 
+    /* PASSWORD LEVEL LOW VALIDATION */
+    public static boolean checkPasswordLowLevel(String password)
+    {
+        String numExp=".*[0-9].*";
+        String alphaCapExp=".*[A-Z].*";
+        String alphaSmallExp=".*[a-z].*";
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=4));
+    }
+
+    /* PASSWORD LEVEL MEDIUM VALIDATION */
+    public static boolean checkPasswordMediumLevel(String password)
+    {
+        String numExp=".*[0-9].*";
+        String alphaCapExp=".*[A-Z].*";
+        String alphaSmallExp=".*[a-z].*";
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=8));
+    }
+
+    /* PASSWORD LEVEL HIGH VALIDATION */
+    public static boolean checkPasswordHighLevel(String password)
+    {
+        String expression="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^+=_?();:])(?=\\S+$).{8,32}$";
+        String exceptCharExp=".*[&<>#%\"'].*";
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches() && !password.matches(exceptCharExp);
+    }
+
+
+    public static boolean isValidPassword(String password, ConfigManager configManager) {
+        String pwdLevel=configManager.getString("app.passwordLevel");
+        if(pwdLevel.equals(PasswordLevel.HIGH))
+        {
+            return AppUtils.checkPasswordHighLevel(password);
+        }
+        else if(pwdLevel.equals(PasswordLevel.MEDIUM))
+        {
+            return AppUtils.checkPasswordMediumLevel(password);
+        }
+        else
+        {
+            return AppUtils.checkPasswordLowLevel(password);
+        }
+    }
 
 }

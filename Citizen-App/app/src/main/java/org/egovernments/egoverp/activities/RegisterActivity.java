@@ -241,49 +241,6 @@ public class RegisterActivity extends AppCompatActivity {
         return matcher.matches();
     }
 
-    private boolean isValidPassword(String password) {
-        String pwdLevel=configManager.getString("app.passwordLevel");
-        if(pwdLevel.equals(PasswordLevel.HIGH))
-        {
-            return checkPasswordHighLevel(password);
-        }
-        else if(pwdLevel.equals(PasswordLevel.MEDIUM))
-        {
-            return checkPasswordMediumLevel(password);
-        }
-        else
-        {
-            return checkPasswordLowLevel(password);
-        }
-    }
-
-    /* PASSWORD LEVEL LOW VALIDATION */
-    private boolean checkPasswordLowLevel(String password)
-    {
-        String numExp=".*[0-9].*";
-        String alphaCapExp=".*[A-Z].*";
-        String alphaSmallExp=".*[a-z].*";
-        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=4));
-    }
-
-    /* PASSWORD LEVEL MEDIUM VALIDATION */
-    private boolean checkPasswordMediumLevel(String password)
-    {
-        String numExp=".*[0-9].*";
-        String alphaCapExp=".*[A-Z].*";
-        String alphaSmallExp=".*[a-z].*";
-        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=8));
-    }
-
-    /* PASSWORD LEVEL HIGH VALIDATION */
-    private boolean checkPasswordHighLevel(String password)
-    {
-        String expression="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%^+=_?();:])(?=\\S+$).{8,32}$";
-        String exceptCharExp=".*[&<>#%\"'].*";
-        Pattern pattern = Pattern.compile(expression);
-        Matcher matcher = pattern.matcher(password);
-        return matcher.matches() && !password.matches(exceptCharExp);
-    }
 
     private String getPasswordConstraintInformation()
     {
@@ -318,7 +275,7 @@ public class RegisterActivity extends AppCompatActivity {
             showValidationErrorMessage("Please enter a valid email ID");
         } else if(TextUtils.isEmpty(password)){
             showValidationErrorMessage("Please enter the password");
-        } else if (!isValidPassword(password)) {
+        } else if (!AppUtils.isValidPassword(password, configManager)) {
             showValidationErrorMessage(getPasswordConstraintInformation());
         } else if (!password.equals(confirmpassword)) {
             showValidationErrorMessage("Passwords do not match");

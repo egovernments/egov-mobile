@@ -100,8 +100,24 @@ public class SplashScreenActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
+                            long lastForgotPwdOTPTime=sessionManager.getForgotPasswordTime();
+
+                            long expiryOTPTime=lastForgotPwdOTPTime+(5*60*1000); //Find OTP Expiry Time (+5 mins)
+
+                            if((expiryOTPTime-System.currentTimeMillis()) > 0 && !TextUtils.isEmpty(sessionManager.getResetPasswordLastMobileNo()))
+                            {
+                                Intent resetPasswordActivity=new Intent(getApplicationContext(), ResetPasswordActivity.class);
+                                resetPasswordActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, sessionManager.getResetPasswordLastMobileNo());
+                                startActivity(resetPasswordActivity);
+                                finish();
+                                return;
+                            }
+
                             startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
                             finish();
+
                         }
                     });
                 }

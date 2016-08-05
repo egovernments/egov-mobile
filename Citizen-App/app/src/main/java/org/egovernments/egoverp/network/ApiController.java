@@ -294,6 +294,14 @@ public class ApiController {
                              @Field("redirectURL") String redirectURL,
                              Callback<JsonObject> jsonObjectCallback);
 
+        @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_PASSWORD_RECOVER)
+        void resetPassword(@Field("identity") String identity,
+                             @Field("token") String token,
+                             @Field("newPassword") String newPassword,
+                             @Field("confirmPassword") String confirmPassword,
+                             Callback<JsonObject> jsonObjectCallback);
+
         @GET(ApiUrl.CITIZEN_GET_PROFILE)
         void getProfile(@Query(value = "access_token", encodeValue = false) String access_token,
                         Callback<ProfileAPIResponse> profileAPIResponseCallback);

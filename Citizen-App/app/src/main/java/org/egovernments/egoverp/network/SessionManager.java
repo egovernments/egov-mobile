@@ -93,6 +93,10 @@ public class SessionManager {
 
     public static final String KEY_PROFILE_NOTIFY_DIMISSED="isProfileDismissed";
 
+    public static final String KEY_RESET_PASSWORD_LAST_TIME="resetPwdLastTime";
+
+    public static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
+
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
     }
@@ -278,4 +282,27 @@ public class SessionManager {
     public String getEmail() {
         return pref.getString(KEY_EMAIL, "----");
     }
+
+    public void setForgotPasswordTime(long milliseconds)
+    {
+        editor = pref.edit();
+        editor.putLong(KEY_RESET_PASSWORD_LAST_TIME, milliseconds);
+        editor.apply();
+    }
+
+    public Long getForgotPasswordTime() {
+        return pref.getLong(KEY_RESET_PASSWORD_LAST_TIME, 0l);
+    }
+
+    public void setResetPasswordLastMobileNo(String mobileNo)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_RESET_PASSWORD_LAST_MOBILE_NO, mobileNo);
+        editor.apply();
+    }
+
+    public String getResetPasswordLastMobileNo() {
+        return pref.getString(KEY_RESET_PASSWORD_LAST_MOBILE_NO, "");
+    }
+
 }

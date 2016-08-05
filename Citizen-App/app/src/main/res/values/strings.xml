@@ -71,7 +71,7 @@
     <string name="owner_label">OWNER NAME</string>
     <string name="phone_label">PHONE NO.</string>
     <string name="phone_label_normal">Phone No.</string>
-    <string name="phone_label_editprofile">PHONE NO.*</string>
+    <string name="phone_label_editprofile">PHONE NO.(Non-editable)</string>
     <string name="altphone_label">ALTERNATE PHONE NO.</string>
     <string name="email_label">EMAIL ADDRESS</string>
     <string name="email_label_normal">Email Address (Optional)</string>
@@ -209,5 +209,6 @@ Links to:</string>
     <string name="birth_death_certificate_label"><![CDATA[Birth & Death Certificate]]></string>
     <string name="birth_death_certificate_label2"></string>
     <string name="building_penalization_label2"></string>
+    <string name="title_activity_reset_password">Reset Password</string>
 
 </resources>

@@ -237,7 +237,17 @@
         <activity
             android:name=".activities.BuildingPlanActivity"
             android:label="@string/building_plan_label"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:label="@string/title_activity_reset_password"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

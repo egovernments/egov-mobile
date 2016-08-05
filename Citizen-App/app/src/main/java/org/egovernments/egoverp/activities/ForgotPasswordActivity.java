@@ -43,11 +43,13 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -81,6 +83,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private FloatingActionButton sendButton;
     private com.melnykov.fab.FloatingActionButton sendButtonCompat;
 
+    EditText phone_edittext;
+
     private SessionManager sessionManager;
 
     @Override
@@ -103,7 +107,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
         sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
 
-        final EditText phone_edittext = (EditText) findViewById(R.id.forgotpassword_edittext);
+        phone_edittext = (EditText) findViewById(R.id.forgotpassword_edittext);
         phone_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -152,7 +156,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     //Invokes call to API
-    private void submit(String phone) {
+    private void submit(final String phone) {
 
         if (TextUtils.isEmpty(phone)) {
             Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_SHORT);
@@ -176,11 +180,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 sendButtonCompat.setVisibility(View.VISIBLE);
             }
         } else {
+
+
+
             ApiController.resetAndGetAPI(ForgotPasswordActivity.this).recoverPassword(phone, sessionManager.getBaseURL(), new Callback<JsonObject>() {
                 @Override
                 public void success(JsonObject resp, Response response) {
 
-                    Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.recoverymessage_msg, Toast.LENGTH_SHORT);
+                    String message=resp.get("status").getAsJsonObject().get("message").getAsString();
+
+                    Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                     toast.show();
 
@@ -190,7 +199,18 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     } else {
                         sendButtonCompat.setVisibility(View.VISIBLE);
                     }
-                    finish();
+
+
+                    long millis = System.currentTimeMillis();
+
+                    sessionManager.setForgotPasswordTime(millis);
+                    sessionManager.setResetPasswordLastMobileNo(phone);
+
+                    Intent resetPasswordActivity=new Intent(getApplicationContext(), ResetPasswordActivity.class);
+                    resetPasswordActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, phone_edittext.getText().toString());
+                    resetPasswordActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(resetPasswordActivity);
 
                 }
 
@@ -198,8 +218,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 public void failure(RetrofitError error) {
                     if (error != null) {
                         if (error.getLocalizedMessage() != null) {
-                            Toast toast = Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            Toast toast = Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG);
                             toast.show();
                         }
                     }
