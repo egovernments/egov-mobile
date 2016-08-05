@@ -91,10 +91,19 @@ public class CitizenCharterActivity extends BaseActivity {
                 {
                     pdfUrl="http://egovernments.org/egov-apps/puraseva/citizen-charter/revenue-section.pdf";
                 }
-                else
+                else if(position==1)
                 {
                     pdfUrl="http://egovernments.org/egov-apps/puraseva/citizen-charter/engineering-section.pdf";
                 }
+                else if(position==2)
+                {
+                    pdfUrl="http://egovernments.org/egov-apps/puraseva/citizen-charter/health-section.pdf";
+                }
+                else if(position==3)
+                {
+                    pdfUrl="http://egovernments.org/egov-apps/puraseva/citizen-charter/town-planing-section.pdf";
+                }
+
                 Intent openPdfViewer=new Intent(CitizenCharterActivity.this, PdfViewerActivity.class);
                 openPdfViewer.putExtra(PdfViewerActivity.PAGE_TITLE, homeItemList.get(position).getTitle());
                 openPdfViewer.putExtra(PdfViewerActivity.PDF_URL, pdfUrl);

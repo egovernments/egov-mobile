@@ -207,7 +207,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     sessionManager.setResetPasswordLastMobileNo(phone);
 
                     Intent resetPasswordActivity=new Intent(getApplicationContext(), ResetPasswordActivity.class);
-                    resetPasswordActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, phone_edittext.getText().toString());
                     resetPasswordActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(resetPasswordActivity);
