@@ -171,6 +171,11 @@ public class HomeActivity extends BaseActivity {
                 homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp, "", getResources().getColor(R.color.citizen_charter_color)));
             }
 
+            if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.sos_label)," ", R.drawable.ic_call_black_36dp, "", getResources().getColor(R.color.sos_color)));
+            }
+
 
         }
         catch (IOException ex)

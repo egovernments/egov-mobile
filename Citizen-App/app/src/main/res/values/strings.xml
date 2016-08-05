@@ -210,5 +210,6 @@ Links to:</string>
     <string name="birth_death_certificate_label2"></string>
     <string name="building_penalization_label2"></string>
     <string name="title_activity_reset_password">Reset Password</string>
+    <string name="title_activity_sos">SOSActivity</string>
 
 </resources>

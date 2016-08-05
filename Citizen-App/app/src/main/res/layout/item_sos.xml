@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ /*******************************************************************************
+  ~  eGov suite of products aim to improve the internal efficiency,transparency,
+  ~      accountability and the service delivery of the government  organizations.
+  ~
+  ~        Copyright (C) <2016>  eGovernments Foundation
+  ~
+  ~        The updated version of eGov suite of products as by eGovernments Foundation
+  ~        is available at http://www.egovernments.org
+  ~
+  ~        This program is free software: you can redistribute it and/or modify
+  ~        it under the terms of the GNU General Public License as published by
+  ~        the Free Software Foundation, either version 3 of the License, or
+  ~        any later version.
+  ~
+  ~        This program is distributed in the hope that it will be useful,
+  ~        but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~        GNU General Public License for more details.
+  ~
+  ~        You should have received a copy of the GNU General Public License
+  ~        along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~        http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~        In addition to the terms of the GPL license to be adhered to in using this
+  ~        program, the following additional terms are to be complied with:
+  ~
+  ~    	1) All versions of this program, verbatim or modified must carry this
+  ~    	   Legal Notice.
+  ~
+  ~    	2) Any misrepresentation of the origin of the material is prohibited. It
+  ~    	   is required that all modified versions of this material be marked in
+  ~    	   reasonable ways as different from the original version.
+  ~
+  ~    	3) This license does not grant any rights to any user of the program
+  ~    	   with regards to rights under trademark law for use of the trade names
+  ~    	   or trademarks of eGovernments Foundation.
+  ~
+  ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  ******************************************************************************/
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/layout_contact"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:layout_margin="2dp"
+    android:elevation="2dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvCharacter"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:text="T"
+        android:gravity="center"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        android:background="@drawable/rounded_drawable"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="16dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text=""
+            android:duplicateParentState="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="4dp"
+            android:clickable="false"
+            android:id="@+id/tvContactName" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=""
+            android:duplicateParentState="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="4dp"
+            android:clickable="false"
+            android:id="@+id/tvContactNo" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_call_black_24dp"
+        android:tint="@color/dividerColor"/>
+
+</LinearLayout>

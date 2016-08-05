@@ -43,6 +43,7 @@
 package org.egovernments.egoverp.activities;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -65,6 +66,10 @@ import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
 import org.egovernments.egoverp.models.DownloadDoc;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
 
@@ -79,12 +84,15 @@ public class BuildingPlanActivity extends BaseActivity {
     ApiController.APIInterface buildingPlanApi;
     ProgressBar progressBar;
     boolean isKeyboardVisible=false;
+    boolean isBuildingPenalization=false;
     CardView cvApplicationDetails;
 
     TextView tvApplicationNo, tvApplicationType, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
             tvNatureOfSite, tvPermissionType, tvApplicantName, tvApplicantMobNo, tvApplicantEmailId;
 
     RecyclerView recyclerView;
+
+    public static String IS_BUILDING_PENALIZATION="Is_building_penalization";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +136,7 @@ public class BuildingPlanActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    findBuildingPlanApplication(searchEditText.getText().toString().trim());
+                    findApplication(searchEditText.getText().toString().trim());
                     hideSoftKeyboard(imm);
                 }
                 return true;
@@ -138,7 +146,7 @@ public class BuildingPlanActivity extends BaseActivity {
             @Override
             public void onClick(DrawablePosition target) {
                 if (target == DrawablePosition.RIGHT) {
-                    findBuildingPlanApplication(searchEditText.getText().toString().trim());
+                    findApplication(searchEditText.getText().toString().trim());
                     hideSoftKeyboard(imm);
                 }
             }
@@ -158,7 +166,7 @@ public class BuildingPlanActivity extends BaseActivity {
         }
     }
 
-    public void findBuildingPlanApplication(String applicationNo)
+    public void findApplication(String applicationNo)
     {
 
         if(TextUtils.isEmpty(applicationNo.trim()))
@@ -166,6 +174,25 @@ public class BuildingPlanActivity extends BaseActivity {
             Toast.makeText(getApplicationContext(),"Please enter application no", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if(isBuildingPenalization)
+        {
+            findBuildingPenalizationApplication(applicationNo);
+        }
+        else
+        {
+            findBuildingPlanApplication(applicationNo);
+        }
+    }
+
+    public void findBuildingPenalizationApplication(String applicationNo)
+    {
+        new TestAsynk().execute(applicationNo);
+        Toast.makeText(BuildingPlanActivity.this, "Search building peanlization application!", Toast.LENGTH_SHORT).show();
+    }
+
+    public void findBuildingPlanApplication(String applicationNo)
+    {
 
         progressBar.setVisibility(View.VISIBLE);
         cvApplicationDetails.setVisibility(View.GONE);
@@ -237,5 +264,56 @@ public class BuildingPlanActivity extends BaseActivity {
         });
 
     }
+
+    @Override
+    public String getToolbarTitle(String titleFromResource) {
+        isBuildingPenalization =getIntent().getBooleanExtra(IS_BUILDING_PENALIZATION, false);
+        if(isBuildingPenalization)
+        {
+            return getString(R.string.building_penalization_label);
+        }
+        return getString(R.string.building_plan_label);
+    }
+
+
+    private class TestAsynk extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            super.onPostExecute(result);
+            /*Toast.makeText(getApplicationContext(),
+                    String.format("%.2f", Float.parseFloat(result)),
+                    Toast.LENGTH_SHORT).show();*/
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            SoapObject request = new SoapObject(ApiUrl.BPS_SOAP_NAMESPACE,
+                    ApiUrl.BPS_SOAP_METHOD_NAME);
+            request.addProperty("ApplicationNo", params[0]);
+
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+                    SoapEnvelope.VER11);
+            envelope.dotNet = true;
+
+            envelope.setOutputSoapObject(request);
+
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(
+                    ApiUrl.BPS_URL);
+            Object response = null;
+            try {
+
+                androidHttpTransport.call(ApiUrl.BPS_SOAP_ACTION, envelope);
+                response = envelope.getResponse();
+                Log.e("Object response", response.toString());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return (response == null?"":response.toString());
+        }
+    }
+
 
 }

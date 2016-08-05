@@ -232,9 +232,17 @@ public class BaseActivity extends AppCompatActivity {
         {
             openBuildingPlanApprovalPage();
         }
+        else if(getString(R.string.building_penalization_label).equals(menuItemText))
+        {
+            openBuildingPenalization();
+        }
         else if(getString(R.string.citizen_charter_label).equals(menuItemText))
         {
             openCitizenCharterPage();
+        }
+        else if(getString(R.string.sos_label).equals(menuItemText))
+        {
+            openSOSPage();
         }
         else if(getString(R.string.profile_label).equals(menuItemText))
         {
@@ -290,6 +298,19 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void openBuildingPenalization()
+    {
+        Intent intent;
+        if (!mActionBarTitle.equals(getString(R.string.title_activity_building_plan))) {
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+            intent = new Intent(BaseActivity.this, BuildingPlanActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(BuildingPlanActivity.IS_BUILDING_PENALIZATION, true);
+            startActivity(intent);
+        }
+    }
+
     public void openWaterTaxPage()
     {
         Intent intent;
@@ -331,6 +352,18 @@ public class BaseActivity extends AppCompatActivity {
         Intent intent;
         if (!getTitle().toString().equals(getString(R.string.profile_label))) {
             intent = new Intent(BaseActivity.this, ProfileActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(intent, 0);
+            if (!getTitle().toString().equals(getString(R.string.home_label)))
+                finish();
+        }
+    }
+
+    public void openSOSPage()
+    {
+        Intent intent;
+        if (!getTitle().toString().equals(getString(R.string.sos_label))) {
+            intent = new Intent(BaseActivity.this, SOSActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(intent, 0);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
@@ -429,6 +462,11 @@ public class BaseActivity extends AppCompatActivity {
             if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_call_black_24dp, getString(R.string.sos_label), (getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
             }
 
             arrayList.add(new NavigationItem(R.drawable.ic_person_black_24dp, getString(R.string.profile_label), (getString(R.string.profile_label).equals(mActionBarTitle)), R.color.profile_color));
