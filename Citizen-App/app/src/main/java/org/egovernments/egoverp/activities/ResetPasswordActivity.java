@@ -42,7 +42,6 @@
 
 package org.egovernments.egoverp.activities;
 
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -163,12 +162,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                 etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
                 etNewPwd.requestFocus();
-
-                Intent i = new Intent(context, ResetPasswordActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(SMSListener.PARAM_OTP_CODE, intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                startActivity(i);
 
             }
         };
@@ -300,6 +293,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 public void success(JsonObject resp, Response response) {
 
                     sessionManager.setForgotPasswordTime(0l);
+                    sessionManager.setLastRegisteredUserTime(0l);
+                    sessionManager.setRegisteredUserLastOTPTime(0l);
                     sessionManager.setResetPasswordLastMobileNo("");
 
                     String message=resp.get("status").getAsJsonObject().get("message").getAsString();

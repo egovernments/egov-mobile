@@ -67,6 +67,7 @@ public class SMSListener extends BroadcastReceiver {
     public static String OTP_LISTENER="OTP_Listener";
     public static String PARAM_LAUCNH_FROM_SMS ="isLaunchFromSMS";
     public static String PARAM_OTP_CODE ="OTP_code";
+    public static String PARAM_IS_ACCOUNT_ACTIVATION ="isAccount_Activation";
 
     public void onReceive(Context context, Intent intent) {
 
@@ -95,6 +96,7 @@ public class SMSListener extends BroadcastReceiver {
                         {
 
                             long lastOtpSentTime=0l;
+                            boolean isAccountActivationMsg=false;
 
                             if(message.contains("Your OTP for recovering password is"))
                             {
@@ -102,6 +104,7 @@ public class SMSListener extends BroadcastReceiver {
                             }
                             else
                             {
+                                isAccountActivationMsg=true;
                                 lastOtpSentTime=sessionManager.getRegisteredUserLastOTPTime();
                             }
 
@@ -124,11 +127,14 @@ public class SMSListener extends BroadcastReceiver {
                                     Intent appLaunchIntent = new Intent(context, SplashScreenActivity.class);
                                     appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     appLaunchIntent.putExtra(PARAM_LAUCNH_FROM_SMS, true);
+                                    appLaunchIntent.putExtra(PARAM_IS_ACCOUNT_ACTIVATION, isAccountActivationMsg);
                                     appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
                                     context.startActivity(appLaunchIntent);
                                 }
 
                             }
+
+                            //Log.i("isForeGround -----> ", ""+isForeground(context, ForgotPasswordActivity.class.getPackage().getName()));
 
                         }
 

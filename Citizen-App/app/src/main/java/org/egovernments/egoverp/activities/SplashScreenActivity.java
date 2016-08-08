@@ -43,11 +43,16 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -66,6 +71,7 @@ import java.io.IOException;
 
 public class SplashScreenActivity extends Activity {
 
+    private static final int REQUEST_CODE_ASK_PERMISSION_READ_SMS = 115;
     /**
      * Duration of wait
      **/
@@ -98,6 +104,7 @@ public class SplashScreenActivity extends Activity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -160,12 +167,12 @@ public class SplashScreenActivity extends Activity {
         sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString("app.debug.log")));
 
         if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
-            timerThread.start();
+            startTimerThread();
         } else {
             if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays")) || TextUtils.isEmpty(sessionManager.getBaseURL())) {
                 new GetCityTask().execute();
             } else {
-                timerThread.start();
+                startTimerThread();
             }
         }
     }
@@ -182,7 +189,7 @@ public class SplashScreenActivity extends Activity {
                     if (response != null) {
                         JSONObject jsonObject = new JSONObject(response);
                         sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString(), jsonObject.getInt("city_code"));
-                        timerThread.start();
+                        startTimerThread();
                     } else {
                         handler.post(new Runnable() {
                             @Override
@@ -201,7 +208,7 @@ public class SplashScreenActivity extends Activity {
                         location = activeCity.getCityName();
                         code = activeCity.getCityCode();
                         sessionManager.setBaseURL(url, location, code);
-                        timerThread.start();
+                        startTimerThread();
                     } else {
                         handler.post(new Runnable() {
                             @Override
@@ -240,6 +247,48 @@ public class SplashScreenActivity extends Activity {
             return null;
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkReadSMSPermision() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_SMS},
+                    REQUEST_CODE_ASK_PERMISSION_READ_SMS);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(getApplicationContext(), "You are denied permission for read sms! so, OTP auto fill feature may won't work", Toast.LENGTH_LONG).show();
+                    timerThread.start();
+                }
+                else if(grantResults[0]== PackageManager.PERMISSION_GRANTED)
+                {
+                    timerThread.start();
+                }
+                break;
+        }
+    }
+
+    public void startTimerThread()
+    {
+        if (Build.VERSION.SDK_INT < 23) {
+            timerThread.start();
+        } else {
+            if(checkReadSMSPermision()) {
+                timerThread.start();
+            }
+        }
+
+    }
+
+
 }
 
 

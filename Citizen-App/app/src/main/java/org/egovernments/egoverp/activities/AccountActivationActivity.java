@@ -43,7 +43,6 @@
 package org.egovernments.egoverp.activities;
 
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -143,12 +142,6 @@ public class AccountActivationActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
 
                 etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-
-                Intent i = new Intent(context, AccountActivationActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(SMSListener.PARAM_OTP_CODE, intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                startActivity(i);
 
             }
         };
