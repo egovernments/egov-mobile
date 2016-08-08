@@ -55,6 +55,7 @@ import android.widget.Toast;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
+import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
@@ -101,16 +102,41 @@ public class SplashScreenActivity extends Activity {
                         @Override
                         public void run() {
 
+                            long lastRegisteredUserTime=sessionManager.getLastRegisteredUserTime();
+
                             long lastForgotPwdOTPTime=sessionManager.getForgotPasswordTime();
 
                             long expiryOTPTime=lastForgotPwdOTPTime+(5*60*1000); //Find OTP Expiry Time (+5 mins)
+
+                            long timeOfExpiryRegisteredUser=lastRegisteredUserTime+(48*60*60*1000);
 
                             if((expiryOTPTime-System.currentTimeMillis()) > 0 && !TextUtils.isEmpty(sessionManager.getResetPasswordLastMobileNo()))
                             {
                                 Intent resetPasswordActivity=new Intent(getApplicationContext(), ResetPasswordActivity.class);
                                 resetPasswordActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, sessionManager.getResetPasswordLastMobileNo());
+
+                                if(getIntent().getBooleanExtra(SMSListener.PARAM_LAUCNH_FROM_SMS, false))
+                                {
+                                    resetPasswordActivity.putExtra(SMSListener.PARAM_OTP_CODE, getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
+                                }
+
                                 startActivity(resetPasswordActivity);
+                                finish();
+                                return;
+                            }
+                            else if((timeOfExpiryRegisteredUser-System.currentTimeMillis())>0 && TextUtils.isEmpty(sessionManager.getAccessToken()))
+                            {
+                                Intent accountActivationIntent=new Intent(getApplicationContext(), AccountActivationActivity.class);
+                                accountActivationIntent.putExtra(AccountActivationActivity.PARAM_USERNAME, sessionManager.getLastRegisteredUserName());
+                                accountActivationIntent.putExtra(AccountActivationActivity.PARAM_PASSWORD, sessionManager.getLastRegisteredUserPassword());
+                                if(getIntent().getBooleanExtra(SMSListener.PARAM_LAUCNH_FROM_SMS, false))
+                                {
+                                    accountActivationIntent.putExtra(SMSListener.PARAM_OTP_CODE, getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
+                                }
+                                accountActivationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(accountActivationIntent);
+
                                 finish();
                                 return;
                             }

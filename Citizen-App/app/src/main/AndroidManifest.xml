@@ -52,6 +52,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_SMS" />
+
     <uses-permission
         android:name="android.permission.CALL_PHONE"
         android:required="false" />
@@ -169,8 +172,7 @@
             android:label="@string/verify_account_label"
             android:parentActivityName=".activities.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.egovernments.egoverp.activities.LoginActivity" />
@@ -254,6 +256,14 @@
             android:name=".activities.AboutUsActivity"
             android:label="@string/aboutus_label"
             android:theme="@style/AppTheme"></activity>
+
+
+        <receiver android:name="org.egovernments.egoverp.listeners.SMSListener">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

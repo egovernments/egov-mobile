@@ -43,13 +43,19 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -66,10 +72,13 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
+import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
 import org.egovernments.egoverp.network.SessionManager;
 import org.egovernments.egoverp.network.UpdateService;
+
+import java.util.concurrent.TimeUnit;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -93,6 +102,12 @@ public class AccountActivationActivity extends AppCompatActivity {
     private Button resendButton;
 
     private SessionManager sessionManager;
+    TextView tvCountDown;
+    CountDownTimer countDownTimer;
+    EditText etOtp;
+
+    public static String PARAM_USERNAME="username";
+    public static String PARAM_PASSWORD="password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,38 +118,61 @@ public class AccountActivationActivity extends AppCompatActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.activateprogressBar);
         resendButton = (Button) findViewById(R.id.activate_resend);
+        tvCountDown=(TextView)findViewById(R.id.tvCountDown);
 
         //Intent extras sent from register activity or from login activity
-        username = getIntent().getStringExtra("username");
-        password = getIntent().getStringExtra("password");
+        username = getIntent().getStringExtra(PARAM_USERNAME);
+        password = getIntent().getStringExtra(PARAM_PASSWORD);
 
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        final EditText code_edittext = (EditText) findViewById(R.id.activate_otpfield);
+        etOtp = (EditText) findViewById(R.id.et_otp);
 
-        code_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        if(!TextUtils.isEmpty(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE)))
+        {
+            etOtp.setText(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
+        }
+
+        BroadcastReceiver otpReceiver=new BroadcastReceiver() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
+            public void onReceive(Context context, Intent intent) {
 
-                    activationCode = code_edittext.toString().trim();
-                    progressBar.setVisibility(View.VISIBLE);
-                    activateButton.setVisibility(View.GONE);
-                    activateButtonCompat.setVisibility(View.GONE);
-                    resendButton.setVisibility(View.INVISIBLE);
-                    submit(activationCode);
-                    return true;
-                }
-                return false;
+                etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+
+                Intent i = new Intent(context, AccountActivationActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                i.putExtra(SMSListener.PARAM_OTP_CODE, intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                startActivity(i);
+
             }
-        });
+        };
 
+        LocalBroadcastManager.getInstance(AccountActivationActivity.this).registerReceiver(otpReceiver,
+                new IntentFilter(SMSListener.OTP_LISTENER));
+
+
+        etOtp.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                        activationCode = etOtp.toString().trim();
+                        progressBar.setVisibility(View.VISIBLE);
+                        activateButton.setVisibility(View.GONE);
+                        activateButtonCompat.setVisibility(View.GONE);
+                        resendButton.setVisibility(View.INVISIBLE);
+                        submit(activationCode);
+                        return true;
+                    }
+                    return false;
+                }
+        });
 
         resendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +183,11 @@ public class AccountActivationActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(AccountActivationActivity.this, R.string.otp_resent_msg, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
+
+                        long millis = System.currentTimeMillis();
+                        sessionManager.setRegisteredUserLastOTPTime(millis);
+                        startCountDown();
+
                     }
 
                     @Override
@@ -170,26 +213,69 @@ public class AccountActivationActivity extends AppCompatActivity {
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                activationCode = code_edittext.getText().toString().trim();
+                activationCode = etOtp.getText().toString().trim();
                 progressBar.setVisibility(View.VISIBLE);
-                activateButton.setVisibility(View.GONE);
-                activateButtonCompat.setVisibility(View.GONE);
+                activateButton.setVisibility(View.INVISIBLE);
+                activateButtonCompat.setVisibility(View.INVISIBLE);
                 submit(activationCode);
             }
         };
 
 
         if (Build.VERSION.SDK_INT >= 21) {
-
             activateButton.setOnClickListener(onClickListener);
         } else {
 
             activateButtonCompat.setVisibility(View.VISIBLE);
-            activateButton.setVisibility(View.GONE);
+            activateButton.setVisibility(View.INVISIBLE);
             activateButtonCompat.setOnClickListener(onClickListener);
 
+        }
+
+        startCountDown();
+
+    }
+
+    private void startCountDown()
+    {
+        final long otpSentMillis =sessionManager.getRegisteredUserLastOTPTime();
+        final long otpExpiryMillis=otpSentMillis+(5*60*1000);
+
+        long remainingMillis= otpExpiryMillis-System.currentTimeMillis();
+
+        if(remainingMillis>0) {
+
+            if(countDownTimer!=null)
+            {
+                countDownTimer.cancel();
+            }
+
+            countDownTimer=new CountDownTimer(remainingMillis, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+
+                    long millis = millisUntilFinished;
+
+                    String msText = String.format("%02dm %02ds",
+                            (TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis))),
+                            (TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+
+                    msText = msText.replace("-", "");
+
+                    tvCountDown.setText("Your OTP will be expiry in " + msText);
+
+                }
+
+                public void onFinish() {
+                    tvCountDown.setText(R.string.otp_exipry_message);
+                    sessionManager.setRegisteredUserLastOTPTime(0l);
+                }
+
+            }.start();
+        }
+        else {
+            tvCountDown.setText(R.string.otp_exipry_message);
+            sessionManager.setRegisteredUserLastOTPTime(0l);
         }
     }
 
@@ -203,6 +289,11 @@ public class AccountActivationActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(AccountActivationActivity.this, R.string.account_activated_msg, Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                     toast.show();
+
+
+                    sessionManager.setRegisteredUserLastOTPTime(0l);
+                    sessionManager.setLastRegisteredUserTime(0l);
+
                     ApiController.getAPI(AccountActivationActivity.this).login(ApiUrl.AUTHORIZATION,username, "read write", password, "password", new Callback<JsonObject>() {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
@@ -276,4 +367,17 @@ public class AccountActivationActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sessionManager.setOTPLocalBroadCastRunning(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sessionManager.setOTPLocalBroadCastRunning(false);
+    }
+
 }

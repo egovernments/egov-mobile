@@ -97,6 +97,16 @@ public class SessionManager {
 
     public static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
 
+    public static final String KEY_OTP_LOCAL_BROADCAST_RUNNING="isOTPBroadcastRunning";
+
+    public static final String KEY_REGISTERED_USER_LAST_TIME="lastRegisteredTime";
+
+    public static final String KEY_REGISTERED_USER_USER_NAME="lastRegisteredUsername";
+
+    public static final String KEY_REGISTERED_USER_PASSWORD="lastRegisteredPassword";
+
+    public static final String KEY_REGISTERED_USER_LAST_OTP_TIME="lastRegisteredOtpTime";
+
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
     }
@@ -304,5 +314,63 @@ public class SessionManager {
     public String getResetPasswordLastMobileNo() {
         return pref.getString(KEY_RESET_PASSWORD_LAST_MOBILE_NO, "");
     }
+
+    public void setOTPLocalBroadCastRunning(boolean isRunning)
+    {
+        editor = pref.edit();
+        editor.putBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, isRunning);
+        editor.apply();
+    }
+
+    public boolean isOTPLocalBroadCastRunning()
+    {
+        return pref.getBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, false);
+    }
+
+    public void setLastRegisteredUserTime(long milliseconds)
+    {
+        editor = pref.edit();
+        editor.putLong(KEY_REGISTERED_USER_LAST_TIME, milliseconds);
+        editor.apply();
+    }
+
+    public Long getLastRegisteredUserTime() {
+        return pref.getLong(KEY_REGISTERED_USER_LAST_TIME, 0l);
+    }
+
+    public void setLastRegisteredUserName(String userName)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_REGISTERED_USER_USER_NAME, userName);
+        editor.apply();
+    }
+
+    public String getLastRegisteredUserName() {
+        return pref.getString(KEY_REGISTERED_USER_USER_NAME, "");
+    }
+
+    public void setLastRegisteredUserPassword(String password)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_REGISTERED_USER_PASSWORD, password);
+        editor.apply();
+    }
+
+    public String getLastRegisteredUserPassword() {
+        return pref.getString(KEY_REGISTERED_USER_PASSWORD, "");
+    }
+
+    public void setRegisteredUserLastOTPTime(long milliseconds)
+    {
+        editor = pref.edit();
+        editor.putLong(KEY_REGISTERED_USER_LAST_OTP_TIME, milliseconds);
+        editor.apply();
+    }
+
+    public Long getRegisteredUserLastOTPTime() {
+        return pref.getLong(KEY_REGISTERED_USER_LAST_OTP_TIME, 0l);
+    }
+
+
 
 }

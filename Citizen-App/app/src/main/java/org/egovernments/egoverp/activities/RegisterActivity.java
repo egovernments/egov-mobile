@@ -53,6 +53,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -261,7 +262,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void submit(final String name, final String email, final String phoneno, final String password, final String confirmpassword) {
 
-        City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
+        final City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
 
         if ((selectedCity == null && isMultiCity)) {
             showValidationErrorMessage("Please select the your district and city");
@@ -306,21 +307,35 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void success(JsonObject jsonObject, Response response) {
 
+                            long millis = System.currentTimeMillis();
+
+                            sessionManager.setLastRegisteredUserTime(millis);
+                            sessionManager.setLastRegisteredUserName(phoneno);
+                            sessionManager.setLastRegisteredUserPassword(password);
+                            sessionManager.setRegisteredUserLastOTPTime(millis); //update last otp time
+
+                            Intent accountActivationIntent=new Intent(getApplicationContext(), AccountActivationActivity.class);
+                            accountActivationIntent.putExtra(AccountActivationActivity.PARAM_USERNAME, phoneno);
+                            accountActivationIntent.putExtra(AccountActivationActivity.PARAM_PASSWORD, password);
+                            accountActivationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(accountActivationIntent);
+
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
 
+                            if(!TextUtils.isEmpty(error.getLocalizedMessage())){
+                                Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            }
+
                         }
                     });
 
 
-                    Intent intent = new Intent(RegisterActivity.this, AccountActivationActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra("username", phoneno);
-                    intent.putExtra("password", password);
-                    startActivity(intent);
-                    finish();
+
                 }
 
 

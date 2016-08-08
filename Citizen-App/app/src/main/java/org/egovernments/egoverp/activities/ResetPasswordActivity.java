@@ -42,18 +42,25 @@
 
 package org.egovernments.egoverp.activities;
 
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -65,6 +72,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.PasswordLevel;
+import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.SessionManager;
 
@@ -78,12 +86,17 @@ import retrofit.client.Response;
 public class ResetPasswordActivity extends AppCompatActivity {
 
     public static String MESSAGE_SENT_TO="messageSentTo";
+    public static String OTP_BROADCAST_LISTENER="OTP_Broadcast_Listener";
+
     EditText etOtp, etNewPwd, etConfirmPwd;
     String mobileNo;
     private ConfigManager configManager;
     SessionManager sessionManager;
     FloatingActionButton fab;
     ProgressBar progressBar;
+    Button btnResendOTP;
+    TextView tvCountDown;
+    CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +116,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
 
         TextView tvResetPws=(TextView)findViewById(R.id.tvResetPwd);
-        final TextView tvCountDown=(TextView)findViewById(R.id.tvCountDown);
+        tvCountDown=(TextView)findViewById(R.id.tvCountDown);
 
         String recoveryMessage = "OTP has been sent to your registered ";
         mobileNo=getIntent().getStringExtra(MESSAGE_SENT_TO);
@@ -123,19 +136,110 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager(getApplicationContext());
 
+        etOtp=(EditText)findViewById(R.id.etOTP);
+        etNewPwd=(EditText)findViewById(R.id.etNewPassword);
+        etConfirmPwd=(EditText)findViewById(R.id.etConfirmPassword);
+        btnResendOTP=(Button)findViewById(R.id.btn_resend_otp);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        if(fab!=null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    resetPassword(v);
+                }
+            });
+        }
+
+        if(!TextUtils.isEmpty(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE)))
+        {
+            etOtp.setText(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
+            etNewPwd.requestFocus();
+        }
+
+        BroadcastReceiver otpReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                etNewPwd.requestFocus();
+
+                Intent i = new Intent(context, ResetPasswordActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                i.putExtra(SMSListener.PARAM_OTP_CODE, intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                startActivity(i);
+
+            }
+        };
+
+        LocalBroadcastManager.getInstance(ResetPasswordActivity.this).registerReceiver(otpReceiver,
+                new IntentFilter(SMSListener.OTP_LISTENER));
+
+        btnResendOTP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resendOTP(mobileNo);
+            }
+        });
+
+        startCountDown();
+
+    }
+
+    private void resendOTP(final String mobileNo)
+    {
+
+        final ProgressDialog progressDialog=new ProgressDialog(ResetPasswordActivity.this);
+        progressDialog.setMessage("Resending OTP...");
+        progressDialog.show();
+
+        ApiController.resetAndGetAPI(ResetPasswordActivity.this).recoverPassword(mobileNo, sessionManager.getBaseURL(), new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject resp, Response response) {
+
+                String message=resp.get("status").getAsJsonObject().get("message").getAsString();
+                Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
+                progressDialog.dismiss();
+
+                long millis = System.currentTimeMillis();
+                sessionManager.setForgotPasswordTime(millis);
+                sessionManager.setResetPasswordLastMobileNo(mobileNo);
+                startCountDown();
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error != null) {
+                    if (error.getLocalizedMessage() != null) {
+                        Toast toast = Toast.makeText(ResetPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
+                progressDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void startCountDown()
+    {
         final long otpSentMillis =sessionManager.getForgotPasswordTime();
         final long otpExpiryMillis=otpSentMillis+(5*60*1000);
 
-        Log.v("Otp sent",""+ otpSentMillis);
-        Log.v("Otp expiry",""+ otpExpiryMillis);
-
         long remainingMillis= otpExpiryMillis-System.currentTimeMillis();
-
-        Log.v("Otp remain",""+ otpExpiryMillis);
 
         if(remainingMillis>0) {
 
-            new CountDownTimer(remainingMillis, 1000) {
+            if(countDownTimer!=null)
+            {
+                countDownTimer.cancel();
+            }
+
+            countDownTimer=new CountDownTimer(remainingMillis, 1000) {
 
                 public void onTick(long millisUntilFinished) {
 
@@ -152,29 +256,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
 
                 public void onFinish() {
-                    tvCountDown.setText("Your OTP has been expired!");
+                    tvCountDown.setText(R.string.otp_exipry_message);
+                    sessionManager.setForgotPasswordTime(0l);
+
                 }
 
             }.start();
         }
         else {
-            tvCountDown.setText("Your OTP has been expired!");
+            tvCountDown.setText(R.string.otp_exipry_message);
+            sessionManager.setForgotPasswordTime(0l);
         }
-
-        etOtp=(EditText)findViewById(R.id.etOTP);
-        etNewPwd=(EditText)findViewById(R.id.etNewPassword);
-        etConfirmPwd=(EditText)findViewById(R.id.etConfirmPassword);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        if(fab!=null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    resetPassword(v);
-                }
-            });
-        }
-
     }
 
     private void resetPassword(final View view)
@@ -211,7 +303,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     sessionManager.setResetPasswordLastMobileNo("");
 
                     String message=resp.get("status").getAsJsonObject().get("message").getAsString();
-                    Toast toast = Toast.makeText(getApplicationContext(), "Password reset successfully, Please login now", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your password successfully changed, Please login now", Toast.LENGTH_LONG);
                     toast.show();
 
                     startActivity(new Intent(ResetPasswordActivity.this, LoginActivity.class));
@@ -252,6 +344,15 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sessionManager.setOTPLocalBroadCastRunning(true);
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sessionManager.setOTPLocalBroadCastRunning(false);
+    }
 }

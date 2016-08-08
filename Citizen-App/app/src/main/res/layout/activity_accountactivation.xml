@@ -69,16 +69,30 @@
                     android:id="@+id/activate_otpinstructions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/activate_otpfield"
                     android:gravity="center_horizontal"
-                    android:padding="20dp"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="15dp"
                     android:text="@string/otp_textfield"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
+                    android:layout_above="@+id/tvCountDown"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
+                <TextView
+                    android:id="@+id/tvCountDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingBottom="10dp"
+                    android:text=""
+                    android:layout_above="@+id/et_otp"
+                    android:textColor="#FFFFFF" />
 
                 <EditText
-                    android:id="@+id/activate_otpfield"
+                    android:id="@+id/et_otp"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
@@ -96,7 +110,7 @@
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
-                    android:layout_below="@+id/activate_otpfield"
+                    android:layout_below="@+id/et_otp"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="20dp"
                     android:visibility="gone" />
@@ -105,7 +119,7 @@
                     android:id="@+id/activate_verify"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/activate_otpfield"
+                    android:layout_below="@+id/et_otp"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="20dp"
                     android:src="@drawable/ic_arrow_forward_white_36dp" />
@@ -114,7 +128,7 @@
                     android:id="@+id/activate_verifycompat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/activate_otpfield"
+                    android:layout_below="@+id/et_otp"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="20dp"
                     android:src="@drawable/ic_arrow_forward_white_36dp"
@@ -122,6 +136,19 @@
                     fab:fab_colorNormal="@color/colorAccent"
                     fab:fab_colorPressed="@color/colorPrimary"
                     fab:fab_colorRipple="#000" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/acc_activation_info"
+                    android:id="@+id/textView8"
+                    android:layout_below="@+id/activate_verify"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:layout_centerHorizontal="true" />
 
             </RelativeLayout>
 

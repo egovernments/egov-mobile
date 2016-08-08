@@ -102,7 +102,7 @@
     <string name="action_label">Action</string>
     <string name="login_field_empty_prompt">Please enter both username and password</string>
     <string name="session_expiry_message">Session expired</string>
-    <string name="otp_resent_msg">OTP Resent</string>
+    <string name="otp_resent_msg">OTP sent successfully</string>
     <string name="account_activated_msg">Account activated</string>
     <string name="processing_msg">Processing request</string>
     <string name="menu_label">Menu</string>
@@ -214,5 +214,7 @@ Links to:</string>
     <string name="title_activity_reset_password">Reset Password</string>
     <string name="title_activity_sos">SOSActivity</string>
     <string name="title_activity_about_us">AboutUsActivity</string>
+    <string name="acc_activation_info">Registration automatically get removed if you do not activate account within next 48 hours</string>
+    <string name="otp_exipry_message">Your OTP has been expired! Please resend otp using below button</string>
 
 </resources>
