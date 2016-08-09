@@ -145,8 +145,10 @@
     <string name="vacantlandtax_label2"></string>
     <string name="citizen_charter_label">Citizen Charter</string>
     <string name="citizen_charter_label2"></string>
-    <string name="sos_label">Emergency</string>
+    <string name="sos_label">SOS</string>
+    <string name="sos_label2">-</string>
     <string name="aboutus_label">About us</string>
+    <string name="aboutus_label2">-</string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">DATE OF BIRTH</string>
@@ -216,5 +218,7 @@ Links to:</string>
     <string name="title_activity_about_us">AboutUsActivity</string>
     <string name="acc_activation_info">Registration automatically get removed if you do not activate account within next 48 hours</string>
     <string name="otp_exipry_message">Your OTP has been expired! Please resend otp using below button</string>
+    <string name="applicant_name">APPLICANT NAME</string>
+    <string name="applicant_mobile_no">APPLICANT MOBILE NO</string>
 
 </resources>

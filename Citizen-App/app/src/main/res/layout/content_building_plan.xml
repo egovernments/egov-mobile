@@ -65,7 +65,7 @@
                 android:orientation="vertical">
 
                 <include layout="@layout/layout_bpa_details"/>
-
+                <include layout="@layout/layout_bps_details"/>
 
             </LinearLayout>
 

@@ -136,12 +136,12 @@ public class ApiUrl {
      *  Building penalization
      */
 
-    public final static String BPS_SOAP_ACTION = "http://bps.com/AppService/IAppService/GetData";
+    public final static String BPS_SOAP_ACTION = "http://bps.in/webservices/";
 
-    public final static String BPS_SOAP_METHOD_NAME = "Status";
+    public final static String BPS_SOAP_METHOD_NAME = "GetStatus";
 
-    public final static String BPS_SOAP_NAMESPACE = "http://bps.com/AppService/";
+    public final static String BPS_SOAP_METHOD_PARAM_NAME = "ApplicationNo";
 
-    public final static String BPS_URL = "http://103.231.212.217/AppStatus/AppService.svc?wsdl";
+    public final static String BPS_SOAP_SERVICE_URL = "http://103.231.212.217/BPS/Services/AppSearch.asmx";
 
 }

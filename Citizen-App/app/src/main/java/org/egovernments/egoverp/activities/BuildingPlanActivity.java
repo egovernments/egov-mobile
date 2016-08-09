@@ -54,23 +54,30 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.FilesDownloadAdapter;
 import org.egovernments.egoverp.helper.CustomEditText;
 import org.egovernments.egoverp.helper.KeyboardUtils;
+import org.egovernments.egoverp.models.BuildingPenalizationAPIResponse;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
 import org.egovernments.egoverp.models.DownloadDoc;
 import org.egovernments.egoverp.network.ApiController;
 import org.egovernments.egoverp.network.ApiUrl;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit.Callback;
@@ -85,12 +92,18 @@ public class BuildingPlanActivity extends BaseActivity {
     ProgressBar progressBar;
     boolean isKeyboardVisible=false;
     boolean isBuildingPenalization=false;
-    CardView cvApplicationDetails;
+    CardView cvBuildingPlanDetails;
+    CardView cvBPSDetails;
 
+    //Textview for Building plan
     TextView tvApplicationNo, tvApplicationType, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
             tvNatureOfSite, tvPermissionType, tvApplicantName, tvApplicantMobNo, tvApplicantEmailId;
 
-    RecyclerView recyclerView;
+    //Textview for BPS
+    TextView tvBPSApplicationNo, tvBPSApplicationStatus, tvBPSApplicantName, tvBPSApplicantMobNo;
+    LinearLayout layoutBPSDocsSection;
+
+    RecyclerView recyclerView, recyclerViewBPS;
 
     public static String IS_BUILDING_PENALIZATION="Is_building_penalization";
 
@@ -102,6 +115,8 @@ public class BuildingPlanActivity extends BaseActivity {
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
+
+
         tvApplicationNo=(TextView)findViewById(R.id.tvApplicationNo);
         tvApplicationType=(TextView)findViewById(R.id.tvApplicationType);
         tvApplicationStatus=(TextView)findViewById(R.id.tvApplicationStatus);
@@ -115,10 +130,20 @@ public class BuildingPlanActivity extends BaseActivity {
         tvApplicantName=(TextView)findViewById(R.id.tvApplicantName);
         tvApplicantMobNo=(TextView)findViewById(R.id.tvApplicantMobNo);
         tvApplicantEmailId=(TextView)findViewById(R.id.tvApplicantEmailId);
-        cvApplicationDetails=(CardView)findViewById(R.id.cvApplicationDetails);
+        cvBuildingPlanDetails =(CardView)findViewById(R.id.cvBuildingPlanDetails);
+        cvBPSDetails=(CardView)findViewById(R.id.cvBPSDetails);
+
+        tvBPSApplicationNo=(TextView)findViewById(R.id.tvBPSApplicationNo);
+        tvBPSApplicationStatus=(TextView)findViewById(R.id.tvBPSApplicationStatus);
+        tvBPSApplicantName=(TextView)findViewById(R.id.tvBPSApplicantName);
+        tvBPSApplicantMobNo=(TextView)findViewById(R.id.tvBPSApplicantMobNo);
+        layoutBPSDocsSection=(LinearLayout)findViewById(R.id.layoutBPSDocsSection);
 
         recyclerView=(RecyclerView)findViewById(R.id.recylerViewFiles);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerViewBPS=(RecyclerView)findViewById(R.id.recylerviewBPSFiles);
+        recyclerViewBPS.setLayoutManager(new LinearLayoutManager(this));
 
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
         {
@@ -187,15 +212,14 @@ public class BuildingPlanActivity extends BaseActivity {
 
     public void findBuildingPenalizationApplication(String applicationNo)
     {
-        new TestAsynk().execute(applicationNo);
-        Toast.makeText(BuildingPlanActivity.this, "Search building peanlization application!", Toast.LENGTH_SHORT).show();
+        new getBuildingPenalizationDetails().execute(applicationNo);
     }
 
     public void findBuildingPlanApplication(String applicationNo)
     {
 
         progressBar.setVisibility(View.VISIBLE);
-        cvApplicationDetails.setVisibility(View.GONE);
+        cvBuildingPlanDetails.setVisibility(View.GONE);
 
         applicationNo=applicationNo.replaceAll("/","\\$");
 
@@ -228,7 +252,7 @@ public class BuildingPlanActivity extends BaseActivity {
                     tvApplicantName.setText(bpadetails.getLTPName());
                     tvApplicantEmailId.setText(bpadetails.getLTPEmailID());
                     tvApplicantMobNo.setText(bpadetails.getLTPMobileNo());
-                    cvApplicationDetails.setVisibility(View.VISIBLE);
+                    cvBuildingPlanDetails.setVisibility(View.VISIBLE);
 
 
 
@@ -250,7 +274,6 @@ public class BuildingPlanActivity extends BaseActivity {
                     }
 
                     recyclerView.setAdapter(new FilesDownloadAdapter(BuildingPlanActivity.this, downloadDocs));
-
 
                 }
             }
@@ -276,43 +299,128 @@ public class BuildingPlanActivity extends BaseActivity {
     }
 
 
-    private class TestAsynk extends AsyncTask<String, Void, String> {
+    private class getBuildingPenalizationDetails extends AsyncTask<String, Void, BuildingPenalizationAPIResponse> {
+
 
         @Override
-        protected void onPostExecute(String result) {
-
-            super.onPostExecute(result);
-            /*Toast.makeText(getApplicationContext(),
-                    String.format("%.2f", Float.parseFloat(result)),
-                    Toast.LENGTH_SHORT).show();*/
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            cvBPSDetails.setVisibility(View.GONE);
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            SoapObject request = new SoapObject(ApiUrl.BPS_SOAP_NAMESPACE,
-                    ApiUrl.BPS_SOAP_METHOD_NAME);
-            request.addProperty("ApplicationNo", params[0]);
+        protected void onPostExecute(BuildingPenalizationAPIResponse buildingPenalizationAPIResponse) {
 
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-                    SoapEnvelope.VER11);
-            envelope.dotNet = true;
+            super.onPostExecute(buildingPenalizationAPIResponse);
 
+            progressBar.setVisibility(View.GONE);
+
+            String genericError="Something went wrong on server!";
+
+            if(buildingPenalizationAPIResponse!=null)
+            {
+
+                if(TextUtils.isEmpty(buildingPenalizationAPIResponse.getApplicationNo()))
+                {
+                    String error=buildingPenalizationAPIResponse.getCurrentStatus();
+                    Toast.makeText(BuildingPlanActivity.this, (TextUtils.isEmpty(error)?genericError:error), Toast.LENGTH_SHORT).show();
+                }
+                else{
+
+                    layoutBPSDocsSection=(LinearLayout)findViewById(R.id.layoutBPSDocsSection);
+
+                    tvBPSApplicationNo.setText(buildingPenalizationAPIResponse.getApplicationNo());
+                    tvBPSApplicationStatus.setText(buildingPenalizationAPIResponse.getCurrentStatus());
+                    tvBPSApplicantName.setText(buildingPenalizationAPIResponse.getApplicantName());
+                    tvBPSApplicantMobNo.setText(buildingPenalizationAPIResponse.getMobileNo());
+
+                    if(buildingPenalizationAPIResponse.getDocType().equals("NA"))
+                    {
+                        layoutBPSDocsSection.setVisibility(View.GONE);
+                    }
+                    else
+                    {
+                        layoutBPSDocsSection.setVisibility(View.VISIBLE);
+
+                        ArrayList<DownloadDoc> downloadDocs=new ArrayList<>();
+
+                        if(buildingPenalizationAPIResponse.getStatusID() == 20)
+                        {
+
+
+                            String[] docsPath=buildingPenalizationAPIResponse.getDocPath().split("##");
+
+                            if(docsPath.length>0) {
+                                downloadDocs.add(new DownloadDoc("Proceeding-Document", getValidUrl(docsPath[0])));
+                                downloadDocs.add(new DownloadDoc("Plan-Document", getValidUrl(docsPath[1])));
+                            }
+
+                        }
+                        else
+                        {
+                            downloadDocs.add(new DownloadDoc(buildingPenalizationAPIResponse.getDocType(), getValidUrl(buildingPenalizationAPIResponse.getDocPath())));
+                        }
+
+                        recyclerViewBPS.setAdapter(new FilesDownloadAdapter(BuildingPlanActivity.this, downloadDocs));
+
+                    }
+
+                    cvBPSDetails.setVisibility(View.VISIBLE);
+                }
+
+            }
+            else
+            {
+                Toast.makeText(BuildingPlanActivity.this, genericError, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        @Override
+        protected BuildingPenalizationAPIResponse doInBackground(String... params) {
+
+            BuildingPenalizationAPIResponse buildingPenalizationAPIResponse=null;
+
+            String SOAP_ACTION = ApiUrl.BPS_SOAP_ACTION+ApiUrl.BPS_SOAP_METHOD_NAME;
+            SoapObject	request = new SoapObject(ApiUrl.BPS_SOAP_ACTION, ApiUrl.BPS_SOAP_METHOD_NAME);
+            request.addProperty(ApiUrl.BPS_SOAP_METHOD_PARAM_NAME, params[0]);
+            SoapSerializationEnvelope envelope =new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            envelope.dotNet=true;
             envelope.setOutputSoapObject(request);
+            HttpTransportSE	androidHttpTransport = new HttpTransportSE(ApiUrl.BPS_SOAP_SERVICE_URL, 120000);
+            androidHttpTransport.debug = true;
 
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(
-                    ApiUrl.BPS_URL);
-            Object response = null;
             try {
-
-                androidHttpTransport.call(ApiUrl.BPS_SOAP_ACTION, envelope);
-                response = envelope.getResponse();
-                Log.e("Object response", response.toString());
-
-            } catch (Exception e) {
+                androidHttpTransport.call(SOAP_ACTION,envelope);
+                SoapPrimitive result =(SoapPrimitive) envelope.getResponse();
+                buildingPenalizationAPIResponse=new Gson().fromJson(result.toString(), BuildingPenalizationAPIResponse.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
                 e.printStackTrace();
             }
-            return (response == null?"":response.toString());
+
+            return buildingPenalizationAPIResponse;
+
         }
+    }
+
+    private String getValidUrl(String url)
+    {
+
+        url=url.replace("\\", "/");
+
+        if(url.startsWith("http:"))
+        {
+            return url;
+        }
+        else
+        {
+            url="http:"+url;
+        }
+
+        return url;
     }
 
 

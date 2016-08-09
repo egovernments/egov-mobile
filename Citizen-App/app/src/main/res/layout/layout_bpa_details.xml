@@ -42,7 +42,7 @@
   -->
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cvApplicationDetails"
+    android:id="@+id/cvBuildingPlanDetails"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="2dp"
@@ -306,7 +306,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="NAME OF APPLICANT"
+                android:text="@string/applicant_name"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
@@ -335,7 +335,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text="APPLICANT MOBILE NO"
+                        android:text="@string/applicant_mobile_no"
                         android:textSize="@dimen/field_labelSize" />
 
                     <TextView
