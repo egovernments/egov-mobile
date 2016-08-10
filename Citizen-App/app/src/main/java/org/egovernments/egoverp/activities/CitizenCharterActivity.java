@@ -71,7 +71,7 @@ public class CitizenCharterActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);*/
 
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(CitizenCharterActivity.this, 2);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(CitizenCharterActivity.this, getResources().getInteger(R.integer.homegridcolumns));
         recyclerView.setLayoutManager(gridLayoutManager);
 
         homeItemList.add(new HomeItem("Revenue Section", R.drawable.ic_rupee_24dp, "", getResources().getColor(R.color.propertytax_color)));
