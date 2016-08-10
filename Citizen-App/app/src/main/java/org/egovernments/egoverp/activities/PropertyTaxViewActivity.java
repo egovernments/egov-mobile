@@ -293,9 +293,6 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                         check++;
                                     }
 
-
-                                    String currentInstallmentText=getCurrentInstallmentText();
-
                                     arrearsTotal=0;
                                     arrearsPenalty=0;
                                     currentTotal=0;
@@ -303,10 +300,10 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                     total =0;
 
                                     for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
-                                        if(currentInstallmentText.equals(taxDetail.getInstallment()))
+                                        if(getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment()))
                                         {
-                                            currentTotal=taxDetail.getTaxAmount();
-                                            currentPenalty=taxDetail.getPenalty();
+                                            currentTotal=currentTotal+taxDetail.getTaxAmount();
+                                            currentPenalty=currentPenalty+taxDetail.getPenalty();
                                         }
                                         else
                                         {
@@ -392,10 +389,10 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public String getCurrentInstallmentText()
+    public ArrayList<String> getCurrentFinancialYearInstallments()
     {
 
-        String installmentText;
+        ArrayList<String> currentYearInstallments=new ArrayList<>();
 
         List<Integer> firstInstallment= Arrays.asList(3, 4, 5, 6, 7, 8);
         //List<Integer> secondInstallment=Arrays.asList(9, 10, 11, 0, 1, 2);
@@ -407,21 +404,24 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         int prevYear=currentYear-1;
         if(firstInstallment.contains(currentMonth))
         {
-            installmentText=currentYear+"-"+nextYear+"-1";
+            currentYearInstallments.add(currentYear+"-"+nextYear+"-1");
+            currentYearInstallments.add(currentYear+"-"+nextYear+"-2");
         }
         else
         {
             if(currentMonth<=2)
             {
-                installmentText=prevYear+"-"+currentYear+"-2";
+                currentYearInstallments.add(prevYear+"-"+currentYear+"-1");
+                currentYearInstallments.add(prevYear+"-"+currentYear+"-2");
             }
             else
             {
-                installmentText=currentYear+"-"+nextYear+"-2";
+                currentYearInstallments.add(currentYear+"-"+nextYear+"-1");
+                currentYearInstallments.add(currentYear+"-"+nextYear+"-2");
             }
         }
 
-        return installmentText;
+        return currentYearInstallments;
 
     }
 

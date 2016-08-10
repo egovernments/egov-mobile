@@ -119,6 +119,9 @@ public class AccountActivationActivity extends AppCompatActivity {
         resendButton = (Button) findViewById(R.id.activate_resend);
         tvCountDown=(TextView)findViewById(R.id.tvCountDown);
 
+        activateButton = (FloatingActionButton) findViewById(R.id.activate_verify);
+        activateButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.activate_verifycompat);
+
         //Intent extras sent from register activity or from login activity
         username = getIntent().getStringExtra(PARAM_USERNAME);
         password = getIntent().getStringExtra(PARAM_PASSWORD);
@@ -135,14 +138,14 @@ public class AccountActivationActivity extends AppCompatActivity {
         if(!TextUtils.isEmpty(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE)))
         {
             etOtp.setText(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
+            activateButton.performClick();
         }
 
         BroadcastReceiver otpReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
                 etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-
+                activateButton.performClick();
             }
         };
 
@@ -200,8 +203,6 @@ public class AccountActivationActivity extends AppCompatActivity {
             }
         });
 
-        activateButton = (FloatingActionButton) findViewById(R.id.activate_verify);
-        activateButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.activate_verifycompat);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
