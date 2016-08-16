@@ -279,7 +279,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                         public void failure(RetrofitError error) {
                             if (error != null) {
                                 if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                                    Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), ""+error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 else {
                                     Toast.makeText(getActivity(), "Session expired! Please, logout and login again.", Toast.LENGTH_LONG).show();
                                 }

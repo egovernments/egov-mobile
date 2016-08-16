@@ -67,14 +67,14 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:paddingBottom="16dp"
                 android:paddingTop="24dp">
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/ic_archive_black_36dp"
                     android:layout_marginBottom="5dp"
-                    android:src="@drawable/ic_list_black_48dp"
                     android:tint="@color/iconstintcolor" />
 
                 <TextView
@@ -82,7 +82,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/nocomplaints"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:layout_marginBottom="5dp"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textView3"
@@ -90,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:text="(Please click on + circle below to register a complaint)"
                     style="@style/TextAppearance.AppCompat.Small"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:textSize="12sp"/>
 
 

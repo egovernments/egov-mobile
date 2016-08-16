@@ -59,7 +59,7 @@ import java.util.List;
 /**
  * Created by egov on 15/12/15.
  */
-public class SearchListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
@@ -67,7 +67,7 @@ public class SearchListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHo
     private List<SearchResultItem> results;
     SearchItemClickListener itemClickListener;
 
-    public SearchListAdapater(Context context, List<SearchResultItem> results, SearchItemClickListener itemClickListener)
+    public SearchListAdapter(Context context, List<SearchResultItem> results, SearchItemClickListener itemClickListener)
     {
         this.results =results;
         this.itemClickListener=itemClickListener;

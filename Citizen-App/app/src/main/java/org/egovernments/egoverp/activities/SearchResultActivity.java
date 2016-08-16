@@ -57,7 +57,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.adapters.SearchListAdapater;
+import org.egovernments.egoverp.adapters.SearchListAdapter;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.SearchResultItem;
@@ -75,7 +75,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     RecyclerView recyclerViewSearchResult;
-    SearchListAdapater.SearchItemClickListener itemClickListener;
+    SearchListAdapter.SearchItemClickListener itemClickListener;
     List<PropertyTaxCallback> resultProperties=new ArrayList<>();
 
     CardView cvInfo;
@@ -92,6 +92,8 @@ public class SearchResultActivity extends AppCompatActivity {
     public static String ULB_CODE="ulbCode";
     public static String ASSESSMENT_NO="assessmentNo";
     public static String REFERER_IP_CONFIG_KEY="app.referrer.ip";
+
+    PropertySearchRequest propertySearchRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,26 +124,17 @@ public class SearchResultActivity extends AppCompatActivity {
 
         category=(isVacantLand?PropertyTaxSearchActivity.VLT_CATEGORY_VALUE:PropertyTaxSearchActivity.PT_CATEGORY_VALUE);
 
-        itemClickListener=new SearchListAdapater.SearchItemClickListener() {
+        itemClickListener=new SearchListAdapter.SearchItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 openViewPropertyTaxScreen(resultProperties.get(position).getAssessmentNo());
             }
         };
 
-        ulbCode=getIntegerParam(PropertyTaxSearchActivity.paramUlbCode);
-        showSearchResults(ulbCode, getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo), category);
+        propertySearchRequest=(PropertySearchRequest)getIntent().getSerializableExtra(PropertyTaxSearchActivity.PARAM_PROPERTY_SEARCH_REQUEST);
+        ulbCode=propertySearchRequest.getUlbCode();
+        showSearchResults(propertySearchRequest);
 
-    }
-
-    String getStringParam(String paramName)
-    {
-        return getEmptyStringIfNull(getIntent().getStringExtra(paramName));
-    }
-
-    Integer getIntegerParam(String paramName)
-    {
-        return getIntent().getIntExtra(paramName, 0);
     }
 
     void hideLoadingIndicator()
@@ -162,7 +155,7 @@ public class SearchResultActivity extends AppCompatActivity {
     {
         progressBar.setVisibility(View.GONE);
         recyclerViewSearchResult.setVisibility(View.GONE);
-        imgInfo.setImageDrawable(getResources().getDrawable(R.drawable.ic_list_black_48dp));
+        imgInfo.setImageDrawable(getResources().getDrawable(R.drawable.ic_business_black_36dp));
         tvMsg.setText("No property found");
         cvInfo.setVisibility(View.VISIBLE);
     }
@@ -189,7 +182,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     }
 
-    void loadRecylerView(List<PropertyTaxCallback> properties)
+    void loadRecyclerView(List<PropertyTaxCallback> properties)
     {
 
         List<SearchResultItem> resultItems=new ArrayList<>();
@@ -216,8 +209,8 @@ public class SearchResultActivity extends AppCompatActivity {
             resultItems.add(searchResultItem);
         }
 
-        SearchListAdapater adapater= new SearchListAdapater(getApplicationContext(), resultItems, itemClickListener);
-        recyclerViewSearchResult.setAdapter(adapater);
+        SearchListAdapter adapter= new SearchListAdapter(getApplicationContext(), resultItems, itemClickListener);
+        recyclerViewSearchResult.setAdapter(adapter);
         hideLoadingIndicator();
     }
 
@@ -231,80 +224,75 @@ public class SearchResultActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showSearchResults(final int ulbCode, final String assessmentNo, final String ownerName, final String mobileNo, final String category)
+    private void showSearchResults(final PropertySearchRequest propertySearchRequest)
     {
 
         showLoadingIndicator();
 
-
         ApiController.getAPI(SearchResultActivity.this)
-                .searchProperty(referrerIp, new PropertySearchRequest(ulbCode, assessmentNo, ownerName, mobileNo, category),
-                        new Callback<List<PropertyTaxCallback>>() {
-                            @Override
-                            public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
+                .searchProperty(referrerIp, propertySearchRequest,
+                new Callback<List<PropertyTaxCallback>>() {
+                    @Override
+                    public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
 
-                                if(isExited){
-                                    return;
-                                }
+                        if(isExited){
+                            return;
+                        }
 
-                                resultProperties=propertyTaxCallbacks;
+                        resultProperties=propertyTaxCallbacks;
 
-                                if(propertyTaxCallbacks.size()>0)
-                                {
-                                    if(propertyTaxCallbacks.size()==1)
-                                    {
-                                        PropertyTaxCallback propertyTaxCallback=propertyTaxCallbacks.get(0);
+                        if(propertyTaxCallbacks.size()>0)
+                        {
+                            if(propertyTaxCallbacks.size()==1)
+                            {
+                                PropertyTaxCallback propertyTaxCallback=propertyTaxCallbacks.get(0);
 
-                                        if (propertyTaxCallback.getTaxErrorDetails()==null) {
-                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                                SearchResultActivity.this.finish();
-                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                            }
-                                            else
-                                            {
-                                                showSearchResults(getIntegerParam(PropertyTaxSearchActivity.paramUlbCode), getStringParam(PropertyTaxSearchActivity.paramAssessmentNo), getStringParam(PropertyTaxSearchActivity.paramOwnerName), getStringParam(PropertyTaxSearchActivity.paramMobileNo), category);
-                                            }
-                                        }
-                                        else if(TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage()))
-                                        {
-                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                                SearchResultActivity.this.finish();
-                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                            }
-                                        }
-                                        else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                        {
-                                            if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                                SearchResultActivity.this.finish();
-                                                openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                            }
-                                        }
-                                        else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                        {
-                                            showEmptyMessage();
-                                        }
+                                if (propertyTaxCallback.getTaxErrorDetails()==null) {
+                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
                                     }
                                     else
                                     {
-                                        loadRecylerView(propertyTaxCallbacks);
+                                        showSearchResults(propertySearchRequest);
                                     }
                                 }
-                                else
+                                else if(TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage()))
+                                {
+                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                    }
+                                }
+                                else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
+                                {
+                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
+                                    }
+                                }
+                                else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
                                 {
                                     showEmptyMessage();
                                 }
                             }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                showErrorMessage(error.getLocalizedMessage());
+                            else
+                            {
+                                loadRecyclerView(propertyTaxCallbacks);
                             }
+                        }
+                        else
+                        {
+                            showEmptyMessage();
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                        showErrorMessage(error.getLocalizedMessage());
+                    }
          });
-
-
-
-
     }
 
 

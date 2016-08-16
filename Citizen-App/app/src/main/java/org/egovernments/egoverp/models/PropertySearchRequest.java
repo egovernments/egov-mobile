@@ -43,26 +43,71 @@
 package org.egovernments.egoverp.models;
 
 
-public class PropertySearchRequest {
+import java.io.Serializable;
+
+public class PropertySearchRequest implements Serializable {
 
     int ulbCode;
     String assessmentNo;
     String ownerName;
     String mobileNumber;
     String category;
+    String doorNo;
 
-    public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber) {
+    public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber, String doorNo, String category) {
         this.ulbCode = ulbCode;
         this.assessmentNo = assessmentNo;
         this.ownerName = ownerName;
+        this.mobileNumber = mobileNumber;
+        this.doorNo = doorNo;
+        this.category = category;
+    }
+
+    public int getUlbCode() {
+        return ulbCode;
+    }
+
+    public void setUlbCode(int ulbCode) {
+        this.ulbCode = ulbCode;
+    }
+
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
     }
 
-    public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber, String category) {
-        this.ulbCode = ulbCode;
-        this.assessmentNo = assessmentNo;
-        this.ownerName = ownerName;
-        this.mobileNumber = mobileNumber;
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDoorNo() {
+        return doorNo;
+    }
+
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
     }
 }

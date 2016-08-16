@@ -66,7 +66,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
-import org.egovernments.egoverp.models.PropertyTaxRequest;
+import org.egovernments.egoverp.models.PropertyViewRequest;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.TaxOwnerDetail;
 import org.egovernments.egoverp.network.ApiController;
@@ -262,7 +262,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
         ApiController.getAPI(PropertyTaxViewActivity.this)
                 .getPropertyTax(referrerIp,
-                        new PropertyTaxRequest(String.format("%04d", ulbCode), code, category),
+                        new PropertyViewRequest(String.format("%04d", ulbCode), code, category),
                         new Callback<PropertyTaxCallback>() {
                             @Override
                             public void success(PropertyTaxCallback propertyTaxCallback, Response response) {

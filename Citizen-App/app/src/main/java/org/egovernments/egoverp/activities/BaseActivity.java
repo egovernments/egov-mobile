@@ -446,19 +446,19 @@ public class BaseActivity extends AppCompatActivity {
             }
 
             //check for property tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
             }
 
             //check for vacant land tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }

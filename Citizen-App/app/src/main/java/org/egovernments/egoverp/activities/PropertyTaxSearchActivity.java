@@ -48,25 +48,28 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
+import org.egovernments.egoverp.models.PropertySearchRequest;
 
 public class PropertyTaxSearchActivity extends BaseActivity {
 
     EditText etAssessmentNo;
     EditText etOwnerName;
     EditText etMobileNo;
+    EditText etDoorNo;
+
+    LinearLayout layoutDoorNoContainer;
+
     TextView tvSearchTitle;
     FloatingActionButton fabSearchProperty;
 
-    public static String paramUlbCode="ulbCode";
-    public static String paramAssessmentNo="assessmentNo";
-    public static String paramOwnerName="ownerName";
-    public static String paramMobileNo="mobileNo";
+    public static final String PARAM_PROPERTY_SEARCH_REQUEST="propertySearchObj";
 
     public static String IS_VACANT_LAND="isVacantLand";
 
@@ -86,6 +89,9 @@ public class PropertyTaxSearchActivity extends BaseActivity {
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
         etMobileNo=(EditText)findViewById(R.id.etMobileNo);
+        etDoorNo=(EditText)findViewById(R.id.etDoorNo);
+
+        layoutDoorNoContainer=(LinearLayout)findViewById(R.id.doorNoContainer);
 
         try
         {
@@ -102,6 +108,10 @@ public class PropertyTaxSearchActivity extends BaseActivity {
         {
             tvSearchTitle.setText(R.string.search_vacant_land);
         }
+        else
+        {
+            layoutDoorNoContainer.setVisibility(View.VISIBLE);
+        }
 
         fabSearchProperty=(FloatingActionButton)findViewById(R.id.fabSearchProperty);
 
@@ -113,10 +123,10 @@ public class PropertyTaxSearchActivity extends BaseActivity {
                 if(validateInputSearchFields())
                 {
                     Intent openSearchResult=new Intent(PropertyTaxSearchActivity.this, SearchResultActivity.class);
-                    openSearchResult.putExtra(paramUlbCode,sessionManager.getUrlLocationCode());
-                    openSearchResult.putExtra(paramAssessmentNo,etAssessmentNo.getText().toString());
-                    openSearchResult.putExtra(paramOwnerName,etOwnerName.getText().toString());
-                    openSearchResult.putExtra(paramMobileNo,etMobileNo.getText().toString());
+
+                    openSearchResult.putExtra(PARAM_PROPERTY_SEARCH_REQUEST, new PropertySearchRequest(sessionManager.getUrlLocationCode(),
+                            etAssessmentNo.getText().toString(), etOwnerName.getText().toString(), etMobileNo.getText().toString(),
+                            etDoorNo.getText().toString(),(isVacantLand?VLT_CATEGORY_VALUE:PT_CATEGORY_VALUE)));
                     openSearchResult.putExtra(IS_VACANT_LAND, isVacantLand);
                     openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
                     startActivity(openSearchResult);
@@ -125,7 +135,6 @@ public class PropertyTaxSearchActivity extends BaseActivity {
                 {
                     Toast.makeText(getApplicationContext(), "At least, Please fill any one field to search", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -143,7 +152,7 @@ public class PropertyTaxSearchActivity extends BaseActivity {
 
     boolean validateInputSearchFields()
     {
-        return (isNotEmpty(etAssessmentNo.getText().toString()) || isNotEmpty(etOwnerName.getText().toString()) || isNotEmpty(etMobileNo.getText().toString()));
+        return (isNotEmpty(etAssessmentNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()) || (isNotEmpty(etDoorNo.getText().toString().trim())&&!isVacantLand));
     }
 
     boolean isNotEmpty(String string)

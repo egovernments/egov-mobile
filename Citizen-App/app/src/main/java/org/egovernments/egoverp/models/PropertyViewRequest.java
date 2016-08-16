@@ -43,13 +43,13 @@
 package org.egovernments.egoverp.models;
 
 
-public class PropertyTaxRequest {
+public class PropertyViewRequest {
 
     private String ulbCode;
     private String assessmentNo;
     private String category;
 
-    public PropertyTaxRequest(String ulbCode, String assessmentNo, String category) {
+    public PropertyViewRequest(String ulbCode, String assessmentNo, String category) {
         this.ulbCode = ulbCode;
         this.assessmentNo = assessmentNo;
         this.category = category;

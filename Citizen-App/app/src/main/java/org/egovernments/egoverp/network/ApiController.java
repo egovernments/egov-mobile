@@ -64,7 +64,7 @@ import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
-import org.egovernments.egoverp.models.PropertyTaxRequest;
+import org.egovernments.egoverp.models.PropertyViewRequest;
 import org.egovernments.egoverp.models.RegisterRequest;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
@@ -266,7 +266,7 @@ public class ApiController {
 
         @POST(ApiUrl.PROPERTY_TAX_DETAILS)
         void getPropertyTax(@Header("Referer") String referer,
-                            @Body PropertyTaxRequest propertyTaxRequest,
+                            @Body PropertyViewRequest propertyViewRequest,
                             Callback<PropertyTaxCallback> taxCallback);
 
         @POST(ApiUrl.WATER_TAX_DETAILS)
