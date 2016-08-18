@@ -151,12 +151,12 @@ public class HomeActivity extends BaseActivity {
             }
 
 
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2), R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.bpacolor)));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp, "", getResources().getColor(R.color.bpcolor)));
             }

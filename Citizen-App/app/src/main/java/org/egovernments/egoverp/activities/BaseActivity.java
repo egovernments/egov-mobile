@@ -409,6 +409,7 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
 
+                progressDialog.dismiss();
                 sessionManager.logoutUser();
 
                 ApiController.apiInterface = null;
@@ -464,13 +465,13 @@ public class BaseActivity extends AppCompatActivity {
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
             }

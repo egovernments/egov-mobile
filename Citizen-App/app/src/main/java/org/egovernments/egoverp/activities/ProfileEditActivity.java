@@ -61,6 +61,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
@@ -72,8 +73,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -131,7 +130,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         profileAadhaar = (EditText) findViewById(R.id.editprofile_aadhaarcardno);
         profilePAN = (EditText) findViewById(R.id.editprofile_PANcardno);
 
-
         if (profile != null) {
             profileName.setText(profile.getName());
             profilePhone.setText(profile.getMobileNumber());
@@ -145,8 +143,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            profileAadhaar.setText(profile.getAadhaarCard());
-            profilePAN.setText(profile.getPanCard());
+            profileAadhaar.setText(profile.getAadhaarNumber());
+            profilePAN.setText(profile.getPan());
 
             profileGender = (RadioGroup) findViewById(R.id.editprofile_gender);
             profileGender.check(R.id.radioButton_others);
@@ -159,7 +157,13 @@ public class ProfileEditActivity extends AppCompatActivity {
                     case "FEMALE":
                         profileGender.check(R.id.radioButton_female);
                         break;
+                    default :
+                        profileGender.check(R.id.radioButton_others);
+                        break;
                 }
+            }
+            else{
+                profileGender.check(R.id.radioButton_male);
             }
 
 
@@ -167,7 +171,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                     try {
-                        String selectedDateStr=String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear + 1) + "-" + String.valueOf(year);
+                        String selectedDateStr = String.valueOf(dayOfMonth) + "-" + String.valueOf(monthOfYear + 1) + "-" + String.valueOf(year);
                         profileDOB.setText(new SimpleDateFormat("d MMMM, yyyy", Locale.ENGLISH).format(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(selectedDateStr)));
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -267,7 +271,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else if (!isValidEmail(emailId)) {
+        } else if (!AppUtils.isValidEmail(emailId)) {
             Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter a valid email ID", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
@@ -277,7 +281,17 @@ public class ProfileEditActivity extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
             progressDialog.dismiss();
-        } else {
+        } else  if(!TextUtils.isEmpty(profileAadhaar.getText()) && profileAadhaar.getText().length()!=12) {
+            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter valid aadhar card number", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
+            progressDialog.dismiss();
+        } else  if(!TextUtils.isEmpty(profilePAN.getText()) && !AppUtils.isValidPANNo(profilePAN.getText().toString())) {
+            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter valid pan card number", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
+            progressDialog.dismiss();
+        }else {
 
             final Profile update_profile = new Profile(name, emailId, mobileNumber, mobileNumber, altContactNumber, gender, panCard, dob, aadhaarCard);
 
@@ -336,14 +350,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             });
 
         }
-    }
-
-    //Matches the email id against the pattern to check if it is of a typical format
-    private boolean isValidEmail(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
     }
 
 }

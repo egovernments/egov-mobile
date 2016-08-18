@@ -190,8 +190,8 @@ public class ProfileActivity extends BaseActivity {
             } else {
                 dob.setText("-");
             }
-            aadhaar.setText(validateIsEmpty(profile.getAadhaarCard()));
-            pan.setText(validateIsEmpty(profile.getPanCard()));
+            aadhaar.setText(validateIsEmpty(profile.getAadhaarNumber()));
+            pan.setText(validateIsEmpty(profile.getPan()));
             if (profile.getGender() != null) {
                 switch (profile.getGender()) {
                     case "MALE":

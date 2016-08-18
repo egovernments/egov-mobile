@@ -72,15 +72,9 @@ public class Profile implements Serializable {
     @SerializedName("gender")
     @Expose
     private String gender;
-    @SerializedName("panCard")
-    @Expose
-    private String panCard;
     @SerializedName("dob")
     @Expose
     private String dob;
-    @SerializedName("aadhaarCard")
-    @Expose
-    private String aadhaarCard;
     @SerializedName("preferredLanguage")
     @Expose
     private String preferredLanguage;
@@ -133,11 +127,8 @@ public class Profile implements Serializable {
         return gender;
     }
 
-    /**
-     * @return The panCard
-     */
-    public String getPanCard() {
-        return panCard;
+    public String getPan() {
+        return pan;
     }
 
     /**
@@ -147,11 +138,8 @@ public class Profile implements Serializable {
         return dob;
     }
 
-    /**
-     * @return The aadhaarCard
-     */
-    public String getAadhaarCard() {
-        return aadhaarCard;
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
     }
 
     /**
@@ -172,4 +160,6 @@ public class Profile implements Serializable {
         this.pan = pan;
         this.aadhaarNumber = aadhaarNumber;
     }
+
+
 }

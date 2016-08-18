@@ -60,6 +60,8 @@ import java.util.regex.Pattern;
  */
 public class AppUtils {
 
+    private static final String PATTERN_PAN = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
+
     public static ConfigManager getConfigManager(Context appContext) throws IOException {
         InputStream inputStream = appContext.getAssets().open("egov.conf");
         ConfigManager configManager = new ConfigManager(inputStream, appContext);
@@ -79,6 +81,11 @@ public class AppUtils {
     public static boolean isValidEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
+    }
+
+    public static boolean isValidPANNo(String panNo) {
+        Pattern pattern = Pattern.compile(PATTERN_PAN);
+        return pattern.matcher(panNo).matches();
     }
 
     public static double round(double value, int places) {
