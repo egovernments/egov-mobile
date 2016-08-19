@@ -197,7 +197,7 @@ public class BaseActivity extends AppCompatActivity {
         };
 
 
-        recyclerView.setAdapter(new NavdrawAdapter(arrayList, sessionManager.getName(), sessionManager.getMobile(), R.drawable.ic_person_black_36dp, navItemClickListener));
+        recyclerView.setAdapter(new NavdrawAdapter(arrayList, sessionManager.getName(), sessionManager.getMobile(), sessionManager.getUrlLocation(), R.drawable.ic_person_black_36dp, navItemClickListener));
 
     }
 

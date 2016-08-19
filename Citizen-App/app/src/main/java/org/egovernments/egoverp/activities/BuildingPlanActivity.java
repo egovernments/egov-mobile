@@ -394,7 +394,7 @@ public class BuildingPlanActivity extends BaseActivity {
             try {
                 androidHttpTransport.call(SOAP_ACTION,envelope);
                 SoapPrimitive result =(SoapPrimitive) envelope.getResponse();
-                buildingPenalizationAPIResponse=new Gson().fromJson(result.toString(), BuildingPenalizationAPIResponse.class);
+                buildingPenalizationAPIResponse=new Gson().fromJson(result.toString().trim(), BuildingPenalizationAPIResponse.class);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (XmlPullParserException e) {

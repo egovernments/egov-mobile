@@ -61,173 +61,158 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:paddingBottom="5dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                android:text="BPA APPLICATION"
+                android:layout_marginBottom="10dp"
+                style="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
                 android:text="@string/application_no"
-                android:textSize="@dimen/field_labelSize" />
+                android:textColor="#8A000000"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvApplicationNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:layout_marginBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="@dimen/data_labelSize" />
+                android:textColor="#DE000000"
+                style="@style/TextAppearance.AppCompat.Body1"/>
 
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:orientation="horizontal"
-                android:layout_marginBottom="5dp">
+                android:gravity="left"
+                android:text="APPLICATION TYPE"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvApplicationType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.AppCompat.Body1"
+                 />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="APPLICATION TYPE"
-                        android:textSize="@dimen/field_labelSize" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
-                    <TextView
-                        android:id="@+id/tvApplicationType"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dataLabelColor"
-                        android:layout_marginBottom="5dp"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/data_labelSize" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="APPLICATION STATUS"
+                android:textSize="@dimen/field_labelSize" />
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/tvApplicationStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="@style/Base.TextAppearance.AppCompat.Body1" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/dotted_line"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:layerType="software" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="APPLICATION STATUS"
-                        android:textSize="@dimen/field_labelSize" />
-
-                    <TextView
-                        android:id="@+id/tvApplicationStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/dataLabelColor"
-                        android:layout_marginBottom="5dp"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/data_labelSize" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="OWNER DETAILS"
+                android:layout_marginBottom="10dp"
+                style="@style/TextAppearance.AppCompat.Body2" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/owner_label"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvOwnerName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/Base.TextAppearance.AppCompat.Body1" />
 
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal">
+                android:gravity="left"
+                android:text="OWNER MOBILE NO"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvOwnerMobNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dataLabelColor"
+                android:gravity="left"
+                style="@style/TextAppearance.AppCompat.Body1" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="OWNER MOBILE NO"
-                        android:textSize="@dimen/field_labelSize" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
-                    <TextView
-                        android:id="@+id/tvOwnerMobNo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dataLabelColor"
-                        android:gravity="left"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="OWNER EMAIL ID"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/tvOwnerEmailId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="@style/TextAppearance.AppCompat.Body1"  />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="OWNER EMAIL ID"
-                        android:textSize="@dimen/field_labelSize" />
-
-                    <TextView
-                        android:id="@+id/tvOwnerEmailId"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/dataLabelColor"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
-
-                </LinearLayout>
-            </LinearLayout>
-
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="OWNER ADDRESS"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption"/>
 
             <TextView
                 android:id="@+id/tvOwnerAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
+                style="@style/TextAppearance.AppCompat.Body1"
+                 />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/dotted_line"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:layerType="software" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="SITE DETAILS"
                 android:layout_marginBottom="10dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body2" />
 
 
             <TextView
@@ -235,71 +220,62 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="SITE ADDRESS"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvSiteAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body1" />
 
-            <LinearLayout
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:layout_marginBottom="5dp"
-                android:orientation="horizontal">
+                android:gravity="left"
+                android:text="NATURE OF SITE"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvNatureOfSite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="@style/TextAppearance.AppCompat.Body1" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="NATURE OF SITE"
-                        android:textSize="@dimen/field_labelSize" />
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
-                    <TextView
-                        android:id="@+id/tvNatureOfSite"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dataLabelColor"
-                        android:gravity="left"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="PERMISSION TYPE"
+                style="@style/TextAppearance.AppCompat.Caption" />
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/tvPermissionType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+               style="@style/TextAppearance.AppCompat.Body1" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/dotted_line"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:layerType="software" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="PERMISSION TYPE"
-                        android:textSize="@dimen/field_labelSize" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="APPLICANT DETAILS"
+                android:layout_marginBottom="10dp"
+                style="@style/TextAppearance.AppCompat.Body2" />
 
-                    <TextView
-                        android:id="@+id/tvPermissionType"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/dataLabelColor"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
-
-                </LinearLayout>
-            </LinearLayout>
 
 
             <TextView
@@ -307,81 +283,64 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/applicant_name"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvApplicantName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body1"/>
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:layout_marginBottom="10dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="@string/applicant_mobile_no"
-                        android:textSize="@dimen/field_labelSize" />
-
-                    <TextView
-                        android:id="@+id/tvApplicantMobNo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/dataLabelColor"
-                        android:gravity="left"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="APPLICANT EMAIL ID"
-                        android:textSize="@dimen/field_labelSize" />
-
-                    <TextView
-                        android:id="@+id/tvApplicantEmailId"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textColor="@color/dataLabelColor"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/data_labelSize" />
-
-                </LinearLayout>
-            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:text="Documents"
-                android:id="@+id/textView7" />
+                android:gravity="left"
+                android:text="@string/applicant_mobile_no"
+                style="@style/TextAppearance.AppCompat.Caption" />
+
+            <TextView
+                android:id="@+id/tvApplicantMobNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="@style/TextAppearance.AppCompat.Body1" />
+
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="APPLICANT EMAIL ID"
+                style="@style/TextAppearance.AppCompat.Caption" />
+
+            <TextView
+                android:id="@+id/tvApplicantEmailId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="@style/TextAppearance.AppCompat.Body1" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/dotted_line"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:layerType="software" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="DOCUMENTS"
+                style="@style/TextAppearance.AppCompat.Body2" />
+
 
         </LinearLayout>
+
 
 
         <android.support.v7.widget.RecyclerView

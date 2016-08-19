@@ -61,7 +61,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:paddingBottom="5dp">
 
             <TextView
@@ -69,64 +71,59 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="@string/application_no"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvBPSApplicationNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:layout_marginBottom="10dp"
-                android:textStyle="bold"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body1" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="APPLICATION STATUS"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvBPSApplicationStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:textColor="@color/dataLabelColor"
-                android:layout_marginBottom="5dp"
-                android:textStyle="bold"
-                android:textSize="@dimen/data_labelSize" />
+                android:layout_marginBottom="10dp"
+                style="@style/TextAppearance.AppCompat.Body1" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="@string/applicant_name"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvBPSApplicantName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:layout_marginBottom="10dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body1"
+                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="@string/applicant_mobile_no"
-                android:textSize="@dimen/field_labelSize" />
+                style="@style/TextAppearance.AppCompat.Caption" />
 
             <TextView
                 android:id="@+id/tvBPSApplicantMobNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:gravity="left"
-                android:layout_marginBottom="5dp"
-                android:textSize="@dimen/data_labelSize" />
+                style="@style/TextAppearance.AppCompat.Body1"
+                 />
 
 
 
@@ -136,24 +133,29 @@
             android:id="@+id/layoutBPSDocsSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:orientation="vertical">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/dotted_line"
+                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
+                android:layerType="software" />
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:text="Documents"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:gravity="left"
+                android:text="DOCUMENTS"
                 android:paddingBottom="10dp"
-                android:id="@+id/textView7" />
+                style="@style/TextAppearance.AppCompat.Body2" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recylerviewBPSFiles"
                 android:layout_width="match_parent"
                 android:paddingBottom="20dp"
-                android:paddingRight="10dp"
-                android:paddingLeft="10dp"
                 android:layout_height="wrap_content">
 
             </android.support.v7.widget.RecyclerView>

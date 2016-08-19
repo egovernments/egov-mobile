@@ -50,7 +50,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -78,6 +78,20 @@
             android:text=""
             android:textStyle="normal"
             style="@style/TextAppearance.AppCompat.Small"
+
+            />
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="2dp"
+            android:text=""
+            android:paddingBottom="8dp"
+            android:textStyle="normal"
+            style="@style/TextAppearance.AppCompat.Caption"
 
             />
     </LinearLayout>

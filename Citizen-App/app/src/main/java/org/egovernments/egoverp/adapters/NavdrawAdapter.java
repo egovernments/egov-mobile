@@ -72,6 +72,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
     private String name;        //String Resource for header View Name
     private int profile;        //int Resource for header view profile picture
     private String email;       //String Resource for header view email
+    private String city;       //String Resource for header view city
 
     NavItemClickListener navItemClickListener;
 
@@ -88,6 +89,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
         ImageView profile;
         TextView Name;
         TextView email;
+        TextView city;
         LinearLayout parent;
 
 
@@ -106,6 +108,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
 
                 Name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xml for name
                 email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from header.xml for email
+                city = (TextView) itemView.findViewById(R.id.city);       // Creating Text View object from header.xml for city
                 profile = (ImageView) itemView.findViewById(R.id.circleView);// Creating Image view object from header.xml for profile pic
                 Holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
             }
@@ -116,11 +119,12 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
 
 
 
-    public NavdrawAdapter(List<NavigationItem> navigationItems, String Name, String Email, int Profile, NavItemClickListener navItemClickListener){ // NavdrawAdapter Constructor with titles and icons parameter
+    public NavdrawAdapter(List<NavigationItem> navigationItems, String Name, String Email, String City, int Profile, NavItemClickListener navItemClickListener){ // NavdrawAdapter Constructor with titles and icons parameter
         this.navItemClickListener=navItemClickListener;
         this.navigationItems = navigationItems;                //have seen earlier
         name = Name;
         email = Email;
+        city=City;
         profile = Profile;                     //here we assign those passed values to the values we declared here
 
     }
@@ -192,6 +196,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
             holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
             holder.Name.setText(name);
             holder.email.setText(email);
+            holder.city.setText(city);
         }
     }
 
