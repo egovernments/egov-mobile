@@ -45,10 +45,7 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storeFile file('/home/egov/Desktop/android-ant/MeGov-app-build/egovernments.keystore')
-            storePassword 'android'
+
         }
     }
     compileSdkVersion 23
@@ -63,7 +60,7 @@ android {
     }
     buildTypes {
         release {
-            debuggable true
+            debuggable false
             minifyEnabled false
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
