@@ -42,9 +42,45 @@
 
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 23
     buildToolsVersion "22.0.1"
+
+    if(project.hasProperty("Officers-App.properties")
+            && new File(project.property("Officers-App.properties")).exists()) {
+
+        Properties props = new Properties()
+        props.load(new FileInputStream(file(project.property("Officers-App.properties"))))
+
+        signingConfigs {
+            release {
+                keyAlias props['alias']
+                keyPassword props['alias.password']
+                storeFile file(props['keystore'])
+                storePassword props['keystore.password']
+            }
+        }
+
+        productFlavors {
+            /*Release product flavors*/
+        }
+
+    }
+    else
+    {
+        productFlavors {
+            egov {
+                minSdkVersion 14
+                targetSdkVersion 23
+                applicationId 'org.egov.employee'
+                versionCode 1
+                versionName '0.1'
+            }
+
+        }
+
+    }
 
     defaultConfig {
         applicationId "offices.org.egov.egovemployees"
@@ -56,25 +92,11 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-        egov {
-            minSdkVersion 14
-            targetSdkVersion 23
-            applicationId 'org.egov.employee'
-            versionCode 1
-            versionName '0.1'
-        }
-        ap {
-            applicationId "org.egov.apemployees"
-            minSdkVersion 14
-            targetSdkVersion 23
-            versionName "0.1-alpha"
-            versionCode 1
-        }
-    }
+
 }
 
 dependencies {
