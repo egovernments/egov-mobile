@@ -265,6 +265,7 @@ public class LoginActivity extends BaseActivity {
                                 preference.setPwd(pwd);
                                 preference.setName(respJson.get("name").getAsString());
                                 preference.setDistrict(autocompleteDistrict.getText().toString());
+                                preference.setActiveCityName(autocompleteCity.getText().toString());
 
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
