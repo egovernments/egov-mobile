@@ -42,9 +42,11 @@
 
 package org.egovernments.egoverp.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -222,6 +224,11 @@ public class SearchResultActivity extends AppCompatActivity {
     void loadPropertiesResultIntoRecyclerView(List<PropertyTaxCallback> properties)
     {
 
+        if(properties.size()>=100)
+        {
+            showModifySearchCriteriaDialog();
+        }
+
         List<SearchResultItem> resultItems=new ArrayList<>();
         for(PropertyTaxCallback propertyTaxCallback:properties)
         {
@@ -257,6 +264,11 @@ public class SearchResultActivity extends AppCompatActivity {
 
     void loadWaterConnectionsResultIntoRecyclerView(List<WaterTaxCallback> waterConnections)
     {
+
+        if(waterConnections.size()>=100)
+        {
+            showModifySearchCriteriaDialog();
+        }
 
         List<SearchResultItem> resultItems=new ArrayList<>();
         for(WaterTaxCallback waterTaxCallback:waterConnections)
@@ -429,6 +441,19 @@ public class SearchResultActivity extends AppCompatActivity {
 
                 });
 
+    }
+
+
+    public void showModifySearchCriteriaDialog()
+    {
+        new AlertDialog.Builder(SearchResultActivity.this)
+                .setMessage("Your search criteria was returns more than 100 records. so, please re-modify the your search criteria for find the accurate results!")
+                .setPositiveButton("MODIFY", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SearchResultActivity.this.finish();
+                    }
+                }).create().show();
     }
 
     @Override
