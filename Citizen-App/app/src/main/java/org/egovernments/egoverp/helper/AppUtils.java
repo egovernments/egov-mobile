@@ -43,10 +43,18 @@
 package org.egovernments.egoverp.helper;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.gson.JsonElement;
+
+import org.egovernments.egoverp.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,11 +77,6 @@ public class AppUtils {
         return configManager;
     }
 
-    public static String getNullAsEmptyString(String string)
-    {
-        return (TextUtils.isEmpty(string)?"":string);
-    }
-
     public static String getNullAsEmptyString(JsonElement jsonElement) {
         return jsonElement.isJsonNull() ? "" : jsonElement.getAsString();
     }
@@ -90,9 +93,7 @@ public class AppUtils {
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
-
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        BigDecimal bd = new BigDecimal(value).setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
 
@@ -139,6 +140,33 @@ public class AppUtils {
         {
             return AppUtils.checkPasswordLowLevel(password);
         }
+    }
+
+    public static void showImageDialog(Context context, String title, String content, int imgResId, String negativeButtonText)
+    {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        final ViewGroup nullParent = null;
+        final View dialogView = inflater.inflate(R.layout.dialog_receipt_info, nullParent);
+
+        TextView tvDesc=(TextView)dialogView.findViewById(R.id.tvContent);
+        ImageView imgView=(ImageView)dialogView.findViewById(R.id.imgContent);
+
+        tvDesc.setText(content);
+        imgView.setImageResource(imgResId);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle(title);
+        builder.setView(dialogView);
+        builder.setNegativeButton(negativeButtonText,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                    }
+                });
+        builder.show();
     }
 
 }

@@ -48,6 +48,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
@@ -62,6 +63,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
     EditText etMobileNo;
     ConfigManager configManager;
 
+    TextView tvReceiptInfo;
 
     public static final String PARAM_IS_WATER_CON_SEARCH="isWaterConSearch";
     public static final String PARAM_WATER_CON_SEARCH_REQUEST ="WaterConSearchObj";
@@ -74,6 +76,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         etConsumerNo=(EditText)findViewById(R.id.etConsumerNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
         etMobileNo=(EditText)findViewById(R.id.etMobileNo);
+        tvReceiptInfo=(TextView)findViewById(R.id.tvReceiptInfo);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSearchWaterConnection);
 
@@ -90,6 +93,8 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         {
             ex.printStackTrace();
         }
+
+        tvReceiptInfo.setOnClickListener(this);
 
     }
 
@@ -126,7 +131,10 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         {
             case R.id.fabSearchWaterConnection:
                 searchWaterConnections();
-            break;
+                break;
+            case R.id.tvReceiptInfo:
+                AppUtils.showImageDialog(WaterChargesSearchActivity.this, getString(R.string.where_can_i_find_my_consumer_no), getString(R.string.consumerno_taxreceipt), R.drawable.wc_bill, getString(R.string.ok_got_it));
+                break;
         }
 
     }

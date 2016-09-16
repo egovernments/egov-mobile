@@ -220,8 +220,13 @@ Links to:</string>
     <string name="otp_exipry_message">Your OTP has been expired! Please resend otp using below button</string>
     <string name="applicant_name">APPLICANT NAME</string>
     <string name="applicant_mobile_no">APPLICANT MOBILE NO</string>
+    <string name="where_can_i_find_my_assessment_no">Where can i find my assessment no?</string>
+    <string name="assementno_taxreceipt">Assessment No. is in the tax receipt</string>
+    <string name="ok_got_it">OK, GOT IT!</string>
     <string name="fill_any_one_details">At least, Please fill any one field to search</string>
     <string name="title_activity_water_charges_search">WaterChargesSearchActivity</string>
     <string name="search_water_connection">Search Water Connection</string>
+    <string name="where_can_i_find_my_consumer_no">Where can i find my consumer no?</string>
+    <string name="consumerno_taxreceipt">Water Charge H.S.C No. is in the tax receipt</string>
 
 </resources>

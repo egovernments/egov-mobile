@@ -112,6 +112,15 @@
 
                         </android.support.design.widget.TextInputLayout>
 
+                        <TextView
+                            android:id="@+id/tvReceiptInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/TextAppearance.AppCompat.Small"
+                            android:textColor="@color/blue"
+                            android:layout_marginLeft="5dp"
+                            android:text="@string/where_can_i_find_my_consumer_no"/>
+
                     </LinearLayout>
 
 
