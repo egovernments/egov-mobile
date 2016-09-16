@@ -42,54 +42,52 @@
 
 package org.egovernments.egoverp.models;
 
-/**
- * Created by egov on 25/5/16.
- */
-public class SearchResultItem {
 
-    String titleText;
-    String secondaryText;
-    String otherText;
-    String rightInfoText;
+import java.io.Serializable;
 
-    public SearchResultItem(){}
+public class WaterConnectionSearchRequest implements Serializable {
 
-    public SearchResultItem(String titleText, String secondaryText, String otherText, String rightInfoText) {
-        this.titleText = titleText;
-        this.secondaryText = secondaryText;
-        this.otherText = otherText;
-        this.rightInfoText = rightInfoText;
+    int ulbCode;
+    String consumerNo;
+    String ownerName;
+    String mobileNo;
+
+    public WaterConnectionSearchRequest(int ulbCode, String consumerNo, String ownerName, String mobileNo) {
+        this.ulbCode = ulbCode;
+        this.consumerNo = consumerNo;
+        this.ownerName = ownerName;
+        this.mobileNo = mobileNo;
     }
 
-    public String getTitleText() {
-        return titleText;
+    public int getUlbCode() {
+        return ulbCode;
     }
 
-    public void setTitleText(String titleText) {
-        this.titleText = titleText;
+    public void setUlbCode(int ulbCode) {
+        this.ulbCode = ulbCode;
     }
 
-    public String getSecondaryText() {
-        return secondaryText;
+    public String getConsumerNo() {
+        return consumerNo;
     }
 
-    public void setSecondaryText(String secondaryText) {
-        this.secondaryText = secondaryText;
+    public void setConsumerNo(String consumerNo) {
+        this.consumerNo = consumerNo;
     }
 
-    public String getOtherText() {
-        return otherText;
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setOtherText(String otherText) {
-        this.otherText = otherText;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
-    public String getRightInfoText() {
-        return rightInfoText;
+    public String getMobileNo() {
+        return mobileNo;
     }
 
-    public void setRightInfoText(String rightInfoText) {
-        this.rightInfoText = rightInfoText;
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 }

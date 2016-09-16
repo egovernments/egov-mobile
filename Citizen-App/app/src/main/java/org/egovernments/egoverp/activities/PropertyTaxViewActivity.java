@@ -310,8 +310,9 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                             arrearsTotal+=taxDetail.getTaxAmount();
                                             arrearsPenalty+=taxDetail.getPenalty();
                                         }
-                                        total =arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
                                     }
+
+                                    total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
 
                                     NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
                                     //nf1.setMinimumFractionDigits(2);

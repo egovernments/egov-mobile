@@ -117,9 +117,10 @@ public class ApiUrl {
     public final static String PROPERTY_TAX_DETAILS = "/restapi/property/propertytaxdetails";
 
     /**
-     * Water Tax
+     * Water Charges
      */
 
+    public final static String SEARCH_WATER_CONNECTION = "/restapi/watercharges/getwatertaxdetailsByOwnerDetails";
     public final static String WATER_TAX_DETAILS = "/restapi/watercharges/getwatertaxdetails";
 
     /**

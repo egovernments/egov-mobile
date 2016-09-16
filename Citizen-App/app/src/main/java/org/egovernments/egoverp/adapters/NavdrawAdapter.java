@@ -44,7 +44,9 @@ package org.egovernments.egoverp.adapters;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +69,6 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
     private static final int TYPE_ITEM = 1;
 
     private List<NavigationItem> navigationItems; // String Array to store the passed titles Value from MainActivity.java
-    private int mIcons[];       // Int Array to store the passed icons resource value from MainActivity.java
 
     private String name;        //String Resource for header View Name
     private int profile;        //int Resource for header view profile picture
@@ -153,11 +154,7 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
         } else if (viewType == TYPE_HEADER) {
 
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_header,parent,false); //Inflating the layout
-
-            ViewHolder vhHeader = new ViewHolder(v,viewType); //Creating ViewHolder and passing the object of type view
-
-            return vhHeader; //returning the object created
-
+            return new ViewHolder(v,viewType); //returning the object created
 
         }
         return null;
@@ -184,11 +181,16 @@ public class NavdrawAdapter extends RecyclerView.Adapter<NavdrawAdapter.ViewHold
 
             if(navigationItem.isActive())
             {
-                holder.parent.setBackgroundColor(context.getResources().getColor(R.color.navhighlight));
+                holder.parent.setBackgroundColor(ContextCompat.getColor(context,R.color.navhighlight));
+            }
+            else{
+                TypedValue outValue = new TypedValue();
+                context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, outValue, true);
+                holder.parent.setBackgroundResource(outValue.resourceId);
             }
 
             holder.imageView.setImageResource(navigationItem.getNavIcon());
-            holder.imageView.setColorFilter(context.getResources().getColor(navigationItem.getMenuColor()), PorterDuff.Mode.SRC_ATOP);
+            holder.imageView.setColorFilter(ContextCompat.getColor(context,navigationItem.getMenuColor()), PorterDuff.Mode.SRC_ATOP);
 
         }
         else{

@@ -44,6 +44,7 @@ package org.egovernments.egoverp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -61,11 +62,16 @@ import org.egovernments.egoverp.adapters.SearchListAdapter;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.SearchResultItem;
+import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.TaxOwnerDetail;
+import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
+import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.network.ApiController;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -77,6 +83,7 @@ public class SearchResultActivity extends AppCompatActivity {
     RecyclerView recyclerViewSearchResult;
     SearchListAdapter.SearchItemClickListener itemClickListener;
     List<PropertyTaxCallback> resultProperties=new ArrayList<>();
+    List<WaterTaxCallback> resultWaterConnections=new ArrayList<>();
 
     CardView cvInfo;
     TextView tvMsg;
@@ -88,12 +95,15 @@ public class SearchResultActivity extends AppCompatActivity {
     String referrerIp;
     String category;
     boolean isVacantLand=false;
+    boolean isWaterCharges=false;
 
     public static String ULB_CODE="ulbCode";
     public static String ASSESSMENT_NO="assessmentNo";
+    public static String CONSUMER_NO="consumerNo";
     public static String REFERER_IP_CONFIG_KEY="app.referrer.ip";
 
     PropertySearchRequest propertySearchRequest;
+    WaterConnectionSearchRequest waterConnectionSearchRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +116,6 @@ public class SearchResultActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        isVacantLand=getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false);
         referrerIp=getIntent().getStringExtra(REFERER_IP_CONFIG_KEY);
 
         progressBar=(ProgressBar)findViewById(R.id.pbPropSearch);
@@ -122,18 +131,34 @@ public class SearchResultActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewSearchResult.setLayoutManager(linearLayoutManager);
 
-        category=(isVacantLand?PropertyTaxSearchActivity.VLT_CATEGORY_VALUE:PropertyTaxSearchActivity.PT_CATEGORY_VALUE);
 
-        itemClickListener=new SearchListAdapter.SearchItemClickListener() {
+        isWaterCharges=getIntent().getBooleanExtra(WaterChargesSearchActivity.PARAM_IS_WATER_CON_SEARCH, false);
+
+        itemClickListener = new SearchListAdapter.SearchItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                openViewPropertyTaxScreen(resultProperties.get(position).getAssessmentNo());
+                if(isWaterCharges) {
+                    openViewWaterConnection(resultWaterConnections.get(position).getConsumerNo());
+                }
+                else {
+                    openViewPropertyTaxScreen(resultProperties.get(position).getAssessmentNo());
+                }
             }
         };
 
-        propertySearchRequest=(PropertySearchRequest)getIntent().getSerializableExtra(PropertyTaxSearchActivity.PARAM_PROPERTY_SEARCH_REQUEST);
-        ulbCode=propertySearchRequest.getUlbCode();
-        showSearchResults(propertySearchRequest);
+        if(!isWaterCharges) {
+            isVacantLand = getIntent().getBooleanExtra(PropertyTaxSearchActivity.IS_VACANT_LAND, false);
+            category = (isVacantLand ? PropertyTaxSearchActivity.VLT_CATEGORY_VALUE : PropertyTaxSearchActivity.PT_CATEGORY_VALUE);
+            propertySearchRequest = (PropertySearchRequest) getIntent().getSerializableExtra(PropertyTaxSearchActivity.PARAM_PROPERTY_SEARCH_REQUEST);
+            ulbCode = propertySearchRequest.getUlbCode();
+            showSearchResults(propertySearchRequest);
+        }
+        else
+        {
+            waterConnectionSearchRequest = (WaterConnectionSearchRequest) getIntent().getSerializableExtra(WaterChargesSearchActivity.PARAM_WATER_CON_SEARCH_REQUEST);
+            ulbCode = waterConnectionSearchRequest.getUlbCode();
+            showSearchResults(waterConnectionSearchRequest);
+        }
 
     }
 
@@ -151,12 +176,12 @@ public class SearchResultActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    void showEmptyMessage()
+    void showEmptyMessage(int icoResId, String message)
     {
         progressBar.setVisibility(View.GONE);
         recyclerViewSearchResult.setVisibility(View.GONE);
-        imgInfo.setImageDrawable(getResources().getDrawable(R.drawable.ic_business_black_36dp));
-        tvMsg.setText("No property found");
+        imgInfo.setImageDrawable(ContextCompat.getDrawable(SearchResultActivity.this, icoResId));
+        tvMsg.setText(message);
         cvInfo.setVisibility(View.VISIBLE);
     }
 
@@ -182,14 +207,24 @@ public class SearchResultActivity extends AppCompatActivity {
 
     }
 
-    void loadRecyclerView(List<PropertyTaxCallback> properties)
+    void openViewWaterConnection(String consumerNo)
+    {
+        if(!TextUtils.isEmpty(consumerNo)){
+            Intent openWaterChargesScreen=new Intent(SearchResultActivity.this, WaterChargesViewActivity.class);
+            openWaterChargesScreen.putExtra(ULB_CODE, ulbCode);
+            openWaterChargesScreen.putExtra(CONSUMER_NO,  consumerNo);
+            openWaterChargesScreen.putExtra(REFERER_IP_CONFIG_KEY,  referrerIp);
+            startActivity(openWaterChargesScreen);
+        }
+
+    }
+
+    void loadPropertiesResultIntoRecyclerView(List<PropertyTaxCallback> properties)
     {
 
         List<SearchResultItem> resultItems=new ArrayList<>();
         for(PropertyTaxCallback propertyTaxCallback:properties)
         {
-            SearchResultItem searchResultItem=new SearchResultItem();
-            searchResultItem.setTitleText(propertyTaxCallback.getAssessmentNo());
 
             String ownerNames = "";
             int check = 0;
@@ -204,9 +239,40 @@ public class SearchResultActivity extends AppCompatActivity {
                 check++;
             }
 
-            searchResultItem.setSecondaryText(ownerNames);
-            searchResultItem.setOtherText(propertyTaxCallback.getPropertyAddress());
-            resultItems.add(searchResultItem);
+            double total=0;
+
+            for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
+                total =taxDetail.getTaxAmount()+taxDetail.getPenalty()+total;
+            }
+
+            String totalFormatted=NumberFormat.getInstance(new Locale("hi","IN")).format(total);
+            resultItems.add(new SearchResultItem(propertyTaxCallback.getAssessmentNo(), ownerNames, propertyTaxCallback.getPropertyAddress(),totalFormatted));
+        }
+
+        SearchListAdapter adapter= new SearchListAdapter(getApplicationContext(), resultItems, itemClickListener);
+        recyclerViewSearchResult.setAdapter(adapter);
+        hideLoadingIndicator();
+    }
+
+
+    void loadWaterConnectionsResultIntoRecyclerView(List<WaterTaxCallback> waterConnections)
+    {
+
+        List<SearchResultItem> resultItems=new ArrayList<>();
+        for(WaterTaxCallback waterTaxCallback:waterConnections)
+        {
+            SearchResultItem searchResultItem=new SearchResultItem();
+            searchResultItem.setTitleText(waterTaxCallback.getConsumerNo());
+            searchResultItem.setSecondaryText(waterTaxCallback.getOwnerName());
+            searchResultItem.setOtherText(waterTaxCallback.getPropertyAddress());
+
+            double total=0;
+
+            for (TaxDetail taxDetail : waterTaxCallback.getTaxDetails()) {
+                total=taxDetail.getTaxAmount()+taxDetail.getPenalty()+total;
+            }
+            String totalFormatted=NumberFormat.getInstance(new Locale("hi","IN")).format(total);
+            resultItems.add(new SearchResultItem(waterTaxCallback.getConsumerNo(), waterTaxCallback.getOwnerName(), waterTaxCallback.getPropertyAddress(), totalFormatted));
         }
 
         SearchListAdapter adapter= new SearchListAdapter(getApplicationContext(), resultItems, itemClickListener);
@@ -226,9 +292,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
     private void showSearchResults(final PropertySearchRequest propertySearchRequest)
     {
-
         showLoadingIndicator();
-
         ApiController.getAPI(SearchResultActivity.this)
                 .searchProperty(referrerIp, propertySearchRequest,
                 new Callback<List<PropertyTaxCallback>>() {
@@ -273,17 +337,17 @@ public class SearchResultActivity extends AppCompatActivity {
                                 }
                                 else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
                                 {
-                                    showEmptyMessage();
+                                    showEmptyMessage(R.drawable.ic_business_black_36dp,"No property found");
                                 }
                             }
                             else
                             {
-                                loadRecyclerView(propertyTaxCallbacks);
+                                loadPropertiesResultIntoRecyclerView(propertyTaxCallbacks);
                             }
                         }
                         else
                         {
-                            showEmptyMessage();
+                            showEmptyMessage(R.drawable.ic_business_black_36dp,"No property found");
                         }
                     }
 
@@ -295,15 +359,87 @@ public class SearchResultActivity extends AppCompatActivity {
          });
     }
 
-
-    String getEmptyStringIfNull(String string)
+    private void showSearchResults(final WaterConnectionSearchRequest waterConnectionSearchRequest)
     {
-        return (TextUtils.isEmpty(string)?"":string);
+
+        showLoadingIndicator();
+
+        ApiController.getAPI(SearchResultActivity.this)
+                .searchWaterConnection(referrerIp, waterConnectionSearchRequest, new Callback<List<WaterTaxCallback>>() {
+                    @Override
+                    public void success(List<WaterTaxCallback> waterTaxCallbacks, Response response) {
+
+                        if(isExited){
+                            return;
+                        }
+
+                        resultWaterConnections=waterTaxCallbacks;
+
+                        if(resultWaterConnections.size()>0)
+                        {
+                            if(resultWaterConnections.size()==1)
+                            {
+                                WaterTaxCallback waterTaxCallback=waterTaxCallbacks.get(0);
+
+                                if (waterTaxCallback.getTaxErrorDetails()==null) {
+                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
+                                    }
+                                    else
+                                    {
+                                        showSearchResults(waterConnectionSearchRequest);
+                                    }
+                                }
+                                else if(TextUtils.isEmpty(waterTaxCallback.getTaxErrorDetails().getErrorMessage()))
+                                {
+                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
+                                    }
+                                }
+                                else if(waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
+                                {
+                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
+                                        SearchResultActivity.this.finish();
+                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
+                                    }
+                                }
+                                else if(!waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
+                                {
+                                    showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
+                                }
+                            }
+                            else
+                            {
+                                loadWaterConnectionsResultIntoRecyclerView(waterTaxCallbacks);
+                            }
+                        }
+                        else
+                        {
+                            showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
+                        }
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+
+                });
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         isExited=true;
     }
 }

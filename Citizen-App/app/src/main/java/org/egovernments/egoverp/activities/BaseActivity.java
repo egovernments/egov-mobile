@@ -54,6 +54,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.google.gson.JsonObject;
@@ -109,7 +110,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void setContentView(final int layoutResID) {
 
-        drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.baselayout, null);
+        final ViewGroup nullParent = null;
+        drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.baselayout, nullParent);
 
         activityContent = (LinearLayout) drawerLayout.findViewById(R.id.activityContent);
 
@@ -132,6 +134,7 @@ public class BaseActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.drawer);
+        assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
         recyclerView.setClickable(true);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(BaseActivity.this);
@@ -141,6 +144,7 @@ public class BaseActivity extends AppCompatActivity {
         if(isTabSupport)
         {
             if (Build.VERSION.SDK_INT >= 21) {
+                assert toolbar != null;
                 toolbar.setElevation(0);
             }
             tabLayout.setVisibility(View.VISIBLE);
@@ -156,14 +160,11 @@ public class BaseActivity extends AppCompatActivity {
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
         assert actionBar != null;
-
         actionBar.setTitle(getToolbarTitle(actionBar.getTitle().toString()));
         mActionBarTitle = actionBar.getTitle();
 
+        if(toolbar!=null)
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
-
-
-
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
@@ -176,7 +177,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         };
 
-        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
 
         arrayList = new ArrayList<>();
@@ -319,7 +320,7 @@ public class BaseActivity extends AppCompatActivity {
     {
         Intent intent;
         if (!getTitle().toString().equals(getString(R.string.watertax_label))) {
-            intent = new Intent(BaseActivity.this, WaterTaxSearchActivity.class);
+            intent = new Intent(BaseActivity.this, WaterChargesSearchActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
@@ -420,15 +421,6 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     //Method fills the nav drawer's ArrayList

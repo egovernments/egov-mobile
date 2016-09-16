@@ -52,9 +52,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
     <uses-permission
         android:name="android.permission.CALL_PHONE"
         android:required="false" />
@@ -148,14 +147,19 @@
             android:name=".activities.PropertyTaxBreakupsDetails"
             android:label="@string/title_activity_property_tax_breakups_details"
             android:theme="@style/AppTheme" />
+
         <activity
-            android:name=".activities.WaterTaxSearchActivity"
+            android:name=".activities.WaterChargesSearchActivity"
+            android:label="@string/watertax_label"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name=".activities.WaterChargesViewActivity"
             android:label="@string/watertax_label"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.egovernments.egoverp.activities.HomeActivity" />
+
         </activity>
         <activity
             android:name=".activities.GrievanceDetailsActivity"
@@ -246,8 +250,7 @@
         <activity
             android:name=".activities.ResetPasswordActivity"
             android:label="@string/title_activity_reset_password"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".activities.SOSActivity"
             android:label="@string/sos_label"
@@ -255,14 +258,14 @@
         <activity
             android:name=".activities.AboutUsActivity"
             android:label="@string/aboutus_label"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
 
-
-        <receiver android:name="org.egovernments.egoverp.listeners.SMSListener">
+        <receiver android:name=".listeners.SMSListener">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
 
     </application>
 

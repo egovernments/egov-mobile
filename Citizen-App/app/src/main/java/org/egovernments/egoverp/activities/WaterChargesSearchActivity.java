@@ -48,52 +48,39 @@ import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
-import org.egovernments.egoverp.models.PropertySearchRequest;
+import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 
-public class PropertyTaxSearchActivity extends BaseActivity implements View.OnClickListener {
+public class WaterChargesSearchActivity extends BaseActivity implements View.OnClickListener {
 
-    EditText etAssessmentNo;
+    EditText etConsumerNo;
     EditText etOwnerName;
     EditText etMobileNo;
-    EditText etDoorNo;
-
-    LinearLayout layoutDoorNoContainer;
-
-    TextView tvSearchTitle;
-    TextView tvReceiptInfo;
-    FloatingActionButton fabSearchProperty;
-
-    public static final String PARAM_PROPERTY_SEARCH_REQUEST="propertySearchObj";
-
-    public static String IS_VACANT_LAND="isVacantLand";
-
-    public static String PT_CATEGORY_VALUE="PT";
-    public static String VLT_CATEGORY_VALUE="VLT";
-
-    boolean isVacantLand=false;
-
     ConfigManager configManager;
 
+
+    public static final String PARAM_IS_WATER_CON_SEARCH="isWaterConSearch";
+    public static final String PARAM_WATER_CON_SEARCH_REQUEST ="WaterConSearchObj";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_property_tax_search);
+        setContentView(R.layout.activity_water_charges_search);
 
-        etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
+        etConsumerNo=(EditText)findViewById(R.id.etConsumerNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
         etMobileNo=(EditText)findViewById(R.id.etMobileNo);
-        etDoorNo=(EditText)findViewById(R.id.etDoorNo);
-        tvReceiptInfo=(TextView)findViewById(R.id.tvReceiptInfo);
 
-        layoutDoorNoContainer=(LinearLayout)findViewById(R.id.doorNoContainer);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSearchWaterConnection);
+
+        if(fab!=null)
+        {
+            fab.setOnClickListener(this);
+        }
 
         try
         {
@@ -104,37 +91,15 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
             ex.printStackTrace();
         }
 
-        tvSearchTitle=(TextView)findViewById(R.id.tvSearchTitle);
-
-        if(isVacantLand && tvSearchTitle!=null)
-        {
-            tvSearchTitle.setText(R.string.search_vacant_land);
-        }
-        else if(tvSearchTitle!=null)
-        {
-            layoutDoorNoContainer.setVisibility(View.VISIBLE);
-        }
-
-        fabSearchProperty=(FloatingActionButton)findViewById(R.id.fabSearchProperty);
-
-        if(fabSearchProperty!=null)
-        fabSearchProperty.setOnClickListener(this);
-
-        tvReceiptInfo.setOnClickListener(this);
-
     }
 
-
-    public void searchProperty()
+    void searchWaterConnections()
     {
-        if(validateInputSearchFields())
-        {
-            Intent openSearchResult=new Intent(PropertyTaxSearchActivity.this, SearchResultActivity.class);
-
-            openSearchResult.putExtra(PARAM_PROPERTY_SEARCH_REQUEST, new PropertySearchRequest(sessionManager.getUrlLocationCode(),
-                    etAssessmentNo.getText().toString(), etOwnerName.getText().toString(), etMobileNo.getText().toString(),
-                    etDoorNo.getText().toString(),(isVacantLand?VLT_CATEGORY_VALUE:PT_CATEGORY_VALUE)));
-            openSearchResult.putExtra(IS_VACANT_LAND, isVacantLand);
+        if(validateInputSearchFields()) {
+            Intent openSearchResult=new Intent(WaterChargesSearchActivity.this, SearchResultActivity.class);
+            openSearchResult.putExtra(PARAM_WATER_CON_SEARCH_REQUEST, new WaterConnectionSearchRequest(sessionManager.getUrlLocationCode(),
+                    etConsumerNo.getText().toString(), etOwnerName.getText().toString(),etMobileNo.getText().toString()));
+            openSearchResult.putExtra(PARAM_IS_WATER_CON_SEARCH, true);
             openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
             startActivity(openSearchResult);
         }
@@ -144,19 +109,9 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
         }
     }
 
-    @Override
-    public String getToolbarTitle(String titleFromResource) {
-        isVacantLand=getIntent().getBooleanExtra(IS_VACANT_LAND, false);
-        if(isVacantLand)
-        {
-            return getString(R.string.vacantlandtax_label);
-        }
-        return getString(R.string.propertytax_label);
-    }
-
     boolean validateInputSearchFields()
     {
-        return (isNotEmpty(etAssessmentNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()) || (isNotEmpty(etDoorNo.getText().toString().trim())&&!isVacantLand));
+        return (isNotEmpty(etConsumerNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()));
     }
 
     boolean isNotEmpty(String string)
@@ -167,13 +122,12 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
     @Override
     public void onClick(View v) {
 
-        switch(v.getId()) {
-            case R.id.fabSearchProperty:
-                searchProperty();
-                break;
-            case R.id.tvReceiptInfo:
-                AppUtils.showImageDialog(PropertyTaxSearchActivity.this, getString(R.string.where_can_i_find_my_assessment_no), getString(R.string.assementno_taxreceipt), R.drawable.pt_bill, getString(R.string.ok_got_it));
-                break;
+        switch(v.getId())
+        {
+            case R.id.fabSearchWaterConnection:
+                searchWaterConnections();
+            break;
         }
+
     }
 }

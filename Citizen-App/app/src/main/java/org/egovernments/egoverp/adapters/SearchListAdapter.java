@@ -44,6 +44,7 @@ package org.egovernments.egoverp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         RecyclerView.ViewHolder vh;
         if(viewType==VIEW_ITEM) {
 
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_property_search, viewGroup, false);
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_search_list, viewGroup, false);
             vh = new SearchResultViewHolder(v);
         }
         else
@@ -101,13 +102,16 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         {
             SearchResultViewHolder searchViewHolder=(SearchResultViewHolder) holder;
 
-            //To do Something
-
             SearchResultItem searchResultItem=results.get(position);
 
             searchViewHolder.tvtitle.setText(searchResultItem.getTitleText());
             searchViewHolder.tvSecondary.setText(searchResultItem.getSecondaryText());
             searchViewHolder.tvOther.setText(searchResultItem.getOtherText());
+
+            if(!TextUtils.isEmpty(searchResultItem.getRightInfoText()))
+            {
+              searchViewHolder.tvRightInfo.setText(searchViewHolder.tvRightInfo.getContext().getString(R.string.Rs)+" "+searchResultItem.getRightInfoText());
+            }
 
             searchViewHolder.parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,6 +143,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private TextView tvtitle;
         private TextView tvSecondary;
         private TextView tvOther;
+        private TextView tvRightInfo;
 
         public SearchResultViewHolder(View v) {
             super(v);
@@ -147,6 +152,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             tvtitle = (TextView) v.findViewById(R.id.tvTitle);
             tvSecondary = (TextView) v.findViewById(R.id.tvSecondary);
             tvOther = (TextView) v.findViewById(R.id.tvOther);
+            tvRightInfo=(TextView)v.findViewById(R.id.tvRightInfo);
         }
 
     }
