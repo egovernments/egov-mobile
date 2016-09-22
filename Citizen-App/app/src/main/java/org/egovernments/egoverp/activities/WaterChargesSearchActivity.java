@@ -58,12 +58,13 @@ import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 
 public class WaterChargesSearchActivity extends BaseActivity implements View.OnClickListener {
 
+    EditText etAssessmentNo;
     EditText etConsumerNo;
     EditText etOwnerName;
     EditText etMobileNo;
     ConfigManager configManager;
 
-    TextView tvReceiptInfo;
+    TextView tvReceiptInfoConsumerNo, tvReceiptInfoAssessmentNo;
 
     public static final String PARAM_IS_WATER_CON_SEARCH="isWaterConSearch";
     public static final String PARAM_WATER_CON_SEARCH_REQUEST ="WaterConSearchObj";
@@ -73,10 +74,12 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_charges_search);
 
+        etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
         etConsumerNo=(EditText)findViewById(R.id.etConsumerNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
         etMobileNo=(EditText)findViewById(R.id.etMobileNo);
-        tvReceiptInfo=(TextView)findViewById(R.id.tvReceiptInfo);
+        tvReceiptInfoConsumerNo =(TextView)findViewById(R.id.tvReceiptInfoConsumerNo);
+        tvReceiptInfoAssessmentNo =(TextView)findViewById(R.id.tvReceiptInfoAssessmentNo);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSearchWaterConnection);
 
@@ -94,8 +97,8 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
             ex.printStackTrace();
         }
 
-        tvReceiptInfo.setOnClickListener(this);
-
+        tvReceiptInfoConsumerNo.setOnClickListener(this);
+        tvReceiptInfoAssessmentNo.setOnClickListener(this);
     }
 
     void searchWaterConnections()
@@ -103,7 +106,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         if(validateInputSearchFields()) {
             Intent openSearchResult=new Intent(WaterChargesSearchActivity.this, SearchResultActivity.class);
             openSearchResult.putExtra(PARAM_WATER_CON_SEARCH_REQUEST, new WaterConnectionSearchRequest(sessionManager.getUrlLocationCode(),
-                    etConsumerNo.getText().toString(), etOwnerName.getText().toString(),etMobileNo.getText().toString()));
+                    etAssessmentNo.getText().toString(),etConsumerNo.getText().toString(), etOwnerName.getText().toString(),etMobileNo.getText().toString()));
             openSearchResult.putExtra(PARAM_IS_WATER_CON_SEARCH, true);
             openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
             startActivity(openSearchResult);
@@ -116,7 +119,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
 
     boolean validateInputSearchFields()
     {
-        return (isNotEmpty(etConsumerNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()));
+        return (isNotEmpty(etAssessmentNo.getText().toString().trim()) || isNotEmpty(etConsumerNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()));
     }
 
     boolean isNotEmpty(String string)
@@ -132,8 +135,11 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
             case R.id.fabSearchWaterConnection:
                 searchWaterConnections();
                 break;
-            case R.id.tvReceiptInfo:
+            case R.id.tvReceiptInfoConsumerNo:
                 AppUtils.showImageDialog(WaterChargesSearchActivity.this, getString(R.string.where_can_i_find_my_consumer_no), getString(R.string.consumerno_taxreceipt), R.drawable.wc_bill, getString(R.string.ok_got_it));
+                break;
+            case R.id.tvReceiptInfoAssessmentNo:
+                AppUtils.showImageDialog(WaterChargesSearchActivity.this, getString(R.string.where_can_i_find_my_assessment_no), getString(R.string.assementno_taxreceipt), R.drawable.pt_bill, getString(R.string.ok_got_it));
                 break;
         }
 

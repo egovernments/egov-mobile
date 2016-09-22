@@ -48,15 +48,25 @@ import java.io.Serializable;
 public class WaterConnectionSearchRequest implements Serializable {
 
     int ulbCode;
+    String assessmentNo;
     String consumerNo;
     String ownerName;
     String mobileNo;
 
-    public WaterConnectionSearchRequest(int ulbCode, String consumerNo, String ownerName, String mobileNo) {
+    public WaterConnectionSearchRequest(int ulbCode, String assessmentNo, String consumerNo, String ownerName, String mobileNo) {
+        this.assessmentNo=assessmentNo;
         this.ulbCode = ulbCode;
         this.consumerNo = consumerNo;
         this.ownerName = ownerName;
         this.mobileNo = mobileNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
+
+    public String getAssessmentNo() {
+        return assessmentNo;
     }
 
     public int getUlbCode() {

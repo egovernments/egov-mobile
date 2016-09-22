@@ -227,6 +227,6 @@ Links to:</string>
     <string name="title_activity_water_charges_search">WaterChargesSearchActivity</string>
     <string name="search_water_connection">Search Water Connection</string>
     <string name="where_can_i_find_my_consumer_no">Where can i find my consumer no?</string>
-    <string name="consumerno_taxreceipt">Water Charge H.S.C No. is in the tax receipt</string>
+    <string name="consumerno_taxreceipt">Water Charge H.S.C No. is in the water charges receipt</string>
 
 </resources>
