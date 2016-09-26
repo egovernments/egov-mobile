@@ -72,20 +72,23 @@
                 android:layout_margin="10dp"
                 android:src="@drawable/ic_camera_alt_black_36dp"/>
 
+            <!--android:textColor="@android:color/white"-->
             <TextView
                 android:id="@+id/home_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/primaryText"
+                android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
+            <!--android:textColor="@android:color/white"-->
             <TextView
                 android:id="@+id/home_item_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
+                android:textColor="@android:color/white"
                 android:visibility="gone"
                 android:textSize="14sp" />
 

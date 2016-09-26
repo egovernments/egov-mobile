@@ -83,6 +83,21 @@
                     android:paddingBottom="10dp"
                     android:src="@drawable/applogo" />
 
+                <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/home_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    card_view:cardCornerRadius="2dp"
+                    card_view:cardUseCompatPadding="true"
+                    android:layout_marginBottom="10dp"
+                    card_view:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
                 <LinearLayout
                     android:id="@+id/multicityoptions"
                     android:layout_width="match_parent"
@@ -97,7 +112,7 @@
                             android:id="@+id/spinner_district"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:background="@drawable/top_edittext"
+                            android:background="@null"
                             android:dropDownVerticalOffset="-10dp"
                             android:focusable="false"
                             android:spinnerMode="dropdown"
@@ -107,11 +122,11 @@
                             android:id="@+id/autocomplete_district"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:background="@drawable/top_edittext"
                             android:drawableLeft="@drawable/ic_place_black_24dp"
                             android:drawablePadding="5dp"
                             android:drawableStart="@drawable/ic_place_black_24dp"
                             android:gravity="center_vertical"
+                            android:background="@null"
                             android:hint="@string/loading_label"
                             android:imeOptions="actionNext"
                             android:inputType="textNoSuggestions"
@@ -131,7 +146,7 @@
                         style="?android:attr/listSeparatorTextViewStyle"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/dividerColor"
+                        android:background="@color/dividercolor"
                         android:gravity="center_horizontal"
                         android:paddingTop="5dp" />
 
@@ -153,7 +168,7 @@
                             android:id="@+id/login_spinner_autocomplete"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:background="@drawable/middle_edittext"
+                            android:background="@null"
                             android:drawableLeft="@drawable/ic_location_city_black_24dp"
                             android:drawablePadding="5dp"
                             android:drawableStart="@drawable/ic_location_city_black_24dp"
@@ -177,7 +192,7 @@
                         style="?android:attr/listSeparatorTextViewStyle"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/dividerColor"
+                        android:background="@color/dividercolor"
                         android:gravity="center_horizontal"
                         android:paddingTop="5dp" />
 
@@ -188,7 +203,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/middle_edittext"
+                    android:background="@null"
                     android:drawableLeft="@drawable/ic_person_black_24dp"
                     android:drawablePadding="5dp"
                     android:drawableStart="@drawable/ic_person_black_24dp"
@@ -206,7 +221,7 @@
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/dividerColor"
+                    android:background="@color/dividercolor"
                     android:gravity="center_horizontal"
                     android:paddingTop="5dp" />
 
@@ -215,8 +230,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/bottom_edittext"
+                    android:background="@null"
                     android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
                     android:drawablePadding="5dp"
                     android:drawableStart="@drawable/ic_vpn_key_black_24dp"
@@ -230,6 +244,10 @@
                     android:paddingStart="10dp"
                     android:textColorHint="#a8a5a5"
                     android:textSize="15sp" />
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
 
                 <ProgressBar
                     android:id="@+id/loginprogressBar"

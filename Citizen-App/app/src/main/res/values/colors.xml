@@ -62,11 +62,11 @@
     <color name="home_color">#899BA6</color>
     <color name="grievance_color">#F85555</color>
     <color name="propertytax_color">#009588</color>
-    <color name="vacand_land_color">#FB9500</color>
+    <color name="vacand_land_color">#F4A460</color>
     <color name="watertax_color">#40A4DF</color>
     <color name="citizen_charter_color">#BA68C8</color>
-    <color name="sos_color">#B71C1C</color>
-    <color name="aboutus_color">#008BF8</color>
+    <color name="sos_color">#F44336</color>
+    <color name="aboutus_color">#227585</color>
     <color name="bpacolor">#795548</color>
     <color name="bpcolor">#FF8A65</color>
     <color name="birthdeathcolor">#607D8B</color>

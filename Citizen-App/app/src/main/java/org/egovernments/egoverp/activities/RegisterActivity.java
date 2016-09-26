@@ -130,6 +130,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     boolean isMultiCity=true;
 
+    EditText name_edittext;
+    EditText email_edittext;
+    EditText phoneno_edittext;
+    EditText password_edittext;
+    EditText confirmpassword_edittext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,11 +162,11 @@ public class RegisterActivity extends AppCompatActivity {
         municipalityInfo = (TextView) findViewById(R.id.municipality_change_info);
         nameInputLayout = (TextInputLayout) findViewById(R.id.signup_name_inputlayout);
 
-        final EditText name_edittext = (EditText) findViewById(R.id.signup_name);
-        final EditText email_edittext = (EditText) findViewById(R.id.signup_email);
-        final EditText phoneno_edittext = (EditText) findViewById(R.id.signup_phoneno);
-        final EditText password_edittext = (EditText) findViewById(R.id.signup_password);
-        final EditText confirmpassword_edittext = (EditText) findViewById(R.id.signup_confirmpassword);
+        name_edittext = (EditText) findViewById(R.id.signup_name);
+        email_edittext = (EditText) findViewById(R.id.signup_email);
+        phoneno_edittext = (EditText) findViewById(R.id.signup_phoneno);
+        password_edittext = (EditText) findViewById(R.id.signup_password);
+        confirmpassword_edittext = (EditText) findViewById(R.id.signup_confirmpassword);
 
         cityAutoCompleteTextView = (CustomAutoCompleteTextView) findViewById(R.id.register_spinner_autocomplete);
         districtAutoCompleteTextView =(CustomAutoCompleteTextView)findViewById(R.id.autocomplete_district);
@@ -525,6 +531,7 @@ public class RegisterActivity extends AppCompatActivity {
                             } else {
                                 City selectedCity = citiesList.get(position - 1);
                                 autocompleteTextBox.setText(selectedCity.getCityName());
+                                name_edittext.requestFocus();
                             }
                         }
                         autocompleteTextBox.dismissDropDown();

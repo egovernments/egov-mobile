@@ -83,8 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2"
-        android:layout_marginTop="5dp">
+        android:weightSum="3">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -109,6 +108,15 @@
 
 
         </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="+"
+            android:textSize="@dimen/field_labelSize" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -136,23 +144,47 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="="
+            android:textSize="@dimen/field_labelSize" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="BALANCE"
+                android:textSize="@dimen/field_labelSize" />
+
+            <TextView
+                android:id="@+id/propertytax_total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textColor="@color/dataLabelColor"
+                style="@style/TextAppearance.AppCompat.Medium"/>
+
+        </LinearLayout>
+
 
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/dotted_line"
-        android:layerType="software" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
+        android:visibility="gone"
         android:layout_marginTop="5dp">
 
         <LinearLayout
@@ -180,28 +212,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="BALANCE"
-                android:textSize="@dimen/field_labelSize" />
-
-            <TextView
-                android:id="@+id/propertytax_total"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:textColor="@color/dataLabelColor"
-                style="@style/TextAppearance.AppCompat.Medium"/>
-
-        </LinearLayout>
 
 
 

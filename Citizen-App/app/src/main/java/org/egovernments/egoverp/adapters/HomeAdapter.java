@@ -50,6 +50,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -129,8 +130,9 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             viewHolder.cardIcon.setImageResource(homeItem.getIcon());
-            viewHolder.cardIcon.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);
-
+            /*viewHolder.cardIcon.setColorFilter(homeItem.getIconColor(), PorterDuff.Mode.SRC_ATOP);*/
+            viewHolder.cardIcon.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            viewHolder.cardView.setCardBackgroundColor(homeItem.getIconColor());
 
             if(homeItem.isGrievanceItem())
             {

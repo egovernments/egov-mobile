@@ -119,7 +119,7 @@ public class HomeActivity extends BaseActivity {
                     }
                 };
 
-                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#0288D1"), "Update your profile", "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
+                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#227585"), "Update your profile", "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
                 homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details.", true, notificationItem));
             }
 

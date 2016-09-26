@@ -491,6 +491,7 @@ public class LoginActivity extends Activity {
                             } else {
                                 City selectedCity = citiesList.get(position - 1);
                                 autocompleteTextBox.setText(selectedCity.getCityName());
+                                username_edittext.requestFocus();
                             }
                         }
                         autocompleteTextBox.dismissDropDown();
