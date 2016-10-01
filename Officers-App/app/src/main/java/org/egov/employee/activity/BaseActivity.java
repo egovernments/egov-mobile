@@ -46,7 +46,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -54,12 +56,19 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.google.gson.JsonObject;
+
+import org.egov.employee.api.ApiController;
 import org.egov.employee.api.LoggingInterceptor;
 import org.egov.employee.config.AppPreference;
 
 import java.lang.reflect.Method;
 
 import offices.org.egov.egovemployees.R;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by egov on 15/12/15.
@@ -128,7 +137,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
                 public void onClick(View view) {
                     //call retry function
                     try {
-                        Method method = classObj.getClass().getMethod(retrymethod, null);
+                        Method method = classObj.getClass().getMethod(retrymethod, (Class<?>[]) null);
                         method.invoke(classObj, null);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -162,6 +171,36 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
 
 
         return false;
+    }
+
+
+    public void recordEmployeeLog()
+    {
+        if(TextUtils.isEmpty(preference.getApiAccessToken()))
+        {
+            return;
+        }
+
+        String deviceId= Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String deviceOS=Integer.toString(Build.VERSION.SDK_INT);
+        String deviceType="mobile";
+
+        Call<JsonObject> jsonDeviceLog = ApiController.getAPI(getApplicationContext(), BaseActivity.this).addDeviceLog(deviceId, deviceOS, deviceType, preference.getApiAccessToken());
+        final Callback<JsonObject> deviceLog = new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        };
+
+        jsonDeviceLog.enqueue(deviceLog);
+
+
     }
 
 }

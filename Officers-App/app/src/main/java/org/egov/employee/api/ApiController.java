@@ -181,6 +181,10 @@ public class ApiController {
                                @Field("password") String password,
                                @Field("grant_type") String grant_type);
 
+        @POST(ApiUrl.EMPLOYEE_LOG)
+        Call<JsonObject> addDeviceLog(@Query(value = "deviceId") String deviceId, @Query(value = "deviceType") String deivceType,
+                                           @Query(value = "deviceOS") String deviceOS, @Query(value = "access_token") String accessToken);
+
         @POST(ApiUrl.EMPLOYEE_LOGOUT)
         Call<JsonObject> logout(@Query("access_token") String accessToken);
 

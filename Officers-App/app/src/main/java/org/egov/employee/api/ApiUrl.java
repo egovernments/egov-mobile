@@ -52,6 +52,8 @@ public class ApiUrl {
 
     public final static String EMPLOYEE_LOGIN = "api/oauth/token";
 
+    public final static String EMPLOYEE_LOG = "api/v1.0/addDeviceLog";
+
     public final static String EMPLOYEE_LOGOUT = "api/v1.0/employee/logout";
 
     public final static String EMPLOYEE_WORKLIST_TYPES = "api/v1.0/employee/inbox";

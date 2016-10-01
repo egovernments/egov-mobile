@@ -276,6 +276,10 @@ public class LoginActivity extends BaseActivity {
                                         finish();
                                     }
                                 }, 1000);
+
+                                recordEmployeeLog();
+
+
                             }
                             else
                             {

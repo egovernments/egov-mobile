@@ -124,7 +124,7 @@ public class SplashScreen extends BaseActivity {
 
         Long urlTimeOut=preference.getLastUrlUpdateTime()+(EgovApp.getInstance().getUrlTimeOutDays()*24*60*60*1000);
 
-        if(urlTimeOut < new Date().getTime() || (EgovApp.getInstance().isMultiCitySupport() && TextUtils.isEmpty(preference.getApiAccessToken())))
+        if(urlTimeOut < new Date().getTime() || (EgovApp.getInstance().isMultiCitySupport() && !TextUtils.isEmpty(preference.getApiAccessToken())))
         {
             if(checkInternetConnectivity())
             {
@@ -137,13 +137,21 @@ public class SplashScreen extends BaseActivity {
             }
         }
         else {
-            openHomePageifUserLogged();
+
+            if(TextUtils.isEmpty(preference.getApiAccessToken()))
+            {
+                new getCityResource().execute();
+            }
+            else {
+                openHomePageifUserLogged();
+            }
         }
     }
 
     public void openHomePageifUserLogged()
     {
         if(!TextUtils.isEmpty(preference.getApiAccessToken())){
+            recordEmployeeLog();
             Handler handler = new Handler();
             handler.postDelayed(new Runnable(){
                 @Override
@@ -198,6 +206,7 @@ public class SplashScreen extends BaseActivity {
             @Override
             public void onResponse(retrofit.Response<JsonObject> response, Retrofit retrofit) {
                 preference.setApiAccessToken("");
+                preference.setActiveCityCode(-1);
                 performAppStartUpSetup();
             }
 
@@ -230,7 +239,7 @@ public class SplashScreen extends BaseActivity {
         @Override
         protected Response doInBackground(String... params) {
             Response response=null;
-            if(EgovApp.getInstance().isMultiCitySupport() && preference.getActiveCityCode() !=-1)
+            if(EgovApp.getInstance().isMultiCitySupport() && !TextUtils.isEmpty(preference.getApiAccessToken()) && preference.getActiveCityCode() !=-1)
             {
                 response = ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), preference.getActiveCityCode(), SplashScreen.this);
             }
@@ -250,7 +259,7 @@ public class SplashScreen extends BaseActivity {
                         String s = response.body().string();
                         //check and load city config's
 
-                        if (EgovApp.getInstance().isMultiCitySupport() && preference.getActiveCityCode() == -1) {
+                        if (EgovApp.getInstance().isMultiCitySupport() && TextUtils.isEmpty(preference.getApiAccessToken())) {
                             JsonArray jsonCitiesList = new JsonParser().parse(s).getAsJsonArray();
                             preference.setCitiesList(jsonCitiesList.toString());
                         } else {
