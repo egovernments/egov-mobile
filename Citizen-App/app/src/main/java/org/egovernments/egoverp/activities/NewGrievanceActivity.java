@@ -50,17 +50,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -76,7 +71,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -98,15 +92,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -148,7 +134,7 @@ import retrofit.mime.TypedString;
  **/
 //TODO frequent types
 
-public class NewGrievanceActivity extends AppCompatActivity implements LocationListener {
+public class NewGrievanceActivity extends AppCompatActivity {
 
     private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
     private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
@@ -158,10 +144,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     private ProgressDialog progressDialog;
 
     private Dialog imagePickerDialog;
-
-    private LocationManager locationManager;
-    private static final long MIN_TIME = 400;
-    private static final float MIN_DISTANCE = 1000;
 
     private AutoCompleteTextView autoCompleteComplaintLoc;
 
@@ -173,9 +155,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     private List<GrievanceLocation> grievanceLocations;
 
     private int locationID = 0;
-    private int complaintTypeID;
-
-    private Marker marker;
+    int complaintTypeID;
+    private LatLng complaintLocLatLng;
 
     private EditText landmark;
     private EditText details;
@@ -197,13 +178,9 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
     private File cacheDir;
 
-    private GoogleMap googleMap;
-
-    private int LOCATION_REQUEST_CODE = 333;
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
     final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
     final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
+    final private int REQUEST_CODE_ASK_COMPLAINT_LOCATION = 777;
 
     ImageView imgMapPick;
     ImageView imgClear;
@@ -226,30 +203,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
         cacheDir = this.getExternalCacheDir() == null ? this.getCacheDir() : this.getExternalCacheDir();
 
-        final FloatingActionButton pictureAddButton = (FloatingActionButton) findViewById(R.id.picture_add);
-        final com.melnykov.fab.FloatingActionButton pictureAddButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.picture_addcompat);
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        final MapDialog locationPickerDialog = new MapDialog(NewGrievanceActivity.this);
-        intializeDialogComponents(locationPickerDialog);
-
-        if (!sessionManager.isDemoMode()) {
-
-            if (Build.VERSION.SDK_INT < 23) {
-                if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                    buildAlertMessageNoGps();
-                } else {
-                    startLocationListener();
-                }
-            } else {
-
-                if (checkLocationPermission()) {
-                    startLocationListener();
-                }
-            }
-
-        }
+        final FloatingActionButton pictureFab = (FloatingActionButton) findViewById(R.id.picture_add);
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -290,23 +244,32 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         imgMapPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                locationPickerDialog.setMapLocationMarker(marker);
-                locationPickerDialog.show();
+               /* locationPickerDialog.setMapLocationMarker(marker);
+                locationPickerDialog.show();*/
+                Intent openGrievancePickLoc=new Intent(NewGrievanceActivity.this, GrievanceLocPickerActivity.class);
+                if(complaintLocLatLng!=null) {
+                    openGrievancePickLoc.putExtra(GrievanceLocPickerActivity.DEFAULT_LOCATION_LAT, complaintLocLatLng.latitude);
+                    openGrievancePickLoc.putExtra(GrievanceLocPickerActivity.DEFAULT_LOCATION_LNG, complaintLocLatLng.longitude);
+                }
+                startActivityForResult(openGrievancePickLoc, REQUEST_CODE_ASK_COMPLAINT_LOCATION);
             }
         });
 
         imgClear=(ImageView)findViewById(R.id.imgClear);
-        imgClear.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        imgClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                marker=null;
-                locationID=0;
-                autoCompleteComplaintLoc.setText("");
-            }
-        });
+        if(imgClear!=null) {
+            imgClear.getDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            imgClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    complaintLocLatLng = null;
+                    locationID = 0;
+                    autoCompleteComplaintLoc.setText("");
+                }
+            });
+        }
 
         autoCompleteComplaintLoc = (AutoCompleteTextView) findViewById(R.id.complaint_locationname);
+        if(autoCompleteComplaintLoc!=null)
         autoCompleteComplaintLoc.setThreshold(3);
         autoCompleteComplaintLoc.addTextChangedListener(new TextWatcher() {
                                                             @Override
@@ -332,7 +295,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                                                                     autoCompleteComplaintLoc.setAdapter(null);
                                                                     return;
                                                                 } else { //if any text change detected from autocomplete text
-                                                                    marker = null;
+                                                                    complaintLocLatLng=null;
                                                                 }
 
                                                                 if (s.length() >= 3) {
@@ -409,10 +372,11 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                 int pos=((NoFilterAdapter)autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(selection);
                 locationID = grievanceLocations.get(pos).getId();*/
 
-                //Clears marker when a location is selected
-                if (marker != null)
-                    marker.remove();
-                marker = null;
+                autoCompleteComplaintLoc.setSelection(0);
+                landmark.requestFocus();
+
+                //Clear the complaint location from map is selected
+                complaintLocLatLng=null;
             }
         });
 
@@ -484,14 +448,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             }
         };
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            pictureAddButton.setOnClickListener(onClickListener);
-
-        } else {
-            pictureAddButton.setVisibility(View.GONE);
-            pictureAddButtonCompat.setVisibility(View.VISIBLE);
-            pictureAddButtonCompat.setOnClickListener(onClickListener);
-        }
+         if(pictureFab!=null)
+         pictureFab.setOnClickListener(onClickListener);
 
     }
 
@@ -512,12 +470,10 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     }
 
 
-    //validate and submit grievance
+    //validate and registerComplaint grievance
     public void validateAndSubmitGrievance()
     {
         String complaintDetails = details.getText().toString().trim();
-        double lat;
-        double lng;
         String landmarkDetails = landmark.getText().toString().trim();
 
         complaintTypeID =0;
@@ -535,7 +491,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
         }
-        else if (locationID == 0 && (marker == null)) {
+        else if (locationID == 0 && (complaintLocLatLng == null)) {
             Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
@@ -544,15 +500,14 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
             toast.show();
         } else {
-            if (marker != null) {
-                lat = marker.getPosition().latitude;
-                lng = marker.getPosition().longitude;
-                progressDialog.show();
-                submit(new GrievanceRequest(lat, lng, complaintDetails, complaintTypeID, landmarkDetails));
+            GrievanceRequest grievanceRequest;
+            if (complaintLocLatLng != null) {
+                grievanceRequest=new GrievanceRequest(complaintLocLatLng.latitude, complaintLocLatLng.longitude, complaintDetails, complaintTypeID, landmarkDetails);
             } else {
-                progressDialog.show();
-                submit(new GrievanceRequest(locationID, complaintDetails, complaintTypeID, landmarkDetails));
+                grievanceRequest=new GrievanceRequest(locationID, complaintDetails, complaintTypeID, landmarkDetails);
             }
+            progressDialog.show();
+            registerComplaint(grievanceRequest);
         }
     }
 
@@ -587,40 +542,52 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             uploadCount++;
 
             if (uploadCount == 1) {
-                addMarkerFromImage(uri);
+                loadComplaintLocationFromImage(uri);
             }
 
             imageID.remove(0);
             viewPager.setCurrentItem(uriArrayList.size());
-
         }
 
         //If result is from gallery
         else if (requestCode == GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
-
             uriArrayList.add(data.getData());
             grievanceImagePagerAdapter.notifyDataSetChanged();
             uploadCount++;
             imageID.remove(0);
             viewPager.setCurrentItem(uriArrayList.size());
             if (uploadCount == 1) {
-                addMarkerFromImage(data.getData());
+                loadComplaintLocationFromImage(data.getData());
             }
 
-        } else if (requestCode == LOCATION_REQUEST_CODE && resultCode == 0) {
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                try {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-                } catch (SecurityException ex) {
-                    ex.printStackTrace();
-                }
+        } else if (requestCode == REQUEST_CODE_ASK_COMPLAINT_LOCATION && resultCode == RESULT_OK) {
+
+            //reset location id
+            locationID=0;
+
+            Double complaintLocLat=data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LAT, 0d);
+            Double complaintLocLng=data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LNG, 0d);
+
+            complaintLocLatLng=new LatLng(complaintLocLat,complaintLocLng);
+            isPickedLocationFromMap=true; //to avoid to load suggestion list when set to Autocomplete
+
+            String selectedLocAddress=data.getStringExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_ADDRESS);
+
+            if(!TextUtils.isEmpty(selectedLocAddress))
+            {
+                autoCompleteComplaintLoc.setText(selectedLocAddress);
             }
+            else
+            {
+                getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
+            }
+
         }
 
     }
 
     //Invokes call to API
-    private void submit(GrievanceRequest grievanceRequest) {
+    private void registerComplaint(GrievanceRequest grievanceRequest) {
 
         //Used to upload multiple multipart parts with the same field name
         MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
@@ -709,37 +676,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
 
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        try {
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            if (googleMap != null) {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-                googleMap.animateCamera(cameraUpdate);
-            }
-            removeLocationListener();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
     private void loadComplaintCategoriesAndTypes()
     {
 
@@ -752,7 +688,6 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                     public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
 
                         grievanceAllCategories=grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
-
                         grievanceTypeCategories=new ArrayList<>();
                         grievanceTypes=new ArrayList<>();
 
@@ -807,22 +742,24 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                         });
 
                         autoCompleteComplaintCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                              @Override
-                              public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                   /*if(!autoCompleteComplaintCategory.hasFocus())
                                   {
                                       autocompleteComplaintType.setText("");
                                       refreshGrievanceTypeAutoComplete(true);
                                   }*/
-                                  refreshGrievanceTypeAutoComplete(true);
-                                  autocompleteComplaintType.requestFocus();
-                              }
+                                autoCompleteComplaintCategory.setSelection(0);
+                                refreshGrievanceTypeAutoComplete(true);
+                                autocompleteComplaintType.requestFocus();
+                            }
                         });
 
                         autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 setGrievanceCategoryText();
+                                autocompleteComplaintType.setSelection(0);
                                 autoCompleteComplaintLoc.requestFocus();
                             }
                         });
@@ -1153,18 +1090,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        removeLocationListener();
     }
 
-    //removing location listener
-    public void removeLocationListener() {
-        try {
-            if (locationManager != null)
-                locationManager.removeUpdates(this);
-        } catch (SecurityException ex) {
-            ex.printStackTrace();
-        }
-    }
 
     /*//find selected location id from location collections
     public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
@@ -1176,47 +1103,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         return null;
     }*/
 
-    private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(settingsIntent, LOCATION_REQUEST_CODE);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-
-    private void startLocationListener() {
-        try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
-            if (googleMap != null) {
-                googleMap.setMyLocationEnabled(true);
-            }
-        } catch (SecurityException ex) {
-            ex.printStackTrace();
-        }
-    }
-
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    startLocationListener();
-                } else {
-                    Toast.makeText(NewGrievanceActivity.this, "You're disabled location access!", Toast.LENGTH_SHORT).show();
-                }
-                break;
             case REQUEST_CODE_ASK_PERMISSIONS_CAMERA:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
@@ -1240,7 +1128,7 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         }
     }
 
-    public void addMarkerFromImage(Uri imageUri) {
+    public void loadComplaintLocationFromImage(Uri imageUri) {
         try {
             String s = UriPathHelper.getRealPathFromURI(imageUri, this);
             ExifInterface exifInterface = new ExifInterface(s);
@@ -1254,33 +1142,13 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
                 lng = 0;
             }
             if (lat != 0 && lng != 0) {
-                addMarkerToMap(new LatLng(lat, lng));
+                complaintLocLatLng=new LatLng(lat, lng);
                 locationID = 0;
-                getAddress(lat,lng);
+                getAndSetAddressToLocAutoComplete(lat,lng);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void addMarkerToMap(LatLng latLng) {
-        if (marker != null) {
-            marker.remove();
-        }
-        marker = googleMap.addMarker(new MarkerOptions().position(latLng));
-        CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-        googleMap.animateCamera(location);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkLocationPermission() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_CODE_ASK_PERMISSIONS_LOCATION);
-            return false;
-        }
-        return true;
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -1305,112 +1173,8 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
         return true;
     }
 
-    public class MapDialog extends Dialog implements OnMapReadyCallback, DialogInterface.OnShowListener, GoogleMap.OnMapClickListener {
-
-        Marker mapLocationMarker;
-
-        public Marker getMapLocationMarker() {
-            return mapLocationMarker;
-        }
-
-        public void setMapLocationMarker(Marker mapLocationMarker) {
-            this.mapLocationMarker = mapLocationMarker;
-        }
-
-        public MapDialog(Context context) {
-            super(context, R.style.AppTheme);
-            setContentView(R.layout.dialog_picklocation);
-            getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-        }
-
-        //Performs initial setup of the map
-        @Override
-        public void onMapReady(final GoogleMap googleMap) {
-            //Disable map toolbar
-            UiSettings uiSettings = googleMap.getUiSettings();
-            uiSettings.setMapToolbarEnabled(false);
-            // Set map type
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            LatLng latLng = new LatLng(sessionManager.getCityLatitude(), sessionManager.getCityLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 12);
-            googleMap.animateCamera(cameraUpdate);
-            googleMap.setOnMapClickListener(this);
-
-        }
-
-        @Override
-        public void onShow(DialogInterface dialog) {
-            googleMap.clear();
-            if(mapLocationMarker!=null)
-            {
-                LatLng latLng=new LatLng(mapLocationMarker.getPosition().latitude, mapLocationMarker.getPosition().longitude);
-                mapLocationMarker=googleMap.addMarker(new MarkerOptions().position(latLng));
-                CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-                googleMap.animateCamera(location);
-            }
-        }
-
-        @Override
-        public void onMapClick(LatLng latLng) {
-            if (mapLocationMarker != null) {
-                mapLocationMarker.remove();
-            }
-            mapLocationMarker = googleMap.addMarker(new MarkerOptions().position(latLng));
-            CameraUpdate location = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-            googleMap.animateCamera(location);
-        }
-
-    }
-
-    public void intializeDialogComponents(final MapDialog mapDialog)
-    {
-        Toolbar toolbar = (Toolbar) mapDialog.findViewById(R.id.toolbar);
-        toolbar.setTitle("Pick Complaint Location");
-        toolbar.inflateMenu(R.menu.map_dialog_actions);
-        toolbar.setNavigationIcon(R.drawable.ic_close_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapDialog.dismiss();
-            }
-        });
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.action_pickloc:
-                        mapDialog.dismiss();
-                        //check for location is picked or not
-                        if(mapDialog.getMapLocationMarker()!=null)
-                        {
-                            if(marker!=null)
-                            {
-                                //check whether location is changed or not
-                                if(marker.getPosition().latitude==mapDialog.getMapLocationMarker().getPosition().latitude && marker.getPosition().longitude==mapDialog.getMapLocationMarker().getPosition().longitude)
-                                {
-                                    return true;
-                                }
-                            }
-                            marker=mapDialog.getMapLocationMarker();
-                            getAddress(marker.getPosition().latitude, marker.getPosition().longitude);
-                            locationID = 0;
-                        }
-
-                        return true;
-                }
-                return false;
-            }
-        });
-
-        MapFragment map = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        googleMap=map.getMap();
-        map.getMapAsync(mapDialog);
-        mapDialog.setOnShowListener(mapDialog);
-    }
-
     /*/If lat/lng is available attempt to resolve it to an address*/
-    private void getAddress(Double lat, Double lng) {
+    private void getAndSetAddressToLocAutoComplete(Double lat, Double lng) {
         progressDialog.show();
         Intent intent = new Intent(this, AddressService.class);
         intent.putExtra(AddressService.LAT, lat);
@@ -1426,20 +1190,18 @@ public class NewGrievanceActivity extends AppCompatActivity implements LocationL
             @Override
             public void run() {
                 progressDialog.dismiss();
-                isPickedLocationFromMap=true;
                 if(addressReadyEvent.isFailed())
                 {
                     Toast.makeText(getApplicationContext(), "Address not found", Toast.LENGTH_SHORT).show();
-                    autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(marker.getPosition().latitude, 2) +", "+AppUtils.round(marker.getPosition().longitude, 2)+")");
+                    autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
                 }
                 else
                 {
                     autoCompleteComplaintLoc.setText(AddressService.addressResult);
                 }
-
+                landmark.requestFocus();
             }
         });
-
     }
 
     //Subscribes the activity to events

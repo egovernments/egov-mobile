@@ -87,7 +87,8 @@ public class HomeActivity extends BaseActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);*/
 
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, getResources().getInteger(R.integer.homegridcolumns));
+        final int homeGridColumnsCount=getResources().getInteger(R.integer.homegridcolumns);
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, homeGridColumnsCount);
         recyclerView.setLayoutManager(gridLayoutManager);
 
         CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
@@ -195,7 +196,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public int getSpanSize(int position) {
                 if(homeAdapter.getItem(position).isNotificationItem()){
-                  return 2;
+                  return homeGridColumnsCount;
                 }
                 return 1;
             }

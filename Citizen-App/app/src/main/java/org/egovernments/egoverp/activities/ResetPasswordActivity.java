@@ -244,7 +244,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                     msText = msText.replace("-", "");
 
-                    tvCountDown.setText("Your OTP will be expiry in " + msText);
+                    tvCountDown.setText("Your OTP will be expire in " + msText);
 
                 }
 

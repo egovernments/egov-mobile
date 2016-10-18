@@ -131,6 +131,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
         </activity>
+
+        <activity
+            android:name=".activities.GrievanceLocPickerActivity"
+            android:label="@string/pick_complaint_location"
+            android:parentActivityName=".activities.GrievanceActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
         <activity
             android:name=".activities.PropertyTaxSearchActivity"
             android:label="@string/propertytax_label"

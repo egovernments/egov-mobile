@@ -269,18 +269,13 @@ public class Grievance implements Serializable, Parcelable {
         dest.writeString(this.landmarkDetails);
         dest.writeString(this.createdDate);
         dest.writeInt(this.supportDocsSize);
-
-        this.lat=0d;
-        this.lng=0d;
-
-        if(this.lat!=null)
+        if(this.lat==null)
         {
-            dest.writeDouble(this.lat);
+            this.lat=0d;
+            this.lng=0d;
         }
-        if(this.lng!=null)
-        {
-            dest.writeDouble(this.lng);
-        }
+        dest.writeDouble(this.lat);
+        dest.writeDouble(this.lng);
     }
 
     public static final Parcelable.Creator<Grievance> CREATOR = new Parcelable.Creator<Grievance>() {

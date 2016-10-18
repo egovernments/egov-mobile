@@ -256,7 +256,7 @@ public class AccountActivationActivity extends AppCompatActivity {
 
                     msText = msText.replace("-", "");
 
-                    tvCountDown.setText("Your OTP will be expiry in " + msText);
+                    tvCountDown.setText("Your OTP will expire in " + msText);
 
                 }
 
