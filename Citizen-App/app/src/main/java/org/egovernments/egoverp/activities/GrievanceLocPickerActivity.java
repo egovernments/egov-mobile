@@ -263,7 +263,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
                         addresses = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1);
                         if (addresses != null && addresses.size() > 0 && pinView!=null) {
                             String address = addresses.get(0).getAddressLine(0);
-                            String city = addresses.get(0).getLocality();
+                            String city = (TextUtils.isEmpty(addresses.get(0).getLocality())?"":addresses.get(0).getLocality());
                             /*String country = addresses.get(0).getCountryName();
                             String knownName = addresses.get(0).getFeatureName();*/
                             pinView.setAddressText(address + (city.equals("null")?"":"," + city));
