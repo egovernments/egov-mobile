@@ -109,7 +109,9 @@ public class Grievance implements Serializable, Parcelable {
     @SerializedName("supportDocs")
     @Expose
     private ArrayList<SupportDoc> supportDocs;
-
+    @SerializedName("citizenFeedback")
+    @Expose
+    private String citizenFeedback;
 
     public Grievance(Parcel in){
         this.detail = in.readString();
@@ -127,6 +129,7 @@ public class Grievance implements Serializable, Parcelable {
         this.supportDocsSize = in.readInt();
         this.lat = in.readDouble();
         this.lng = in.readDouble();
+        this.citizenFeedback=in.readString();
     }
 
 
@@ -248,6 +251,9 @@ public class Grievance implements Serializable, Parcelable {
         return supportDocs;
     }
 
+    public String getCitizenFeedback() {
+        return citizenFeedback;
+    }
 
     @Override
     public int describeContents() {
@@ -276,6 +282,7 @@ public class Grievance implements Serializable, Parcelable {
         }
         dest.writeDouble(this.lat);
         dest.writeDouble(this.lng);
+        dest.writeString(this.citizenFeedback);
     }
 
     public static final Parcelable.Creator<Grievance> CREATOR = new Parcelable.Creator<Grievance>() {

@@ -58,11 +58,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -134,7 +136,14 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
     private Button btnMoreComments;
 
+    private RatingBar feedbackRatingBar;
+    private TextView tvRatingBar;
 
+    private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
+    private final String[] feedBackText=new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
+
+
+    @SuppressWarnings("unchecked")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,6 +176,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         layoutCompComments =(LinearLayout)findViewById(R.id.complaintcommentscontainer);
         layoutToggleComments = (LinearLayout) findViewById(R.id.complainttogglecomments);
         btnMoreComments=(Button)findViewById(R.id.btnmorecomments);
+        feedbackRatingBar=(RatingBar)findViewById(R.id.feedbackRatingBar);
+        tvRatingBar=(TextView)findViewById(R.id.tvRatingBar);
 
         final LinearLayout feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
 
@@ -177,10 +188,9 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         progressBar = (ProgressBar) findViewById(R.id.grievance_history_placeholder);
 
         final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
-        final Spinner feedbackSpinner = (Spinner) findViewById(R.id.update_feedback);
         ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Select", "Withdraw"));
         ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Select", "Re-open"));
-        ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("Unspecified", "Satisfactory", "Unsatisfactory"));
+
 
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
@@ -269,9 +279,16 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                 commentBoxLabel.setText(getResources().getString(R.string.feedback));
 
                 feedbackLayout.setVisibility(View.VISIBLE);
-                ArrayAdapter<String> feedbackAdapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, feedbackOptions);
-                feedbackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                feedbackSpinner.setAdapter(new NothingSelectedSpinnerAdapter(feedbackAdapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
+                if(!TextUtils.isEmpty(grievance.getCitizenFeedback()))
+                {
+                    int rating=feedbackOptions.indexOf(grievance.getCitizenFeedback());
+                    feedbackRatingBar.setRating(rating);
+                    tvRatingBar.setText(feedBackText[rating]);
+                }
+                else
+                {
+                    tvRatingBar.setText(feedBackText[0]);
+                }
 
             }
             //Display default spinners
@@ -293,6 +310,16 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         //load complaint history
         new LoadComplaintHistory().execute();
 
+        feedbackRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean b) {
+
+                int value= Math.round(rating);
+                tvRatingBar.setText(feedBackText[value]);
+
+            }
+        });
+
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -301,7 +328,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                 String comment = updateComment.getText().toString().trim();
                 String feedback = "";
                 if (feedbackLayout.getVisibility() == View.VISIBLE) {
-                    feedback = (String) feedbackSpinner.getSelectedItem();
+                    feedback = feedbackOptions.get(Math.round(feedbackRatingBar.getRating()));
                 }
 
                 if (action == null) {
@@ -350,7 +377,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
                                         loadComplaintComments(grievanceCommentAPIResult.getGrievanceComments());
                                         actionsSpinner.setSelection(0);
-                                        feedbackSpinner.setSelection(0);
                                         updateComment.getText().clear();
 
                                         if (!isComment) {
@@ -505,7 +531,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
     //The viewpager custom adapter
     private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
 
-        public GrievanceImagePagerAdapter(FragmentManager fm) {
+        GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -564,7 +590,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
         for(int i=(grievanceComments.size()-1);i>=0;i--)
         {
-            View commentItemTemplate=getLayoutInflater().inflate(R.layout.template_comment_item,null);
+            final ViewGroup nullParent = null;
+            View commentItemTemplate=getLayoutInflater().inflate(R.layout.template_comment_item,nullParent);
             GrievanceComment comment=grievanceComments.get(i);
             TextView tvUserName=(TextView)commentItemTemplate.findViewById(R.id.commenter_name);
             tvUserName.setText(comment.getUpdatedBy());

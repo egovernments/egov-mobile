@@ -549,15 +549,32 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical"
+                                    android:gravity="center"
                                     android:visibility="gone">
 
-                                    <Spinner
-                                        android:id="@+id/update_feedback"
+                                    <TextView
                                         android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/your_rating"
+                                        android:paddingTop="10dp"
+                                        android:paddingLeft="10dp"
+                                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                                    <RatingBar
+                                        android:id="@+id/feedbackRatingBar"
+                                        android:theme="@style/EgovRatingBarStyle"
+                                        android:layout_width="wrap_content"
+                                        android:stepSize="1"
+                                        android:numStars="5"
                                         android:layout_height="wrap_content" />
 
-                                    <View style="@style/Divider" />
-
+                                    <TextView
+                                        android:id="@+id/tvRatingBar"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="5dp"
+                                        android:textColor="@color/primaryText"
+                                        style="@style/TextAppearance.AppCompat.Caption" />
 
                                 </LinearLayout>
 
