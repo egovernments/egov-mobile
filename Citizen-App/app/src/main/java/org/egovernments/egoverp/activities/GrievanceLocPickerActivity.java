@@ -53,6 +53,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,7 +97,7 @@ import java.util.Locale;
  */
 
 public class GrievanceLocPickerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnCameraIdleListener,
-        MapWrapperLayout.OnDragListener, GoogleMap.OnMyLocationButtonClickListener, GoogleApiClient.ConnectionCallbacks,
+        MapWrapperLayout.OnDragListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     SessionManager sessionManager;
@@ -209,7 +210,6 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         uiSettings.setMapToolbarEnabled(false);
         // Set map type
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.setOnMyLocationButtonClickListener(this);
         googleMap.setOnCameraIdleListener(this);
         LatLng latLng = new LatLng(sessionManager.getCityLatitude(), sessionManager.getCityLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((defaultLatLng==null?latLng:defaultLatLng), 16);
@@ -258,19 +258,38 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
             @Override
             public void run() {
                 if(!pinView.isDragging()) {
-                    List<Address> addresses;
-                    try {
-                        addresses = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1);
-                        if (addresses != null && addresses.size() > 0 && pinView!=null) {
-                            String address = addresses.get(0).getAddressLine(0);
-                            String city = (TextUtils.isEmpty(addresses.get(0).getLocality())?"":addresses.get(0).getLocality());
-                            /*String country = addresses.get(0).getCountryName();
-                            String knownName = addresses.get(0).getFeatureName();*/
-                            pinView.setAddressText(address + (city.equals("null")?"":"," + city));
+
+                    new AsyncTask<Void, Void, String>()
+                    {
+                        List<Address> addresses;
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            try {
+                                addresses = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1);
+                                if (addresses != null && addresses.size() > 0 && pinView!=null) {
+                                    String address = addresses.get(0).getAddressLine(0);
+                                    String city = (TextUtils.isEmpty(addresses.get(0).getLocality())?"":addresses.get(0).getLocality());
+                                    /*String country = addresses.get(0).getCountryName();
+                                    String knownName = addresses.get(0).getFeatureName();*/
+                                    return address + (city.equals("null")?"":"," + city);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+                        @Override
+                        protected void onPostExecute(String response) {
+                            super.onPostExecute(response);
+                            if(pinView!=null && !pinView.isDragging()) {
+                                if (TextUtils.isEmpty(response))
+                                    response = "Unknown Location";
+                                pinView.setAddressText(response);
+                            }
+                        }
+                    }.execute();
+
                 }
             }
         };
@@ -300,14 +319,6 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
             default:
                 break;
         }
-
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        removeUpdateAddressRunningTasks();
-        pinView.setAddressText("Getting address");
-        return false;
     }
 
     void removeUpdateAddressRunningTasks()
@@ -363,7 +374,10 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_CODE_ASK_PERMISSIONS_LOCATION && resultCode==RESULT_OK)
         {
-            startLocationListener();
+            if(mGoogleApiClient.isConnected())
+                startLocationListener();
+            else
+                mGoogleApiClient.connect();
         }
     }
 
@@ -405,7 +419,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
     protected void onResume() {
         super.onResume();
 
-        if (mGoogleApiClient != null) {
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
     }
@@ -437,7 +451,10 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
             case REQUEST_CODE_ASK_PERMISSIONS_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    startLocationListener();
+                    if(mGoogleApiClient.isConnected())
+                        startLocationListener();
+                    else
+                        mGoogleApiClient.connect();
                 } else {
                     Toast.makeText(GrievanceLocPickerActivity.this, "You're disabled location access!", Toast.LENGTH_SHORT).show();
                 }

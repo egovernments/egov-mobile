@@ -1192,7 +1192,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if(addressReadyEvent.isFailed())
                 {
-                    Toast.makeText(getApplicationContext(), "Address not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Unknown location! No issues.\n Still you can file a complaint", Toast.LENGTH_LONG).show();
                     autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
                 }
                 else
