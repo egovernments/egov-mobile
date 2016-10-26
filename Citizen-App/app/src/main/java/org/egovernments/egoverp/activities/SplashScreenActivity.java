@@ -358,7 +358,7 @@ public class SplashScreenActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
         builder.setCancelable(false);
         builder.setTitle("New update is available");
-        builder.setMessage("Please download the latest app to use upgraded services");
+        builder.setMessage("Please download the latest app to use our upgraded services");
         builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -380,7 +380,7 @@ public class SplashScreenActivity extends Activity {
         AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
         builder.setCancelable(false);
         builder.setTitle("New update is available");
-        builder.setMessage("We're recommended download the latest app to use upgraded services");
+        builder.setMessage("We're recommended to download the latest app to use our upgraded services");
         builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
