@@ -244,8 +244,6 @@ public class NewGrievanceActivity extends AppCompatActivity {
         imgMapPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* locationPickerDialog.setMapLocationMarker(marker);
-                locationPickerDialog.show();*/
                 Intent openGrievancePickLoc=new Intent(NewGrievanceActivity.this, GrievanceLocPickerActivity.class);
                 if(complaintLocLatLng!=null) {
                     openGrievancePickLoc.putExtra(GrievanceLocPickerActivity.DEFAULT_LOCATION_LAT, complaintLocLatLng.latitude);
@@ -367,19 +365,12 @@ public class NewGrievanceActivity extends AppCompatActivity {
         autoCompleteComplaintLoc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                /*String selection = (String)parent.getItemAtPosition(position);
-                int pos=((NoFilterAdapter)autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(selection);
-                locationID = grievanceLocations.get(pos).getId();*/
-
                 autoCompleteComplaintLoc.setSelection(0);
                 landmark.requestFocus();
-
                 //Clear the complaint location from map is selected
                 complaintLocLatLng=null;
             }
         });
-
 
         runOnUiThread(new Runnable() {
             @Override
@@ -932,7 +923,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
     //Custom adapter for viewpager
     private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
 
-        public GrievanceImagePagerAdapter(FragmentManager fm) {
+        GrievanceImagePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -1110,7 +1101,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
                     // Permission Granted
                     fromCamera();
                 } else {
-                    Toast.makeText(NewGrievanceActivity.this, "You're disabled camera access!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewGrievanceActivity.this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS:
@@ -1120,7 +1111,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
                     intent.setType("image/*");
                     startActivityForResult(intent, GALLERY_PHOTO);
                 } else {
-                    Toast.makeText(NewGrievanceActivity.this, "You're disabled read access!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewGrievanceActivity.this, R.string.permission_read_denied, Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

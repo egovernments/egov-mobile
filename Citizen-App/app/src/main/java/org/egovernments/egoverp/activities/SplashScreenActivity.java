@@ -85,10 +85,10 @@ public class SplashScreenActivity extends Activity {
 
     private SessionManager sessionManager;
 
-    private String url;
-    private String location;
+    String url;
+    String location;
 
-    private int code;
+    int code;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -265,7 +265,7 @@ public class SplashScreenActivity extends Activity {
         switch (requestCode) {
             case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(getApplicationContext(), "You are denied permission for read sms! so, OTP auto fill feature may won't work", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.permission_readsms_denied, Toast.LENGTH_LONG).show();
                     timerThread.start();
                 }
                 else if(grantResults[0]== PackageManager.PERMISSION_GRANTED)

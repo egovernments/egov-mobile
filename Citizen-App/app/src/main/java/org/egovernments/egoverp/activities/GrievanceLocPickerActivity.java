@@ -192,17 +192,6 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         alert.show();
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkLocationPermission() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_CODE_ASK_PERMISSIONS_LOCATION);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         //Disable map toolbar
@@ -258,38 +247,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
             @Override
             public void run() {
                 if(!pinView.isDragging()) {
-
-                    new AsyncTask<Void, Void, String>()
-                    {
-                        List<Address> addresses;
-                        @Override
-                        protected String doInBackground(Void... params) {
-                            try {
-                                addresses = geocoder.getFromLocation(cameraPosition.target.latitude, cameraPosition.target.longitude, 1);
-                                if (addresses != null && addresses.size() > 0 && pinView!=null) {
-                                    String address = addresses.get(0).getAddressLine(0);
-                                    String city = (TextUtils.isEmpty(addresses.get(0).getLocality())?"":addresses.get(0).getLocality());
-                                    /*String country = addresses.get(0).getCountryName();
-                                    String knownName = addresses.get(0).getFeatureName();*/
-                                    return address + (city.equals("null")?"":"," + city);
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(String response) {
-                            super.onPostExecute(response);
-                            if(pinView!=null && !pinView.isDragging()) {
-                                if (TextUtils.isEmpty(response))
-                                    response = "Unknown Location";
-                                pinView.setAddressText(response);
-                            }
-                        }
-                    }.execute();
-
+                    new SetAddressToPinViewFromCameraPosition().execute(cameraPosition);
                 }
             }
         };
@@ -374,10 +332,10 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==REQUEST_CODE_ASK_PERMISSIONS_LOCATION && resultCode==RESULT_OK)
         {
-            if(mGoogleApiClient.isConnected())
-                startLocationListener();
-            else
-                mGoogleApiClient.connect();
+                if (mGoogleApiClient.isConnected())
+                    startLocationListener();
+                else
+                    mGoogleApiClient.connect();
         }
     }
 
@@ -390,18 +348,51 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
-        if (Build.VERSION.SDK_INT < 23) {
-            if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                buildAlertMessageNoGps();
-            } else {
-                startLocationListener();
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            checkAndStartLocationManager();
         } else {
-
             if (checkLocationPermission()) {
-                startLocationListener();
+                checkAndStartLocationManager();
             }
+        }
+    }
+
+    public void checkAndStartLocationManager()
+    {
+        if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            buildAlertMessageNoGps();
+        } else {
+            startLocationListener();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkLocationPermission() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_CODE_ASK_PERMISSIONS_LOCATION);
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS_LOCATION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    if(mGoogleApiClient.isConnected())
+                        checkAndStartLocationManager();
+                    else
+                        mGoogleApiClient.connect();
+                } else {
+                    Toast.makeText(GrievanceLocPickerActivity.this, R.string.permission_location_denied, Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
@@ -444,21 +435,39 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS_LOCATION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    if(mGoogleApiClient.isConnected())
-                        startLocationListener();
-                    else
-                        mGoogleApiClient.connect();
-                } else {
-                    Toast.makeText(GrievanceLocPickerActivity.this, "You're disabled location access!", Toast.LENGTH_SHORT).show();
+    class SetAddressToPinViewFromCameraPosition extends AsyncTask<CameraPosition, String, String>{
+
+            List<Address> addresses;
+            CameraPosition cameraPosition;
+
+            @Override
+            protected String doInBackground(CameraPosition... params) {
+            try {
+                cameraPosition=params[0];
+                addresses = geocoder.getFromLocation(params[0].target.latitude, params[0].target.longitude, 1);
+                if (addresses != null && addresses.size() > 0 && pinView!=null) {
+                    String address = addresses.get(0).getAddressLine(0);
+                    String city = (TextUtils.isEmpty(addresses.get(0).getLocality())?"":addresses.get(0).getLocality());
+                                    /*String country = addresses.get(0).getCountryName();
+                                    String knownName = addresses.get(0).getFeatureName();*/
+                    return address + (city.equals("null")?"":"," + city);
                 }
-                break;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if(pinView!=null && !pinView.isDragging()) {
+                if (TextUtils.isEmpty(response))
+                    new SetAddressToPinViewFromCameraPosition().execute(cameraPosition);
+                else
+                    pinView.setAddressText(response);
+            }
         }
     }
+
 }

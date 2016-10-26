@@ -594,13 +594,15 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
             View commentItemTemplate=getLayoutInflater().inflate(R.layout.template_comment_item,nullParent);
             GrievanceComment comment=grievanceComments.get(i);
             TextView tvUserName=(TextView)commentItemTemplate.findViewById(R.id.commenter_name);
-            tvUserName.setText(comment.getUpdatedBy());
 
-            if (comment.getUpdatedUserType().equals("EMPLOYEE"))
+            if (comment.getUpdatedUserType().equals("EMPLOYEE") || !comment.getUpdatedUserType().equals("CITIZEN")) {
+                tvUserName.setText(comment.getUser());
                 tvUserName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-
-            if(sessionManager.getUsername().equals(comment.getUpdatedBy()))
-                tvUserName.setText("Me");
+            }
+            else
+            {
+                tvUserName.setText(comment.getUpdatedBy());
+            }
 
 
             ((TextView)commentItemTemplate.findViewById(R.id.comment_datetime)).setText(formatDateString(comment.getDate(), "MMM dd, yyyy hh:mm:ss aa", "dd/MM/yyyy hh:mm aa"));
