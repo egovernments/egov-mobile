@@ -46,16 +46,22 @@ package org.egovernments.egoverp.activities;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
@@ -84,6 +90,9 @@ public class SplashScreenActivity extends Activity {
     private Handler handler;
 
     private SessionManager sessionManager;
+
+    private final String PLAYSTORE_URL="https://play.google.com/store/apps/details?id=";
+    private final String MARKET_URL="market://details?id=";
 
     String url;
     String location;
@@ -248,6 +257,58 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
+
+    class GetLatestAppVersion extends AsyncTask<String, Integer, JsonObject>{
+
+        final String KEY_RESULT="result";
+        final String KEY_APP_VERSION_CODE="versionCode";
+        final String KEY_APP_IS_FORCE_UPDATE="isForceUpdate";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JsonObject doInBackground(String... params) {
+            JsonObject response = null;
+            try {
+                String resp = ApiController.getCityURL(configManager.getString("api.appVersionCheck")+getApplicationContext().getPackageName());
+                response=new JsonParser().parse(resp).getAsJsonObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject response) {
+            super.onPostExecute(response);
+
+            if(response!=null)
+            {
+                JsonObject appDetails=response.get(KEY_RESULT).getAsJsonObject();
+
+                if(AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()){
+                    if(appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean())
+                    {
+                        showForceUpdateAlert();
+                    }
+                    else{
+                        showRecommendedUpdateAlert();
+                    }
+                }
+                else{
+                    launchScreen();
+                }
+            }
+            else{
+                launchScreen();
+            }
+
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.M)
     private boolean checkReadSMSPermision() {
         int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
@@ -278,6 +339,11 @@ public class SplashScreenActivity extends Activity {
 
     public void startTimerThread()
     {
+        new GetLatestAppVersion().execute();
+    }
+
+
+    public void launchScreen(){
         if (Build.VERSION.SDK_INT < 23) {
             timerThread.start();
         } else {
@@ -285,9 +351,56 @@ public class SplashScreenActivity extends Activity {
                 timerThread.start();
             }
         }
-
     }
 
+    void showForceUpdateAlert(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle("New update is available");
+        builder.setMessage("Please download the latest app to use upgraded services");
+        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+        builder.create().show();
+    }
+
+
+    void showRecommendedUpdateAlert(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle("New update is available");
+        builder.setMessage("We're recommended download the latest app to use upgraded services");
+        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+        builder.setNegativeButton("NOT NOW", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                launchScreen();
+            }
+        });
+        builder.create().show();
+    }
 
 }
 

@@ -44,6 +44,7 @@ package org.egovernments.egoverp.helper;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -167,6 +168,16 @@ public class AppUtils {
                     }
                 });
         builder.show();
+    }
+
+    public static Integer getAppVersionCode(Context context) {
+        Integer versionCode = 0;
+        try {
+            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionCode;
     }
 
 }
