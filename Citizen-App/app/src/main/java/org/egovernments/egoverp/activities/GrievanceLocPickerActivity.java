@@ -186,6 +186,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         dialog.cancel();
+                        finish();
                     }
                 });
         final AlertDialog alert = builder.create();
@@ -390,7 +391,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
                     else
                         mGoogleApiClient.connect();
                 } else {
-                    Toast.makeText(GrievanceLocPickerActivity.this, R.string.permission_location_denied, Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 break;
         }

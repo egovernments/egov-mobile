@@ -98,7 +98,6 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.events.AddressReadyEvent;
-import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
 import org.egovernments.egoverp.helper.NoFilterAdapter;
@@ -551,26 +550,30 @@ public class NewGrievanceActivity extends AppCompatActivity {
                 loadComplaintLocationFromImage(data.getData());
             }
 
-        } else if (requestCode == REQUEST_CODE_ASK_COMPLAINT_LOCATION && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_CODE_ASK_COMPLAINT_LOCATION) {
 
-            //reset location id
-            locationID=0;
+            if(resultCode == RESULT_OK) {
+                //reset location id
+                locationID = 0;
 
-            Double complaintLocLat=data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LAT, 0d);
-            Double complaintLocLng=data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LNG, 0d);
+                Double complaintLocLat = data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LAT, 0d);
+                Double complaintLocLng = data.getDoubleExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_LNG, 0d);
 
-            complaintLocLatLng=new LatLng(complaintLocLat,complaintLocLng);
-            isPickedLocationFromMap=true; //to avoid to load suggestion list when set to Autocomplete
+                complaintLocLatLng = new LatLng(complaintLocLat, complaintLocLng);
+                isPickedLocationFromMap = true; //to avoid to load suggestion list when set to Autocomplete
 
-            String selectedLocAddress=data.getStringExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_ADDRESS);
+                String selectedLocAddress = data.getStringExtra(GrievanceLocPickerActivity.SELECTED_LOCATION_ADDRESS);
 
-            if(!TextUtils.isEmpty(selectedLocAddress))
-            {
-                autoCompleteComplaintLoc.setText(selectedLocAddress);
+                if (!TextUtils.isEmpty(selectedLocAddress)) {
+                    autoCompleteComplaintLoc.setText(selectedLocAddress);
+                    landmark.requestFocus();
+                } else {
+                    getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
+                }
             }
-            else
+            else if(resultCode == RESULT_CANCELED)
             {
-                getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
+                Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
             }
 
         }
@@ -1183,8 +1186,10 @@ public class NewGrievanceActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if(addressReadyEvent.isFailed())
                 {
-                    Toast.makeText(getApplicationContext(), "Unknown location! No issues.\n Still you can file a complaint", Toast.LENGTH_LONG).show();
-                    autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
+                    complaintLocLatLng=null;
+                    Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Unknown location! No issues.\n Still you can file a complaint", Toast.LENGTH_LONG).show();
+                    //autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
                 }
                 else
                 {

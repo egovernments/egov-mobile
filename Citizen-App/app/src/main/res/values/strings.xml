@@ -235,5 +235,5 @@ Links to:</string>
     <string name="permission_read_denied">You have disabled permission for read file access! if you want to enable go to the app info page in settings and enable it!</string>
     <string name="permission_readsms_denied">"You have disabled read sms permission for OTP! if you want to enable go the app info page in settings and enable it "</string>
     <string name="permission_location_denied">you have disabled open camera permission! if you want to enable go to the app info page and enable it</string>
-
+    <string name="complaint_location_message">Select the complaint location by entering first 3-4 characters of the locality</string>
 </resources>
