@@ -55,19 +55,23 @@ import android.util.Log;
 import org.egovernments.egoverp.activities.SplashScreenActivity;
 import org.egovernments.egoverp.network.SessionManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by egov on 8/8/16.
  */
 public class SMSListener extends BroadcastReceiver {
 
-    private SmsMessage currentSMS;
-    private String message;
+    SmsMessage currentSMS;
+    String message;
     SessionManager sessionManager;
 
     public static String OTP_LISTENER="OTP_Listener";
     public static String PARAM_LAUCNH_FROM_SMS ="isLaunchFromSMS";
     public static String PARAM_OTP_CODE ="OTP_code";
-    public static String PARAM_IS_ACCOUNT_ACTIVATION ="isAccount_Activation";
+    final String RECOVERY_MESSAGE ="Your OTP for recovering password is";
+    final String ACCOUNT_ACTIVATION_MESSAGE ="Use OTP";
 
     public void onReceive(Context context, Intent intent) {
 
@@ -85,53 +89,50 @@ public class SMSListener extends BroadcastReceiver {
 
                         currentSMS = getIncomingMessage(aObject, bundle);
 
-                        String senderNo = currentSMS.getDisplayOriginatingAddress();
+                        /*String senderNo = currentSMS.getDisplayOriginatingAddress();*/
 
                         message = currentSMS.getDisplayMessageBody();
 
                         sessionManager=new SessionManager(context);
 
-                        if((message.contains("Your OTP for recovering password is") || message.contains("Your Portal Activation Code is"))
+                        if((message.contains(RECOVERY_MESSAGE) || message.contains(ACCOUNT_ACTIVATION_MESSAGE))
                                 && TextUtils.isEmpty(sessionManager.getAccessToken()))
                         {
 
-                            long lastOtpSentTime=0l;
-                            boolean isAccountActivationMsg=false;
+                            long lastOtpSentTime;
+
+                            String otpCode=getOTPCode(message);
+                            boolean isRunning =sessionManager.isOTPLocalBroadCastRunning();
 
                             if(message.contains("Your OTP for recovering password is"))
                             {
                                 lastOtpSentTime=sessionManager.getForgotPasswordTime();
+                                long expiryOTPTime=lastOtpSentTime+(5*60*1000); //CALCULATE OTP Expiry Time (+5 mins)
+                                if(lastOtpSentTime<expiryOTPTime) {
+                                    if(isRunning)
+                                    {
+                                        Intent otpIntent = new Intent(OTP_LISTENER);
+                                        otpIntent.putExtra(PARAM_OTP_CODE, otpCode);
+                                        LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
+                                    }
+                                    else
+                                    {
+                                        Intent appLaunchIntent = new Intent(context, SplashScreenActivity.class);
+                                        appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        appLaunchIntent.putExtra(PARAM_LAUCNH_FROM_SMS, true);
+                                        appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
+                                        context.startActivity(appLaunchIntent);
+                                    }
+                                }
                             }
                             else
                             {
-                                isAccountActivationMsg=true;
-                                lastOtpSentTime=sessionManager.getRegisteredUserLastOTPTime();
-                            }
-
-                            long expiryOTPTime=lastOtpSentTime+(5*60*1000); //CALCULATE OTP Expiry Time (+5 mins)
-
-                            if(lastOtpSentTime<expiryOTPTime)
-                            {
-                                boolean isRunning =sessionManager.isOTPLocalBroadCastRunning();
-
-                                String otpCode=getOTPCode(message);
-
                                 if(isRunning)
                                 {
                                     Intent otpIntent = new Intent(OTP_LISTENER);
                                     otpIntent.putExtra(PARAM_OTP_CODE, otpCode);
                                     LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
                                 }
-                                else
-                                {
-                                    Intent appLaunchIntent = new Intent(context, SplashScreenActivity.class);
-                                    appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    appLaunchIntent.putExtra(PARAM_LAUCNH_FROM_SMS, true);
-                                    appLaunchIntent.putExtra(PARAM_IS_ACCOUNT_ACTIVATION, isAccountActivationMsg);
-                                    appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
-                                    context.startActivity(appLaunchIntent);
-                                }
-
                             }
 
                             //Log.i("isForeGround -----> ", ""+isForeground(context, ForgotPasswordActivity.class.getPackage().getName()));
@@ -166,8 +167,17 @@ public class SMSListener extends BroadcastReceiver {
 
     private String getOTPCode(String message)
     {
-        message=message.trim();
-        String otpCode=message.substring(message.length()-5, message.length());
+        String otpCode=null;
+        if(message.contains(RECOVERY_MESSAGE)) {
+            message=message.trim();
+            otpCode=message.substring(message.length()-5, message.length());
+        }
+        else{
+            Matcher m = Pattern.compile("(\\d{5})").matcher(message);
+            while (m.find()) {
+                otpCode = m.group(1);
+            }
+        }
         return (TextUtils.isEmpty(otpCode)?"":otpCode);
     }
 

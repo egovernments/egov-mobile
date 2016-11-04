@@ -362,10 +362,7 @@ public class LoginActivity extends Activity {
                                     //If user has attempted to log into a yet to be activated account,
                                     // automatically redirect the user to account activation screen
                                     if (errorDescription.startsWith("Please activate your account")) {
-                                        Intent intent = new Intent(LoginActivity.this, AccountActivationActivity.class);
-                                        intent.putExtra("username", username);
-                                        intent.putExtra("password", password);
-                                        startActivity(intent);
+                                       showToastMsg("Please contact us because your account has not been activated");
                                     } else {
                                         showToastMsg(errorDescription);
                                     }

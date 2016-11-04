@@ -56,8 +56,9 @@ public class RegisterRequest {
     private String deviceId;
     private String deviceType;
     private String OSVersion;
+    private String activationCode;
 
-    public RegisterRequest(String emailId, String mobileNumber, String name, String password, String deviceId, String deviceType, String OSVersion) {
+    public RegisterRequest(String emailId, String mobileNumber, String name, String password, String deviceId, String deviceType, String OSVersion, String activationCode) {
         this.emailId = emailId;
         this.mobileNumber = mobileNumber;
         this.name = name;
@@ -65,6 +66,7 @@ public class RegisterRequest {
         this.deviceId = deviceId;
         this.deviceType = deviceType;
         this.OSVersion = OSVersion;
+        this.activationCode=activationCode;
     }
 
     public String getEmailId() {
@@ -97,5 +99,13 @@ public class RegisterRequest {
 
     public String getOSVersion() {
         return OSVersion;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
     }
 }

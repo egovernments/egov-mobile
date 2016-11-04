@@ -44,7 +44,11 @@ package org.egovernments.egoverp.activities;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -54,12 +58,15 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -79,11 +86,14 @@ import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.helper.PasswordLevel;
+import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.RegisterRequest;
 import org.egovernments.egoverp.network.ApiController;
+import org.egovernments.egoverp.network.ApiUrl;
 import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.network.UpdateService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,6 +145,8 @@ public class RegisterActivity extends AppCompatActivity {
     EditText phoneno_edittext;
     EditText password_edittext;
     EditText confirmpassword_edittext;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,9 +210,6 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                progressDialog.show();
-
                 name = name_edittext.getText().toString().trim();
                 email = email_edittext.getText().toString().trim();
                 phoneno = phoneno_edittext.getText().toString().trim();
@@ -214,9 +223,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-
-                    progressDialog.show();
-
                     name = name_edittext.getText().toString().trim();
                     email = email_edittext.getText().toString().trim();
                     phoneno = phoneno_edittext.getText().toString().trim();
@@ -229,6 +235,17 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+
+        password_edittext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus && !TextUtils.isEmpty(password_edittext.getText()) && !AppUtils.isValidPassword(password_edittext.getText().toString(), configManager)){
+                    showValidationErrorMessage(getPasswordConstraintInformation());
+                    password_edittext.setText("");
+                }
+            }
+        });
+
         handler = new Handler();
 
         try {
@@ -238,6 +255,17 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         new GetAllCitiesTask().execute();
+
+        BroadcastReceiver otpReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(alertDialog!=null && alertDialog.isShowing())
+                showOTPVerificationDialog(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+            }
+        };
+
+        LocalBroadcastManager.getInstance(RegisterActivity.this).registerReceiver(otpReceiver,
+                new IntentFilter(SMSListener.OTP_LISTENER));
 
     }
 
@@ -288,106 +316,11 @@ public class RegisterActivity extends AppCompatActivity {
             showValidationErrorMessage("Passwords do not match");
         } else {
 
-            if(isMultiCity)
-            sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+            if(isMultiCity) {
+                sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+            }
+            sendOTPCode();
 
-            RegisterRequest registerRequest = new RegisterRequest(email, phoneno, name, password, deviceID, deviceType, deviceOS);
-            ApiController.resetAndGetAPI(RegisterActivity.this).registerUser(registerRequest, new Callback<JsonObject>() {
-                @Override
-                public void success(JsonObject jsonObject, Response response) {
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Toast toast = Toast.makeText(RegisterActivity.this, "Account created", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                            progressDialog.dismiss();
-
-                        }
-                    });
-
-
-                    ApiController.getAPI(RegisterActivity.this).sendOTP(phoneno, new Callback<JsonObject>() {
-                        @Override
-                        public void success(JsonObject jsonObject, Response response) {
-
-                            long millis = System.currentTimeMillis();
-
-                            sessionManager.setLastRegisteredUserTime(millis);
-                            sessionManager.setLastRegisteredUserName(phoneno);
-                            sessionManager.setLastRegisteredUserPassword(password);
-                            sessionManager.setRegisteredUserLastOTPTime(millis); //update last otp time
-
-                            Intent accountActivationIntent=new Intent(getApplicationContext(), AccountActivationActivity.class);
-                            accountActivationIntent.putExtra(AccountActivationActivity.PARAM_USERNAME, phoneno);
-                            accountActivationIntent.putExtra(AccountActivationActivity.PARAM_PASSWORD, password);
-                            accountActivationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(accountActivationIntent);
-
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-
-                            if(!TextUtils.isEmpty(error.getLocalizedMessage())){
-                                Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-
-                        }
-                    });
-
-
-
-                }
-
-
-                @Override
-                public void failure(final RetrofitError error) {
-
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            JsonObject jsonObject = null;
-
-                            progressDialog.dismiss();
-
-                            if (error != null) {
-                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
-                                    Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                    toast.show();
-                                } else {
-                                    try {
-                                        jsonObject = (JsonObject) error.getBody();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (jsonObject != null) {
-                                        Toast toast = Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_SHORT);
-                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                        toast.show();
-                                    } else {
-                                        Toast toast = Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                        toast.show();
-                                    }
-
-                                }
-                            } else {
-                                Toast toast = Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        }
-                    });
-                }
-            });
         }
     }
 
@@ -629,13 +562,199 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void showValidationErrorMessage(String message)
     {
-        Toast toast = Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
         progressDialog.dismiss();
     }
 
+    public void showOTPVerificationDialog(final String otpCode)
+    {
+        if(alertDialog!=null && alertDialog.isShowing())
+        {
+            alertDialog.dismiss();
+        }
 
+        dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_verify_otp, null);
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setView(dialogView);
+
+        final EditText etOTP=(EditText)dialogView.findViewById(R.id.etOTP);
+        etOTP.setText(otpCode);
+
+        if(!TextUtils.isEmpty(otpCode))
+        registerAccount(otpCode);
+
+        dialogBuilder.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(!TextUtils.isEmpty(etOTP.getText()))
+                    registerAccount(otpCode);
+                else
+                  Toast.makeText(RegisterActivity.this,"Please enter OTP code",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialogBuilder.setNeutralButton("GENERATE OTP", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                sendOTPCode();
+            }
+        });
+
+        alertDialog=dialogBuilder.create();
+        alertDialog.show();
+    }
+
+
+    public void sendOTPCode()
+    {
+
+        progressDialog.show();
+
+        ApiController.resetAndGetAPI(getApplicationContext()).sendOTP(phoneno, new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+                progressDialog.dismiss();
+                showOTPVerificationDialog("");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                progressDialog.dismiss();
+                if(!TextUtils.isEmpty(error.getLocalizedMessage())){
+                    Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                    toast.show();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sessionManager.setOTPLocalBroadCastRunning(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sessionManager.setOTPLocalBroadCastRunning(false);
+    }
+
+    public void registerAccount(final String otpCode)
+    {
+        progressDialog.show();
+
+        RegisterRequest registerRequest = new RegisterRequest(email, phoneno, name, password, deviceID, deviceType, deviceOS, otpCode);
+        ApiController.getAPI(getApplicationContext()).registerUser(registerRequest, new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        progressDialog.dismiss();
+                        alertDialog.dismiss();
+
+                        citizenLogin(phoneno, password);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Account created", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                        toast.show();
+
+                    }
+                });
+            }
+
+            @Override
+            public void failure(final RetrofitError error) {
+
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        JsonObject jsonObject = null;
+
+                        progressDialog.dismiss();
+
+                        if (error != null) {
+                            if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
+                                Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG);
+                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                toast.show();
+                            } else {
+                                try {
+                                    jsonObject = (JsonObject) error.getBody();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (jsonObject != null) {
+                                    Toast toast = Toast.makeText(RegisterActivity.this, "An account already exists with that email ID or mobile no.", Toast.LENGTH_LONG);
+                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+                                } else {
+                                    Toast toast = Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_LONG);
+                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+                                }
+
+                            }
+                        } else {
+                            Toast toast = Toast.makeText(RegisterActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                        }
+
+                        if(alertDialog.isShowing())
+                        alertDialog.dismiss();
+
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void citizenLogin(final String username, final String password)
+    {
+
+        progressDialog.show();
+
+        ApiController.getAPI(getApplicationContext()).login(ApiUrl.AUTHORIZATION,username, "read write", password, "password", new Callback<JsonObject>() {
+            @Override
+            public void success(JsonObject jsonObject, Response response) {
+
+                sessionManager.loginUser(username, password, AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                        AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
+                        jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
+
+                startService(new Intent(RegisterActivity.this, UpdateService.class)
+                        .putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
+
+                Intent openHomeScreen=new Intent(RegisterActivity.this, HomeActivity.class);
+                openHomeScreen.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(openHomeScreen);
+                finish();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+                progressDialog.dismiss();
+
+                Toast toast = Toast.makeText(RegisterActivity.this, "An error occurred while logging in", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+    }
 
 }
 

@@ -68,44 +68,36 @@ public class SessionManager {
 
     private static final String PREF_NAME = "CredentialsPref";
 
-    public static final String IS_LOGGED_IN = "IsLoggedIn";
+    private static final String IS_LOGGED_IN = "IsLoggedIn";
 
-    public static final String KEY_PASSWORD = "password";
+    private static final String KEY_PASSWORD = "password";
 
-    public static final String KEY_USERNAME = "username";
+    private static final String KEY_USERNAME = "username";
 
-    public static final String KEY_NAME = "name";
+    private static final String KEY_NAME = "name";
 
-    public static final String KEY_MOBILE = "mobile";
+    private static final String KEY_MOBILE = "mobile";
 
-    public static final String KEY_EMAIL = "email";
+    private static final String KEY_EMAIL = "email";
 
-    public static final String KEY_ACCESS_TOKEN = "access_token";
+    private static final String KEY_ACCESS_TOKEN = "access_token";
 
-    public static final String KEY_DEMO_MODE = "demoMode";
+    private static final String KEY_DEMO_MODE = "demoMode";
 
-    public static final String KEY_CITY_LAT = "cityLatitude";
-    public static final String KEY_CITY_LNG = "cityLongitude";
+    private static final String KEY_CITY_LAT = "cityLatitude";
+    private static final String KEY_CITY_LNG = "cityLongitude";
 
-    public static final String KEY_DEBUG_LOG="isLogEnabled";
+    private static final String KEY_DEBUG_LOG="isLogEnabled";
 
-    public static final String KEY_TERMS_AGREED="isTermsAgreed";
+    private static final String KEY_TERMS_AGREED="isTermsAgreed";
 
-    public static final String KEY_PROFILE_NOTIFY_DIMISSED="isProfileDismissed";
+    private static final String KEY_PROFILE_NOTIFY_DIMISSED="isProfileDismissed";
 
-    public static final String KEY_RESET_PASSWORD_LAST_TIME="resetPwdLastTime";
+    private static final String KEY_RESET_PASSWORD_LAST_TIME="resetPwdLastTime";
 
-    public static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
+    private static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
 
-    public static final String KEY_OTP_LOCAL_BROADCAST_RUNNING="isOTPBroadcastRunning";
-
-    public static final String KEY_REGISTERED_USER_LAST_TIME="lastRegisteredTime";
-
-    public static final String KEY_REGISTERED_USER_USER_NAME="lastRegisteredUsername";
-
-    public static final String KEY_REGISTERED_USER_PASSWORD="lastRegisteredPassword";
-
-    public static final String KEY_REGISTERED_USER_LAST_OTP_TIME="lastRegisteredOtpTime";
+    private static final String KEY_OTP_LOCAL_BROADCAST_RUNNING="isOTPBroadcastRunning";
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
@@ -113,17 +105,6 @@ public class SessionManager {
 
 
     //When the user is logged in, store data in shared preferences to be used across sessions
-    public void loginUser(String password, String email, String accessToken) {
-
-        editor = pref.edit();
-
-        editor.putBoolean(IS_LOGGED_IN, true);
-        editor.putString(KEY_PASSWORD, password);
-        editor.putString(KEY_USERNAME, email);
-        editor.putString(KEY_ACCESS_TOKEN, accessToken);
-        editor.apply();
-    }
-
     public void loginUser(String username, String password, String name, String mobileno, String email, String accessToken, double cityLat, double cityLng) {
 
         editor = pref.edit();
@@ -326,51 +307,5 @@ public class SessionManager {
     {
         return pref.getBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, false);
     }
-
-    public void setLastRegisteredUserTime(long milliseconds)
-    {
-        editor = pref.edit();
-        editor.putLong(KEY_REGISTERED_USER_LAST_TIME, milliseconds);
-        editor.apply();
-    }
-
-    public Long getLastRegisteredUserTime() {
-        return pref.getLong(KEY_REGISTERED_USER_LAST_TIME, 0l);
-    }
-
-    public void setLastRegisteredUserName(String userName)
-    {
-        editor = pref.edit();
-        editor.putString(KEY_REGISTERED_USER_USER_NAME, userName);
-        editor.apply();
-    }
-
-    public String getLastRegisteredUserName() {
-        return pref.getString(KEY_REGISTERED_USER_USER_NAME, "");
-    }
-
-    public void setLastRegisteredUserPassword(String password)
-    {
-        editor = pref.edit();
-        editor.putString(KEY_REGISTERED_USER_PASSWORD, password);
-        editor.apply();
-    }
-
-    public String getLastRegisteredUserPassword() {
-        return pref.getString(KEY_REGISTERED_USER_PASSWORD, "");
-    }
-
-    public void setRegisteredUserLastOTPTime(long milliseconds)
-    {
-        editor = pref.edit();
-        editor.putLong(KEY_REGISTERED_USER_LAST_OTP_TIME, milliseconds);
-        editor.apply();
-    }
-
-    public Long getRegisteredUserLastOTPTime() {
-        return pref.getLong(KEY_REGISTERED_USER_LAST_OTP_TIME, 0l);
-    }
-
-
 
 }

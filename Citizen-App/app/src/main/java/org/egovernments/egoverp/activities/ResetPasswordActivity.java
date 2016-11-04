@@ -293,8 +293,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 public void success(JsonObject resp, Response response) {
 
                     sessionManager.setForgotPasswordTime(0l);
-                    sessionManager.setLastRegisteredUserTime(0l);
-                    sessionManager.setRegisteredUserLastOTPTime(0l);
                     sessionManager.setResetPasswordLastMobileNo("");
 
                     String message=resp.get("status").getAsJsonObject().get("message").getAsString();

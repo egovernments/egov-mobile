@@ -183,16 +183,6 @@
                 android:value=".activities.GrievanceActivity" />
         </activity>
         <activity
-            android:name=".activities.AccountActivationActivity"
-            android:label="@string/verify_account_label"
-            android:parentActivityName=".activities.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.egovernments.egoverp.activities.LoginActivity" />
-        </activity>
-        <activity
             android:name=".activities.ProfileEditActivity"
             android:label="@string/editprofile_label"
             android:parentActivityName=".activities.ProfileActivity"
