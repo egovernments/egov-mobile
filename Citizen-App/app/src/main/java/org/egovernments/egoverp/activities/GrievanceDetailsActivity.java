@@ -134,6 +134,8 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
     private LinearLayout layoutToggleComments;
 
+    Spinner actionsSpinner;
+
     private Button btnMoreComments;
 
     private RatingBar feedbackRatingBar;
@@ -187,7 +189,7 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
         progressBar = (ProgressBar) findViewById(R.id.grievance_history_placeholder);
 
-        final Spinner actionsSpinner = (Spinner) findViewById(R.id.update_action);
+        actionsSpinner = (Spinner) findViewById(R.id.update_action);
         ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Select", "Withdraw"));
         ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Select", "Re-open"));
 
@@ -364,50 +366,21 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                             @Override
                             public void success(JsonObject jsonObject, Response response) {
 
-                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
+                                if(isComment && feedbackLayout.getVisibility() == View.GONE)
+                                {
+                                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT);
+                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                                    toast.show();
+                                    loadComplaintHistory();
+                                }
+                                else{
+                                    Intent intent=new Intent();
+                                    intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
+                                            isComment && feedbackLayout.getVisibility() == View.VISIBLE? "Your feedback submitted successfully":"Grievance updated successfully");
+                                    setResult(RESULT_OK, intent);
+                                    finish();
+                                }
                                 progressDialog.dismiss();
-
-                                ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
-                                    @Override
-                                    public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
-
-                                        GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
-
-                                        loadComplaintComments(grievanceCommentAPIResult.getGrievanceComments());
-                                        actionsSpinner.setSelection(0);
-                                        updateComment.getText().clear();
-
-                                        if (!isComment) {
-                                            setResult(RESULT_OK,new Intent());
-                                            finish();
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void failure(RetrofitError error) {
-                                        if (error.getLocalizedMessage() != null)
-                                            if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
-                                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                toast.show();
-                                                sessionManager.logoutUser();
-                                                startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                                            } else {
-                                                Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                toast.show();
-                                            }
-                                        else {
-                                            Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
-                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                            toast.show();
-                                        }
-                                    }
-                                });
-
 
                             }
 
@@ -482,12 +455,11 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
             @Override
             public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
-
                 GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
-
+                actionsSpinner.setSelection(0);
+                updateComment.getText().clear();
                 progressBar.setVisibility(View.GONE);
                 List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
-
                 loadComplaintComments(grievanceComments);
             }
 

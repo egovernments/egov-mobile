@@ -108,11 +108,6 @@ import retrofit.client.Response;
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends AppCompatActivity {
 
-    private String name;
-    private String phoneno;
-    private String email;
-    private String password;
-    private String confirmpassword;
     private String deviceID;
     private String deviceOS;
     private String deviceType;
@@ -210,12 +205,8 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                name = name_edittext.getText().toString().trim();
-                email = email_edittext.getText().toString().trim();
-                phoneno = phoneno_edittext.getText().toString().trim();
-                password = password_edittext.getText().toString().trim();
-                confirmpassword = confirmpassword_edittext.getText().toString().trim();
-                submit(name, email, phoneno, password, confirmpassword);
+                submit(name_edittext.getText().toString().trim(), email_edittext.getText().toString().trim()
+                        , phoneno_edittext.getText().toString().trim(), password_edittext.getText().toString().trim(), confirmpassword_edittext.getText().toString().trim());
             }
         });
 
@@ -223,12 +214,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    name = name_edittext.getText().toString().trim();
-                    email = email_edittext.getText().toString().trim();
-                    phoneno = phoneno_edittext.getText().toString().trim();
-                    password = password_edittext.getText().toString().trim();
-                    confirmpassword = confirmpassword_edittext.getText().toString().trim();
-                    submit(name, email, phoneno, password, confirmpassword);
+                    submit(name_edittext.getText().toString().trim(), email_edittext.getText().toString().trim()
+                            , phoneno_edittext.getText().toString().trim(), password_edittext.getText().toString().trim(), confirmpassword_edittext.getText().toString().trim());
                     return true;
                 }
                 return false;
@@ -259,8 +246,14 @@ public class RegisterActivity extends AppCompatActivity {
         BroadcastReceiver otpReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(alertDialog!=null && alertDialog.isShowing())
-                showOTPVerificationDialog(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+            if(alertDialog!=null && alertDialog.isShowing()) {
+                EditText etOTP=(EditText) alertDialog.findViewById(R.id.etOTP);
+                if(etOTP!=null) {
+                    etOTP.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                    etOTP.setSelection(etOTP.getText().length());
+                }
+                registerAccount(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+            }
             }
         };
 
@@ -568,7 +561,7 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
-    public void showOTPVerificationDialog(final String otpCode)
+    public void showOTPVerificationDialog()
     {
         if(alertDialog!=null && alertDialog.isShowing())
         {
@@ -580,18 +573,13 @@ public class RegisterActivity extends AppCompatActivity {
         View dialogView = inflater.inflate(R.layout.dialog_verify_otp, null);
         dialogBuilder.setCancelable(false);
         dialogBuilder.setView(dialogView);
-
         final EditText etOTP=(EditText)dialogView.findViewById(R.id.etOTP);
-        etOTP.setText(otpCode);
-
-        if(!TextUtils.isEmpty(otpCode))
-        registerAccount(otpCode);
 
         dialogBuilder.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(!TextUtils.isEmpty(etOTP.getText()))
-                    registerAccount(otpCode);
+                    registerAccount(etOTP.getText().toString());
                 else
                   Toast.makeText(RegisterActivity.this,"Please enter OTP code",Toast.LENGTH_SHORT).show();
             }
@@ -614,11 +602,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         progressDialog.show();
 
-        ApiController.resetAndGetAPI(getApplicationContext()).sendOTP(phoneno, new Callback<JsonObject>() {
+        ApiController.resetAndGetAPI(getApplicationContext()).sendOTP(phoneno_edittext.getText().toString(), new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
                 progressDialog.dismiss();
-                showOTPVerificationDialog("");
+                showOTPVerificationDialog();
             }
 
             @Override
@@ -649,7 +637,9 @@ public class RegisterActivity extends AppCompatActivity {
     {
         progressDialog.show();
 
-        RegisterRequest registerRequest = new RegisterRequest(email, phoneno, name, password, deviceID, deviceType, deviceOS, otpCode);
+        RegisterRequest registerRequest = new RegisterRequest(email_edittext.getText().toString(), phoneno_edittext.getText().toString(),
+                name_edittext.getText().toString(), password_edittext.getText().toString(), deviceID, deviceType, deviceOS, otpCode);
+
         ApiController.getAPI(getApplicationContext()).registerUser(registerRequest, new Callback<JsonObject>() {
             @Override
             public void success(JsonObject jsonObject, Response response) {
@@ -660,12 +650,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                         progressDialog.dismiss();
                         alertDialog.dismiss();
-
-                        citizenLogin(phoneno, password);
+                        citizenLogin(phoneno_edittext.getText().toString(), password_edittext.getText().toString());
                         Toast toast = Toast.makeText(getApplicationContext(), "Account created", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
-
                     }
                 });
             }

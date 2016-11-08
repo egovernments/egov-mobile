@@ -83,6 +83,7 @@ import retrofit.client.Response;
 
 public class GrievanceActivity extends BaseActivity {
 
+    public static final String RESULT_MESSAGE="Message";
     public static int ACTION_UPDATE_REQUIRED = 111;
     ViewPager viewPager;
     ProgressBar pbHome;
@@ -147,6 +148,7 @@ public class GrievanceActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
+           Toast.makeText(getApplicationContext(), data.getStringExtra(RESULT_MESSAGE), Toast.LENGTH_SHORT).show();
            loadGrievanceCategories();
         }
 
