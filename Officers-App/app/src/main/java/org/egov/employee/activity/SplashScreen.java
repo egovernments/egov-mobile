@@ -42,10 +42,13 @@
 
 package org.egov.employee.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -62,6 +65,7 @@ import com.squareup.okhttp.Response;
 
 import org.egov.employee.api.ApiController;
 import org.egov.employee.application.EgovApp;
+import org.egov.employee.utils.AppUtils;
 
 import java.util.Date;
 
@@ -79,6 +83,9 @@ public class SplashScreen extends BaseActivity {
 
     String serverErrorMsg;
 
+    private final String PLAYSTORE_URL="https://play.google.com/store/apps/details?id=";
+    private final String MARKET_URL="market://details?id=";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,13 +93,31 @@ public class SplashScreen extends BaseActivity {
         ((Button)findViewById(R.id.btnretry)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performAppStartUpSetup();
+                appVersionCheckAndProceedToLaunch();
             }
         });
 
         pbsplash=(ProgressBar)findViewById(R.id.pbsplash);
         layerror=(LinearLayout) findViewById(R.id.layerror);
 
+        appVersionCheckAndProceedToLaunch();
+
+    }
+
+    private void appVersionCheckAndProceedToLaunch()
+    {
+        if(checkInternetConnectivity())
+        {
+            new AppVersionCheck().execute();
+        }
+        else
+        {
+            showError("No internet connection!");
+        }
+    }
+
+    private void proceedAppLaunchWithUserLoggedInCondition()
+    {
         isFromSessionTimeOut=getIntent().getBooleanExtra("isFromSessionTimeOut",false);
         isFromLogOut=getIntent().getBooleanExtra("isLoggedOut", false);
         if(isFromSessionTimeOut || isFromLogOut)
@@ -100,7 +125,7 @@ public class SplashScreen extends BaseActivity {
             if(isFromSessionTimeOut)
             {
                 showLogOutMsg();
-                performAppStartUpSetup();
+                getMunicipalityDetails();
             }
             else
             {
@@ -108,15 +133,11 @@ public class SplashScreen extends BaseActivity {
             }
         }
         else {
-            performAppStartUpSetup();
+            getMunicipalityDetails();
         }
-
-
-
     }
 
-
-    private void performAppStartUpSetup()
+    private void getMunicipalityDetails()
     {
 
         ((ProgressBar)findViewById(R.id.pbsplash)).setVisibility(View.VISIBLE);
@@ -126,15 +147,8 @@ public class SplashScreen extends BaseActivity {
 
         if(urlTimeOut < new Date().getTime() || (EgovApp.getInstance().isMultiCitySupport() && !TextUtils.isEmpty(preference.getApiAccessToken())))
         {
-            if(checkInternetConnectivity())
-            {
                 //refresh server url resources
                 new getCityResource().execute();
-            }
-            else
-            {
-                showError("No internet connection!");
-            }
         }
         else {
 
@@ -207,7 +221,7 @@ public class SplashScreen extends BaseActivity {
             public void onResponse(retrofit.Response<JsonObject> response, Retrofit retrofit) {
                 preference.setApiAccessToken("");
                 preference.setActiveCityCode(-1);
-                performAppStartUpSetup();
+                getMunicipalityDetails();
             }
 
             @Override
@@ -284,6 +298,123 @@ public class SplashScreen extends BaseActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    class AppVersionCheck extends AsyncTask<String, Integer, JsonObject>{
+
+        final String KEY_SUCCESS="success";
+        final String KEY_RESULT="result";
+        final String KEY_APP_VERSION_CODE="versionCode";
+        final String KEY_APP_IS_FORCE_UPDATE="isForceUpdate";
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected JsonObject doInBackground(String... params) {
+            Response response=null;
+            JsonObject responseJson=null;
+            try {
+                response = ApiController.getCityURL(EgovApp.getInstance().getAppVersionCheckApiUrl()+getApplicationContext().getPackageName(), SplashScreen.this);
+                if(response!=null) {
+                    if (response.code() == 200) {
+                        responseJson=new JsonParser().parse(response.body().string()).getAsJsonObject();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return responseJson;
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject response) {
+            super.onPostExecute(response);
+
+            if(response!=null && !TextUtils.isEmpty(response.toString()))
+            {
+
+                if(!response.get(KEY_SUCCESS).getAsBoolean())
+                {
+                    proceedAppLaunchWithUserLoggedInCondition();
+                    return;
+                }
+
+                JsonObject appDetails=response.get(KEY_RESULT).getAsJsonObject();
+
+                if(AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()){
+                    if(appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean())
+                    {
+                        showForceUpdateAlert();
+                    }
+                    else{
+                        showRecommendedUpdateAlert();
+                    }
+                }
+                else{
+                    proceedAppLaunchWithUserLoggedInCondition();
+                }
+            }
+            else{
+                proceedAppLaunchWithUserLoggedInCondition();
+            }
+
+        }
+    }
+
+
+    void showForceUpdateAlert(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+        builder.setCancelable(false);
+        builder.setTitle("New update is available");
+        builder.setMessage("Please download the latest app to use our upgraded services");
+        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+        builder.create().show();
+    }
+
+
+    void showRecommendedUpdateAlert(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+        builder.setCancelable(false);
+        builder.setTitle("New update is available");
+        builder.setMessage("We're recommended to download the latest app to use our upgraded services");
+        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+        builder.setNegativeButton("NOT NOW", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                proceedAppLaunchWithUserLoggedInCondition();
+            }
+        });
+        builder.create().show();
     }
 
 }

@@ -58,9 +58,10 @@ public class EgovApp extends Application {
     private Context context;
     private static Properties appConfig;
 
-    private String KEY_MULTICITY="app.type.ismulticity";
-    private String KEY_URL_RESOURCE="app.resource.serverurl";
-    private String KEY_URL_TIMEOUT="app.refresh.serverurl.days";
+    private static final String KEY_MULTICITY="app.type.ismulticity";
+    private static final String KEY_URL_RESOURCE="app.resource.serverurl";
+    private static final String KEY_URL_TIMEOUT="app.refresh.serverurl.days";
+    private static final String KEY_APP_VERSION_CHECK="app.version.check";
 
     @Override
     public void onCreate() {
@@ -97,6 +98,11 @@ public class EgovApp extends Application {
     public Integer getUrlTimeOutDays()
     {
         return Integer.valueOf(appConfig.get(KEY_URL_TIMEOUT).toString());
+    }
+
+    public String getAppVersionCheckApiUrl()
+    {
+        return appConfig.get(KEY_APP_VERSION_CHECK).toString();
     }
 
 }

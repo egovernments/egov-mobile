@@ -43,8 +43,13 @@
 package org.egov.employee.utils;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by egov on 1/6/16.
@@ -56,6 +61,27 @@ public class AppUtils {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         return display.getHeight();
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        BigDecimal bd = new BigDecimal(value).setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    public static String isEmptyReturnNull(String str)
+    {
+        return (TextUtils.isEmpty(str)?null:str);
+    }
+
+    public static Integer getAppVersionCode(Context context) {
+        Integer versionCode = 0;
+        try {
+            versionCode = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionCode;
     }
 
 }
