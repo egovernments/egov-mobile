@@ -115,6 +115,16 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
         });
 
 
+        if(getUserVisibleHint() && !_areItemsLoaded)
+        {
+            workflowtype = getArguments().getString("workFlowType");
+            totalItemsCount = getArguments().getInt("itemsCount");
+            accessToken=getArguments().getString("accessToken");
+            tasks=new ArrayList<Task>();
+            _areItemsLoaded=true;
+            loadInboxListItems();
+        }
+
 
         /* TasksItemClickListener listener=new TasksItemClickListener() {
             @Override
@@ -147,13 +157,13 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser && !_areItemsLoaded)
+        if(isVisibleToUser && !_areItemsLoaded && getActivity()!=null)
         {
             workflowtype = getArguments().getString("workFlowType");
             totalItemsCount = getArguments().getInt("itemsCount");
             accessToken=getArguments().getString("accessToken");
-            _areItemsLoaded=true;
             tasks=new ArrayList<Task>();
+            _areItemsLoaded=true;
             loadInboxListItems();
         }
         else if(isVisibleToUser)

@@ -44,7 +44,7 @@
 <resources>
     <color name="colorPrimary">#262626</color>
     <color name="colorPrimaryDark">#1C1C1C</color>
-    <color name="colorAccent">#F2851F</color>
+    <color name="colorAccent">#EF6C00</color>
     <color name="edittextbordercolor">#7a7a7a</color>
     <color name="edittexthintcolor">#7a7a7a</color>
     <color name="edittexttextcolor">#fff</color>
@@ -54,6 +54,8 @@
     <color name="cardbg">#2E2E2E</color>
     <color name="cardtitleColor">#FFF</color>
     <color name="cardsubtitlecolor">#757575</color>
+    <color name="textColorHint">#5b5b5b</color>
+    <color name="textColorHintLabel">#b3b2b2</color>
     <color name="cardstatustextcolor">#F6D730</color>
     <color name="scrollbarcolor">#7a7a7a</color>
     <color name="bluecolor">#1083c2</color>
@@ -62,5 +64,7 @@
     <color name="lightgreencolor">#CC648f2f</color>
     <color name="redcolor">#D32F2E</color>
     <color name="dividercolor">#2E2E2E</color>
+    <color name="pinviewlinecolor">#8A000000</color>
+
 
 </resources>

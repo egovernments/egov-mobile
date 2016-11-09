@@ -46,6 +46,8 @@
 
     <uses-permission android:name="android.permission.CALL_PHONE" android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -58,6 +60,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAcKReDsZC32qkAEUWqyIpoNSXfA420cN8" />
+
         <activity
             android:name="org.egov.employee.activity.SplashScreen"
             android:label="@string/app_name"
@@ -94,6 +104,36 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <activity
+            android:name="org.egov.employee.activity.GrievanceActivity"
+            android:label="@string/grievances_label"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name="org.egov.employee.activity.NewGrievanceActivity"
+            android:label="@string/newgrievance_label"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
+        <activity
+            android:name="org.egov.employee.activity.GrievanceLocPickerActivity"
+            android:label="@string/pick_complaint_location"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
+        <activity
+            android:name="org.egov.employee.activity.GrievanceDetailsActivity"
+            android:label="@string/grievancedetails_label"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+        </activity>
+
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -109,6 +149,9 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
+        <service android:name="org.egov.employee.service.AddressService" />
+
     </application>
 
 </manifest>

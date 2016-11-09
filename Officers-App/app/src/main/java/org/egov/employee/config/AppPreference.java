@@ -55,25 +55,30 @@ public class AppPreference {
     private SharedPreferences appSharedPrefs;
     private SharedPreferences.Editor prefsEditor;
     //This is hold current user logged city server url
-    private String activeCityUrl="activeCityUrl";
+    private final String activeCityUrl="activeCityUrl";
     //This is hold current user logged city server url
-    private String activeCityName="activeCityName";
+    private final String activeCityName="activeCityName";
     //if app has multicity support it will hold active city code for url update functionality
-    private String activeCityCode="activeCityCode";
+    private final String activeCityCode="activeCityCode";
     //This is used to store time of when city url updated (refresh functionality)
-    private String lastUrlUpdateTime="lasturlupdatetime";
+    private final String lastUrlUpdateTime="lasturlupdatetime";
     //This is used to store multiple cities details
-    private String citiesList ="citiesList";
+    private final String citiesList ="citiesList";
     //This is used to store API Access Token
-    private String apiAccessToken = "apiAccessToken";
+    private final String apiAccessToken = "apiAccessToken";
     //This is used to store current logged user name
-    private String userName = "userName";
+    private final String userName = "userName";
     //This is used to store current logged user pwd
-    private String pwd="pwd";
+    private final String pwd="pwd";
     //This is used to store name of current logged user
-    private String name="name";
+    private final String name="name";
     //This is used to save selected district text
-    private String district="district";
+    private final String district="district";
+
+    private final String activeCityLat="activeCityLat";
+    //This is used to save selected district text
+    private final String activeCityLng="activeCityLng";
+
 
     public AppPreference(Context context){
         this.appSharedPrefs = context.getSharedPreferences(APP_PREFS, Activity.MODE_PRIVATE);
@@ -164,4 +169,23 @@ public class AppPreference {
     public void setDistrict(String _district) {
         prefsEditor.putString(district, _district).commit();
     }
+
+    public Double getActiveCityLat() {
+        return Double.valueOf(appSharedPrefs.getString(activeCityLat, "0"));
+    }
+
+    public void setActiveCityLat(Double _cityLat)
+    {
+        prefsEditor.putString(activeCityLat, String.valueOf(_cityLat)).commit();
+    }
+
+    public Double getActiveCityLng() {
+        return Double.valueOf(appSharedPrefs.getString(activeCityLng, "0"));
+    }
+
+    public void setActiveCityLng(Double _cityLng)
+    {
+        prefsEditor.putString(activeCityLng, String.valueOf(_cityLng)).commit();
+    }
+
 }

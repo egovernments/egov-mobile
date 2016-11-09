@@ -41,22 +41,21 @@
   ~  ******************************************************************************/
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/colorPrimary"
     tools:context="org.egov.employee.activity.Homepage">
 
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
+<android.support.design.widget.CoordinatorLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorPrimary">
 
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
@@ -80,19 +79,30 @@
 
             </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_homepage" />
 
-    </LinearLayout>
-
-   <!-- <FrameLayout
+  <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
      <include layout="@layout/content_homepage" />
 
-
-
-
-    </FrameLayout>-->
+  </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>
+
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/navigation_view_header"
+        app:itemBackground="@drawable/drawer_item_bg"
+        app:itemIconTint="@android:color/white"
+        android:background="@color/pagebgcolor"
+        app:itemTextColor="@android:color/white"
+        app:menu="@menu/drawer"/>
+
+</android.support.v4.widget.DrawerLayout>
+

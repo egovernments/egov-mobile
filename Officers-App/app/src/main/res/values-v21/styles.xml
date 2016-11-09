@@ -105,4 +105,9 @@
         <item name="android:background">@color/dividercolor</item>
     </style>
 
+    <style name="EgovRatingBarStyle" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
 </resources>

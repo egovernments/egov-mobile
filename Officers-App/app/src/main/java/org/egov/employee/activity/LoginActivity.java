@@ -247,6 +247,11 @@ public class LoginActivity extends BaseActivity {
 
             hideLoginControls();
 
+            preference.setDistrict(autocompleteDistrict.getText().toString());
+            preference.setActiveCityName(autocompleteCity.getText().toString());
+            preference.setUserName("");
+            preference.setPwd("");
+
             Call<JsonObject> jsonLogin = ApiController.getAPI(getApplicationContext(), LoginActivity.this).login(ApiUrl.AUTHORIZATION,
                     username, "read write", pwd, "password");
 
@@ -266,6 +271,8 @@ public class LoginActivity extends BaseActivity {
                                 preference.setName(respJson.get("name").getAsString());
                                 preference.setDistrict(autocompleteDistrict.getText().toString());
                                 preference.setActiveCityName(autocompleteCity.getText().toString());
+                                preference.setActiveCityLat(respJson.get("cityLat").getAsDouble());
+                                preference.setActiveCityLng(respJson.get("cityLng").getAsDouble());
 
                                 Handler handler = new Handler();
                                 handler.postDelayed(new Runnable() {
@@ -278,14 +285,12 @@ public class LoginActivity extends BaseActivity {
                                 }, 1000);
 
                                 recordEmployeeLog();
-
-
-                            }
-                            else
-                            {
+                           }
+                           else
+                           {
                                 showSnackBar("You're not a employee!");
                                 showLoginControls();
-                            }
+                           }
 
                         } else {
                             showSnackBar("Invalid response from server!");

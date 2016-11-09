@@ -1,0 +1,708 @@
+<!--
+  ~ /*******************************************************************************
+  ~  eGov suite of products aim to improve the internal efficiency,transparency,
+  ~      accountability and the service delivery of the government  organizations.
+  ~
+  ~        Copyright (C) <2016>  eGovernments Foundation
+  ~
+  ~        The updated version of eGov suite of products as by eGovernments Foundation
+  ~        is available at http://www.egovernments.org
+  ~
+  ~        This program is free software: you can redistribute it and/or modify
+  ~        it under the terms of the GNU General Public License as published by
+  ~        the Free Software Foundation, either version 3 of the License, or
+  ~        any later version.
+  ~
+  ~        This program is distributed in the hope that it will be useful,
+  ~        but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~        GNU General Public License for more details.
+  ~
+  ~        You should have received a copy of the GNU General Public License
+  ~        along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~        http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~        In addition to the terms of the GPL license to be adhered to in using this
+  ~        program, the following additional terms are to be complied with:
+  ~
+  ~    	1) All versions of this program, verbatim or modified must carry this
+  ~    	   Legal Notice.
+  ~
+  ~    	2) Any misrepresentation of the origin of the material is prohibited. It
+  ~    	   is required that all modified versions of this material be marked in
+  ~    	   reasonable ways as different from the original version.
+  ~
+  ~    	3) This license does not grant any rights to any user of the program
+  ~    	   with regards to rights under trademark law for use of the trade names
+  ~    	   or trademarks of eGovernments Foundation.
+  ~
+  ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  ******************************************************************************/
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/cardbg">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/view_toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/details_imageslayout"
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/details_complaint_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+                <com.viewpagerindicator.LinePageIndicator
+                    android:id="@+id/indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
+                    app:lineWidth="30dp"
+                    app:selectedColor="@color/colorAccent"
+                    app:strokeWidth="4dp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:orientation="vertical"
+                android:paddingBottom="15dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/details_complaintNo_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/complaintID_label"
+                        android:textColor="@color/textColorHintLabel"
+                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/details_complaintNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorPrimaryDark"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:id="@+id/details_complaint_date_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/date_label"
+                            android:textColor="@color/textColorHintLabel"
+                            style="@style/TextAppearance.AppCompat.Caption" />
+
+                        <TextView
+                            android:id="@+id/details_complaint_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="20dp"
+                            android:textColor="@android:color/white" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="5dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/details_complaint_status_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/status_label"
+                            android:textColor="@color/textColorHintLabel"
+                            style="@style/TextAppearance.AppCompat.Caption" />
+
+                        <TextView
+                            android:id="@+id/details_complaint_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"/>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorPrimaryDark"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="COMPLAINANT NAME"
+                            android:textColor="@color/textColorHintLabel"
+                            style="@style/TextAppearance.AppCompat.Caption" />
+
+                        <TextView
+                            android:id="@+id/details_complainant_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="20dp"
+                            android:textColor="@android:color/white" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="5dp"
+                        android:visibility="invisible"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="COMPLAINANT PHONE NO"
+                            android:textColor="@color/textColorHintLabel"
+                            style="@style/TextAppearance.AppCompat.Caption" />
+
+                        <TextView
+                            android:id="@+id/details_complainant_phoneno"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"/>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="COMPLAINANT EMAIL"
+                        android:textColor="@color/textColorHintLabel"
+                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/details_complainant_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="20dp"
+                        android:textColor="@android:color/white" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/colorPrimaryDark"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/details_complaint_type_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/details_type_label"
+                        android:textColor="@color/textColorHintLabel"
+                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/details_complaint_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="20dp"
+                        android:textColor="@android:color/white" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="15dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_location_on_white_24dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/details_complaint_location_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/location_label"
+                                android:textColor="@color/textColorHintLabel"
+                                style="@style/TextAppearance.AppCompat.Caption" />
+
+
+                            <android.support.v7.widget.CardView
+                                android:id="@+id/mapcardview"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:layout_marginTop="5dp"
+                                app:cardCornerRadius="2dp"
+                                app:cardUseCompatPadding="true">
+
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <fragment
+                                        android:id="@+id/map"
+                                        android:name="com.google.android.gms.maps.MapFragment"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="140dp" />
+
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:id="@+id/map_location_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Loading..."
+                                            android:textSize="14sp" />
+
+                                    </LinearLayout>
+
+                                </LinearLayout>
+
+
+                            </android.support.v7.widget.CardView>
+
+
+                            <TextView
+                                android:id="@+id/details_complaint_location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white"
+                                android:layout_marginBottom="15dp" />
+
+                            <View style="@style/Divider" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/layoutlandmark"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_business_white_24dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/details_complaint_landmark_label"
+                                android:textColor="@color/textColorHintLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/landmark_label"
+                                style="@style/TextAppearance.AppCompat.Caption" />
+
+                            <TextView
+                                android:id="@+id/details_complaint_landmark"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white"
+                                android:layout_marginBottom="15dp"
+                                />
+
+                            <View style="@style/Divider" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="60dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_message_white_24dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/details_complaint_details_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/details_label"
+                                android:textColor="@color/textColorHintLabel"
+                                style="@style/TextAppearance.AppCompat.Caption" />
+
+
+                            <TextView
+                                android:id="@+id/details_complaint_details"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white"
+                                android:layout_marginBottom="15dp" />
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/history_label"
+                    android:textColor="@color/textColorHintLabel"
+                    style="@style/TextAppearance.AppCompat.Caption" />
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/historycardview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="2dp"
+                    app:cardUseCompatPadding="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="12dp">
+
+                        <Button
+                            android:id="@+id/btnmorecomments"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@android:color/white"
+                            android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
+                            android:text="" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:orientation="vertical">
+
+                            <ProgressBar
+                                android:id="@+id/grievance_history_placeholder"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:layout_width="56dp"
+                                android:layout_height="56dp"
+                                android:layout_gravity="center"
+                                android:layout_margin="20dp" />
+
+                            <LinearLayout
+                                android:id="@+id/complainttogglecomments"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/complaintcommentscontainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/update_grievance_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:orientation="vertical">
+
+                            <View style="@style/Divider" />
+
+                            <TextView
+                                android:id="@+id/commentbox_label"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="UPDATE COMPLAINT"
+                                android:layout_marginLeft="15dp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginBottom="5dp"
+                                android:textColor="@color/cardsubtitlecolor"
+                                style="@style/TextAppearance.AppCompat.Caption" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingLeft="10dp"
+                                android:paddingRight="10dp">
+
+                                <Spinner
+                                    android:id="@+id/update_action"
+                                    style="@style/Egovspinnerstyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" />
+
+                                <LinearLayout
+                                    android:id="@+id/feedback_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:visibility="gone">
+
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/your_rating"
+                                        android:textColor="@color/cardsubtitlecolor"
+                                        android:paddingTop="10dp"
+                                        android:paddingLeft="10dp"
+                                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                                    <RatingBar
+                                        android:id="@+id/feedbackRatingBar"
+                                        android:theme="@style/EgovRatingBarStyle"
+                                        android:layout_width="wrap_content"
+                                        android:stepSize="1"
+                                        android:numStars="5"
+                                        android:layout_height="wrap_content" />
+
+                                    <TextView
+                                        android:id="@+id/tvRatingBar"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:padding="5dp"
+                                        android:textColor="@android:color/white"
+                                        style="@style/TextAppearance.AppCompat.Caption" />
+
+                                </LinearLayout>
+
+
+                                <EditText
+                                    android:id="@+id/update_comment"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/comments"
+                                    android:maxLength="400"
+                                    android:textColor="@color/edittexttextcolor"
+                                    android:textSize="14sp"
+                                    android:paddingLeft="10dp"
+                                    android:layout_marginTop="5dp"
+                                    android:theme="@style/Egovinputstyle" />
+
+
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/grievance_update_button"
+                                style="@style/Egovpositivebutton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginRight="5dp"
+                                android:layout_marginTop="5dp"
+                                android:text="@string/submit_label"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+  </LinearLayout>
+
+  <include layout="@layout/layout_powered_by"/>
+
+</LinearLayout>

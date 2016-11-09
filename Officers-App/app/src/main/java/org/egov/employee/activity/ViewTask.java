@@ -315,18 +315,18 @@ public class ViewTask extends BaseActivity {
             ComplaintHistory comment=grievanceComments.get(i);
             TextView tvUserType=(TextView)commentItemTemplate.findViewById(R.id.tvUserType);
             TextView tvUserName=(TextView)commentItemTemplate.findViewById(R.id.commenter_name);
-            tvUserName.setText(comment.getUpdatedBy());
 
-            if (comment.getUpdatedUserType().equals("EMPLOYEE")) {
+
+            if (comment.getUpdatedUserType().equals("EMPLOYEE") || !comment.getUpdatedUserType().equals("CITIZEN")) {
                 tvUserType.setBackgroundResource(R.drawable.round_red_bg);
                 tvUserType.setText("O");
+                tvUserName.setText(comment.getUser());
             }
             else {
                 tvUserType.setBackgroundResource(R.drawable.round_blue_bg);
                 tvUserType.setText("C");
+                tvUserName.setText(comment.getUpdatedBy());
             }
-            if(preference.getUserName().equals(comment.getUpdatedBy()))
-                tvUserName.setText("Me");
 
             ((TextView)commentItemTemplate.findViewById(R.id.comment_datetime)).setText(formatDateString(comment.getDate(), "MMM dd, yyyy hh:mm:ss aa", "dd/MM/yyyy hh:mm aa"));
             if(!TextUtils.isEmpty(comment.getComments()))

@@ -74,8 +74,21 @@ public class ApiUrl {
 
     public final static String PGR_COMPLAINT_UPDATE = "/api/v1.0/employee/complaint/update/{complaintNo}";
 
+    /* Grievance */
 
+    public final static String GET_MY_COMPLAINTS_CATEGORIES_COUNT = "/api/v1.0/citizen/getMyComplaint/count";
 
+    public final static String COMPLAINT_CATEGORIES_TYPES = "/api/v1.0/complaint/getComplaintCategories";
+
+    public final static String COMPLAINT_DOWNLOAD_IMAGE = "/api/v1.0/complaint/downloadfile/";
+
+    public final static String GET_MY_COMPLAINTS = "/api/v1.0/citizen/getMyComplaint/{page}/{pageSize}";
+
+    public final static String COMPLAINT_GET_LOCATION_BY_NAME = "/api/v1.0/complaint/getLocation";
+
+    public final static String COMPLAINT_CREATE = "/api/v1.0/complaint/create";
+
+    public final static String COMPLAINT_UPDATE_STATUS = "/api/v1.0/complaint/{complaintNo}/updateStatus";
 
 
 }

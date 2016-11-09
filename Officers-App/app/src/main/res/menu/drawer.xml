@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.egov.employee.activity.LoginActivity">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/item_worklist"
+            android:title="@string/item_worklist_str"
+            android:icon="@drawable/ic_toc_white_24dp"/>
+        <item android:id="@+id/item_grievance"
+            android:title="@string/item_grievance_str"
+            android:icon="@drawable/ic_archive_white_24dp"/>
+        <item android:id="@+id/item_logout"
+            android:title="@string/item_log_out_str"
+            android:icon="@drawable/ic_exit_to_app_white_24dp"/>
+    </group>
+</menu>

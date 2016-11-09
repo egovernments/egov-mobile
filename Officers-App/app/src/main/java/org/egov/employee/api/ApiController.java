@@ -43,6 +43,7 @@
 package org.egov.employee.api;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.OkHttpClient;
@@ -52,6 +53,10 @@ import com.squareup.okhttp.Response;
 
 import org.egov.employee.config.AppPreference;
 import org.egov.employee.data.ComplaintViewAPIResponse;
+import org.egov.employee.data.GrievanceAPIResponse;
+import org.egov.employee.data.GrievanceLocationAPIResponse;
+import org.egov.employee.data.GrievanceTypeAPIResponse;
+import org.egov.employee.data.GrievanceUpdate;
 import org.egov.employee.data.TaskAPIResponse;
 import org.egov.employee.data.TaskAPISearchResponse;
 
@@ -67,6 +72,7 @@ import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.PartMap;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -162,6 +168,9 @@ public class ApiController {
 
         AppPreference preference=new AppPreference(context);
 
+        Log.v("ACTIVE CITY URL", preference.getActiveCityUrl());
+
+
         Retrofit restAdapter = new Retrofit.Builder()
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -215,6 +224,33 @@ public class ApiController {
         @POST(ApiUrl.PGR_COMPLAINT_UPDATE)
         Call<JsonObject> updateComplaint(@Path(value = "complaintNo") String complaintNo, @Query(value = "access_token") String accessToken, @PartMap Map<String, RequestBody> files);
 
+
+        /*
+           Grievance
+         */
+
+        @GET(ApiUrl.GET_MY_COMPLAINTS_CATEGORIES_COUNT)
+        Call<JsonObject> getComplaintCategories(@Query(value = "access_token") String accessToken);
+
+        @GET(ApiUrl.GET_MY_COMPLAINTS)
+        Call<GrievanceAPIResponse> getMyComplaints(@Path(value = "page") String pages,
+                                                   @Path(value = "pageSize") String pagesize,
+                                                   @Query(value = "access_token") String access_token,
+                                                   @Query(value = "complaintStatus") String complaintStatus);
+
+        @GET(ApiUrl.COMPLAINT_CATEGORIES_TYPES)
+        Call<GrievanceTypeAPIResponse> getComplaintCategoriesAndTypes(@Query(value = "access_token") String access_token);
+
+        @GET(ApiUrl.COMPLAINT_GET_LOCATION_BY_NAME)
+        Call<GrievanceLocationAPIResponse> getComplaintLocation(@Query(value = "locationName") String location,
+                                                                @Query(value = "access_token") String access_token);
+
+        @Multipart
+        @POST(ApiUrl.COMPLAINT_CREATE)
+        Call<JsonObject> createComplaint(@Query(value = "access_token") String accessToken, @PartMap Map<String, RequestBody> files);
+
+        @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
+        Call<JsonObject> updateComplaint(@Path(value = "complaintNo") String complaintNo, @Body GrievanceUpdate grievanceUpdate, @Query(value = "access_token") String accessToken);
 
     }
 

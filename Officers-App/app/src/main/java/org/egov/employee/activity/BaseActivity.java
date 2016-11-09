@@ -49,18 +49,24 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
 import org.egov.employee.api.ApiController;
 import org.egov.employee.api.LoggingInterceptor;
 import org.egov.employee.config.AppPreference;
+import org.egov.employee.config.NavMenuItems;
 
 import java.lang.reflect.Method;
 
@@ -76,6 +82,10 @@ import retrofit.Retrofit;
 public abstract class BaseActivity extends AppCompatActivity implements LoggingInterceptor.ErrorListener {
 
     AppPreference preference;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle drawerToggle;
+    NavigationView navigationView;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         setContentView(getLayoutResource());
         //app preference variable
         preference=new AppPreference(getApplicationContext());
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
@@ -201,6 +211,108 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         jsonDeviceLog.enqueue(deviceLog);
 
 
+    }
+
+    public void setupNavDrawer(NavMenuItems navMenuItem)
+    {
+        //Initialising NavigationView
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        //Setting OnNavigationItemSelectedListener to the Navigation View.
+        //This is used to perform specific action when an item is clicked.
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                //Navigation View must close when any of this item is clicked.
+                //To do this we use the closeDrawers() method.
+                drawerLayout.closeDrawers();
+
+                if(menuItem.isChecked())
+                {
+                    return false;
+                }
+
+                //Using switch case to identify the ID of the menu item
+                // and then performing relevant action.
+                switch (menuItem.getItemId()){
+                    case R.id.item_worklist:
+                        openWorkListPage();
+                        return false;
+                    case R.id.item_grievance:
+                        openGrievancePage();
+                        return false;
+                    case R.id.item_logout:
+                        logout();
+                        return true;
+                    default:
+                        return true;
+                }
+
+            }
+        });
+
+
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.tvFullName)).setText(preference.getName());
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.tvUserId)).setText(preference.getUserName());
+
+        navigationView.getMenu().getItem(navMenuItem.getMenuCode()).setChecked(true);
+
+        //Initialising DrawerLayout.
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
+
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
+            public void onDrawerClosed(View view) {
+
+            }
+
+            public void onDrawerOpened(View drawerView) {
+
+            }
+        };
+
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+
+    public void openGrievancePage()
+    {
+        Intent intent = new Intent(BaseActivity.this, GrievanceActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        closeCurrentActivityIsNotWorkList();
+    }
+
+    public void openWorkListPage()
+    {
+        Intent intent = new Intent(BaseActivity.this, Homepage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    public void closeCurrentActivityIsNotWorkList()
+    {
+        if(!(this instanceof Homepage))
+        {
+            finish();
+        }
+    }
+
+    public void logout()
+    {
+        //clear current user access token from app preference in splashscreen with flag param
+        Intent intent = new Intent(this, SplashScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("isLoggedOut", true);
+        this.startActivity(intent);
+        this.overridePendingTransition(0,0);
+    }
+
+
+    public void enableBackButton()
+    {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 }

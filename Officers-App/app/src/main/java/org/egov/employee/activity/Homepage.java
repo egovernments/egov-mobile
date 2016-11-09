@@ -44,7 +44,6 @@ package org.egov.employee.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.IntentCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -58,6 +57,7 @@ import com.google.gson.JsonObject;
 
 import org.egov.employee.adapter.TasksAdapter;
 import org.egov.employee.api.ApiController;
+import org.egov.employee.config.NavMenuItems;
 import org.egov.employee.controls.SlidingTabLayout;
 import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
@@ -77,13 +77,15 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     public RelativeLayout homePageLoader;
     public LinearLayout inboxEmptyInfo;
 
-    public static int ACTION_UPDATE_REQUIRED=111;
+    public static final int ACTION_UPDATE_REQUIRED=111;
 
     String WORK_FLOW_TYPE_COMPLAINT="Complaint";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setupNavDrawer(NavMenuItems.WORKLIST);
 
         homePageLoader=(RelativeLayout)findViewById(R.id.homepageloader);
         homePageLoader.setVisibility(View.GONE);
@@ -197,15 +199,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            //clear current user access token from app preference in splashscreen with flag param
-            Intent intent = new Intent(this, SplashScreen.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("isLoggedOut", true);
-            this.startActivity(intent);
-            this.overridePendingTransition(0,0);
-        }
-        else if(id == R.id.action_refresh)
+        if(id == R.id.action_refresh)
         {
             getWorkListCategory();
         }
