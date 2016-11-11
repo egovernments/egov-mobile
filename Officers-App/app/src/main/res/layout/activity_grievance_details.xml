@@ -230,7 +230,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:paddingLeft="5dp"
-                        android:visibility="invisible"
                         android:orientation="vertical">
 
                         <TextView
@@ -255,10 +254,10 @@
 
 
                 <LinearLayout
+                    android:id="@+id/layoutcomplainantemail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView

@@ -517,10 +517,7 @@ public class ViewTask extends BaseActivity {
     {
         JsonObject jsonParams=new JsonObject();
         jsonParams.addProperty("action", complaintStatus);
-        if(approvalPosition>0)
-        {
-            jsonParams.addProperty("approvalposition",approvalPosition);
-        }
+        jsonParams.addProperty("approvalposition",approvalPosition);
         jsonParams.addProperty("comment", complaintComments);
 
         Map<String, RequestBody> uploadPics = new HashMap<>();

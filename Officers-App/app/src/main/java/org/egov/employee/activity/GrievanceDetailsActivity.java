@@ -165,6 +165,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         TextView complaintLandmark = (TextView) findViewById(R.id.details_complaint_landmark);
         TextView complaintNo = (TextView) findViewById(R.id.details_complaintNo);
         TextView commentBoxLabel = (TextView) findViewById(R.id.commentbox_label);
+        LinearLayout layoutcomplainantEmail=(LinearLayout)findViewById(R.id.layoutcomplainantemail);
         LinearLayout layoutLandMark=(LinearLayout)findViewById(R.id.layoutlandmark);
         complaintLocation = (TextView) findViewById(R.id.details_complaint_location);
         mapCardView=(CardView)findViewById(R.id.mapcardview);
@@ -230,6 +231,11 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         complaintDate.setText(formatDateString(grievance.getCreatedDate(),"yyyy-MM-dd hh:mm:ss.SSS","dd/MM/yyyy hh:mm aa"));
 
         complainantName.setText(grievance.getComplainantName());
+        complainantPhoneNo.setText(grievance.getComplainantMobileNo());
+        if(TextUtils.isEmpty(grievance.getComplainantEmail()))
+            layoutcomplainantEmail.setVisibility(View.GONE);
+        else
+        complainantEmail.setText(grievance.getComplainantEmail());
 
         complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());

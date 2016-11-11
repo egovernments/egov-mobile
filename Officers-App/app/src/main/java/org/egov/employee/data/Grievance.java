@@ -76,6 +76,12 @@ public class Grievance implements Serializable, Parcelable {
     @SerializedName("complainantName")
     @Expose
     private String complainantName;
+    @SerializedName("complainantMobileNo")
+    @Expose
+    private String complainantMobileNo;
+    @SerializedName("complainantEmail")
+    @Expose
+    private String complainantEmail;
     @SerializedName("locationName")
     @Expose
     private String locationName;
@@ -88,9 +94,6 @@ public class Grievance implements Serializable, Parcelable {
     @SerializedName("complaintTypeName")
     @Expose
     private String complaintTypeName;
-    @SerializedName("complaintTypeImage")
-    @Expose
-    private String complaintTypeImage;
     @SerializedName("landmarkDetails")
     @Expose
     private String landmarkDetails;
@@ -120,6 +123,8 @@ public class Grievance implements Serializable, Parcelable {
         this.lastModifiedBy = in.readString();
         this.lastModifiedDate = in.readString();
         this.complainantName = in.readString();
+        this.complainantMobileNo=in.readString();
+        this.complainantEmail=in.readString();
         this.locationName = in.readString();
         this.childLocationName = in.readString();
         this.complaintTypeId = in.readInt();
@@ -174,6 +179,20 @@ public class Grievance implements Serializable, Parcelable {
     }
 
     /**
+     * @return The complainantMobileNo
+     */
+    public String getComplainantMobileNo() {
+        return complainantMobileNo;
+    }
+
+    /**
+     * @return The complainantEmail
+     */
+    public String getComplainantEmail() {
+        return complainantEmail;
+    }
+
+    /**
      * @return The locationName
      */
     public String getLocationName() {
@@ -192,13 +211,6 @@ public class Grievance implements Serializable, Parcelable {
      */
     public String getComplaintTypeName() {
         return complaintTypeName;
-    }
-
-    /**
-     * @return The complaintTypeImage
-     */
-    public String getComplaintTypeImage() {
-        return complaintTypeImage;
     }
 
     /**
@@ -269,6 +281,8 @@ public class Grievance implements Serializable, Parcelable {
         dest.writeString(this.lastModifiedBy);
         dest.writeString(this.lastModifiedDate);
         dest.writeString(this.complainantName);
+        dest.writeString(this.complainantMobileNo);
+        dest.writeString(this.complainantEmail);
         dest.writeString(this.locationName);
         dest.writeString(this.childLocationName);
         dest.writeInt(this.complaintTypeId);
