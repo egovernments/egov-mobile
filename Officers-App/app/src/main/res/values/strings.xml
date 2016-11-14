@@ -113,4 +113,9 @@
     <string name="complaint_location_message">Select the complaint location by entering first 3-4 characters of the locality</string>
     <string name="permission_camera_denied">You have disabled permission for camera access! if you want to enable go to the app info page in settings and enable it</string>
     <string name="permission_read_denied">You have disabled permission for read file access! if you want to enable go to the app info page in settings and enable it!</string>
+    <string name="update_available_alert_title">New update is available</string>
+    <string name="update_force_alert_content">Please download the latest app to use our upgraded services</string>
+    <string name="alert_button_update_text">UPDATE</string>
+    <string name="alert_button_notnow_text">NOT NOW</string>
+    <string name="alert_recommended_update_content">We\'re recommended to download the latest app to use our upgraded services</string>
 </resources>
