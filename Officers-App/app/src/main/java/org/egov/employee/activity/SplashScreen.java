@@ -350,10 +350,12 @@ public class SplashScreen extends BaseActivity {
                 if(AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()){
                     if(appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean())
                     {
-                        showForceUpdateAlert();
+                        showUpdateAlert(true, getString(R.string.update_available_alert_title),
+                                getString(R.string.update_force_alert_content));
                     }
                     else{
-                        showRecommendedUpdateAlert();
+                        showUpdateAlert(false, getString(R.string.update_available_alert_title),
+                                getString(R.string.alert_recommended_update_content));
                     }
                 }
                 else{
@@ -368,13 +370,12 @@ public class SplashScreen extends BaseActivity {
     }
 
 
-    void showForceUpdateAlert(){
-
+    void showUpdateAlert(boolean isForceUpdate, String title, String message){
         AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
         builder.setCancelable(false);
-        builder.setTitle("New update is available");
-        builder.setMessage("Please download the latest app to use our upgraded services");
-        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.update_available_alert_title);
+        builder.setMessage(R.string.update_force_alert_content);
+        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
@@ -386,34 +387,16 @@ public class SplashScreen extends BaseActivity {
                 finish();
             }
         });
-        builder.create().show();
-    }
 
-
-    void showRecommendedUpdateAlert(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
-        builder.setCancelable(false);
-        builder.setTitle("New update is available");
-        builder.setMessage("We're recommended to download the latest app to use our upgraded services");
-        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+        if(!isForceUpdate)
+        {
+            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    proceedAppLaunchWithUserLoggedInCondition();
                 }
-                finish();
-            }
-        });
-        builder.setNegativeButton("NOT NOW", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                proceedAppLaunchWithUserLoggedInCondition();
-            }
-        });
+            });
+        }
         builder.create().show();
     }
 
