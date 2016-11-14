@@ -149,6 +149,8 @@
     <string name="sos_label2">-</string>
     <string name="aboutus_label">About us</string>
     <string name="aboutus_label2">-</string>
+    <string name="sla_label">SLA</string>
+    <string name="sla_label2">-</string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="complaint_type_label">Complaint Type *</string>
     <string name="dob_label">DATE OF BIRTH</string>
@@ -236,4 +238,9 @@ Links to:</string>
     <string name="permission_readsms_denied">"You have disabled read sms permission for OTP! if you want to enable go the app info page in settings and enable it "</string>
     <string name="permission_location_denied">you have disabled open camera permission! if you want to enable go to the app info page and enable it</string>
     <string name="complaint_location_message">Select the complaint location by entering first 3-4 characters of the locality</string>
+    <string name="update_available_alert_title">New update is available</string>
+    <string name="update_force_alert_content">Please download the latest app to use our upgraded services</string>
+    <string name="alert_button_update_text">UPDATE</string>
+    <string name="alert_button_notnow_text">NOT NOW</string>
+    <string name="alert_recommended_update_content">We\'re recommended to download the latest app to use our upgraded services</string>
 </resources>

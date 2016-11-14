@@ -256,7 +256,7 @@ public class SplashScreenActivity extends Activity {
             try {
                 String resp = ApiController.getCityURL(configManager.getString("api.appVersionCheck")+getApplicationContext().getPackageName());
                 response=new JsonParser().parse(resp).getAsJsonObject();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return response;
@@ -273,10 +273,12 @@ public class SplashScreenActivity extends Activity {
                 if(AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()){
                     if(appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean())
                     {
-                        showForceUpdateAlert();
+                        showUpdateAlert(true, getString(R.string.update_available_alert_title),
+                                getString(R.string.update_force_alert_content));
                     }
                     else{
-                        showRecommendedUpdateAlert();
+                        showUpdateAlert(false, getString(R.string.update_available_alert_title),
+                                getString(R.string.alert_recommended_update_content));
                     }
                 }
                 else{
@@ -334,13 +336,13 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
-    void showForceUpdateAlert(){
 
+    void showUpdateAlert(boolean isForceUpdate, String title, String content){
         AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
         builder.setCancelable(false);
-        builder.setTitle("New update is available");
-        builder.setMessage("Please download the latest app to use our upgraded services");
-        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
+        builder.setTitle(title);
+        builder.setMessage(content);
+        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
@@ -352,34 +354,16 @@ public class SplashScreenActivity extends Activity {
                 finish();
             }
         });
-        builder.create().show();
-    }
 
-
-    void showRecommendedUpdateAlert(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
-        builder.setCancelable(false);
-        builder.setTitle("New update is available");
-        builder.setMessage("We're recommended to download the latest app to use our upgraded services");
-        builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+        if(!isForceUpdate)
+        {
+            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    launchScreen();
                 }
-                finish();
-            }
-        });
-        builder.setNegativeButton("NOT NOW", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                launchScreen();
-            }
-        });
+            });
+        }
         builder.create().show();
     }
 
