@@ -370,11 +370,11 @@ public class SplashScreen extends BaseActivity {
     }
 
 
-    void showUpdateAlert(boolean isForceUpdate, String title, String message){
+    void showUpdateAlert(boolean isForceUpdate, String title, String content){
         AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
         builder.setCancelable(false);
-        builder.setTitle(R.string.update_available_alert_title);
-        builder.setMessage(R.string.update_force_alert_content);
+        builder.setTitle(title);
+        builder.setMessage(content);
         builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
