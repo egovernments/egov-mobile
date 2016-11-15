@@ -255,6 +255,7 @@
                         android:background="@null"
                         android:imeOptions="actionNext"
                         android:inputType="text"
+                        android:maxLength="200"
                         android:textColorHint="#a8a5a5"
                         android:textSize="16sp"
                         />
