@@ -370,6 +370,7 @@
                         android:textColor="@android:color/white"
                         android:imeOptions="actionNext"
                         android:inputType="text"
+                        android:maxLength="200"
                         android:textColorHint="@color/textColorHint"
                         android:textSize="16sp"
                         />
