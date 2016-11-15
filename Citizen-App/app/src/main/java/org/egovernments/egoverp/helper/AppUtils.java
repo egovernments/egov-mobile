@@ -45,6 +45,8 @@ package org.egovernments.egoverp.helper;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -178,6 +180,17 @@ public class AppUtils {
             e.printStackTrace();
         }
         return versionCode;
+    }
+
+
+    //check internet connection available method
+    public static boolean checkInternetConnectivity(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo activeNetwork = connectivity.getActiveNetworkInfo();
+            return activeNetwork != null;
+        }
+        return false;
     }
 
 }

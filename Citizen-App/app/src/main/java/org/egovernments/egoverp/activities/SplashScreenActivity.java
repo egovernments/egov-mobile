@@ -49,15 +49,22 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
@@ -93,6 +100,8 @@ public class SplashScreenActivity extends Activity {
 
     private final String PLAYSTORE_URL="https://play.google.com/store/apps/details?id=";
     private final String MARKET_URL="market://details?id=";
+
+    private AlertDialog errorAlertDialog;
 
     String url;
     String location;
@@ -156,15 +165,30 @@ public class SplashScreenActivity extends Activity {
         sessionManager = new SessionManager(getApplicationContext());
         sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString("app.debug.log")));
 
-        if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
-            startTimerThread();
-        } else {
-            if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays")) || TextUtils.isEmpty(sessionManager.getBaseURL())) {
-                new GetCityTask().execute();
-            } else {
+        startInitialConditionCheck();
+
+    }
+
+    void startInitialConditionCheck()
+    {
+        if(AppUtils.checkInternetConnectivity(getApplicationContext()))
+        {
+            if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
                 startTimerThread();
+            } else {
+                if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays")) || TextUtils.isEmpty(sessionManager.getBaseURL())) {
+                    new GetCityTask().execute();
+                } else {
+                    startTimerThread();
+                }
             }
         }
+        else{
+            showErrorAlert("No Connection!", "Please check your internet connection and try again",
+                    getString(R.string.try_again), R.drawable.ic_network_wifi_black_48dp,
+                    ContextCompat.getColor(SplashScreenActivity.this, R.color.red));
+        }
+
     }
 
     class GetCityTask extends AsyncTask<String, Integer, Object> {
@@ -365,6 +389,34 @@ public class SplashScreenActivity extends Activity {
             });
         }
         builder.create().show();
+    }
+
+    void showErrorAlert(String errorTitle, String errorDesc, String btnText, int imageResourceId, int imgColor)
+    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_imagery_notification, null);
+        ((TextView)dialogView.findViewById(R.id.tvTitle)).setText(errorTitle);
+        ((TextView)dialogView.findViewById(R.id.tvContent)).setText(errorDesc);
+        ImageView imageView=(ImageView)dialogView.findViewById(R.id.imgAlert);
+        imageView.setImageResource(imageResourceId);
+        imageView.setColorFilter(imgColor, PorterDuff.Mode.SRC_ATOP);
+
+        Button btnAction=(Button) dialogView.findViewById(R.id.btnAction);
+        btnAction.setText(btnText);
+        btnAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                errorAlertDialog.dismiss();
+                startInitialConditionCheck();
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        errorAlertDialog=builder.create();
+        errorAlertDialog.show();
+
     }
 
 }

@@ -243,4 +243,5 @@ Links to:</string>
     <string name="alert_button_update_text">UPDATE</string>
     <string name="alert_button_notnow_text">NOT NOW</string>
     <string name="alert_recommended_update_content">We\'re recommended to download the latest app to use our upgraded services</string>
+    <string name="try_again">TRY AGAIN</string>
 </resources>

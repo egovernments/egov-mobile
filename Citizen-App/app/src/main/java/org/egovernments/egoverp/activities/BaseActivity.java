@@ -249,6 +249,10 @@ public class BaseActivity extends AppCompatActivity {
         {
             openAboutUsPage();
         }
+        else if(getString(R.string.sla_label).equals(menuItemText))
+        {
+            openSLAPage();
+        }
         else if(getString(R.string.profile_label).equals(menuItemText))
         {
             openProfilePage();
@@ -388,6 +392,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void openSLAPage()
+    {
+        Intent openPdfViewer=new Intent(BaseActivity.this, PdfViewerActivity.class);
+        openPdfViewer.putExtra(PdfViewerActivity.PAGE_TITLE, getString(R.string.sla_label));
+        openPdfViewer.putExtra(PdfViewerActivity.PDF_URL, "http://egovernments.org/egov-apps/puraseva/sla/sla.pdf");
+        startActivity(openPdfViewer);
+    }
+
     public void logoutUser()
     {
         progressDialog.show();
@@ -476,6 +488,11 @@ public class BaseActivity extends AppCompatActivity {
             if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_call_black_36dp, getString(R.string.sos_label),(getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.sla","true")))
+            {
+                arrayList.add(new NavigationItem(R.drawable.ic_access_time_white_36dp, getString(R.string.sla_label),(getString(R.string.sla_label).equals(mActionBarTitle)), R.color.sla_color));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.aboutus","true")))
