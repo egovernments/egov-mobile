@@ -47,6 +47,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -120,68 +121,94 @@ public class HomeActivity extends BaseActivity {
                     }
                 };
 
-                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#227585"), "Update your profile", "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
+                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#227585"), "Update your profile",
+                        "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
                 homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details.", true, notificationItem));
             }
 
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
             {
-                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp, "File grievances or review and update previously filed grievances", getResources().getColor(R.color.grievance_color));
+                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp, 
+                        "File grievances or review and update previously filed grievances", ContextCompat.getColor(HomeActivity.this, R.color.grievance_color));
                 //grievanceItem.setGrievanceItem(true);
                 homeItemList.add(grievanceItem);
 
             }
 
             //check for property tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")) 
+                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
-                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertytax_label2), R.drawable.ic_business_black_36dp, "View property tax details for an assessment number", getResources().getColor(R.color.propertytax_color)));
+                homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertytax_label2), R.drawable.ic_business_black_36dp,
+                        "View property tax details for an assessment number", ContextCompat.getColor(HomeActivity.this, R.color.propertytax_color)));
             }
 
             //check for vacant land tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true"))
+                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
-                homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), getString(R.string.vacantlandtax_label2), R.drawable.ic_vacant_land_36dp, "", getResources().getColor(R.color.vacand_land_color)));
+                homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), getString(R.string.vacantlandtax_label2), R.drawable.ic_vacant_land_36dp,
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.vacand_land_color)));
             }
 
             //check for water tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")) 
+                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
-                homeItemList.add(new HomeItem(getString(R.string.watertax_label), getString(R.string.watertax_label2), R.drawable.ic_water_tab_black_36dp, "View water tax details for a consumer code", getResources().getColor(R.color.watertax_color)));
+                homeItemList.add(new HomeItem(getString(R.string.watertax_label), getString(R.string.watertax_label2), R.drawable.ic_water_tab_black_36dp,
+                        "View water tax details for a consumer code", ContextCompat.getColor(HomeActivity.this, R.color.watertax_color)));
             }
 
 
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true"))
+                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
-                homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2), R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.bpacolor)));
+                homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2),
+                        R.drawable.ic_town_plan_36dp, "", ContextCompat.getColor(HomeActivity.this, R.color.bpacolor)));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")) 
+                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
-                homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp, "", getResources().getColor(R.color.bpcolor)));
+                homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp,
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.bpcolor)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.birthdeathcertificate","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.birth_death_certificate_label), getString(R.string.birth_death_certificate_label2), R.drawable.ic_certificate_36dp, "", getResources().getColor(R.color.birthdeathcolor)));
+                homeItemList.add(new HomeItem(getString(R.string.birth_death_certificate_label), getString(R.string.birth_death_certificate_label2), R.drawable.ic_certificate_36dp,
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.birthdeathcolor)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp, "", getResources().getColor(R.color.citizen_charter_color)));
+                homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp,
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.citizen_charter_color)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.sos_label),getString(R.string.sos_label2), R.drawable.ic_call_black_36dp, "", getResources().getColor(R.color.sos_color)));
+                homeItemList.add(new HomeItem(getString(R.string.sos_label),getString(R.string.sos_label2), R.drawable.ic_call_black_36dp, 
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.sos_color)));
+            }
+
+            if(Boolean.valueOf((String)configManager.get("app.module.sla","true")))
+            {
+                homeItemList.add(new HomeItem(getString(R.string.sla_label),getString(R.string.sla_label2), R.drawable.ic_access_time_white_36dp,
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.sla_color)));
             }
 
             if(Boolean.valueOf((String)configManager.get("app.module.aboutus","true")))
             {
-                homeItemList.add(new HomeItem(getString(R.string.aboutus_label),getString(R.string.aboutus_label2), R.drawable.ic_info_black_36dp, "", getResources().getColor(R.color.aboutus_color)));
+                homeItemList.add(new HomeItem(getString(R.string.aboutus_label),getString(R.string.aboutus_label2), R.drawable.ic_info_black_36dp, 
+                        "", ContextCompat.getColor(HomeActivity.this, R.color.aboutus_color)));
             }
-
 
         }
         catch (IOException ex)
