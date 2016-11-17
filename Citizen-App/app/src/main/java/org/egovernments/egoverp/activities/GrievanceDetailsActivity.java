@@ -81,6 +81,9 @@ import com.google.gson.JsonObject;
 import com.viewpagerindicator.LinePageIndicator;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.CustomErrorHandler;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
@@ -90,10 +93,7 @@ import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResult;
 import org.egovernments.egoverp.models.GrievanceUpdate;
 import org.egovernments.egoverp.models.SupportDoc;
-import org.egovernments.egoverp.network.AddressService;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.CustomErrorHandler;
-import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.services.AddressService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -63,14 +63,14 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.KeyboardUtils;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.SessionManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

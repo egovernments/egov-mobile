@@ -61,6 +61,7 @@ import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.SearchListAdapter;
+import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.SearchResultItem;
@@ -68,7 +69,6 @@ import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.TaxOwnerDetail;
 import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 import org.egovernments.egoverp.models.WaterTaxCallback;
-import org.egovernments.egoverp.network.ApiController;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

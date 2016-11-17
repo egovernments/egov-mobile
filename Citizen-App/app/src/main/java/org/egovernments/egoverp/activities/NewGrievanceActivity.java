@@ -97,6 +97,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.CustomErrorHandler;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
@@ -109,10 +112,7 @@ import org.egovernments.egoverp.models.GrievanceType;
 import org.egovernments.egoverp.models.GrievanceTypeAPIResponse;
 import org.egovernments.egoverp.models.GrievanceTypeCategory;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
-import org.egovernments.egoverp.network.AddressService;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.CustomErrorHandler;
-import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.services.AddressService;
 
 import java.io.File;
 import java.io.IOException;

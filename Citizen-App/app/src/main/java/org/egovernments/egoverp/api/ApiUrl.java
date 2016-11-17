@@ -40,7 +40,7 @@
  *  *****************************************************************************
  */
 
-package org.egovernments.egoverp.network;
+package org.egovernments.egoverp.api;
 
 
 /**

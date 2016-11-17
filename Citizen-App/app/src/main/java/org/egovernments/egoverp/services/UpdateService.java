@@ -40,7 +40,7 @@
  *  *****************************************************************************
  */
 
-package org.egovernments.egoverp.network;
+package org.egovernments.egoverp.services;
 
 
 import android.app.Service;
@@ -59,6 +59,9 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.activities.HomeActivity;
 import org.egovernments.egoverp.activities.LoginActivity;
 import org.egovernments.egoverp.activities.ProfileActivity;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.ProfileAPIResponse;

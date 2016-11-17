@@ -74,7 +74,7 @@ import org.egovernments.egoverp.activities.HomeActivity;
 import org.egovernments.egoverp.helper.CardViewOnClickListener;
 import org.egovernments.egoverp.models.HomeItem;
 import org.egovernments.egoverp.models.NotificationItem;
-import org.egovernments.egoverp.network.UpdateService;
+import org.egovernments.egoverp.services.UpdateService;
 
 import java.util.List;
 

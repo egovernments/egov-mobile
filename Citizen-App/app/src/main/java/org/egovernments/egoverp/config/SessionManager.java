@@ -40,7 +40,7 @@
  *  *****************************************************************************
  */
 
-package org.egovernments.egoverp.network;
+package org.egovernments.egoverp.config;
 
 
 import android.content.Context;

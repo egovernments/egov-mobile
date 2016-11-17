@@ -83,10 +83,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.PinView;
 import org.egovernments.egoverp.helper.map.CustomMapFragment;
 import org.egovernments.egoverp.helper.map.MapWrapperLayout;
-import org.egovernments.egoverp.network.SessionManager;
 
 import java.io.IOException;
 import java.util.List;

@@ -62,11 +62,11 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceActivity;
 import org.egovernments.egoverp.activities.GrievanceDetailsActivity;
 import org.egovernments.egoverp.adapters.GrievanceListAdapater;
+import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.helper.EndlessRecyclerOnScrollListener;
 import org.egovernments.egoverp.helper.GrievanceItemInterface;
 import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
-import org.egovernments.egoverp.network.ApiController;
 
 import java.io.IOException;
 import java.util.ArrayList;

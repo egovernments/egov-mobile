@@ -60,7 +60,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
-import org.egovernments.egoverp.network.UpdateService;
+import org.egovernments.egoverp.services.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

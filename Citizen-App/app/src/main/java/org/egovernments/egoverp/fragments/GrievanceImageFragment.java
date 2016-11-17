@@ -59,7 +59,7 @@ import com.squareup.picasso.Picasso;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceDetailsActivity;
 import org.egovernments.egoverp.activities.GrievanceImageViewerActivity;
-import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.config.SessionManager;
 
 /**
  * Fragment used by GrievanceDetailsActivity viewpager

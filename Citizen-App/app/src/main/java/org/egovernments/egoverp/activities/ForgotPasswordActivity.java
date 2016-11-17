@@ -64,8 +64,8 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.SessionManager;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

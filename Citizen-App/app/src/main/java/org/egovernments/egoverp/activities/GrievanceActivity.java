@@ -63,10 +63,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.api.CustomErrorHandler;
 import org.egovernments.egoverp.fragments.GrievanceFragment;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
-import org.egovernments.egoverp.network.CustomErrorHandler;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -72,16 +72,16 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
-import org.egovernments.egoverp.network.SessionManager;
-import org.egovernments.egoverp.network.UpdateService;
+import org.egovernments.egoverp.services.UpdateService;
 
 import java.io.IOException;
 import java.util.ArrayList;

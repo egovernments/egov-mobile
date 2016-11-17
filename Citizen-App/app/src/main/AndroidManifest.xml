@@ -68,7 +68,7 @@
     <supports-screens android:anyDensity="true" />
 
     <application
-        android:name=".application.EgovAppConfig"
+        android:name=".application.AppConfig"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/egov_label"
@@ -228,8 +228,8 @@
                 android:value="org.egovernments.egoverp.activities.GrievanceDetailsActivity" />
         </activity>
 
-        <service android:name=".network.UpdateService" />
-        <service android:name=".network.AddressService" />
+        <service android:name=".services.UpdateService" />
+        <service android:name=".services.AddressService" />
 
         <activity
             android:name=".activities.SearchResultActivity"

@@ -63,13 +63,13 @@ import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.FilesDownloadAdapter;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.helper.CustomEditText;
 import org.egovernments.egoverp.helper.KeyboardUtils;
 import org.egovernments.egoverp.models.BuildingPenalizationAPIResponse;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
 import org.egovernments.egoverp.models.DownloadDoc;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.ApiUrl;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;

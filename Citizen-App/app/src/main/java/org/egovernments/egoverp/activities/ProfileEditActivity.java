@@ -61,13 +61,13 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.CustomErrorHandler;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.errors.ErrorResponse;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.CustomErrorHandler;
-import org.egovernments.egoverp.network.SessionManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

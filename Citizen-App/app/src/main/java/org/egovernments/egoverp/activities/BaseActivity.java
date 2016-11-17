@@ -61,11 +61,12 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.NavdrawAdapter;
+import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.Modules;
+import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.NavigationItem;
-import org.egovernments.egoverp.network.ApiController;
-import org.egovernments.egoverp.network.SessionManager;
 
 import java.util.ArrayList;
 
@@ -445,57 +446,57 @@ public class BaseActivity extends AppCompatActivity {
             arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle)), R.color.home_color));
 
             //check for pgr module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.pgr","true")))
+            if(Boolean.valueOf((String)configManager.get(Modules.PGR,"true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_archive_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle)), R.color.grievance_color));
             }
 
             //check for property tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.propertytax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Modules.PROPERTY_TAX,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
             }
 
             //check for vacant land tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.vacantlandtax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Modules.VACANT_LAND_TAX,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.watertax","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Modules.WATER_CHARGE,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingplanapproval","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Modules.BPA,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get("app.module.buildingpenalization","true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Modules.BPS,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.citizencharter","true")))
+            if(Boolean.valueOf((String)configManager.get(Modules.CITIZEN_CHARTER,"true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.sos","true")))
+            if(Boolean.valueOf((String)configManager.get(Modules.SOS,"true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_call_black_36dp, getString(R.string.sos_label),(getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.sla","true")))
+            if(Boolean.valueOf((String)configManager.get(Modules.SLA,"true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_access_time_white_36dp, getString(R.string.sla_label),(getString(R.string.sla_label).equals(mActionBarTitle)), R.color.sla_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get("app.module.aboutus","true")))
+            if(Boolean.valueOf((String)configManager.get(Modules.ABOUT_US,"true")))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_info_black_24dp, getString(R.string.aboutus_label),(getString(R.string.aboutus_label).equals(mActionBarTitle)), R.color.aboutus_color));
             }

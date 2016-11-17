@@ -53,7 +53,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import org.egovernments.egoverp.activities.SplashScreenActivity;
-import org.egovernments.egoverp.network.SessionManager;
+import org.egovernments.egoverp.config.SessionManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
