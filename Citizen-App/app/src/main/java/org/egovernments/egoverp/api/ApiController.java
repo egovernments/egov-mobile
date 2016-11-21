@@ -95,20 +95,28 @@ public class ApiController {
 
     private final static OkHttpClient client = SSLTrustManager.createClient();
 
-    public static String getCityURL(String url) throws IOException{
-
+    public static City getCityURL(String url) throws IOException{
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-
             Response response = client.newCall(request).execute();
+            return new Gson().fromJson(response.body().charStream(), City.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
+    public static String getResponseFromUrl(String url)throws IOException{
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = client.newCall(request).execute();
             return response.body().string();
         } catch (Exception e) {
             return null;
         }
-
     }
 
     public static List<District> getAllCitiesURLs(String url) throws IOException {

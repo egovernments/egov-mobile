@@ -57,6 +57,8 @@ import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 
+import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
+
 public class PropertyTaxSearchActivity extends BaseActivity implements View.OnClickListener {
 
     EditText etAssessmentNo;
@@ -135,7 +137,7 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
                     etAssessmentNo.getText().toString(), etOwnerName.getText().toString(), etMobileNo.getText().toString(),
                     etDoorNo.getText().toString(),(isVacantLand?VLT_CATEGORY_VALUE:PT_CATEGORY_VALUE)));
             openSearchResult.putExtra(IS_VACANT_LAND, isVacantLand);
-            openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
+            openSearchResult.putExtra(REFERER_IP_CONFIG_KEY, configManager.getString(REFERER_IP_CONFIG_KEY));
             startActivity(openSearchResult);
         }
         else

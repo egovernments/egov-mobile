@@ -83,6 +83,7 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
@@ -104,6 +105,8 @@ import java.util.regex.Pattern;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends AppCompatActivity {
@@ -272,7 +275,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String getPasswordConstraintInformation()
     {
-        String pwdLevel=configManager.getString("app.passwordLevel");
+        String pwdLevel=configManager.getString(Config.APP_PASSWORD_LEVEL);
         if(pwdLevel.equals(PasswordLevel.HIGH))
         {
             return getResources().getString(R.string.password_level_high);
@@ -310,7 +313,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
 
             if(isMultiCity) {
-                sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+                sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
+                        selectedCity.getCityCode(), selectedCity.getModules()!=null?selectedCity.getModules().toString():null);
             }
             sendOTPCode();
 
@@ -369,7 +373,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void loadDropdowns()
     {
         try {
-            if (configManager.getString("api.multicities").equals("false")) {
+            if (configManager.getString(API_MULTICITIES).equals("false")) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -390,7 +394,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
+        districtsList = ApiController.getAllCitiesURLs(configManager.getString(API_MULTICITIES));
 
         if (districtsList != null) {
 

@@ -46,18 +46,34 @@ package org.egovernments.egoverp.config;
  * Created by egov on 17/11/16.
  */
 
-public class Modules {
+public class Config {
 
-    public static final String PGR="app.module.pgr";
-    public static final String PROPERTY_TAX ="app.module.propertytax";
-    public static final String VACANT_LAND_TAX ="app.module.vacantlandtax";
-    public static final String WATER_CHARGE="app.module.watertax";
-    public static final String BPA="app.module.buildingplanapproval";
-    public static final String BPS="app.module.buildingpenalization";
-    public static final String CITIZEN_CHARTER="app.module.citizencharter";
-    public static final String SOS="app.module.sos";
-    public static final String SLA="app.module.sla";
-    public static final String ABOUT_US="app.module.aboutus";
+    public static final String API_MULTICITIES = "api.multicities";
+    public static final String APP_DEBUG_LOG = "app.debug.log";
+    public static final String APP_TIMEOUTDAYS = "app.timeoutdays";
+    public static final String API_APP_VERSION_CHECK = "api.appVersionCheck";
+    public static final String API_CITY_URL = "api.cityUrl";
+    public static final String APP_PASSWORD_LEVEL = "app.passwordLevel";
+    public static final String API_MULTIPLE_CITIES_URL = "api.multipleCitiesUrl";
+    public static final String REFERER_IP_CONFIG_KEY="app.referrer.ip";
+    public static final String APP_PAYMENT_GATEWAY_VACANTLAND_TAX = "app.payment.gateway.vacantland.tax";
+    public static final String APP_PAYMENT_GATEWAY_PROPERTY_TAX = "app.payment.gateway.property.tax";
+    public static final String APP_PAYMENT_GATEWAY_WATER_TAX = "app.payment.gateway.water.tax";
+
+
+    public class Modules
+    {
+        public static final String ABOUT_US="app.module.aboutus";
+        public static final String SLA="app.module.sla";
+        public static final String SOS="app.module.sos";
+        public static final String CITIZEN_CHARTER="app.module.citizencharter";
+        public static final String BPS="app.module.buildingpenalization";
+        public static final String BPA="app.module.buildingplanapproval";
+        public static final String WATER_CHARGE="app.module.watertax";
+        public static final String VACANT_LAND_TAX ="app.module.vacantlandtax";
+        public static final String PROPERTY_TAX ="app.module.propertytax";
+        public static final String PGR="app.module.pgr";
+    }
 
 
 }

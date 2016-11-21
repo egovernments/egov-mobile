@@ -64,6 +64,7 @@ import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
@@ -82,6 +83,8 @@ import java.util.Locale;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
 public class WaterChargesViewActivity extends AppCompatActivity {
 
@@ -182,7 +185,7 @@ public class WaterChargesViewActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    String paymentGatewayUrl=configManager.getString("app.payment.gateway.water.tax");
+                    String paymentGatewayUrl=configManager.getString(Config.APP_PAYMENT_GATEWAY_WATER_TAX);
                     paymentGatewayUrl=sessionManager.getBaseURL()+paymentGatewayUrl;
 
                     paymentGatewayUrl=paymentGatewayUrl.replace("{consumerNo}", tvConsumerNo.getText().toString());
@@ -263,7 +266,7 @@ public class WaterChargesViewActivity extends AppCompatActivity {
         waterTaxCardView.setVisibility(View.GONE);
 
         ApiController.getAPI(WaterChargesViewActivity.this)
-                .getWaterTax(configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY),
+                .getWaterTax(configManager.getString(REFERER_IP_CONFIG_KEY),
                         new WaterTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
                         new Callback<WaterTaxCallback>() {
                             @Override

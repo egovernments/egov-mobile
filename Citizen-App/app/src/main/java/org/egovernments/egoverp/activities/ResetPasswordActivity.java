@@ -69,6 +69,7 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
@@ -322,7 +323,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
     private String getPasswordConstraintInformation()
     {
-        String pwdLevel=configManager.getString("app.passwordLevel");
+        String pwdLevel=configManager.getString(Config.APP_PASSWORD_LEVEL);
         if(pwdLevel.equals(PasswordLevel.HIGH))
         {
             return getResources().getString(R.string.password_level_high);

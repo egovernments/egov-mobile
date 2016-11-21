@@ -238,7 +238,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                             {
                                 if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat()>0)
                                 {
-                                    Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                                     List<Address> addresses;
                                     try {
                                         addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);

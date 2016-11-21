@@ -64,6 +64,7 @@ import com.google.gson.Gson;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
@@ -82,6 +83,8 @@ import java.util.Locale;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
 public class PropertyTaxViewActivity extends AppCompatActivity {
 
@@ -122,7 +125,7 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        referrerIp=getIntent().getStringExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY);
+        referrerIp=getIntent().getStringExtra(REFERER_IP_CONFIG_KEY);
 
         listBreakups= new ArrayList<>();
         progressBar = (ProgressBar) findViewById(R.id.propertytax_progressbar);
@@ -171,7 +174,8 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                 else
                 {
 
-                    String paymentGatewayUrl=(isVacantLand? configManager.getString("app.payment.gateway.vacantland.tax"):configManager.getString("app.payment.gateway.property.tax"));
+                    String paymentGatewayUrl=isVacantLand? configManager.getString(Config.APP_PAYMENT_GATEWAY_VACANTLAND_TAX)
+                            :configManager.getString(Config.APP_PAYMENT_GATEWAY_PROPERTY_TAX);
                     paymentGatewayUrl=sessionManager.getBaseURL()+paymentGatewayUrl;
 
                     paymentGatewayUrl=paymentGatewayUrl.replace("{assessmentNo}", tvAssessmentNo.getText().toString());

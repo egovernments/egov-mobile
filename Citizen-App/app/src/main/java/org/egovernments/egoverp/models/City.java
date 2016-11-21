@@ -43,8 +43,20 @@
 
 package org.egovernments.egoverp.models;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import static org.egovernments.egoverp.config.Config.Modules.ABOUT_US;
+import static org.egovernments.egoverp.config.Config.Modules.BPA;
+import static org.egovernments.egoverp.config.Config.Modules.BPS;
+import static org.egovernments.egoverp.config.Config.Modules.CITIZEN_CHARTER;
+import static org.egovernments.egoverp.config.Config.Modules.PGR;
+import static org.egovernments.egoverp.config.Config.Modules.PROPERTY_TAX;
+import static org.egovernments.egoverp.config.Config.Modules.SLA;
+import static org.egovernments.egoverp.config.Config.Modules.SOS;
+import static org.egovernments.egoverp.config.Config.Modules.VACANT_LAND_TAX;
+import static org.egovernments.egoverp.config.Config.Modules.WATER_CHARGE;
 
 public class City {
 
@@ -57,6 +69,9 @@ public class City {
     @SerializedName("city_code")
     @Expose
     private int cityCode;
+    @SerializedName("non_active_modules")
+    @Expose
+    private Modules modules;
 
     /**
      * @return The cityName
@@ -78,5 +93,101 @@ public class City {
 
     public int getCityCode() {
         return cityCode;
+    }
+
+    public Modules getModules() {
+        return modules;
+    }
+
+    public class Modules{
+
+        @SerializedName(PGR)
+        @Expose
+        private boolean isPgrDisable;
+
+        @SerializedName(PROPERTY_TAX)
+        @Expose
+        private boolean isPropertyTaxDisable;
+
+        @SerializedName(VACANT_LAND_TAX)
+        @Expose
+        private boolean isVacantLandTaxDisable;
+
+        @SerializedName(WATER_CHARGE)
+        @Expose
+        private boolean isWaterChargeDisable;
+
+        @SerializedName(BPA)
+        @Expose
+        private boolean isBPADisable;
+
+        @SerializedName(BPS)
+        @Expose
+        private boolean isBPSDisable;
+
+        @SerializedName(CITIZEN_CHARTER)
+        @Expose
+        private boolean isCitizenCharterDisable;
+
+        @SerializedName(SOS)
+        @Expose
+        private boolean isSOSDisable;
+
+        @SerializedName(SLA)
+        @Expose
+        private boolean isSLADisable;
+
+        @SerializedName(ABOUT_US)
+        @Expose
+        private boolean isAboutUsDisable;
+
+        public Modules(){
+
+        }
+
+        public boolean isPgrDisable() {
+            return isPgrDisable;
+        }
+
+        public boolean isPropertyTaxDisable() {
+            return isPropertyTaxDisable;
+        }
+
+        public boolean isVacantLandTaxDisable() {
+            return isVacantLandTaxDisable;
+        }
+
+        public boolean isWaterChargeDisable() {
+            return isWaterChargeDisable;
+        }
+
+        public boolean isBPADisable() {
+            return isBPADisable;
+        }
+
+        public boolean isBPSDisable() {
+            return isBPSDisable;
+        }
+
+        public boolean isCitizenCharterDisable() {
+            return isCitizenCharterDisable;
+        }
+
+        public boolean isSOSDisable() {
+            return isSOSDisable;
+        }
+
+        public boolean isSLADisable() {
+            return isSLADisable;
+        }
+
+        public boolean isAboutUsDisable() {
+            return isAboutUsDisable;
+        }
+
+        @Override
+        public String toString() {
+            return new Gson().toJson(this);
+        }
     }
 }

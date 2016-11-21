@@ -72,15 +72,16 @@ import com.google.gson.JsonParser;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.models.City;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
+
+import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
 public class SplashScreenActivity extends Activity {
 
@@ -102,11 +103,6 @@ public class SplashScreenActivity extends Activity {
     private final String MARKET_URL="market://details?id=";
 
     private AlertDialog errorAlertDialog;
-
-    String url;
-    String location;
-
-    int code;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -163,7 +159,7 @@ public class SplashScreenActivity extends Activity {
         }
 
         sessionManager = new SessionManager(getApplicationContext());
-        sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString("app.debug.log")));
+        sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString(Config.APP_DEBUG_LOG)));
 
         startInitialConditionCheck();
 
@@ -173,10 +169,12 @@ public class SplashScreenActivity extends Activity {
     {
         if(AppUtils.checkInternetConnectivity(getApplicationContext()))
         {
-            if (sessionManager.getUrlLocation() == null && configManager.getString("api.multicities").equals("true")) {
+            if (sessionManager.getUrlLocation() == null && configManager.getString(API_MULTICITIES).equals("true")) {
                 startTimerThread();
             } else {
-                if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString("app.timeoutdays")) || TextUtils.isEmpty(sessionManager.getBaseURL())) {
+                if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString(Config.APP_TIMEOUTDAYS))
+                        || TextUtils.isEmpty(sessionManager.getBaseURL())
+                        || sessionManager.getAppVersionCode()!=AppUtils.getAppVersionCode(SplashScreenActivity.this)) {
                     new GetCityTask().execute();
                 } else {
                     startTimerThread();
@@ -188,7 +186,6 @@ public class SplashScreenActivity extends Activity {
                     getString(R.string.try_again), R.drawable.ic_network_wifi_black_48dp,
                     ContextCompat.getColor(SplashScreenActivity.this, R.color.red));
         }
-
     }
 
     class GetCityTask extends AsyncTask<String, Integer, Object> {
@@ -198,11 +195,11 @@ public class SplashScreenActivity extends Activity {
 
             try {
 
-                if (configManager.getString("api.multicities").equals("false")) {
-                    String response = ApiController.getCityURL(configManager.getString("api.cityUrl"));
-                    if (response != null) {
-                        JSONObject jsonObject = new JSONObject(response);
-                        sessionManager.setBaseURL(jsonObject.get("url").toString(), jsonObject.get("city_name").toString(), jsonObject.getInt("city_code"));
+                if (configManager.getString(API_MULTICITIES).equals("false")) {
+                    City city = ApiController.getCityURL(configManager.getString(Config.API_CITY_URL));
+                    if (city != null) {
+                        sessionManager.setBaseURL(city.getUrl(), city.getCityName(),
+                                city.getCityCode(), city.getModules()!=null?city.getModules().toString():null);
                         startTimerThread();
                     } else {
                         handler.post(new Runnable() {
@@ -216,12 +213,10 @@ public class SplashScreenActivity extends Activity {
                         sessionManager.logoutUser();
                     }
                 } else {
-                    City activeCity=ApiController.getCityURL(configManager.getString("api.multipleCitiesUrl"), sessionManager.getUrlLocationCode());
+                    City activeCity=ApiController.getCityURL(configManager.getString(Config.API_MULTIPLE_CITIES_URL), sessionManager.getUrlLocationCode());
                     if (activeCity != null) {
-                        url = activeCity.getUrl();
-                        location = activeCity.getCityName();
-                        code = activeCity.getCityCode();
-                        sessionManager.setBaseURL(url, location, code);
+                        sessionManager.setBaseURL(activeCity.getUrl(), activeCity.getCityName(),
+                                activeCity.getCityCode(), activeCity.getModules()!=null?activeCity.getModules().toString():null);
                         startTimerThread();
                     } else {
                         handler.post(new Runnable() {
@@ -241,17 +236,6 @@ public class SplashScreenActivity extends Activity {
                     @Override
                     public void run() {
                         Toast toast = Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. Please ensure you are connected to the internet.", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                    }
-                });
-                sessionManager.logoutUser();
-            } catch (JSONException e) {
-                e.printStackTrace();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast toast = Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. The app may be unavailable in your area", Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
                     }
@@ -278,7 +262,7 @@ public class SplashScreenActivity extends Activity {
         protected JsonObject doInBackground(String... params) {
             JsonObject response = null;
             try {
-                String resp = ApiController.getCityURL(configManager.getString("api.appVersionCheck")+getApplicationContext().getPackageName());
+                String resp = ApiController.getResponseFromUrl(configManager.getString(Config.API_APP_VERSION_CHECK)+getApplicationContext().getPackageName());
                 response=new JsonParser().parse(resp).getAsJsonObject();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -290,7 +274,7 @@ public class SplashScreenActivity extends Activity {
         protected void onPostExecute(JsonObject response) {
             super.onPostExecute(response);
 
-            if(response!=null)
+            if(response!=null && TextUtils.isEmpty(response.toString()))
             {
                 JsonObject appDetails=response.get(KEY_RESULT).getAsJsonObject();
 

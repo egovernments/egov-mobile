@@ -45,6 +45,7 @@ package org.egovernments.egoverp.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import java.util.Calendar;
 
@@ -98,6 +99,10 @@ public class SessionManager {
     private static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
 
     private static final String KEY_OTP_LOCAL_BROADCAST_RUNNING="isOTPBroadcastRunning";
+
+    private static final String KEY_DISABLE_MODULE_JSON="modulesDisabledJson";
+
+    private static final String KEY_APP_VERSION_CODE="appVersionCode";
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
@@ -157,7 +162,7 @@ public class SessionManager {
         editor.apply();
     }
 
-    public void setBaseURL(String url, String location, int code) {
+    public void setBaseURL(String url, String location, int code, String disabledModuleJson) {
 
         if(url!=null)
         {
@@ -171,6 +176,7 @@ public class SessionManager {
             editor.putInt(URL_CREATED_TIME, Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
             editor.putString(URL_LOCATION, location);
             editor.putInt(URL_LOCATION_CODE, code);
+            editor.putString(KEY_DISABLE_MODULE_JSON, TextUtils.isEmpty(disabledModuleJson)?"":disabledModuleJson);
 
             editor.apply();
         }
@@ -308,4 +314,28 @@ public class SessionManager {
         return pref.getBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, false);
     }
 
+    public void setDisabledModulesJson(String modulesJson)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_DISABLE_MODULE_JSON, modulesJson);
+        editor.apply();
+    }
+
+
+    public void setAppVersionCode(int versionCode)
+    {
+        editor = pref.edit();
+        editor.putInt(KEY_APP_VERSION_CODE, versionCode);
+        editor.apply();
+    }
+
+    public Integer getAppVersionCode()
+    {
+        return pref.getInt(KEY_APP_VERSION_CODE, 0);
+    }
+
+    public String getDisabledModulesJson()
+    {
+        return pref.getString(KEY_DISABLE_MODULE_JSON, "");
+    }
 }

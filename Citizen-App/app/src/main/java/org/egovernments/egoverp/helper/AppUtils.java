@@ -58,6 +58,7 @@ import android.widget.TextView;
 import com.google.gson.JsonElement;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.config.Config;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,7 +131,7 @@ public class AppUtils {
 
 
     public static boolean isValidPassword(String password, ConfigManager configManager) {
-        String pwdLevel=configManager.getString("app.passwordLevel");
+        String pwdLevel=configManager.getString(Config.APP_PASSWORD_LEVEL);
         if(pwdLevel.equals(PasswordLevel.HIGH))
         {
             return AppUtils.checkPasswordHighLevel(password);

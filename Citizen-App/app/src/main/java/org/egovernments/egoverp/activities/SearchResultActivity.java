@@ -79,6 +79,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
+
 public class SearchResultActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
@@ -102,7 +104,6 @@ public class SearchResultActivity extends AppCompatActivity {
     public static String ULB_CODE="ulbCode";
     public static String ASSESSMENT_NO="assessmentNo";
     public static String CONSUMER_NO="consumerNo";
-    public static String REFERER_IP_CONFIG_KEY="app.referrer.ip";
 
     PropertySearchRequest propertySearchRequest;
     WaterConnectionSearchRequest waterConnectionSearchRequest;

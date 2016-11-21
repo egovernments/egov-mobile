@@ -53,19 +53,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.NavdrawAdapter;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.config.Modules;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
+import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.NavigationItem;
 
 import java.util.ArrayList;
@@ -179,7 +182,6 @@ public class BaseActivity extends AppCompatActivity {
         };
 
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-
 
         arrayList = new ArrayList<>();
         arrayList.add(null);
@@ -415,6 +417,8 @@ public class BaseActivity extends AppCompatActivity {
                 Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+
+                if(progressDialog.isShowing())
                 progressDialog.dismiss();
 
 
@@ -423,14 +427,15 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
 
+                if(progressDialog.isShowing())
                 progressDialog.dismiss();
+
                 sessionManager.logoutUser();
 
                 ApiController.apiInterface = null;
 
                 Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                progressDialog.dismiss();
                 finish();
             }
         });
@@ -442,61 +447,89 @@ public class BaseActivity extends AppCompatActivity {
         try {
             ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
+            City.Modules disabledModules=null;
+            if(!TextUtils.isEmpty(sessionManager.getDisabledModulesJson()))
+                disabledModules=new Gson().fromJson(sessionManager.getDisabledModulesJson(), City.Modules.class);
 
             arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle)), R.color.home_color));
 
             //check for pgr module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.PGR,"true")))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.PGR,"true")) && disabledModules!=null
+                    && !disabledModules.isPgrDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_archive_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle)), R.color.grievance_color));
             }
 
             //check for property tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.PROPERTY_TAX,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.PROPERTY_TAX,"true"))
+                    && disabledModules!=null && !disabledModules.isPropertyTaxDisable()
+                    && (sessionManager.getUrlLocationCode() != 1021)
+                    && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
             }
 
             //check for vacant land tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.VACANT_LAND_TAX,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.VACANT_LAND_TAX,"true"))
+                    && disabledModules!=null && !disabledModules.isVacantLandTaxDisable()
+                    && (sessionManager.getUrlLocationCode() != 1021)
+                    && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.WATER_CHARGE,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.WATER_CHARGE,"true"))
+                    && disabledModules!=null && !disabledModules.isWaterChargeDisable()
+                    && (sessionManager.getUrlLocationCode() != 1021)
+                    && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.BPA,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.BPA,"true"))
+                    && disabledModules!=null && !disabledModules.isBPADisable()
+                    && (sessionManager.getUrlLocationCode() != 1021)
+                    && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             //check for building plan module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Modules.BPS,"true")) && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) && (sessionManager.getUrlLocationCode() != 1086))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.BPS,"true"))
+                    && disabledModules!=null && !disabledModules.isBPSDisable()
+                    && (sessionManager.getUrlLocationCode() != 1021)
+                    && (sessionManager.getUrlLocationCode() != 1073)
+                    && (sessionManager.getUrlLocationCode() != 1086))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Modules.CITIZEN_CHARTER,"true")))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.CITIZEN_CHARTER,"true"))
+                    && disabledModules!=null && !disabledModules.isCitizenCharterDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Modules.SOS,"true")))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.SOS,"true"))
+                    && disabledModules!=null && !disabledModules.isSOSDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_call_black_36dp, getString(R.string.sos_label),(getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Modules.SLA,"true")))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.SLA,"true"))
+                    && disabledModules!=null && !disabledModules.isSLADisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_access_time_white_36dp, getString(R.string.sla_label),(getString(R.string.sla_label).equals(mActionBarTitle)), R.color.sla_color));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Modules.ABOUT_US,"true")))
+            if(Boolean.valueOf((String)configManager.get(Config.Modules.ABOUT_US,"true"))
+                    && disabledModules!=null && !disabledModules.isAboutUsDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_info_black_24dp, getString(R.string.aboutus_label),(getString(R.string.aboutus_label).equals(mActionBarTitle)), R.color.aboutus_color));
             }

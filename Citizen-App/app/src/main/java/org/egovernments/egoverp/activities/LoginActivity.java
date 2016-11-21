@@ -74,6 +74,7 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
@@ -90,6 +91,8 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
 /**
  * The login screen activity
@@ -141,6 +144,8 @@ public class LoginActivity extends Activity {
 
         //Checks if session manager believes that the user is logged in.
         if (sessionManager.isLoggedIn()) {
+
+            sessionManager.setAppVersionCode(AppUtils.getAppVersionCode(LoginActivity.this));
             //If user is logged in and has a stored access token, immediately login user
             if (sessionManager.getAccessToken() != (null)) {
                 //Start fetching data from server
@@ -219,14 +224,16 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if (configManager.getString("api.multicities").equals("true"))
+                if (configManager.getString(API_MULTICITIES).equals("true"))
                 {
                     City selectedCity=getCityByName(cityAutocompleteTextBox.getText().toString());
                     if(!isValidDistrictAndMunicipality(selectedCity))
                     {
                         return;
                     }
-                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+
+                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
+                            selectedCity.getCityCode(), selectedCity.getModules()!=null?selectedCity.getModules().toString():null);
                 }
 
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
@@ -326,8 +333,10 @@ public class LoginActivity extends Activity {
                     return;
                 }
 
-                if (configManager.getString("api.multicities").equals("true"))
-                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(), selectedCity.getCityCode());
+
+                if (configManager.getString(API_MULTICITIES).equals("true"))
+                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
+                            selectedCity.getCityCode(), selectedCity.getModules()!=null?selectedCity.getModules().toString():null);
 
                 showLoginProgress();
 
@@ -416,7 +425,7 @@ public class LoginActivity extends Activity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(configManager.getString("api.multipleCitiesUrl"));
+        districtsList = ApiController.getAllCitiesURLs(configManager.getString(Config.API_MULTIPLE_CITIES_URL));
 
         if (districtsList != null) {
 
@@ -573,7 +582,7 @@ public class LoginActivity extends Activity {
 
     public boolean isValidDistrictAndMunicipality(City selectedCity)
     {
-        if (selectedCity == null && configManager.getString("api.multicities").equals("true")) {
+        if (selectedCity == null && configManager.getString(API_MULTICITIES).equals("true")) {
 
             String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
             showToastMsg(errorMsg);
@@ -636,7 +645,7 @@ public class LoginActivity extends Activity {
     {
         try {
 
-            if (configManager.getString("api.multicities").equals("false")) {
+            if (configManager.getString(API_MULTICITIES).equals("false")) {
                 hideMultiCityComponents();
             } else {
                 loadDistrictDropdown();

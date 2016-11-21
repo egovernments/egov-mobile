@@ -56,6 +56,8 @@ import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 
+import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
+
 public class WaterChargesSearchActivity extends BaseActivity implements View.OnClickListener {
 
     EditText etAssessmentNo;
@@ -108,7 +110,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
             openSearchResult.putExtra(PARAM_WATER_CON_SEARCH_REQUEST, new WaterConnectionSearchRequest(sessionManager.getUrlLocationCode(),
                     etAssessmentNo.getText().toString(),etConsumerNo.getText().toString(), etOwnerName.getText().toString(),etMobileNo.getText().toString()));
             openSearchResult.putExtra(PARAM_IS_WATER_CON_SEARCH, true);
-            openSearchResult.putExtra(SearchResultActivity.REFERER_IP_CONFIG_KEY, configManager.getString(SearchResultActivity.REFERER_IP_CONFIG_KEY));
+            openSearchResult.putExtra(REFERER_IP_CONFIG_KEY, configManager.getString(REFERER_IP_CONFIG_KEY));
             startActivity(openSearchResult);
         }
         else
