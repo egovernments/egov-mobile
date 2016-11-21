@@ -107,6 +107,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
+import static org.egovernments.egoverp.config.Config.API_MULTIPLE_CITIES_URL;
 
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends AppCompatActivity {
@@ -394,7 +395,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(configManager.getString(API_MULTICITIES));
+        districtsList = ApiController.getAllCitiesURLs(configManager.getString(API_MULTIPLE_CITIES_URL));
 
         if (districtsList != null) {
 

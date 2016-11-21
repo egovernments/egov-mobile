@@ -57,6 +57,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -430,13 +431,7 @@ public class BaseActivity extends AppCompatActivity {
                 if(progressDialog.isShowing())
                 progressDialog.dismiss();
 
-                sessionManager.logoutUser();
-
-                ApiController.apiInterface = null;
-
-                Intent intent = new Intent(BaseActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+                Toast.makeText(BaseActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -462,50 +457,35 @@ public class BaseActivity extends AppCompatActivity {
 
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.PROPERTY_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isPropertyTaxDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && disabledModules!=null && !disabledModules.isPropertyTaxDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
             }
 
             //check for vacant land tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.VACANT_LAND_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isVacantLandTaxDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && disabledModules!=null && !disabledModules.isVacantLandTaxDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.WATER_CHARGE,"true"))
-                    && disabledModules!=null && !disabledModules.isWaterChargeDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && disabledModules!=null && !disabledModules.isWaterChargeDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }
 
             //check for building plan module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPA,"true"))
-                    && disabledModules!=null && !disabledModules.isBPADisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && disabledModules!=null && !disabledModules.isBPADisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             //check for building plan module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPS,"true"))
-                    && disabledModules!=null && !disabledModules.isBPSDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && disabledModules!=null && !disabledModules.isBPSDisable())
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
             }
