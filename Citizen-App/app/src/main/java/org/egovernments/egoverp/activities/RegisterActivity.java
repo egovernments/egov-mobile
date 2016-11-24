@@ -56,6 +56,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -64,6 +65,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.transition.Slide;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -73,7 +75,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -158,6 +159,10 @@ public class RegisterActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setupWindowAnimations();
         }
 
         spinnerCity = (Spinner) findViewById(R.id.signup_city);
@@ -378,7 +383,7 @@ public class RegisterActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        ((LinearLayout)findViewById(R.id.multicityoptions)).setVisibility(View.GONE);
+                        findViewById(R.id.multicityoptions).setVisibility(View.GONE);
                         municipalityInfo.setVisibility(View.GONE);
                         nameInputLayout.setBackgroundResource(R.drawable.top_edittext);
                         isMultiCity=false;
@@ -747,6 +752,14 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setupWindowAnimations() {
+        Slide enterTransition = new Slide();
+        enterTransition.setDuration(getResources().getInteger(R.integer.anim_duration_long));
+        enterTransition.setSlideEdge(Gravity.BOTTOM);
+        getWindow().setEnterTransition(enterTransition);
     }
 
 }

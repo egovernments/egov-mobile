@@ -42,11 +42,18 @@
 
 package org.egovernments.egoverp.helper;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -192,6 +199,13 @@ public class AppUtils {
             return activeNetwork != null;
         }
         return false;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static Bundle getTransitionBundle(Activity activity, Intent i) {
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity, true);
+        ActivityOptionsCompat transitionActivityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        return transitionActivityOptions.toBundle();
     }
 
 }

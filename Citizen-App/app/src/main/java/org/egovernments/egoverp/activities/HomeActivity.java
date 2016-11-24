@@ -46,12 +46,16 @@ package org.egovernments.egoverp.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.transition.Slide;
+import android.view.Gravity;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -79,6 +83,10 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_home);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setupWindowAnimations();
+        }
 
         if(!sessionManager.isTermsAgreed())
         {
@@ -137,9 +145,9 @@ public class HomeActivity extends BaseActivity {
 
             //check for pgr module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.PGR,"true"))
-                    && disabledModules!=null && !disabledModules.isPgrDisable())
+                    && (disabledModules == null || !disabledModules.isPgrDisable()))
             {
-                HomeItem grievanceItem=new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp, 
+                HomeItem grievanceItem = new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp,
                         "File grievances or review and update previously filed grievances", ContextCompat.getColor(HomeActivity.this, R.color.grievance_color));
                 //grievanceItem.setGrievanceItem(true);
                 homeItemList.add(grievanceItem);
@@ -147,10 +155,7 @@ public class HomeActivity extends BaseActivity {
 
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.PROPERTY_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isPropertyTaxDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)
-                    && (sessionManager.getUrlLocationCode() != 1073)
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && (disabledModules == null || !disabledModules.isPropertyTaxDisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertytax_label2), R.drawable.ic_business_black_36dp,
                         "View property tax details for an assessment number", ContextCompat.getColor(HomeActivity.this, R.color.propertytax_color)));
@@ -158,9 +163,7 @@ public class HomeActivity extends BaseActivity {
 
             //check for vacant land tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.VACANT_LAND_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isVacantLandTaxDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && (disabledModules == null || !disabledModules.isVacantLandTaxDisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), getString(R.string.vacantlandtax_label2), R.drawable.ic_vacant_land_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.vacand_land_color)));
@@ -168,9 +171,7 @@ public class HomeActivity extends BaseActivity {
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.WATER_CHARGE,"true") )
-                    && disabledModules!=null && !disabledModules.isWaterChargeDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && (disabledModules == null || !disabledModules.isWaterChargeDisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.watertax_label), getString(R.string.watertax_label2), R.drawable.ic_water_tab_black_36dp,
                         "View water tax details for a consumer code", ContextCompat.getColor(HomeActivity.this, R.color.watertax_color)));
@@ -178,18 +179,14 @@ public class HomeActivity extends BaseActivity {
 
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPA,"true"))
-                    && disabledModules!=null && !disabledModules.isBPADisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && (disabledModules == null || !disabledModules.isBPADisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2),
                         R.drawable.ic_town_plan_36dp, "", ContextCompat.getColor(HomeActivity.this, R.color.bpacolor)));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPS,"true"))
-                    && disabledModules!=null && !disabledModules.isBPSDisable()
-                    && (sessionManager.getUrlLocationCode() != 1021)  && (sessionManager.getUrlLocationCode() != 1073) 
-                    && (sessionManager.getUrlLocationCode() != 1086))
+                    && (disabledModules == null || !disabledModules.isBPSDisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.bpcolor)));
@@ -202,30 +199,30 @@ public class HomeActivity extends BaseActivity {
             }*/
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.CITIZEN_CHARTER,"true"))
-                    && disabledModules!=null && !disabledModules.isCitizenCharterDisable())
+                    && (disabledModules == null || !disabledModules.isCitizenCharterDisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.citizen_charter_color)));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.SOS,"true"))
-                    && disabledModules!=null && !disabledModules.isSOSDisable())
+                    && (disabledModules == null || !disabledModules.isSOSDisable()))
             {
-                homeItemList.add(new HomeItem(getString(R.string.sos_label),getString(R.string.sos_label2), R.drawable.ic_call_black_36dp, 
+                homeItemList.add(new HomeItem(getString(R.string.sos_label), getString(R.string.sos_label2), R.drawable.ic_call_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.sos_color)));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.SLA,"true"))
-                    && disabledModules!=null && !disabledModules.isSLADisable())
+                    && (disabledModules == null || !disabledModules.isSLADisable()))
             {
                 homeItemList.add(new HomeItem(getString(R.string.sla_label),getString(R.string.sla_label2), R.drawable.ic_access_time_white_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.sla_color)));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.ABOUT_US,"true"))
-                    && disabledModules!=null && !disabledModules.isAboutUsDisable())
+                    && (disabledModules == null || !disabledModules.isAboutUsDisable()))
             {
-                homeItemList.add(new HomeItem(getString(R.string.aboutus_label),getString(R.string.aboutus_label2), R.drawable.ic_info_black_36dp, 
+                homeItemList.add(new HomeItem(getString(R.string.aboutus_label), getString(R.string.aboutus_label2), R.drawable.ic_info_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.aboutus_color)));
             }
 
@@ -289,4 +286,14 @@ public class HomeActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         recreate();
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setupWindowAnimations() {
+        Slide enterTransition = new Slide();
+        enterTransition.setDuration(getResources().getInteger(R.integer.anim_duration_long));
+        enterTransition.setSlideEdge(Gravity.BOTTOM);
+        getWindow().setEnterTransition(enterTransition);
+    }
+
 }

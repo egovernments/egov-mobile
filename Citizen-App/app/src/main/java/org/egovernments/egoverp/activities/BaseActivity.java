@@ -449,67 +449,67 @@ public class BaseActivity extends AppCompatActivity {
             arrayList.add(new NavigationItem(R.drawable.ic_home_black_24dp, getString(R.string.home_label), (getString(R.string.home_label).equals(mActionBarTitle)), R.color.home_color));
 
             //check for pgr module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.PGR,"true")) && disabledModules!=null
-                    && !disabledModules.isPgrDisable())
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.PGR, "true"))
+                    && (disabledModules == null || !disabledModules.isPgrDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_archive_black_24dp, getString(R.string.grievances_label), (getString(R.string.grievances_label).equals(mActionBarTitle)), R.color.grievance_color));
             }
 
             //check for property tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.PROPERTY_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isPropertyTaxDisable())
+                    && (disabledModules == null || !disabledModules.isPropertyTaxDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_business_black_24dp, getString(R.string.propertytax_label), (getString(R.string.propertytax_label).equals(mActionBarTitle)), R.color.propertytax_color));
             }
 
             //check for vacant land tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.VACANT_LAND_TAX,"true"))
-                    && disabledModules!=null && !disabledModules.isVacantLandTaxDisable())
+                    && (disabledModules == null || !disabledModules.isVacantLandTaxDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_vacant_land_36dp, getString(R.string.vacantlandtax_label), (getString(R.string.vacantlandtax_label).equals(mActionBarTitle)), R.color.vacand_land_color));
             }
 
             //check for water tax module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.WATER_CHARGE,"true"))
-                    && disabledModules!=null && !disabledModules.isWaterChargeDisable())
+                    && (disabledModules == null || !disabledModules.isWaterChargeDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_water_tab_black_24dp, getString(R.string.watertax_label), (getString(R.string.watertax_label).equals(mActionBarTitle)), R.color.watertax_color));
             }
 
             //check for building plan module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPA,"true"))
-                    && disabledModules!=null && !disabledModules.isBPADisable())
+                    && (disabledModules == null || !disabledModules.isBPADisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_town_plan_36dp, getString(R.string.building_plan_label), (getString(R.string.building_plan_label).equals(mActionBarTitle)), R.color.bpacolor));
             }
 
             //check for building plan module enabled or not
             if(Boolean.valueOf((String)configManager.get(Config.Modules.BPS,"true"))
-                    && disabledModules!=null && !disabledModules.isBPSDisable())
+                    && (disabledModules == null || !disabledModules.isBPSDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_location_city_black_36dp, getString(R.string.building_penalization_label), (getString(R.string.building_penalization_label).equals(mActionBarTitle)), R.color.bpcolor));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.CITIZEN_CHARTER,"true"))
-                    && disabledModules!=null && !disabledModules.isCitizenCharterDisable())
+                    && (disabledModules == null || !disabledModules.isCitizenCharterDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_grid_on_black_24dp, getString(R.string.citizen_charter_label), (getString(R.string.citizen_charter_label).equals(mActionBarTitle)), R.color.citizen_charter_color));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.SOS,"true"))
-                    && disabledModules!=null && !disabledModules.isSOSDisable())
+                    && (disabledModules == null || !disabledModules.isSOSDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_call_black_36dp, getString(R.string.sos_label),(getString(R.string.sos_label).equals(mActionBarTitle)), R.color.sos_color));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.SLA,"true"))
-                    && disabledModules!=null && !disabledModules.isSLADisable())
+                    && (disabledModules == null || !disabledModules.isSLADisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_access_time_white_36dp, getString(R.string.sla_label),(getString(R.string.sla_label).equals(mActionBarTitle)), R.color.sla_color));
             }
 
             if(Boolean.valueOf((String)configManager.get(Config.Modules.ABOUT_US,"true"))
-                    && disabledModules!=null && !disabledModules.isAboutUsDisable())
+                    && (disabledModules == null || !disabledModules.isAboutUsDisable()))
             {
                 arrayList.add(new NavigationItem(R.drawable.ic_info_black_24dp, getString(R.string.aboutus_label),(getString(R.string.aboutus_label).equals(mActionBarTitle)), R.color.aboutus_color));
             }

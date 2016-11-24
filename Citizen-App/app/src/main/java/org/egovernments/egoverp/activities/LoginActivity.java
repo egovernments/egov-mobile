@@ -144,13 +144,13 @@ public class LoginActivity extends Activity {
 
         //Checks if session manager believes that the user is logged in.
         if (sessionManager.isLoggedIn()) {
-
             sessionManager.setAppVersionCode(AppUtils.getAppVersionCode(LoginActivity.this));
             //If user is logged in and has a stored access token, immediately login user
             if (sessionManager.getAccessToken() != (null)) {
                 //Start fetching data from server
                 startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE));
-                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivityAnimation(intent, true);
                 finish();
             } else {
                 showToastMsg("Session expired!");
@@ -244,7 +244,8 @@ public class LoginActivity extends Activity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivityAnimation(intent, true);
             }
         });
 
@@ -349,7 +350,10 @@ public class LoginActivity extends Activity {
                                 AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
                                 jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                         startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
-                        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivityAnimation(intent, true);
+
                         finish();
 
                     }
@@ -389,6 +393,13 @@ public class LoginActivity extends Activity {
 
             }
 
+    }
+
+    private void startActivityAnimation(Intent intent, Boolean withAnimation) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && withAnimation)
+            startActivity(intent, AppUtils.getTransitionBundle(LoginActivity.this, intent));
+        else
+            startActivity(intent);
     }
 
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
