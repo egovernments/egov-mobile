@@ -48,7 +48,6 @@
     <color name="blackOverlay">#BF000000</color>
     <color name="dataLabelColor">#424242</color>
     <color name="primaryText">#212121</color>
-    <color name="secondaryText">#727272</color>
     <color name="dividerColor">#757575</color>
     <color name="imageBackground">#ffd6d7d7</color>
     <color name="dividercolor">#1f000000</color>
@@ -57,7 +56,6 @@
     <color name="red">#F44336</color>
     <color name="blue">#1083c2</color>
     <color name="navhighlight">#E8E8E8</color>
-    <color name="navheaderbg">#3b3b3b</color>
 
     <color name="home_color">#899BA6</color>
     <color name="grievance_color">#F85555</color>
@@ -70,8 +68,6 @@
     <color name="sla_color">#B32356</color>
     <color name="bpacolor">#795548</color>
     <color name="bpcolor">#FF8A65</color>
-    <color name="birthdeathcolor">#607D8B</color>
     <color name="profile_color">#899BA6</color>
     <color name="logout_color">#899BA6</color>
-    <color name="file_item_bg">#E0E0E0</color>
 </resources>
