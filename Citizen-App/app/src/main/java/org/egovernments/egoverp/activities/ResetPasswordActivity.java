@@ -52,58 +52,48 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.config.Config;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.PasswordLevel;
 import org.egovernments.egoverp.listeners.SMSListener;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
-public class ResetPasswordActivity extends AppCompatActivity {
+public class ResetPasswordActivity extends BaseActivity {
 
     public static String MESSAGE_SENT_TO="messageSentTo";
-    public static String OTP_BROADCAST_LISTENER="OTP_Broadcast_Listener";
 
     EditText etOtp, etNewPwd, etConfirmPwd;
     String mobileNo;
-    private ConfigManager configManager;
-    SessionManager sessionManager;
     FloatingActionButton fab;
     ProgressBar progressBar;
     Button btnResendOTP;
     TextView tvCountDown;
     CountDownTimer countDownTimer;
+    private ConfigManager configManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reset_password);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentViewWithNavBar(R.layout.activity_reset_password, false);
+
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
@@ -134,7 +124,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         tvResetPws.setText(recoveryMessage);
 
-        sessionManager = new SessionManager(getApplicationContext());
 
         etOtp=(EditText)findViewById(R.id.etOTP);
         etNewPwd=(EditText)findViewById(R.id.etNewPassword);
@@ -146,7 +135,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    resetPassword(v);
+                    resetPassword();
                 }
             });
         }
@@ -188,31 +177,29 @@ public class ResetPasswordActivity extends AppCompatActivity {
         progressDialog.setMessage("Resending OTP...");
         progressDialog.show();
 
-        ApiController.resetAndGetAPI(ResetPasswordActivity.this).recoverPassword(mobileNo, sessionManager.getBaseURL(), new Callback<JsonObject>() {
+
+        Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
+                sessionManager.getBaseURL(), this).recoverPassword(mobileNo, sessionManager.getBaseURL());
+
+        recoverPasswordCall.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
-            public void success(JsonObject resp, Response response) {
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    JsonObject resp = response.body();
+                    String message = resp.get("status").getAsJsonObject().get("message").getAsString();
 
-                String message=resp.get("status").getAsJsonObject().get("message").getAsString();
-                Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
-                progressDialog.dismiss();
+                    showSnackBar(message);
+                    progressDialog.dismiss();
 
-                long millis = System.currentTimeMillis();
-                sessionManager.setForgotPasswordTime(millis);
-                sessionManager.setResetPasswordLastMobileNo(mobileNo);
-                startCountDown();
-
+                    long millis = System.currentTimeMillis();
+                    sessionManager.setForgotPasswordTime(millis);
+                    sessionManager.setResetPasswordLastMobileNo(mobileNo);
+                    startCountDown();
+                }
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (error != null) {
-                    if (error.getLocalizedMessage() != null) {
-                        Toast toast = Toast.makeText(ResetPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                }
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 progressDialog.dismiss();
             }
         });
@@ -237,11 +224,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                 public void onTick(long millisUntilFinished) {
 
-                    long millis = millisUntilFinished;
-
-                    String msText = String.format("%02dm %02ds",
-                            (TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis))),
-                            (TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))));
+                    String msText = String.format(Locale.getDefault(), "%02dm %02ds",
+                            (TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished))),
+                            (TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
 
                     msText = msText.replace("-", "");
 
@@ -251,7 +236,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
                 public void onFinish() {
                     tvCountDown.setText(R.string.otp_exipry_message);
-                    sessionManager.setForgotPasswordTime(0l);
+                    sessionManager.setForgotPasswordTime(0L);
 
                 }
 
@@ -259,62 +244,56 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
         else {
             tvCountDown.setText(R.string.otp_exipry_message);
-            sessionManager.setForgotPasswordTime(0l);
+            sessionManager.setForgotPasswordTime(0L);
         }
     }
 
-    private void resetPassword(final View view)
+    private void resetPassword()
     {
         if(TextUtils.isEmpty(etOtp.getText()))
         {
-            Snackbar.make(view, "Please enter the otp code", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
+            showSnackBar("Please enter the otp code");
         }
         else if(TextUtils.isEmpty(etNewPwd.getText()))
         {
-            Snackbar.make(view, "Please enter the new password", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
+            showSnackBar("Please enter the new password");
         }
         else if(!etNewPwd.getText().toString().equals(etConfirmPwd.getText().toString()))
         {
-            Snackbar.make(view, "Password doesn't match", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
+            showSnackBar("Password doesn't match");
         }
         else if (!AppUtils.isValidPassword(etNewPwd.getText().toString(), configManager)) {
-            Toast.makeText(ResetPasswordActivity.this, getPasswordConstraintInformation(), Toast.LENGTH_SHORT).show();
-        }
-        else
+            showSnackBar(getPasswordConstraintInformation());
+        } else if (validateInternetConnection())
         {
 
             fab.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
 
-            ApiController.resetAndGetAPI(ResetPasswordActivity.this).resetPassword(mobileNo, etOtp.getText().toString(), etNewPwd.getText().toString(), etConfirmPwd.getText().toString(), new Callback<JsonObject>() {
+            Call<JsonObject> recoverPassword = ApiController.getRetrofit2API(ResetPasswordActivity.this,
+                    sessionManager.getBaseURL(), this).resetPassword(mobileNo, etOtp.getText().toString(),
+                    etNewPwd.getText().toString(), etConfirmPwd.getText().toString());
+
+            recoverPassword.enqueue(new retrofit2.Callback<JsonObject>() {
                 @Override
-                public void success(JsonObject resp, Response response) {
+                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
-                    sessionManager.setForgotPasswordTime(0l);
-                    sessionManager.setResetPasswordLastMobileNo("");
+                    if (response.isSuccessful()) {
+                        sessionManager.setForgotPasswordTime(0L);
+                        sessionManager.setResetPasswordLastMobileNo("");
 
-                    String message=resp.get("status").getAsJsonObject().get("message").getAsString();
-                    Toast toast = Toast.makeText(getApplicationContext(), "Your password successfully changed, Please login now", Toast.LENGTH_LONG);
-                    toast.show();
-
-                    startActivity(new Intent(ResetPasswordActivity.this, LoginActivity.class));
-                    finish();
+                        Intent openLoginScreen = new Intent(ResetPasswordActivity.this, LoginActivity.class);
+                        openLoginScreen.putExtra(LoginActivity.STARTUP_MESSAGE, "Your password successfully changed, Please login now");
+                        startActivity(openLoginScreen);
+                        finish();
+                    }
 
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
+                public void onFailure(Call<JsonObject> call, Throwable t) {
                     fab.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.INVISIBLE);
-                    if (error != null) {
-                        if (error.getLocalizedMessage() != null) {
-                            Snackbar.make(view, error.getLocalizedMessage(), Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-                    }
                 }
             });
 

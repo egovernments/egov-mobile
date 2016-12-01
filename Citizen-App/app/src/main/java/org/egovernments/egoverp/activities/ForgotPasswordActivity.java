@@ -50,47 +50,38 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.IntentCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.config.SessionManager;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * The password recovery screen activity
  **/
 
-public class ForgotPasswordActivity extends AppCompatActivity {
-
-    private String phone;
-    private ProgressBar progressBar;
-
-    private FloatingActionButton sendButton;
-    private com.melnykov.fab.FloatingActionButton sendButtonCompat;
+public class ForgotPasswordActivity extends BaseActivity {
 
     EditText phone_edittext;
-
-    private SessionManager sessionManager;
+    private String phone;
+    private ProgressBar progressBar;
+    private FloatingActionButton sendButton;
+    private com.melnykov.fab.FloatingActionButton sendButtonCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgotpassword);
+
+        setContentViewWithNavBar(R.layout.activity_forgotpassword, false);
 
         progressBar = (ProgressBar) findViewById(R.id.forgotprogressBar);
 
@@ -101,8 +92,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        sessionManager = new SessionManager(getApplicationContext());
 
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
         sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
@@ -128,25 +117,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 phone = phone_edittext.getText().toString().trim();
-                progressBar.setVisibility(View.VISIBLE);
-                sendButton.setVisibility(View.GONE);
-                sendButtonCompat.setVisibility(View.GONE);
                 submit(phone);
-
-
             }
         };
 
         if (Build.VERSION.SDK_INT >= 21)
-
         {
-
             sendButton.setOnClickListener(onClickListener);
-
         } else
-
         {
             sendButtonCompat.setVisibility(View.VISIBLE);
             sendButton.setVisibility(View.GONE);
@@ -159,9 +138,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void submit(final String phone) {
 
         if (TextUtils.isEmpty(phone)) {
-            Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.forgot_password_prompt, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
+            showSnackBar(R.string.forgot_password_prompt);
             progressBar.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= 21) {
                 sendButton.setVisibility(View.VISIBLE);
@@ -170,57 +147,50 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
 
         } else if (phone.length() != 10) {
-            Toast toast = Toast.makeText(ForgotPasswordActivity.this, R.string.mobilenumber_length_prompt, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
+            showSnackBar(R.string.mobilenumber_length_prompt);
             progressBar.setVisibility(View.GONE);
             if (Build.VERSION.SDK_INT >= 21) {
                 sendButton.setVisibility(View.VISIBLE);
             } else {
                 sendButtonCompat.setVisibility(View.VISIBLE);
             }
-        } else {
+        } else if (validateInternetConnection()) {
 
+            progressBar.setVisibility(View.VISIBLE);
+            sendButton.setVisibility(View.GONE);
+            sendButtonCompat.setVisibility(View.GONE);
 
+            Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
+                    sessionManager.getBaseURL(), this).recoverPassword(phone, sessionManager.getBaseURL());
 
-            ApiController.resetAndGetAPI(ForgotPasswordActivity.this).recoverPassword(phone, sessionManager.getBaseURL(), new Callback<JsonObject>() {
+            recoverPasswordCall.enqueue(new retrofit2.Callback<JsonObject>() {
                 @Override
-                public void success(JsonObject resp, Response response) {
+                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
-                    String message=resp.get("status").getAsJsonObject().get("message").getAsString();
+                    if (response.isSuccessful()) {
 
-                    Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
+                        progressBar.setVisibility(View.GONE);
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            sendButton.setVisibility(View.VISIBLE);
+                        } else {
+                            sendButtonCompat.setVisibility(View.VISIBLE);
+                        }
 
-                    progressBar.setVisibility(View.GONE);
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        sendButton.setVisibility(View.VISIBLE);
-                    } else {
-                        sendButtonCompat.setVisibility(View.VISIBLE);
+
+                        long millis = System.currentTimeMillis();
+
+                        sessionManager.setForgotPasswordTime(millis);
+                        sessionManager.setResetPasswordLastMobileNo(phone);
+
+                        Intent resetPasswordActivity = new Intent(getApplicationContext(), ResetPasswordActivity.class);
+                        resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, phone_edittext.getText().toString());
+                        resetPasswordActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(resetPasswordActivity);
                     }
-
-
-                    long millis = System.currentTimeMillis();
-
-                    sessionManager.setForgotPasswordTime(millis);
-                    sessionManager.setResetPasswordLastMobileNo(phone);
-
-                    Intent resetPasswordActivity=new Intent(getApplicationContext(), ResetPasswordActivity.class);
-                    resetPasswordActivity.putExtra(ResetPasswordActivity.MESSAGE_SENT_TO, phone_edittext.getText().toString());
-                    resetPasswordActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(resetPasswordActivity);
-
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    if (error != null) {
-                        if (error.getLocalizedMessage() != null) {
-                            Toast toast = Toast.makeText(ForgotPasswordActivity.this, error.getLocalizedMessage(), Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                    }
+                public void onFailure(Call<JsonObject> call, Throwable t) {
 
                     progressBar.setVisibility(View.GONE);
                     if (Build.VERSION.SDK_INT >= 21) {
@@ -228,7 +198,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     } else {
                         sendButtonCompat.setVisibility(View.VISIBLE);
                     }
-
                 }
             });
 

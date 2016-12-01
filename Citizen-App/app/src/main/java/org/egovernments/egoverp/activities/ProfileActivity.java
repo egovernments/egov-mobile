@@ -75,19 +75,16 @@ import de.greenrobot.event.EventBus;
 public class ProfileActivity extends BaseActivity {
 
     public static Profile profile = null;
-
-    private ProgressBar progressBar;
-
-    //private ProgressDialog progressDialog;
-
     public static boolean isUpdateFailed = false;
 
+    //private ProgressDialog progressDialog;
     private final int ACTION_UPDATE_REQUIRED = 111;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentViewWithNavBar(R.layout.activity_profile, true);
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
         progressDialog=new ProgressDialog(ProfileActivity.this);

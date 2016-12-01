@@ -48,7 +48,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -68,11 +67,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.IntentCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -98,8 +94,6 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.api.CustomErrorHandler;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
@@ -111,79 +105,57 @@ import org.egovernments.egoverp.models.GrievanceRequest;
 import org.egovernments.egoverp.models.GrievanceType;
 import org.egovernments.egoverp.models.GrievanceTypeAPIResponse;
 import org.egovernments.egoverp.models.GrievanceTypeCategory;
-import org.egovernments.egoverp.models.errors.ErrorResponse;
 import org.egovernments.egoverp.services.AddressService;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.mime.MultipartTypedOutput;
-import retrofit.mime.TypedFile;
-import retrofit.mime.TypedString;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 
 /**
  * The Grievance creation page activity
  **/
 //TODO frequent types
 
-public class NewGrievanceActivity extends AppCompatActivity {
-
-    private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
-    private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
-    private List<String> grievanceTypes = new ArrayList<>(); //stores grievance types string for adapter
-    private List<String> grievanceTypeCategories = new ArrayList<>(); //stores grievance categories string for adapter
-
-    private ProgressDialog progressDialog;
-
-    private Dialog imagePickerDialog;
-
-    private AutoCompleteTextView autoCompleteComplaintLoc;
-
-    private CustomAutoCompleteTextView autocompleteComplaintType;
-    private CustomAutoCompleteTextView autoCompleteComplaintCategory;
-
-    private SessionManager sessionManager;
-
-    private List<GrievanceLocation> grievanceLocations;
-
-    private int locationID = 0;
-    int complaintTypeID;
-    private LatLng complaintLocLatLng;
-
-    private EditText landmark;
-    private EditText details;
+public class NewGrievanceActivity extends BaseActivity {
 
     //Codes used to start image picker tasks
     private static final int CAMERA_PHOTO = 111;
     private static final int GALLERY_PHOTO = 222;
-
-    private int uploadCount = 0;
-
-    //Used as to maintain unique image IDs
-    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
-
-    private ArrayList<Uri> uriArrayList = new ArrayList<>();
-
-    private ViewPager viewPager;
-
-    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
-
-    private File cacheDir;
-
     final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
     final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
     final private int REQUEST_CODE_ASK_COMPLAINT_LOCATION = 777;
-
+    int complaintTypeID;
     ImageView imgMapPick;
     ImageView imgClear;
-
+    private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
+    private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
+    private List<String> grievanceTypes = new ArrayList<>(); //stores grievance types string for adapter
+    private List<String> grievanceTypeCategories = new ArrayList<>(); //stores grievance categories string for adapter
+    private Dialog imagePickerDialog;
+    private AutoCompleteTextView autoCompleteComplaintLoc;
+    private CustomAutoCompleteTextView autocompleteComplaintType;
+    private CustomAutoCompleteTextView autoCompleteComplaintCategory;
+    private List<GrievanceLocation> grievanceLocations;
+    private int locationID = 0;
+    private LatLng complaintLocLatLng;
+    private EditText landmark;
+    private EditText details;
+    private int uploadCount = 0;
+    //Used as to maintain unique image IDs
+    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
+    private ArrayList<Uri> uriArrayList = new ArrayList<>();
+    private ViewPager viewPager;
+    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
+    private File cacheDir;
     private boolean isPickedLocationFromMap=false;
 
     @Override
@@ -192,11 +164,6 @@ public class NewGrievanceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_grievance);
 
-        sessionManager = new SessionManager(getApplicationContext());
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -204,21 +171,13 @@ public class NewGrievanceActivity extends AppCompatActivity {
 
         final FloatingActionButton pictureFab = (FloatingActionButton) findViewById(R.id.picture_add);
 
-        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing request");
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setCancelable(false);
-
         autocompleteComplaintType = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintType);
         autoCompleteComplaintCategory = (CustomAutoCompleteTextView) findViewById(R.id.autoCompleteComplaintCategory);
 
         autocompleteComplaintType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Fetching type list, please wait", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
+                showSnackBar("Fetching type list, please wait");
             }
         });
 
@@ -269,97 +228,21 @@ public class NewGrievanceActivity extends AppCompatActivity {
         if(autoCompleteComplaintLoc!=null)
         autoCompleteComplaintLoc.setThreshold(3);
         autoCompleteComplaintLoc.addTextChangedListener(new TextWatcher() {
-                                                            @Override
-                                                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                                                            }
+            }
 
-                                                            //When 2 or more characters are entered, API is called to provide a matching location name
-                                                            @Override
-                                                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                loadComplaintLocationSuggestion(s);
+            }
 
+            @Override
+            public void afterTextChanged(Editable s) {
 
-                                                                if (autoCompleteComplaintLoc.getText().toString().length() > 0) {
-                                                                    imgClear.setVisibility(View.VISIBLE);
-                                                                } else {
-                                                                    imgClear.setVisibility(View.GONE);
-                                                                }
-
-                                                                //used to skip below statements when populate address from maps
-                                                                if (isPickedLocationFromMap) {
-                                                                    isPickedLocationFromMap = false;
-                                                                    locationID = 0;
-                                                                    autoCompleteComplaintLoc.setAdapter(null);
-                                                                    return;
-                                                                } else { //if any text change detected from autocomplete text
-                                                                    complaintLocLatLng=null;
-                                                                }
-
-                                                                if (s.length() >= 3) {
-
-                                                                    if (autoCompleteComplaintLoc.getAdapter() != null) {
-                                                                        int pos = ((NoFilterAdapter) autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(autoCompleteComplaintLoc.getText().toString());
-                                                                        if (pos >= 0) {
-                                                                            locationID = grievanceLocations.get(pos).getId();
-                                                                            return;
-                                                                        } else {
-                                                                            locationID = 0;
-                                                                        }
-                                                                    }
-
-                                                                    ApiController.getAPI(NewGrievanceActivity.this).getComplaintLocation(s.toString(), sessionManager.getAccessToken(), new Callback<GrievanceLocationAPIResponse>() {
-                                                                                @Override
-                                                                                public void success(GrievanceLocationAPIResponse grievanceLocationAPIResponse, Response response) {
-
-                                                                                    grievanceLocations = new ArrayList<>();
-                                                                                    grievanceLocations = grievanceLocationAPIResponse.getGrievanceLocation();
-
-                                                                                    ArrayList<String> strings = new ArrayList<>();
-                                                                                    try {
-                                                                                        for (int i = 0; i < grievanceLocations.size(); i++) {
-                                                                                            strings.add(grievanceLocations.get(i).getName());
-                                                                                        }
-                                                                                        NoFilterAdapter<String> adapter = new NoFilterAdapter<>(NewGrievanceActivity.this,
-                                                                                                android.R.layout.select_dialog_item, strings);
-                                                                                        autoCompleteComplaintLoc.setAdapter(adapter);
-
-                                                                                    } catch (Exception e) {
-                                                                                        e.printStackTrace();
-                                                                                    }
-                                                                                }
-
-                                                                                @Override
-                                                                                public void failure(RetrofitError error) {
-                                                                                    if (error.getLocalizedMessage() != null)
-                                                                                        if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                                                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this,  R.string.session_timeout, Toast.LENGTH_SHORT);
-                                                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                                                            toast.show();
-                                                                                            sessionManager.logoutUser();
-                                                                                            startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                                                                                        } else {
-                                                                                            Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                                                                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                                                            toast.show();
-                                                                                        }
-                                                                                    else {
-                                                                                        Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving location", Toast.LENGTH_SHORT);
-                                                                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                                                                        toast.show();
-                                                                                    }
-                                                                                }
-                                                                            }
-
-                                                                    );
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void afterTextChanged(Editable s) {
-                                                            }
-                                                        }
-
-        );
+            }
+        });
 
         autoCompleteComplaintLoc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -430,9 +313,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
 
                     imagePickerDialog.show();
                 } else {
-                    Toast toast = Toast.makeText(NewGrievanceActivity.this, "Limited to 3 image", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
+                    showSnackBar("Limited to 3 image");
                 }
 
             }
@@ -441,6 +322,72 @@ public class NewGrievanceActivity extends AppCompatActivity {
          if(pictureFab!=null)
          pictureFab.setOnClickListener(onClickListener);
 
+    }
+
+    private void loadComplaintLocationSuggestion(CharSequence s) {
+
+        if (autoCompleteComplaintLoc.getText().toString().length() > 0) {
+            imgClear.setVisibility(View.VISIBLE);
+        } else {
+            imgClear.setVisibility(View.GONE);
+        }
+
+        //used to skip below statements when populate address from maps
+        if (isPickedLocationFromMap) {
+            isPickedLocationFromMap = false;
+            locationID = 0;
+            autoCompleteComplaintLoc.setAdapter(null);
+            return;
+        } else { //if any text change detected from autocomplete text
+            complaintLocLatLng = null;
+        }
+
+        if (s.length() >= 3) {
+
+            if (autoCompleteComplaintLoc.getAdapter() != null) {
+                int pos = ((NoFilterAdapter) autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(autoCompleteComplaintLoc.getText().toString());
+                if (pos >= 0) {
+                    locationID = grievanceLocations.get(pos).getId();
+                    return;
+                } else {
+                    locationID = 0;
+                }
+            }
+
+            Call<GrievanceLocationAPIResponse> grievanceLocationAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                    .getComplaintLocation(s.toString(), sessionManager.getAccessToken());
+
+            grievanceLocationAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceLocationAPIResponse>() {
+                @Override
+                public void onResponse(Call<GrievanceLocationAPIResponse> call, retrofit2.Response<GrievanceLocationAPIResponse> response) {
+
+                    GrievanceLocationAPIResponse grievanceLocationAPIResponse = response.body();
+                    grievanceLocations = new ArrayList<>();
+                    grievanceLocations = grievanceLocationAPIResponse.getGrievanceLocation();
+
+                    ArrayList<String> strings = new ArrayList<>();
+                    try {
+
+                        for (int i = 0; i < grievanceLocations.size(); i++) {
+                            strings.add(grievanceLocations.get(i).getName());
+                        }
+                        NoFilterAdapter<String> adapter = new NoFilterAdapter<>(NewGrievanceActivity.this,
+                                android.R.layout.select_dialog_item, strings);
+                        autoCompleteComplaintLoc.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GrievanceLocationAPIResponse> call, Throwable t) {
+
+                }
+            });
+
+        }
     }
 
     @Override
@@ -459,7 +406,6 @@ public class NewGrievanceActivity extends AppCompatActivity {
         }
     }
 
-
     //validate and registerComplaint grievance
     public void validateAndSubmitGrievance()
     {
@@ -477,18 +423,12 @@ public class NewGrievanceActivity extends AppCompatActivity {
         }
 
         if (complaintTypeID == 0) {
-            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select complaint type", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
+            showSnackBar("Please select complaint type");
         }
         else if (locationID == 0 && (complaintLocLatLng == null)) {
-            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please select location on map or select a location from dropdown", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
+            showSnackBar("Please select location on map or select a location from dropdown");
         }else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
-            Toast toast = Toast.makeText(NewGrievanceActivity.this, "Please enter complaint details (at least 10 characters", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
+            showSnackBar("Please enter complaint details (at least 10 characters");
         } else {
             GrievanceRequest grievanceRequest;
             if (complaintLocLatLng != null) {
@@ -573,7 +513,7 @@ public class NewGrievanceActivity extends AppCompatActivity {
             }
             else if(resultCode == RESULT_CANCELED)
             {
-                Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
+                showSnackBar(R.string.complaint_location_message);
             }
 
         }
@@ -583,90 +523,43 @@ public class NewGrievanceActivity extends AppCompatActivity {
     //Invokes call to API
     private void registerComplaint(GrievanceRequest grievanceRequest) {
 
+        Map<String, RequestBody> formDatas = new HashMap<>();
+
         //Used to upload multiple multipart parts with the same field name
-        MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
-
-        multipartTypedOutput.addPart("json_complaint", new TypedString(new Gson().toJson(grievanceRequest)));
-
-        if (uploadCount != 0) {
-            for (Uri uri : uriArrayList) {
-
-                String mimeType = getMimeType(uri);
-
-                String path;
-
-                File imgFile = new File(uri.getPath());
-                path = uri.getPath();
-
-                if (!imgFile.exists()) {
-                    try {
-                        new File(UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this));
-                        path = UriPathHelper.getRealPathFromURI(uri, NewGrievanceActivity.this);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                path = ImageCompressionHelper.compressImage(path, path);
-
-                multipartTypedOutput.addPart("files", new TypedFile(mimeType, new File(path)));
-
-            }
-
+        for (Uri uploadDoc : uriArrayList) {
+            String mimeType = getMimeType(uploadDoc);
+            String path;
+            path = UriPathHelper.getRealPathFromURI(uploadDoc, getApplicationContext());
+            path = ImageCompressionHelper.compressImage(path, path);
+            File uploadFile = new File(path);
+            RequestBody fileBody = RequestBody.create(MediaType.parse(mimeType), new File(path));
+            formDatas.put("files\"; filename=\"" + uploadFile.getName(), fileBody);
         }
 
+        RequestBody complaintDetails = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(grievanceRequest));
 
-        ApiController.getAPI(NewGrievanceActivity.this).createComplaint(multipartTypedOutput, sessionManager.getAccessToken(), new Callback<JsonObject>() {
-            @Override
-            public void success(JsonObject jsonObject, Response response) {
+        formDatas.put("json_complaint", complaintDetails);
 
-                Toast toast = Toast.makeText(NewGrievanceActivity.this, "Grievance successfully registered", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
+        Call<JsonObject> createComplaintCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                .createComplaint(sessionManager.getAccessToken(), formDatas);
 
-                progressDialog.dismiss();
-
-                setResult(RESULT_OK, new Intent());
-                finish();
-
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-                progressDialog.dismiss();
-                if (error.getLocalizedMessage() != null)
-                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                        Toast toast = Toast.makeText(NewGrievanceActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                        sessionManager.logoutUser();
-                        startActivity(new Intent(NewGrievanceActivity.this, LoginActivity.class));
-                    } else if (error.getLocalizedMessage().contains("400")) {
-                        try {
-                            ErrorResponse errorResponse = (ErrorResponse) error.getBodyAs(ErrorResponse.class);
-                            Toast toast = Toast.makeText(NewGrievanceActivity.this, errorResponse.getErrorStatus().getMessage(), Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        } catch (Exception e) {
-                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-                    } else {
-                        Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                    }
-                else {
-                    Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
+        if (validateInternetConnection()) {
+            createComplaintCall.enqueue(new retrofit2.Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                    progressDialog.dismiss();
+                    Intent intent = new Intent();
+                    intent.putExtra(GrievanceActivity.RESULT_MESSAGE, "Grievance successfully registered");
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
 
-            }
-        });
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                }
+            });
+        }
 
     }
 
@@ -677,120 +570,90 @@ public class NewGrievanceActivity extends AppCompatActivity {
         setLoadingHintCustomAutoComplete(autocompleteComplaintType);
 
         //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
-        ApiController.getAPI(NewGrievanceActivity.this).getComplaintTypes(sessionManager.getAccessToken(), new Callback<GrievanceTypeAPIResponse>() {
-                    @Override
-                    public void success(GrievanceTypeAPIResponse grievanceTypeAPIResponse, Response response) {
+        Call<GrievanceTypeAPIResponse> grievanceTypeAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                .getComplaintCategoryAndTypes(sessionManager.getAccessToken());
 
-                        grievanceAllCategories=grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
-                        grievanceTypeCategories=new ArrayList<>();
-                        grievanceTypes=new ArrayList<>();
+        grievanceTypeAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceTypeAPIResponse>() {
+            @Override
+            public void onResponse(Call<GrievanceTypeAPIResponse> call, retrofit2.Response<GrievanceTypeAPIResponse> response) {
 
-                        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
-                        {
-                            grievanceTypeCategories.add(grievanceTypeCategory.getCategoryName());
-                            grievanceAllTypes.addAll(grievanceTypeCategory.getGrievanceTypes());
+                GrievanceTypeAPIResponse grievanceTypeAPIResponse = response.body();
+                grievanceAllCategories = grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
+                grievanceTypeCategories = new ArrayList<>();
+                grievanceTypes = new ArrayList<>();
 
-                            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
-                            {
-                                grievanceTypes.add(grievanceType.getName());
-                            }
-                        }
+                for (GrievanceTypeCategory grievanceTypeCategory : grievanceAllCategories) {
+                    grievanceTypeCategories.add(grievanceTypeCategory.getCategoryName());
+                    grievanceAllTypes.addAll(grievanceTypeCategory.getGrievanceTypes());
 
-                        final ArrayAdapter<String> adapterGrievanceCategories = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypeCategories);
-                        final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
-
-                        setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
-                        setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
-
-                        final Runnable nextFocusRunnable=new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshGrievanceTypeAutoComplete(true);
-                            }
-                        };
-
-                        final Handler focusOutHandler=new Handler();
-
-                        autoCompleteComplaintCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                            @Override
-                            public void onFocusChange(View v, boolean hasFocus) {
-                                if(!hasFocus)
-                                {
-                                    if(TextUtils.isEmpty(autoCompleteComplaintCategory.getText()))
-                                    {
-                                        focusOutHandler.postDelayed(nextFocusRunnable, 100);
-                                    }
-                                }
-                            }
-                        });
-
-                        autocompleteComplaintType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                            @Override
-                            public void onFocusChange(View v, boolean hasFocus) {
-                                if(hasFocus)
-                                {
-                                    focusOutHandler.removeCallbacks(nextFocusRunnable);
-                                    refreshGrievanceTypeAutoComplete(false);
-                                }
-                            }
-                        });
-
-                        autoCompleteComplaintCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                  /*if(!autoCompleteComplaintCategory.hasFocus())
-                                  {
-                                      autocompleteComplaintType.setText("");
-                                      refreshGrievanceTypeAutoComplete(true);
-                                  }*/
-                                autoCompleteComplaintCategory.setSelection(0);
-                                refreshGrievanceTypeAutoComplete(true);
-                                autocompleteComplaintType.requestFocus();
-                            }
-                        });
-
-                        autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                setGrievanceCategoryText();
-                                autocompleteComplaintType.setSelection(0);
-                                autoCompleteComplaintLoc.requestFocus();
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                        if (error.getLocalizedMessage() != null)
-                            if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                                Toast toast = Toast.makeText(NewGrievanceActivity.this,  R.string.session_timeout, Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                                sessionManager.logoutUser();
-                                Intent openLoginPage=new Intent(NewGrievanceActivity.this, LoginActivity.class);
-                                openLoginPage.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(openLoginPage);
-                            } else {
-                                Toast toast = Toast.makeText(NewGrievanceActivity.this, error.getLocalizedMessage() + "Could not retrieve grievance types.", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        else {
-                            Toast toast = Toast.makeText(NewGrievanceActivity.this, "An unexpected error occurred while retrieving complaint types", Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-
-                        setLoadingFailedHintCustomAutoComplete(autoCompleteComplaintCategory);
-                        setLoadingFailedHintCustomAutoComplete(autocompleteComplaintType);
-
+                    for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
+                        grievanceTypes.add(grievanceType.getName());
                     }
                 }
 
-        );
+                final ArrayAdapter<String> adapterGrievanceCategories = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypeCategories);
+                final ArrayAdapter<String> adapterGrievanceTypes = new ArrayAdapter<>(NewGrievanceActivity.this, android.R.layout.simple_spinner_dropdown_item, grievanceTypes);
+
+                setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
+                setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
+
+                final Runnable nextFocusRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshGrievanceTypeAutoComplete(true);
+                    }
+                };
+
+                final Handler focusOutHandler = new Handler();
+
+                autoCompleteComplaintCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus) {
+                            if (TextUtils.isEmpty(autoCompleteComplaintCategory.getText())) {
+                                focusOutHandler.postDelayed(nextFocusRunnable, 100);
+                            }
+                        }
+                    }
+                });
+
+                autocompleteComplaintType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (hasFocus) {
+                            focusOutHandler.removeCallbacks(nextFocusRunnable);
+                            refreshGrievanceTypeAutoComplete(false);
+                        }
+                    }
+                });
+
+                autoCompleteComplaintCategory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        autoCompleteComplaintCategory.setSelection(0);
+                        refreshGrievanceTypeAutoComplete(true);
+                        autocompleteComplaintType.requestFocus();
+                    }
+                });
+
+                autocompleteComplaintType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        setGrievanceCategoryText();
+                        autocompleteComplaintType.setSelection(0);
+                        autoCompleteComplaintLoc.requestFocus();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<GrievanceTypeAPIResponse> call, Throwable t) {
+                setLoadingFailedHintCustomAutoComplete(autoCompleteComplaintCategory);
+                setLoadingFailedHintCustomAutoComplete(autocompleteComplaintType);
+            }
+        });
+
     }
 
     private void setLoadingHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete)
@@ -918,9 +781,252 @@ public class NewGrievanceActivity extends AppCompatActivity {
         });
     }
 
+    //Function converts lat/lng value from exif data to degrees
+    private Double convertToDegree(String stringDMS) {
+        Double result;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = Double.valueOf(stringD[0]);
+        Double D1 = Double.valueOf(stringD[1]);
+        Double FloatD = D0 / D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = Double.valueOf(stringM[0]);
+        Double M1 = Double.valueOf(stringM[1]);
+        Double FloatM = M0 / M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = Double.valueOf(stringS[0]);
+        Double S1 = Double.valueOf(stringS[1]);
+        Double FloatS = S0 / S1;
+
+        result = FloatD + (FloatM / 60) + (FloatS / 3600);
+
+        return result;
+
+
+    }
+
+    //Returns the mime type of file. If it cannot be resolved, assumed to be jpeg
+    private String getMimeType(Uri uri) {
+        String mimeType;
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            ContentResolver contentResolver = NewGrievanceActivity.this.getContentResolver();
+            mimeType = contentResolver.getType(uri);
+            return mimeType;
+        }
+        return "image/jpeg";
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS_CAMERA:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    fromCamera();
+                } else {
+                    showSnackBar(R.string.permission_camera_denied);
+                }
+                break;
+            case REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    Intent intent = new Intent(Intent.ACTION_PICK);
+                    intent.setType("image/*");
+                    startActivityForResult(intent, GALLERY_PHOTO);
+                } else {
+                    showSnackBar(R.string.permission_read_denied);
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public void loadComplaintLocationFromImage(Uri imageUri) {
+        try {
+            String s = UriPathHelper.getRealPathFromURI(imageUri, this);
+            ExifInterface exifInterface = new ExifInterface(s);
+            double lat;
+            double lng;
+            try {
+                lat = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                lng = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+            } catch (Exception e) {
+                lat = 0;
+                lng = 0;
+            }
+            if (lat != 0 && lng != 0) {
+                complaintLocLatLng=new LatLng(lat, lng);
+                locationID = 0;
+                getAndSetAddressToLocAutoComplete(lat,lng);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkCameraPermission() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.CAMERA);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CODE_ASK_PERMISSIONS_CAMERA);
+            return false;
+        }
+        return true;
+    }
+
+
+    /*//find selected location id from location collections
+    public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
+        for (GrievanceLocation complaintLocation : grievanceLocations) {
+            if (complaintLocation.getName().equals(complaintLocationName)) {
+                return complaintLocation;
+            }
+        }
+        return null;
+    }*/
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkReadAccessPermission() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS);
+            return false;
+        }
+        return true;
+    }
+
+    /*/If lat/lng is available attempt to resolve it to an address*/
+    private void getAndSetAddressToLocAutoComplete(Double lat, Double lng) {
+        progressDialog.show();
+        Intent intent = new Intent(this, AddressService.class);
+        intent.putExtra(AddressService.LAT, lat);
+        intent.putExtra(AddressService.LNG, lng);
+        startService(intent);
+    }
+
+    //Handles AddressReadyEvent posted by AddressService on success
+    @SuppressWarnings("unused")
+    public void onEvent(final AddressReadyEvent addressReadyEvent) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                if(addressReadyEvent.isFailed())
+                {
+                    complaintLocLatLng=null;
+                    showSnackBar(R.string.complaint_location_message);
+                }
+                else
+                {
+                    autoCompleteComplaintLoc.setText(AddressService.addressResult);
+                }
+                landmark.requestFocus();
+            }
+        });
+    }
+
+    //Subscribes the activity to events
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    //Unsubscribes the activity to events
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
     public interface RemoveImageInterface {
         void removeFragmentImage(int position, UploadImageFragment fragment);
+    }
+
+    //The fragments of the viewpager
+    public static class UploadImageFragment extends Fragment {
+        RemoveImageInterface removeInf = null;
+        Integer fragmentPosition = -1;
+        Uri uri = null;
+
+
+        public UploadImageFragment() {
+        }
+
+
+        @SuppressLint("ValidFragment")
+        public UploadImageFragment(RemoveImageInterface removeInf, Uri uri) {
+            this.removeInf = removeInf;
+            this.uri = uri;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            View view = inflater.inflate(R.layout.fragment_upload_image, container, false);
+            ImageView imageView = (ImageView) view.findViewById(R.id.image_viewpager_item);
+
+            ImageView cancel_button = (ImageView) view.findViewById(R.id.viewpager_cancel);
+
+            //Draws the cancel icon in top right corner
+            Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_cancel_white_24dp);
+            drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+            cancel_button.setImageDrawable(drawable);
+
+            Bundle arg = this.getArguments();
+
+            //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
+            Bitmap ThumbImage = null;
+            try {
+                /*ThumbImage = ThumbnailUtils
+                        .extractThumbnail(MediaStore.Images.Media.getBitmap
+                                (getActivity().getContentResolver(),
+                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
+                ThumbImage = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+
+            if (ThumbImage != null) {
+                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
+            } else {
+                Toast toast = Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
+                toast.show();
+            }
+
+            imageView.setImageBitmap(ThumbImage);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            fragmentPosition = arg.getInt("pos");
+
+            cancel_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    removeInf.removeFragmentImage(fragmentPosition, UploadImageFragment.this);
+
+                }
+            });
+
+            return view;
+
+        }
+
     }
 
     //Custom adapter for viewpager
@@ -967,251 +1073,6 @@ public class NewGrievanceActivity extends AppCompatActivity {
             viewPager.setCurrentItem(position);
 
         }
-    }
-
-    //The fragments of the viewpager
-    public static class UploadImageFragment extends Fragment {
-        RemoveImageInterface removeInf = null;
-        Integer fragmentPosition = -1;
-        Uri uri = null;
-
-
-        public UploadImageFragment() {
-        }
-
-
-        @SuppressLint("ValidFragment")
-        public UploadImageFragment(RemoveImageInterface removeInf, Uri uri) {
-            this.removeInf = removeInf;
-            this.uri = uri;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-            View view = inflater.inflate(R.layout.fragment_upload_image, container, false);
-            ImageView imageView = (ImageView) view.findViewById(R.id.image_viewpager_item);
-
-            ImageView cancel_button = (ImageView) view.findViewById(R.id.viewpager_cancel);
-
-            //Draws the cancel icon in top right corner
-            Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_cancel_white_24dp);
-            drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-            cancel_button.setImageDrawable(drawable);
-
-            Bundle arg = this.getArguments();
-
-            //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
-            Bitmap ThumbImage = null;
-            try {
-                /*ThumbImage = ThumbnailUtils
-                        .extractThumbnail(MediaStore.Images.Media.getBitmap
-                                (getActivity().getContentResolver(),
-                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
-                ThumbImage=MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-
-
-            if (ThumbImage != null) {
-                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
-            } else {
-                Toast toast = Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                toast.show();
-            }
-
-            imageView.setImageBitmap(ThumbImage);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-            fragmentPosition = arg.getInt("pos");
-
-            cancel_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    removeInf.removeFragmentImage(fragmentPosition, UploadImageFragment.this);
-
-                }
-            });
-
-            return view;
-
-        }
-
-    }
-
-    //Function converts lat/lng value from exif data to degrees
-    private Double convertToDegree(String stringDMS) {
-        Double result;
-        String[] DMS = stringDMS.split(",", 3);
-
-        String[] stringD = DMS[0].split("/", 2);
-        Double D0 = Double.valueOf(stringD[0]);
-        Double D1 = Double.valueOf(stringD[1]);
-        Double FloatD = D0 / D1;
-
-        String[] stringM = DMS[1].split("/", 2);
-        Double M0 = Double.valueOf(stringM[0]);
-        Double M1 = Double.valueOf(stringM[1]);
-        Double FloatM = M0 / M1;
-
-        String[] stringS = DMS[2].split("/", 2);
-        Double S0 = Double.valueOf(stringS[0]);
-        Double S1 = Double.valueOf(stringS[1]);
-        Double FloatS = S0 / S1;
-
-        result = FloatD + (FloatM / 60) + (FloatS / 3600);
-
-        return result;
-
-
-    }
-
-    //Returns the mime type of file. If it cannot be resolved, assumed to be jpeg
-    private String getMimeType(Uri uri) {
-        String mimeType;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver contentResolver = NewGrievanceActivity.this.getContentResolver();
-            mimeType = contentResolver.getType(uri);
-            return mimeType;
-        }
-        return "image/jpeg";
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    /*//find selected location id from location collections
-    public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
-        for (GrievanceLocation complaintLocation : grievanceLocations) {
-            if (complaintLocation.getName().equals(complaintLocationName)) {
-                return complaintLocation;
-            }
-        }
-        return null;
-    }*/
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS_CAMERA:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    fromCamera();
-                } else {
-                    Toast.makeText(NewGrievanceActivity.this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    Intent intent = new Intent(Intent.ACTION_PICK);
-                    intent.setType("image/*");
-                    startActivityForResult(intent, GALLERY_PHOTO);
-                } else {
-                    Toast.makeText(NewGrievanceActivity.this, R.string.permission_read_denied, Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public void loadComplaintLocationFromImage(Uri imageUri) {
-        try {
-            String s = UriPathHelper.getRealPathFromURI(imageUri, this);
-            ExifInterface exifInterface = new ExifInterface(s);
-            double lat;
-            double lng;
-            try {
-                lat = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                lng = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-            } catch (Exception e) {
-                lat = 0;
-                lng = 0;
-            }
-            if (lat != 0 && lng != 0) {
-                complaintLocLatLng=new LatLng(lat, lng);
-                locationID = 0;
-                getAndSetAddressToLocAutoComplete(lat,lng);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkCameraPermission() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.CAMERA);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CODE_ASK_PERMISSIONS_CAMERA);
-            return false;
-        }
-        return true;
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkReadAccessPermission() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS);
-            return false;
-        }
-        return true;
-    }
-
-    /*/If lat/lng is available attempt to resolve it to an address*/
-    private void getAndSetAddressToLocAutoComplete(Double lat, Double lng) {
-        progressDialog.show();
-        Intent intent = new Intent(this, AddressService.class);
-        intent.putExtra(AddressService.LAT, lat);
-        intent.putExtra(AddressService.LNG, lng);
-        startService(intent);
-    }
-
-    //Handles AddressReadyEvent posted by AddressService on success
-    @SuppressWarnings("unused")
-    public void onEvent(final AddressReadyEvent addressReadyEvent) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                if(addressReadyEvent.isFailed())
-                {
-                    complaintLocLatLng=null;
-                    Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
-                    //Toast.makeText(getApplicationContext(), "Unknown location! No issues.\n Still you can file a complaint", Toast.LENGTH_LONG).show();
-                    //autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
-                }
-                else
-                {
-                    autoCompleteComplaintLoc.setText(AddressService.addressResult);
-                }
-                landmark.requestFocus();
-            }
-        });
-    }
-
-    //Subscribes the activity to events
-    @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
 }

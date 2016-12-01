@@ -61,7 +61,7 @@ public class CitizenCharterActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_citizen_charter);
+        setContentViewWithNavBar(R.layout.activity_citizen_charter, true);
 
         final List<HomeItem> homeItemList = new ArrayList<>();
 

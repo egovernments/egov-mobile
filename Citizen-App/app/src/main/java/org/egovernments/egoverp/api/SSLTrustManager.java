@@ -42,18 +42,22 @@
 
 package org.egovernments.egoverp.api;
 
-import com.squareup.okhttp.OkHttpClient;
+/**
+ * Created by egov on 11/1/16.
+ */
 
-import java.security.SecureRandom;
+
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Creates certificate validation chain to attempt to validate certificates of unknown server for https requests
@@ -61,56 +65,53 @@ import javax.net.ssl.X509TrustManager;
 
 public class SSLTrustManager {
 
-    private static OkHttpClient configureClient(final OkHttpClient client) {
-        final TrustManager[] certs = new TrustManager[]{new X509TrustManager() {
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            @Override
-            public void checkServerTrusted(final X509Certificate[] chain,
-                                           final String authType) throws CertificateException {
-            }
-
-            @Override
-            public void checkClientTrusted(final X509Certificate[] chain,
-                                           final String authType) throws CertificateException {
-            }
-        }};
-
-        SSLContext ctx = null;
+    private static OkHttpClient.Builder getUnsafeOkHttpClient() {
         try {
-            ctx = SSLContext.getInstance("TLS");
-            ctx.init(null, certs, new SecureRandom());
-        } catch (final java.security.GeneralSecurityException ex) {
-            ex.printStackTrace();
-        }
+            // Create a trust manager that does not validate certificate chains
+            final TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
 
-        try {
-            final HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // Create an ssl socket factory with our all-trusting manager
+            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.sslSocketFactory(sslSocketFactory);
+            builder.hostnameVerifier(new HostnameVerifier() {
                 @Override
-                public boolean verify(final String hostname,
-                                      final SSLSession session) {
+                public boolean verify(String hostname, SSLSession session) {
                     return true;
                 }
-            };
-            client.setHostnameVerifier(hostnameVerifier);
-            if (ctx != null)
-                client.setSslSocketFactory(ctx.getSocketFactory());
-        } catch (final Exception e) {
-            e.printStackTrace();
+            });
+
+            builder.connectTimeout(80, TimeUnit.SECONDS);
+            builder.readTimeout(80, TimeUnit.SECONDS);
+            builder.writeTimeout(80, TimeUnit.SECONDS);
+
+            return builder;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        return client;
     }
 
-    public static OkHttpClient createClient() {
-        final OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(2, TimeUnit.MINUTES);
-        client.setConnectTimeout(2, TimeUnit.MINUTES);
-        return configureClient(client);
+    public static OkHttpClient.Builder createClient() {
+        return getUnsafeOkHttpClient();
     }
 
-} 
+}

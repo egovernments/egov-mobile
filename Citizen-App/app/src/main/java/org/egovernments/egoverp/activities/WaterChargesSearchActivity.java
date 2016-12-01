@@ -60,21 +60,19 @@ import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
 public class WaterChargesSearchActivity extends BaseActivity implements View.OnClickListener {
 
+    public static final String PARAM_IS_WATER_CON_SEARCH = "isWaterConSearch";
+    public static final String PARAM_WATER_CON_SEARCH_REQUEST = "WaterConSearchObj";
     EditText etAssessmentNo;
     EditText etConsumerNo;
     EditText etOwnerName;
     EditText etMobileNo;
     ConfigManager configManager;
-
     TextView tvReceiptInfoConsumerNo, tvReceiptInfoAssessmentNo;
-
-    public static final String PARAM_IS_WATER_CON_SEARCH="isWaterConSearch";
-    public static final String PARAM_WATER_CON_SEARCH_REQUEST ="WaterConSearchObj";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_water_charges_search);
+        setContentViewWithNavBar(R.layout.activity_water_charges_search, true);
 
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
         etConsumerNo=(EditText)findViewById(R.id.etConsumerNo);
@@ -105,7 +103,7 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
 
     void searchWaterConnections()
     {
-        if(validateInputSearchFields()) {
+        if (validateInputSearchFields() && validateInternetConnection()) {
             Intent openSearchResult=new Intent(WaterChargesSearchActivity.this, SearchResultActivity.class);
             openSearchResult.putExtra(PARAM_WATER_CON_SEARCH_REQUEST, new WaterConnectionSearchRequest(sessionManager.getUrlLocationCode(),
                     etAssessmentNo.getText().toString(),etConsumerNo.getText().toString(), etOwnerName.getText().toString(),etMobileNo.getText().toString()));

@@ -43,7 +43,6 @@
 package org.egovernments.egoverp.activities;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -52,11 +51,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -68,7 +64,6 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -82,8 +77,6 @@ import com.viewpagerindicator.LinePageIndicator;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.api.CustomErrorHandler;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
@@ -103,47 +96,34 @@ import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * Displays the details of a complaint when clicked in GrievanceActivity recycler view
  **/
 
-public class GrievanceDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class GrievanceDetailsActivity extends BaseActivity implements OnMapReadyCallback {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
     public static final String GRIEVANCE_SUPPORT_DOCS = "GrievanceSupportDocs";
 
     private static Grievance grievance;
-
-    private EditText updateComment;
-
-    private ProgressDialog progressDialog;
-
-    private String action;
-
-    private SessionManager sessionManager;
-
-    private boolean isComment = false;
-
-    private ProgressBar progressBar;
-
-    private LinearLayout layoutCompComments;
-
-    private LinearLayout layoutToggleComments;
-
+    private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
+    private final String[] feedBackText = new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
     Spinner actionsSpinner;
-
+    private EditText updateComment;
+    private String action;
+    private boolean isComment = false;
+    private ProgressBar progressBar;
+    private LinearLayout layoutCompComments;
+    private LinearLayout layoutToggleComments;
     private Button btnMoreComments;
-
     private RatingBar feedbackRatingBar;
     private TextView tvRatingBar;
 
-    private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
-    private final String[] feedBackText=new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
-
+    public static Grievance getGrievance() {
+        return grievance;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -153,11 +133,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
         grievance = (Grievance)getIntent().getExtras().get(GRIEVANCE_ITEM);
         grievance.setSupportDocs((ArrayList<SupportDoc>)getIntent().getExtras().get(GRIEVANCE_SUPPORT_DOCS));
-
-        sessionManager = new SessionManager(GrievanceDetailsActivity.this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -192,12 +167,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         actionsSpinner = (Spinner) findViewById(R.id.update_action);
         ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Select", "Withdraw"));
         ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Select", "Re-open"));
-
-
-        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing request");
-        progressDialog.setCancelable(false);
 
         btnMoreComments.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -334,16 +303,12 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                 }
 
                 if (action == null) {
-                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select an action", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
+                    showSnackBar("Please select an action");
                 } else {
                     if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
-                        Toast.makeText(GrievanceDetailsActivity.this, "Comment is necessary for this action", Toast.LENGTH_SHORT).show();
+                        showSnackBar("Comment is necessary for this action");
                     } else if (feedback == null) {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "Please select a feedback option", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
+                        showSnackBar("Please select a feedback option");
                     } else {
                         switch (action) {
                             case "Select":
@@ -362,52 +327,35 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
                         progressDialog.show();
 
-                        ApiController.getAPI(GrievanceDetailsActivity.this).updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), sessionManager.getAccessToken(), new Callback<JsonObject>() {
-                            @Override
-                            public void success(JsonObject jsonObject, Response response) {
+                        Call<JsonObject> updateGrievanceCall = ApiController.getRetrofit2API(getApplicationContext(), GrievanceDetailsActivity.this)
+                                .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment),
+                                        sessionManager.getAccessToken());
 
-                                if(isComment && feedbackLayout.getVisibility() == View.GONE)
-                                {
-                                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.grievanceupdated_msg, Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                    toast.show();
-                                    loadComplaintHistory();
-                                }
-                                else{
-                                    Intent intent=new Intent();
-                                    intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
-                                            isComment && feedbackLayout.getVisibility() == View.VISIBLE? "Your feedback submitted successfully":"Grievance updated successfully");
-                                    setResult(RESULT_OK, intent);
-                                    finish();
-                                }
-                                progressDialog.dismiss();
+                        if (validateInternetConnection()) {
+                            updateGrievanceCall.enqueue(new retrofit2.Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                if (error.getLocalizedMessage() != null)
-                                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
-                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                        toast.show();
-                                        sessionManager.logoutUser();
-                                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
+                                    if (isComment && feedbackLayout.getVisibility() == View.GONE) {
+                                        showSnackBar(R.string.grievanceupdated_msg);
+                                        loadComplaintHistory();
                                     } else {
-                                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                        toast.show();
+                                        Intent intent = new Intent();
+                                        intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
+                                                isComment && feedbackLayout.getVisibility() == View.VISIBLE ? "Your feedback submitted successfully" : "Grievance updated successfully");
+                                        setResult(RESULT_OK, intent);
+                                        finish();
                                     }
-                                else {
-                                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                    toast.show();
-                                }
-                                progressDialog.dismiss();
+                                    progressDialog.dismiss();
 
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
 
                     }
                 }
@@ -436,10 +384,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
         return 0;
     }
 
-    public static Grievance getGrievance() {
-        return grievance;
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
@@ -452,9 +396,14 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
 
     private void loadComplaintHistory()
     {
-        ApiController.getAPI(GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken(), new Callback<GrievanceCommentAPIResponse>() {
+
+        Call<GrievanceCommentAPIResponse> grievanceCommentAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                .getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken());
+
+        grievanceCommentAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceCommentAPIResponse>() {
             @Override
-            public void success(GrievanceCommentAPIResponse grievanceCommentAPIResponse, Response response) {
+            public void onResponse(Call<GrievanceCommentAPIResponse> call, retrofit2.Response<GrievanceCommentAPIResponse> response) {
+                GrievanceCommentAPIResponse grievanceCommentAPIResponse = response.body();
                 GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
                 actionsSpinner.setSelection(0);
                 updateComment.getText().clear();
@@ -464,60 +413,11 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                if (error.getLocalizedMessage() != null) {
-                    if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-
-                        sessionManager.logoutUser();
-                        startActivity(new Intent(GrievanceDetailsActivity.this, LoginActivity.class));
-                    } else {
-                        Toast toast = Toast.makeText(GrievanceDetailsActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                    }
-                }
-                else {
-                    Toast toast = Toast.makeText(GrievanceDetailsActivity.this, "An unexpected error occurred while retrieving comments", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
-                }
+            public void onFailure(Call<GrievanceCommentAPIResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
             }
-
         });
-    }
 
-    //Load complaint History
-    public class LoadComplaintHistory extends AsyncTask<String, Integer, String>
-    {
-        @Override
-        protected String doInBackground(String... params) {
-            loadComplaintHistory();
-            return null;
-        }
-    }
-
-    //The viewpager custom adapter
-    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
-
-        GrievanceImagePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (grievance.getSupportDocsSize() != 0)
-                return GrievanceImageFragment.instantiateItem(position, sessionManager.getAccessToken(),grievance.getSupportDocs().get(position).getFileId());
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return grievance.getSupportDocsSize();
-        }
     }
 
     //If lat/lng is available attempt to resolve it to an address
@@ -576,7 +476,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
                 tvUserName.setText(comment.getUpdatedBy());
             }
 
-
             ((TextView)commentItemTemplate.findViewById(R.id.comment_datetime)).setText(formatDateString(comment.getDate(), "MMM dd, yyyy hh:mm:ss aa", "dd/MM/yyyy hh:mm aa"));
             if(!TextUtils.isEmpty(comment.getComments()))
             {
@@ -599,7 +498,6 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
             }
         }
     }
-
 
     //Handles AddressReadyEvent posted by AddressService on success
     @SuppressWarnings("unused")
@@ -626,5 +524,34 @@ public class GrievanceDetailsActivity extends AppCompatActivity implements OnMap
     protected void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    //Load complaint History
+    public class LoadComplaintHistory extends AsyncTask<String, Integer, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            loadComplaintHistory();
+            return null;
+        }
+    }
+
+    //The viewpager custom adapter
+    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
+
+        GrievanceImagePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (grievance.getSupportDocsSize() != 0)
+                return GrievanceImageFragment.instantiateItem(position, sessionManager.getAccessToken(), grievance.getSupportDocs().get(position).getFileId());
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return grievance.getSupportDocsSize();
+        }
     }
 }

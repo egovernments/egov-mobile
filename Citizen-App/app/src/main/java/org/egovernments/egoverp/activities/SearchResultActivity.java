@@ -47,11 +47,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,45 +73,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
-public class SearchResultActivity extends AppCompatActivity {
+public class SearchResultActivity extends BaseActivity {
 
+    public static String ULB_CODE = "ulbCode";
+    public static String ASSESSMENT_NO = "assessmentNo";
+    public static String CONSUMER_NO = "consumerNo";
     ProgressBar progressBar;
     RecyclerView recyclerViewSearchResult;
     SearchListAdapter.SearchItemClickListener itemClickListener;
     List<PropertyTaxCallback> resultProperties=new ArrayList<>();
     List<WaterTaxCallback> resultWaterConnections=new ArrayList<>();
-
     CardView cvInfo;
     TextView tvMsg;
     ImageView imgInfo;
-
     int ulbCode;
-
-    boolean isExited=false;
     String referrerIp;
     String category;
     boolean isVacantLand=false;
     boolean isWaterCharges=false;
-
-    public static String ULB_CODE="ulbCode";
-    public static String ASSESSMENT_NO="assessmentNo";
-    public static String CONSUMER_NO="consumerNo";
-
     PropertySearchRequest propertySearchRequest;
     WaterConnectionSearchRequest waterConnectionSearchRequest;
+
+    Call<List<PropertyTaxCallback>> propertySearchCall;
+    Call<List<WaterTaxCallback>> waterConnectionResultsCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -192,7 +183,7 @@ public class SearchResultActivity extends AppCompatActivity {
     {
         progressBar.setVisibility(View.GONE);
         recyclerViewSearchResult.setVisibility(View.GONE);
-        imgInfo.setImageDrawable(getResources().getDrawable(R.drawable.ic_cancel_white_48dp));
+        imgInfo.setImageDrawable(ContextCompat.getDrawable(SearchResultActivity.this, R.drawable.ic_cancel_white_48dp));
         tvMsg.setText(errorMsg);
         cvInfo.setVisibility(View.VISIBLE);
     }
@@ -306,70 +297,50 @@ public class SearchResultActivity extends AppCompatActivity {
     private void showSearchResults(final PropertySearchRequest propertySearchRequest)
     {
         showLoadingIndicator();
-        ApiController.getAPI(SearchResultActivity.this)
-                .searchProperty(referrerIp, propertySearchRequest,
-                new Callback<List<PropertyTaxCallback>>() {
-                    @Override
-                    public void success(List<PropertyTaxCallback> propertyTaxCallbacks, Response response) {
 
-                        if(isExited){
-                            return;
-                        }
+        propertySearchCall = ApiController.getRetrofit2API(getApplicationContext(), null)
+                .searchProperty(referrerIp, propertySearchRequest);
 
-                        resultProperties=propertyTaxCallbacks;
+        propertySearchCall.enqueue(new retrofit2.Callback<List<PropertyTaxCallback>>() {
+            @Override
+            public void onResponse(Call<List<PropertyTaxCallback>> call, retrofit2.Response<List<PropertyTaxCallback>> response) {
 
-                        if(propertyTaxCallbacks.size()>0)
-                        {
-                            if(propertyTaxCallbacks.size()==1)
-                            {
-                                PropertyTaxCallback propertyTaxCallback=propertyTaxCallbacks.get(0);
+                List<PropertyTaxCallback> propertyTaxCallbacks = response.body();
 
-                                if (propertyTaxCallback.getTaxErrorDetails()==null) {
-                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                    }
-                                    else
-                                    {
-                                        showSearchResults(propertySearchRequest);
-                                    }
-                                }
-                                else if(TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage()))
-                                {
-                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                    }
-                                }
-                                else if(propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                {
-                                    if(!TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
-                                    }
-                                }
-                                else if(!propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                {
-                                    showEmptyMessage(R.drawable.ic_business_black_36dp,"No property found");
-                                }
-                            }
-                            else
-                            {
-                                loadPropertiesResultIntoRecyclerView(propertyTaxCallbacks);
-                            }
+                resultProperties = propertyTaxCallbacks;
+
+                if (propertyTaxCallbacks.size() > 0) {
+                    if (propertyTaxCallbacks.size() == 1) {
+                        PropertyTaxCallback propertyTaxCallback = propertyTaxCallbacks.get(0);
+
+                        if (propertyTaxCallback.getTaxErrorDetails() == null
+                                && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
+                                TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage())
+                                        && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
+                                propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")
+                                        && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                            SearchResultActivity.this.finish();
+                            openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
                         }
                         else
                         {
                             showEmptyMessage(R.drawable.ic_business_black_36dp,"No property found");
                         }
+                    } else {
+                        loadPropertiesResultIntoRecyclerView(propertyTaxCallbacks);
                     }
+                } else {
+                    showEmptyMessage(R.drawable.ic_business_black_36dp, "No property found");
+                }
 
-                    @Override
-                    public void failure(RetrofitError error) {
+            }
 
-                        showErrorMessage(error.getLocalizedMessage());
-                    }
-         });
+            @Override
+            public void onFailure(Call<List<PropertyTaxCallback>> call, Throwable t) {
+                showErrorMessage(t.getLocalizedMessage());
+            }
+        });
+
     }
 
     private void showSearchResults(final WaterConnectionSearchRequest waterConnectionSearchRequest)
@@ -377,7 +348,47 @@ public class SearchResultActivity extends AppCompatActivity {
 
         showLoadingIndicator();
 
-        ApiController.getAPI(SearchResultActivity.this)
+        Call<List<WaterTaxCallback>> waterConnectionResultsCall = ApiController.getRetrofit2API(getApplicationContext(), null)
+                .searchWaterConnection(referrerIp, waterConnectionSearchRequest);
+
+        waterConnectionResultsCall.enqueue(new retrofit2.Callback<List<WaterTaxCallback>>() {
+            @Override
+            public void onResponse(Call<List<WaterTaxCallback>> call, retrofit2.Response<List<WaterTaxCallback>> response) {
+
+                List<WaterTaxCallback> waterTaxCallbacks = response.body();
+                resultWaterConnections = waterTaxCallbacks;
+
+                if (resultWaterConnections.size() > 0) {
+                    if (resultWaterConnections.size() == 1) {
+                        WaterTaxCallback waterTaxCallback = waterTaxCallbacks.get(0);
+
+                        if (waterTaxCallback.getTaxErrorDetails() == null && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())
+                                || TextUtils.isEmpty(waterTaxCallback.getTaxErrorDetails().getErrorMessage())
+                                && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())
+                                || waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")
+                                && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
+                            SearchResultActivity.this.finish();
+                            openViewWaterConnection(waterTaxCallback.getConsumerNo());
+                        }
+                        else
+                        {
+                            showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
+                        }
+                    } else {
+                        loadWaterConnectionsResultIntoRecyclerView(waterTaxCallbacks);
+                    }
+                } else {
+                    showEmptyMessage(R.drawable.ic_water_tab_black_36dp, "No water connection found");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<WaterTaxCallback>> call, Throwable t) {
+                showErrorMessage(t.getLocalizedMessage());
+            }
+        });
+
+        /*ApiController.getAPI(SearchResultActivity.this)
                 .searchWaterConnection(referrerIp, waterConnectionSearchRequest, new Callback<List<WaterTaxCallback>>() {
                     @Override
                     public void success(List<WaterTaxCallback> waterTaxCallbacks, Response response) {
@@ -386,52 +397,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             return;
                         }
 
-                        resultWaterConnections=waterTaxCallbacks;
 
-                        if(resultWaterConnections.size()>0)
-                        {
-                            if(resultWaterConnections.size()==1)
-                            {
-                                WaterTaxCallback waterTaxCallback=waterTaxCallbacks.get(0);
-
-                                if (waterTaxCallback.getTaxErrorDetails()==null) {
-                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
-                                    }
-                                    else
-                                    {
-                                        showSearchResults(waterConnectionSearchRequest);
-                                    }
-                                }
-                                else if(TextUtils.isEmpty(waterTaxCallback.getTaxErrorDetails().getErrorMessage()))
-                                {
-                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
-                                    }
-                                }
-                                else if(waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                {
-                                    if(!TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
-                                        SearchResultActivity.this.finish();
-                                        openViewWaterConnection(waterTaxCallback.getConsumerNo());
-                                    }
-                                }
-                                else if(!waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS"))
-                                {
-                                    showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
-                                }
-                            }
-                            else
-                            {
-                                loadWaterConnectionsResultIntoRecyclerView(waterTaxCallbacks);
-                            }
-                        }
-                        else
-                        {
-                            showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
-                        }
 
                     }
 
@@ -440,7 +406,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
                     }
 
-                });
+                });*/
 
     }
 
@@ -466,6 +432,9 @@ public class SearchResultActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isExited=true;
+        if (propertySearchCall != null && !propertySearchCall.isCanceled())
+            propertySearchCall.cancel();
+        else if (waterConnectionResultsCall != null && !waterConnectionResultsCall.isCanceled())
+            waterConnectionResultsCall.cancel();
     }
 }

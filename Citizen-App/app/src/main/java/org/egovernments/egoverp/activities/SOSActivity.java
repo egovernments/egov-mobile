@@ -52,6 +52,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -81,140 +82,20 @@ public class SOSActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sos);
+        setContentViewWithNavBar(R.layout.activity_sos, true);
 
-        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recylerview);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recylerview);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(SOSActivity.this));
 
-        JsonParser parser=new JsonParser();
-        Gson gson=new Gson();
-        ArrayList<EmergencyContact> emergencyContacts=gson.fromJson(parser.parse(loadJSONFromAsset()), new TypeToken<List<EmergencyContact>>(){}.getType());
+        JsonParser parser = new JsonParser();
+        Gson gson = new Gson();
+        ArrayList<EmergencyContact> emergencyContacts = gson.fromJson(parser.parse(loadJSONFromAsset()), new TypeToken<List<EmergencyContact>>() {
+        }.getType());
 
         recyclerView.setAdapter(new SOSAdapter(SOSActivity.this, emergencyContacts));
 
 
-    }
-
-
-    public class SOSAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        Context context;
-        ArrayList<EmergencyContact> emergencyContacts;
-
-        public SOSAdapter(Context context, ArrayList<EmergencyContact> emergencyContacts)
-        {
-            this.context=context;
-            this.emergencyContacts =emergencyContacts;
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_sos, viewGroup, false);
-            RecyclerView.ViewHolder vh = new ContactViewHolder(v);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            final EmergencyContact emergencyContact = emergencyContacts.get(position);
-
-            final ContactViewHolder viewHolder=(ContactViewHolder)holder;
-
-            viewHolder.tvCharacter.setText(emergencyContact.getContactName().substring(0,1).toUpperCase());
-            viewHolder.tvContactName.setText(emergencyContact.getContactName());
-            viewHolder.tvContactNo.setText(emergencyContact.getContactNo());
-
-            viewHolder.layoutContact.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    final String contactNos[]=emergencyContact.getContactNo().split("/");
-
-                    if(contactNos.length>1)
-                    {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(SOSActivity.this);
-                        builder.setTitle(emergencyContact.getContactName());
-                        builder.setItems(contactNos, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int item) {
-                                // Do something with the selection
-                                mobileNoClicked=contactNos[item];
-                                if (Build.VERSION.SDK_INT < 23) {
-                                    callToEmergenyNo(mobileNoClicked);
-                                } else {
-                                    if (checkCallPermision()) {
-                                        callToEmergenyNo(mobileNoClicked);
-                                    }
-                                }
-                            }
-                        });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    }
-                    else {
-                        mobileNoClicked = emergencyContact.getContactNo();
-
-                        if (Build.VERSION.SDK_INT < 23) {
-                            callToEmergenyNo(mobileNoClicked);
-                        } else {
-                            if (checkCallPermision()) {
-                                callToEmergenyNo(mobileNoClicked);
-                            }
-                        }
-                    }
-
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return emergencyContacts.size();
-        }
-
-        public class ContactViewHolder extends RecyclerView.ViewHolder{
-
-            LinearLayout layoutContact;
-            TextView tvCharacter, tvContactName, tvContactNo;
-            ContactViewHolder(View itemView)
-            {
-                super(itemView);
-                layoutContact = (LinearLayout) itemView.findViewById(R.id.layout_contact);
-                tvCharacter=(TextView)itemView.findViewById(R.id.tvCharacter);
-                tvContactName=(TextView)itemView.findViewById(R.id.tvContactName);
-                tvContactNo=(TextView)itemView.findViewById(R.id.tvContactNo);
-            }
-
-        }
-
-    }
-
-    public class EmergencyContact
-    {
-        String contactName;
-        String contactNo;
-
-        public EmergencyContact(String contactNo, String contactName) {
-            this.contactNo = contactNo;
-            this.contactName = contactName;
-        }
-
-        public String getContactName() {
-            return contactName;
-        }
-
-        public void setContactName(String contactName) {
-            this.contactName = contactName;
-        }
-
-        public String getContactNo() {
-            return contactNo;
-        }
-
-        public void setContactNo(String contactNo) {
-            this.contactNo = contactNo;
-        }
     }
 
     @Override
@@ -240,11 +121,14 @@ public class SOSActivity extends BaseActivity {
         return true;
     }
 
-    public void callToEmergenyNo(String emergencyNo){
+    public void callToEmergenyNo(String emergencyNo) {
 
         Intent intent = new Intent(Intent.ACTION_CALL);
         intent.setData(Uri.parse("tel:" + emergencyNo));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         getApplication().startActivity(intent);
 
     }
@@ -263,6 +147,122 @@ public class SOSActivity extends BaseActivity {
             return null;
         }
         return json;
+    }
+
+    public class SOSAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        Context context;
+        ArrayList<EmergencyContact> emergencyContacts;
+
+        public SOSAdapter(Context context, ArrayList<EmergencyContact> emergencyContacts) {
+            this.context = context;
+            this.emergencyContacts = emergencyContacts;
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_sos, viewGroup, false);
+            RecyclerView.ViewHolder vh = new ContactViewHolder(v);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            final EmergencyContact emergencyContact = emergencyContacts.get(position);
+
+            final ContactViewHolder viewHolder = (ContactViewHolder) holder;
+
+            viewHolder.tvCharacter.setText(emergencyContact.getContactName().substring(0, 1).toUpperCase());
+            viewHolder.tvContactName.setText(emergencyContact.getContactName());
+            viewHolder.tvContactNo.setText(emergencyContact.getContactNo());
+
+            viewHolder.layoutContact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    final String contactNos[] = emergencyContact.getContactNo().split("/");
+
+                    if (contactNos.length > 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SOSActivity.this);
+                        builder.setTitle(emergencyContact.getContactName());
+                        builder.setItems(contactNos, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int item) {
+                                // Do something with the selection
+                                mobileNoClicked = contactNos[item];
+                                if (Build.VERSION.SDK_INT < 23) {
+                                    callToEmergenyNo(mobileNoClicked);
+                                } else {
+                                    if (checkCallPermision()) {
+                                        callToEmergenyNo(mobileNoClicked);
+                                    }
+                                }
+                            }
+                        });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    } else {
+                        mobileNoClicked = emergencyContact.getContactNo();
+
+                        if (Build.VERSION.SDK_INT < 23) {
+                            callToEmergenyNo(mobileNoClicked);
+                        } else {
+                            if (checkCallPermision()) {
+                                callToEmergenyNo(mobileNoClicked);
+                            }
+                        }
+                    }
+
+                }
+            });
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return emergencyContacts.size();
+        }
+
+        public class ContactViewHolder extends RecyclerView.ViewHolder {
+
+            LinearLayout layoutContact;
+            TextView tvCharacter, tvContactName, tvContactNo;
+
+            ContactViewHolder(View itemView) {
+                super(itemView);
+                layoutContact = (LinearLayout) itemView.findViewById(R.id.layout_contact);
+                tvCharacter = (TextView) itemView.findViewById(R.id.tvCharacter);
+                tvContactName = (TextView) itemView.findViewById(R.id.tvContactName);
+                tvContactNo = (TextView) itemView.findViewById(R.id.tvContactNo);
+            }
+
+        }
+
+    }
+
+    public class EmergencyContact {
+        String contactName;
+        String contactNo;
+
+        public EmergencyContact(String contactNo, String contactName) {
+            this.contactNo = contactNo;
+            this.contactName = contactName;
+        }
+
+        public String getContactName() {
+            return contactName;
+        }
+
+        public void setContactName(String contactName) {
+            this.contactName = contactName;
+        }
+
+        public String getContactNo() {
+            return contactNo;
+        }
+
+        public void setContactNo(String contactNo) {
+            this.contactNo = contactNo;
+        }
     }
 
 

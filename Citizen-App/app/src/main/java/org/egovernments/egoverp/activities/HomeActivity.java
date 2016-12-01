@@ -82,7 +82,7 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_home);
+        setContentViewWithNavBar(R.layout.activity_home, true);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setupWindowAnimations();

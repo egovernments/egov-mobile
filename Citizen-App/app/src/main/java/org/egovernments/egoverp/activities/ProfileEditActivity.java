@@ -44,13 +44,9 @@ package org.egovernments.egoverp.activities;
 
 
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,32 +54,27 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.api.CustomErrorHandler;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
-import org.egovernments.egoverp.models.errors.ErrorResponse;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * The profile edit screen activity
  **/
 
-public class ProfileEditActivity extends AppCompatActivity {
+public class ProfileEditActivity extends BaseActivity {
 
+    public static final String PROFILE_EDIT_CONTENT = "profile";
     private EditText profileName;
     private EditText profilePhone;
     private EditText profileAltPhone;
@@ -91,16 +82,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     private EditText profileDOB;
     private EditText profileAadhaar;
     private EditText profilePAN;
-
     private RadioGroup profileGender;
-
-    private SessionManager sessionManager;
-
-    private ProgressDialog progressDialog;
-
     private String date_of_birth;
-
-    public static final String PROFILE_EDIT_CONTENT = "profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,18 +92,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         Profile profile = (Profile) getIntent().getSerializableExtra(PROFILE_EDIT_CONTENT);
 
-        sessionManager = new SessionManager(ProfileEditActivity.this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Processing request");
-        progressDialog.setCancelable(false);
 
         profileName = (EditText) findViewById(R.id.editprofile_name);
         profilePhone = (EditText) findViewById(R.id.editprofile_phoneno);
@@ -215,7 +188,6 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.confirm:
-                progressDialog.show();
                 submit();
                 break;
         }
@@ -252,56 +224,58 @@ public class ProfileEditActivity extends AppCompatActivity {
         String aadhaarCard = profileAadhaar.getText().toString().trim();
 
         if (mobileNumber.length() != 10) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Phone no. must be 10 digits", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Phone no. must be 10 digits");
         } else if (TextUtils.isEmpty(mobileNumber)) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter mobile number", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter mobile number");
         } else if (TextUtils.isEmpty(emailId)) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter email ID", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter email ID");
         } else if (!TextUtils.isEmpty(altContactNumber) && altContactNumber.length() != 10) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Alternate Phone no. must be 10 digits", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Alternate Phone no. must be 10 digits");
         } else if (!AppUtils.isValidEmail(emailId)) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter a valid email ID", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter a valid email ID");
         } else if (TextUtils.isEmpty(dob)) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter date of birth", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter date of birth");
         } else  if(!TextUtils.isEmpty(profileAadhaar.getText()) && profileAadhaar.getText().length()!=12) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter valid aadhar card number", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter valid aadhar card number");
         } else  if(!TextUtils.isEmpty(profilePAN.getText()) && !AppUtils.isValidPANNo(profilePAN.getText().toString())) {
-            Toast toast = Toast.makeText(ProfileEditActivity.this, "Please enter valid pan card number", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-            progressDialog.dismiss();
+            showSnackBar("Please enter valid pan card number");
         }else {
 
             final Profile update_profile = new Profile(name, emailId, mobileNumber, mobileNumber, altContactNumber, gender, panCard, dob, aadhaarCard);
 
-            ApiController.getAPI(ProfileEditActivity.this).updateProfile(update_profile, sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
+            progressDialog.show();
+
+            Call<ProfileAPIResponse> profileAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                    .updateProfile(update_profile, sessionManager.getAccessToken());
+
+            profileAPIResponseCall.enqueue(new retrofit2.Callback<ProfileAPIResponse>() {
+                @Override
+                public void onResponse(Call<ProfileAPIResponse> call, retrofit2.Response<ProfileAPIResponse> response) {
+
+                    ProfileAPIResponse profileAPIResponse = response.body();
+
+                    showSnackBar("Profile updated successfully");
+
+                    ProfileActivity.profile = profileAPIResponse.getProfile();
+
+                    progressDialog.dismiss();
+                    Intent intent = new Intent();
+                    setResult(RESULT_OK, intent);
+
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<ProfileAPIResponse> call, Throwable t) {
+                    progressDialog.dismiss();
+                }
+            });
+
+            /*ApiController.getAPI(ProfileEditActivity.this).updateProfile(update_profile, sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
                 @Override
                 public void success(ProfileAPIResponse profileAPIResponse, Response response) {
 
-                    Toast toast = Toast.makeText(ProfileEditActivity.this, "Profile updated", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
+                    showSnackBar("Profile updated successfully");
 
                     ProfileActivity.profile = profileAPIResponse.getProfile();
 
@@ -347,7 +321,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     progressDialog.dismiss();
 
                 }
-            });
+            });*/
 
         }
     }

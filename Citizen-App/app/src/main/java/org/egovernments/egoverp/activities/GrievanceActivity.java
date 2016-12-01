@@ -57,7 +57,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -65,16 +64,13 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
-import org.egovernments.egoverp.api.CustomErrorHandler;
 import org.egovernments.egoverp.fragments.GrievanceFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * The activity containing grievance list
@@ -91,7 +87,7 @@ public class GrievanceActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentViewWithTabs(R.layout.activity_grievance);
+        setContentViewWithTabs(R.layout.activity_grievance, true, true);
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         pbHome=(ProgressBar)findViewById(R.id.pbhome);
 
@@ -148,7 +144,7 @@ public class GrievanceActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
-           Toast.makeText(getApplicationContext(), data.getStringExtra(RESULT_MESSAGE), Toast.LENGTH_SHORT).show();
+            showSnackBar(data.getStringExtra(RESULT_MESSAGE));
            loadGrievanceCategories();
         }
 
@@ -158,28 +154,23 @@ public class GrievanceActivity extends BaseActivity {
     {
         showLoader();
 
-        ApiController.getAPI(GrievanceActivity.this).getComplaintCategoriesWithCount(sessionManager.getAccessToken(), new Callback<JsonObject>() {
-            @Override
-            public void success(JsonObject jsonObject, Response response) {
+        Call<JsonObject> getComplaintCategoriesCount = ApiController.getRetrofit2API(GrievanceActivity.this, GrievanceActivity.this)
+                .getComplaintCategoryCount(sessionManager.getAccessToken());
 
-                loadViewPager(jsonObject.get("result").getAsJsonObject());
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-
-                if(error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE))
-                {
-                    Toast.makeText(getApplicationContext(),  R.string.session_timeout, Toast.LENGTH_SHORT).show();
-                    logoutUser();
+        if (validateInternetConnection()) {
+            getComplaintCategoriesCount.enqueue(new retrofit2.Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                    JsonObject jsonObject = response.body();
+                    loadViewPager(jsonObject.get("result").getAsJsonObject());
                 }
-                else{
-                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    showSnackBar(t.getLocalizedMessage());
                 }
-            }
-        });
+            });
+        }
 
     }
 

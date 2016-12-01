@@ -46,6 +46,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -57,7 +58,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -65,6 +66,7 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.adapters.NavdrawAdapter;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.api.Interceptor;
 import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
@@ -74,15 +76,13 @@ import org.egovernments.egoverp.models.NavigationItem;
 
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * The activity sets up common features of layout for other activities
  **/
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity implements Interceptor.ErrorListener {
 
     protected LinearLayout activityContent;
 
@@ -95,6 +95,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected ProgressDialog progressDialog;
 
+    protected boolean isHasNavBar = false;
     protected boolean isTabSupport=false;
     protected TabLayout tabLayout;
 
@@ -105,15 +106,42 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(R.layout.baselayout);
     }
 
-    public void setContentViewWithTabs(final int layoutResID)
+    public void setContentViewWithTabs(final int layoutResID, final Boolean isHasTabs, final Boolean isHasNavBar)
     {
-        isTabSupport=true;
+        this.isTabSupport = isHasTabs;
+        this.isHasNavBar = isHasNavBar;
+        setContentView(layoutResID);
+    }
+
+    public void setContentViewWithNavBar(final int layoutResID, Boolean isHasNavBar) {
+        this.isHasNavBar = isHasNavBar;
         setContentView(layoutResID);
     }
 
     //Overridden method will intercept layout passed and inflate it into baselayout.xml
     @Override
     public void setContentView(final int layoutResID) {
+
+        sessionManager = new SessionManager(getApplicationContext());
+
+        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.processing_msg));
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+
+        if (isHasNavBar)
+            setupNavBarWithResource(layoutResID);
+        else {
+            super.setContentView(layoutResID);
+            android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+            if (toolbar != null)
+                setSupportActionBar(toolbar);
+        }
+
+    }
+
+    private void setupNavBarWithResource(int layoutResID) {
 
         final ViewGroup nullParent = null;
         drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.baselayout, nullParent);
@@ -123,12 +151,6 @@ public class BaseActivity extends AppCompatActivity {
         getLayoutInflater().inflate(layoutResID, activityContent, true);
 
         super.setContentView(drawerLayout);
-
-        sessionManager = new SessionManager(getApplicationContext());
-        progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.processing_msg));
-        progressDialog.setCancelable(false);
 
         android.support.v7.widget.Toolbar toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
 
@@ -164,20 +186,25 @@ public class BaseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
-        assert actionBar != null;
-        actionBar.setTitle(getToolbarTitle(actionBar.getTitle().toString()));
-        mActionBarTitle = actionBar.getTitle();
+        if (actionBar != null) {
+            mActionBarTitle = actionBar.getTitle() != null ?
+                    actionBar.getTitle().toString() : "";
+            actionBar.setTitle(getToolbarTitle(mActionBarTitle.toString()));
+            mActionBarTitle = actionBar.getTitle();
+        }
+
 
         if(toolbar!=null)
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
-
+                if (actionBar != null)
                 actionBar.setTitle(mActionBarTitle);
             }
 
             public void onDrawerOpened(View drawerView) {
+                if (actionBar != null)
                 actionBar.setTitle(R.string.menu_label);
             }
         };
@@ -203,7 +230,6 @@ public class BaseActivity extends AppCompatActivity {
 
 
         recyclerView.setAdapter(new NavdrawAdapter(arrayList, sessionManager.getName(), sessionManager.getMobile(), sessionManager.getUrlLocation(), R.drawable.ic_person_black_36dp, navItemClickListener));
-
     }
 
     public String getToolbarTitle(String titleFromResource)
@@ -406,34 +432,39 @@ public class BaseActivity extends AppCompatActivity {
 
     public void logoutUser()
     {
-        progressDialog.show();
-        ApiController.getAPI(BaseActivity.this).logout(sessionManager.getAccessToken(), new Callback<JsonObject>() {
+        runOnUiThread(new Runnable() {
             @Override
-            public void success(JsonObject jsonObject, Response response) {
-
-                sessionManager.logoutUser();
-
-                ApiController.apiInterface = null;
-
-                Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-
-                if(progressDialog.isShowing())
-                progressDialog.dismiss();
-
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-
-                if(progressDialog.isShowing())
-                progressDialog.dismiss();
-
-                Toast.makeText(BaseActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            public void run() {
+                progressDialog.show();
             }
         });
+
+        Call<JsonObject> logoutCall = ApiController.getRetrofit2API(getApplicationContext(), this).logout(sessionManager.getAccessToken());
+
+        logoutCall.enqueue(new retrofit2.Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                clearAuthAndOpenLoginForm("Logged out successfully");
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void clearAuthAndOpenLoginForm(String startUpMessage) {
+        sessionManager.logoutUser();
+        ApiController.apiInterface = null;
+        Intent intent = new Intent(BaseActivity.this, LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(LoginActivity.STARTUP_MESSAGE, startUpMessage);
+        startActivity(intent);
     }
 
     //Method fills the nav drawer's ArrayList
@@ -522,6 +553,41 @@ public class BaseActivity extends AppCompatActivity {
         {
             ex.printStackTrace();
         }
+    }
+
+    public void showSnackBar(String msg) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), msg,
+                Snackbar.LENGTH_LONG).setDuration(Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        tv.setMaxLines(5);
+        snackbar.show();
+    }
+
+    public void showSnackBar(Integer stringResourceId) {
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), stringResourceId,
+                Snackbar.LENGTH_LONG).setDuration(Snackbar.LENGTH_LONG);
+        View snackbarView = snackbar.getView();
+        TextView tv = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        tv.setMaxLines(5);
+        snackbar.show();
+    }
+
+    @Override
+    public void errorOccurred(String errorMsg) {
+        showSnackBar(errorMsg);
+    }
+
+    @Override
+    public void sessionTimeOutError() {
+        clearAuthAndOpenLoginForm(getString(R.string.session_timeout));
+    }
+
+    public Boolean validateInternetConnection() {
+        Boolean hasInternetConnection = AppUtils.checkInternetConnectivity(BaseActivity.this);
+        if (!hasInternetConnection)
+            showSnackBar("No internet connection");
+        return hasInternetConnection;
     }
 
 }

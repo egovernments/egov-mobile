@@ -50,7 +50,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
@@ -61,24 +60,18 @@ import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
 public class PropertyTaxSearchActivity extends BaseActivity implements View.OnClickListener {
 
+    public static final String PARAM_PROPERTY_SEARCH_REQUEST = "propertySearchObj";
+    public static String IS_VACANT_LAND = "isVacantLand";
+    public static String PT_CATEGORY_VALUE = "PT";
+    public static String VLT_CATEGORY_VALUE = "VLT";
     EditText etAssessmentNo;
     EditText etOwnerName;
     EditText etMobileNo;
     EditText etDoorNo;
-
     LinearLayout layoutDoorNoContainer;
-
     TextView tvSearchTitle;
     TextView tvReceiptInfo;
     FloatingActionButton fabSearchProperty;
-
-    public static final String PARAM_PROPERTY_SEARCH_REQUEST="propertySearchObj";
-
-    public static String IS_VACANT_LAND="isVacantLand";
-
-    public static String PT_CATEGORY_VALUE="PT";
-    public static String VLT_CATEGORY_VALUE="VLT";
-
     boolean isVacantLand=false;
 
     ConfigManager configManager;
@@ -87,7 +80,7 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_property_tax_search);
+        setContentViewWithNavBar(R.layout.activity_property_tax_search, true);
 
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
         etOwnerName=(EditText)findViewById(R.id.etOwnerName);
@@ -129,7 +122,7 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
 
     public void searchProperty()
     {
-        if(validateInputSearchFields())
+        if (validateInputSearchFields() && validateInternetConnection())
         {
             Intent openSearchResult=new Intent(PropertyTaxSearchActivity.this, SearchResultActivity.class);
 
@@ -142,7 +135,7 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
         }
         else
         {
-            Toast.makeText(getApplicationContext(), R.string.fill_any_one_details, Toast.LENGTH_SHORT).show();
+            showSnackBar(R.string.fill_any_one_details);
         }
     }
 

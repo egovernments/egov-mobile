@@ -56,7 +56,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceActivity;
@@ -73,39 +72,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * Created by egov on 20/4/16.
  */
 public class GrievanceFragment extends android.support.v4.app.Fragment {
 
-    GrievanceItemInterface grievanceItemInterface;
-
-    private List<Grievance> grievanceList=new ArrayList<>();
-
-    private RecyclerView recyclerView;
-
-    private ProgressBar progressBar;
-
-    private CardView cvNoComplaints;
-
     public GrievanceListAdapater grievanceAdapter;
-
+    GrievanceItemInterface grievanceItemInterface;
+    EndlessRecyclerOnScrollListener onScrollListener;
+    String accessToken;
+    String pageTitle;
+    Bundle downImageArgs;
+    private List<Grievance> grievanceList=new ArrayList<>();
+    private RecyclerView recyclerView;
+    private ProgressBar progressBar;
+    private CardView cvNoComplaints;
     //The currently visible page no.
     private int pageNo = 1;
     private int position;
-
     private boolean loading = true;
     private boolean isPaginationEnded = false;
-    EndlessRecyclerOnScrollListener onScrollListener;
-
-    String accessToken;
-    String pageTitle;
-
-    Bundle downImageArgs;
 
     public static GrievanceFragment instantiateItem(String access_token, String title, int position, String imageDownloadUrl) {
         GrievanceFragment imageFragment = new GrievanceFragment();
@@ -229,7 +217,63 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 grievanceAdapter.notifyItemInserted(grievanceList.size());
             }
 
-            ApiController.getAPI(getActivity()).getMyComplaints(page, "10", accessToken, pageTitle, new Callback<GrievanceAPIResponse>() {
+        Call<GrievanceAPIResponse> getMyComplaints = ApiController.getRetrofit2API(getContext(), null)
+                .getMyComplaints(page, "10", accessToken, pageTitle);
+
+        getMyComplaints.enqueue(new retrofit2.Callback<GrievanceAPIResponse>() {
+            @Override
+            public void onResponse(Call<GrievanceAPIResponse> call, retrofit2.Response<GrievanceAPIResponse> response) {
+
+                GrievanceAPIResponse grievanceAPIResponse = response.body();
+
+                for (Grievance grievance : grievanceAPIResponse.getResult()) {
+                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {
+                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                        List<Address> addresses;
+                        try {
+                            addresses = geocoder.getFromLocation(grievance.getLat(), grievance.getLng(), 1);
+                            String location = (TextUtils.isEmpty(addresses.get(0).getSubLocality()) ? addresses.get(0).getThoroughfare() : addresses.get(0).getSubLocality());
+                            grievance.setLocationName(returnValidString(location));
+                            grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                if (page.equals("1")) {
+                    if (grievanceList != null) {
+                        grievanceList.clear();
+                    }
+                    grievanceList = grievanceAPIResponse.getResult();
+                    grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
+                    recyclerView.setAdapter(grievanceAdapter);
+                    progressBar.setVisibility(View.GONE);
+                }
+                //If the request is a next page request
+                else {
+                    grievanceList.remove(grievanceList.size() - 1);
+                    grievanceAdapter.notifyItemRemoved(grievanceList.size());
+                    grievanceList.addAll(grievanceList.size(), grievanceAPIResponse.getResult());
+                    grievanceAdapter.notifyItemInserted(grievanceList.size());
+                }
+
+                if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
+                    isPaginationEnded = true;
+                }
+                loading = false;
+                updateSuccessEvent();
+            }
+
+            @Override
+            public void onFailure(Call<GrievanceAPIResponse> call, Throwable t) {
+                loading = false;
+                updateFailedEvent();
+            }
+        });
+
+
+            /*ApiController.getAPI(getActivity()).getMyComplaints(page, "10", accessToken, pageTitle, new Callback<GrievanceAPIResponse>() {
                         @Override
                         public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
 
@@ -291,7 +335,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
 
                     }
 
-            );
+            );*/
         }
 
        public void updateSuccessEvent()

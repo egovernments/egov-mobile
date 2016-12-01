@@ -48,9 +48,6 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
@@ -74,33 +71,37 @@ import org.egovernments.egoverp.models.WaterTaxRequest;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
-import retrofit.http.Body;
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
-import retrofit.mime.MultipartTypedOutput;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.PartMap;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public class ApiController {
 
+    private final static okhttp3.OkHttpClient.Builder okHttpBuilder = SSLTrustManager.createClient();
     public static APIInterface apiInterface = null;
-
-    private final static OkHttpClient client = SSLTrustManager.createClient();
 
     public static City getCityURL(String url) throws IOException{
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            Response response = client.newCall(request).execute();
+            Response response = okHttpBuilder.build().newCall(request).execute();
             return new Gson().fromJson(response.body().charStream(), City.class);
         } catch (Exception e) {
             return null;
@@ -112,7 +113,7 @@ public class ApiController {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            Response response = client.newCall(request).execute();
+            Response response = okHttpBuilder.build().newCall(request).execute();
             return response.body().string();
         } catch (Exception e) {
             return null;
@@ -126,7 +127,7 @@ public class ApiController {
                     .url(url)
                     .build();
 
-            Response response = client.newCall(request).execute();
+            Response response = okHttpBuilder.build().newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException();
             Type type = new TypeToken<List<District>>() {
@@ -141,12 +142,11 @@ public class ApiController {
     public static City getCityURL(String url, int cityCode) throws IOException {
 
         try {
-
             Request request = new Request.Builder()
                     .url(url + "&code=" + cityCode)
                     .build();
 
-            Response response = client.newCall(request).execute();
+            Response response = okHttpBuilder.build().newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException();
             return new Gson().fromJson(response.body().charStream(), City.class);
@@ -157,175 +157,159 @@ public class ApiController {
     }
 
     //Sets up the API client
-    public static APIInterface getAPI(Context context) {
+    public static APIInterface getRetrofit2API(Context context, Interceptor.ErrorListener errorListener) {
+
         SessionManager sessionManager = new SessionManager(context);
-        if (apiInterface == null) {
-            RestAdapter restAdapter = new RestAdapter
-                    .Builder()
-                    .setClient(new OkClient(client))
-                    .setEndpoint(sessionManager.getBaseURL())
-                    .setErrorHandler(new CustomErrorHandler())
+
+        okHttpBuilder.interceptors().clear();
+
+        Interceptor logging = new Interceptor();
+        // set your desired log level none, body, header
+        logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
+        logging.setErrorListener(errorListener);
+
+        okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
+
+        if (apiInterface == null || errorListener != null) {
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(sessionManager.getBaseURL())
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            //logger enable or disable based on app config
-            restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
-            apiInterface = restAdapter.create(APIInterface.class);
+
+            apiInterface = retrofit.create(APIInterface.class);
         }
+
         return apiInterface;
     }
 
-    public static APIInterface resetAndGetAPI(Context context) {
+    public static APIInterface getRetrofit2API(Context context, String url, Interceptor.ErrorListener errorListener) {
         SessionManager sessionManager = new SessionManager(context);
         apiInterface=null;
-        RestAdapter restAdapter = new RestAdapter
-                    .Builder()
-                    .setClient(new OkClient(client))
-                    .setEndpoint(sessionManager.getBaseURL())
-                    .setErrorHandler(new CustomErrorHandler())
-                    .build();
-        //logger enable or disable based on app config
-        restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
-        apiInterface = restAdapter.create(APIInterface.class);
-        return apiInterface;
-    }
 
-    //For Third Party Servers
-    public static APIInterface getCustomAPI(Context context, String url) {
-        SessionManager sessionManager = new SessionManager(context);
-        APIInterface apiInterface=null;
-        RestAdapter restAdapter = new RestAdapter
-                .Builder()
-                .setClient(new OkClient(client))
-                .setEndpoint(url)
-                .setErrorHandler(new CustomErrorHandler())
+        okHttpBuilder.interceptors().clear();
+
+        Interceptor logging = new Interceptor();
+        //set your desired log level none, body, header
+        logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
+        logging.setErrorListener(errorListener);
+        okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(url)
                 .build();
-        //logger enable or disable based on app config
-        restAdapter.setLogLevel((sessionManager.getKeyDebugLog()?RestAdapter.LogLevel.FULL:RestAdapter.LogLevel.NONE));
-        apiInterface = restAdapter.create(APIInterface.class);
+
+        apiInterface = retrofit.create(APIInterface.class);
         return apiInterface;
     }
 
     public interface APIInterface {
 
-        @POST(ApiUrl.CITIZEN_REGISTER)
-        void registerUser(@Body RegisterRequest registerRequest,
-                          Callback<JsonObject> jsonObjectCallback);
-
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGIN)
-        void login(@Header("Authorization") String authorization, @Field("username") String username,
-                   @Field("scope") String scope,
-                   @Field("password") String password,
-                   @Field("grant_type") String grant_type,
-                   Callback<JsonObject> jsonObjectCallback);
+        Call<JsonObject> login(@Header("Authorization") String authorization, @Field("username") String username,
+                               @Field("scope") String scope,
+                               @Field("password") String password,
+                               @Field("grant_type") String grant_type);
+
+        @GET(ApiUrl.CITIZEN_GET_PROFILE)
+        Call<ProfileAPIResponse> getProfile(@Query(value = "access_token") String access_token);//Callback<ProfileAPIResponse> profileAPIResponseCallback
 
         @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_PASSWORD_RECOVER)
+        Call<JsonObject> recoverPassword(@Field("identity") String identity,
+                                         @Field("redirectURL") String redirectURL);
+
+        @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_PASSWORD_RECOVER)
+        Call<JsonObject> resetPassword(@Field("identity") String identity,
+                                       @Field("token") String token,
+                                       @Field("newPassword") String newPassword,
+                                       @Field("confirmPassword") String confirmPassword);
+
+        @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_SEND_OTP)
+        Call<JsonObject> sendOTPToVerifyBeforeAccountCreate(@Field("identity") String identity);
+
+        @POST(ApiUrl.CITIZEN_REGISTER)
+        Call<JsonObject> registerUser(@Body RegisterRequest registerRequest);
+
+        @GET(ApiUrl.CITIZEN_GET_COMPLAINT_CATEGORIES_COUNT)
+        Call<JsonObject> getComplaintCategoryCount(@Query(value = "access_token") String authorization);
+
+        @GET(ApiUrl.CITIZEN_GET_MY_COMPLAINT)
+        Call<GrievanceAPIResponse> getMyComplaints(@Path("page") String pages,
+                                                   @Path(value = "pageSize") String pageSize,
+                                                   @Query(value = "access_token") String accessToken,
+                                                   @Query(value = "complaintStatus") String complaintStatus);
+
+        @GET(ApiUrl.COMPLAINT_CATEGORIES_TYPES)
+        Call<GrievanceTypeAPIResponse> getComplaintCategoryAndTypes(@Query(value = "access_token") String access_token);
+
+        @GET(ApiUrl.COMPLAINT_GET_LOCATION_BY_NAME)
+        Call<GrievanceLocationAPIResponse> getComplaintLocation(@Query(value = "locationName") String location,
+                                                                @Query(value = "access_token") String access_token);
+
+        @Multipart
+        @POST(ApiUrl.COMPLAINT_CREATE)
+        Call<JsonObject> createComplaint(@Query(value = "access_token") String access_token, @PartMap Map<String, RequestBody> files);
+
+        @GET(ApiUrl.COMPLAINT_HISTORY)
+        Call<GrievanceCommentAPIResponse> getComplaintHistory(@Path(value = "complaintNo") String complaintNo,
+                                                              @Query(value = "access_token") String access_token);
+
+        @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
+        Call<JsonObject> updateGrievance(@Path(value = "complaintNo") String complaintNo,
+                                         @Body GrievanceUpdate grievanceUpdate,
+                                         @Query(value = "access_token") String access_token);
+
+        @POST(ApiUrl.SEARCH_PROPERTY)
+        Call<List<PropertyTaxCallback>> searchProperty(@Header("Referer") String referer,
+                                                       @Body PropertySearchRequest propertySearchRequest);
+
+        @POST(ApiUrl.PROPERTY_TAX_DETAILS)
+        Call<PropertyTaxCallback> getPropertyTax(@Header("Referer") String referer,
+                                                 @Body PropertyViewRequest propertyViewRequest);
+
+        @POST(ApiUrl.SEARCH_WATER_CONNECTION)
+        Call<List<WaterTaxCallback>> searchWaterConnection(@Header("Referer") String referer,
+                                                           @Body WaterConnectionSearchRequest waterConnectionSearchRequest);
+
+        @POST(ApiUrl.WATER_TAX_DETAILS)
+        Call<WaterTaxCallback> getWaterTax(@Header("Referer") String referer,
+                                           @Body WaterTaxRequest waterTaxRequest);
+
+        @GET(ApiUrl.BPA_DETAILS)
+        Call<BuildingPlanAPIResponse> getBuildingPlanApprovalDetails(@Path(value = "applicationNo") String applicationNo, @Path(value = "authKey") String authKey);
+
+        @PUT(ApiUrl.CITIZEN_UPDATE_PROFILE)
+        Call<ProfileAPIResponse> updateProfile(@Body Profile profile,
+                                               @Query(value = "access_token") String access_token);
+
+        @FormUrlEncoded
+        @POST(ApiUrl.CITIZEN_LOGOUT)
+        Call<JsonObject> logout(@Field("access_token") String access_token);
+
+        /*@GET(ApiUrl.COMPLAINTS_COUNT_DETAILS)
+        void getComplaintCountDetails(@Query(value = "access_token", encodeValue = false) String access_token,
+                           Callback<JsonObject> grievanceAPIJsonCallback);*/
+
+        /*@FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGOUT)
         void logout(@Field("access_token") String access_token,
                     Callback<JsonObject> jsonObjectCallback);
 
-        @GET(ApiUrl.COMPLAINTS_COUNT_DETAILS)
-        void getComplaintCountDetails(@Query(value = "access_token", encodeValue = false) String access_token,
-                           Callback<JsonObject> grievanceAPIJsonCallback);
 
 
-        @GET(ApiUrl.CITIZEN_GET_COMPLAINT_CATEGORIES_COUNT)
-        void getComplaintCategoriesWithCount(@Query("access_token") String authorization, Callback<JsonObject> complaintCategoriesCallback);
-
-        @GET(ApiUrl.CITIZEN_GET_MY_COMPLAINT)
-        void getMyComplaints(@Path(value = "page", encode = false) String pages,
-                             @Path(value = "pageSize", encode = false) String pagesize,
-                             @Query(value = "access_token", encodeValue = false) String access_token,
-                             @Query(value = "complaintStatus", encodeValue = false) String complaintStatus,
-                             Callback<GrievanceAPIResponse> complaintAPIResponseCallback);
-
-        @GET(ApiUrl.COMPLAINT_LATEST)
-        void getLatestComplaints(@Path(value = "page", encode = false) String pages,
-                                 @Path(value = "pageSize", encode = false) String pagesize,
-                                 @Query(value = "access_token", encodeValue = false) String access_token,
-                                 Callback<GrievanceAPIResponse> complaintAPIResponseCallback);
-
-        @GET(ApiUrl.COMPLAINT_CATEGORIES_TYPES)
-        void getComplaintTypes(@Query(value = "access_token", encodeValue = false) String access_token,
-                               Callback<GrievanceTypeAPIResponse> grievanceTypeAPIResponseCallback);
-
-        @GET(ApiUrl.COMPLAINT_HISTORY)
-        void getComplaintHistory(@Path(value = "complaintNo", encode = false) String complaintNo,
-                                 @Query(value = "access_token", encodeValue = false) String access_token,
-                                 Callback<GrievanceCommentAPIResponse> grievanceCommentAPIResponseCallback);
-
-        @GET(ApiUrl.COMPLAINT_GET_LOCATION_BY_NAME)
-        void getComplaintLocation(@Query(value = "locationName", encodeValue = false) String location,
-                                  @Query(value = "access_token", encodeValue = false) String access_token,
-                                  Callback<GrievanceLocationAPIResponse> grievanceLocationAPIResponseCallback);
-
-        @POST(ApiUrl.COMPLAINT_CREATE)
-        void createComplaint(@Body MultipartTypedOutput output,
-                             @Query(value = "access_token", encodeValue = false) String access_token,
-                             Callback<JsonObject> jsonObjectCallback);
-
-        @PUT(ApiUrl.COMPLAINT_UPDATE_STATUS)
-        void updateGrievance(@Path(value = "complaintNo", encode = false) String complaintNo,
-                             @Body GrievanceUpdate grievanceUpdate,
-                             @Query(value = "access_token", encodeValue = false) String access_token,
-                             Callback<JsonObject> jsonObjectCallback);
-
-        @POST(ApiUrl.SEARCH_PROPERTY)
-        void searchProperty(@Header("Referer") String referer,
-                            @Body PropertySearchRequest propertySearchRequest,
-                            Callback<List<PropertyTaxCallback>> taxCallback);
-
-        @POST(ApiUrl.PROPERTY_TAX_DETAILS)
-        void getPropertyTax(@Header("Referer") String referer,
-                            @Body PropertyViewRequest propertyViewRequest,
-                            Callback<PropertyTaxCallback> taxCallback);
-
-        @POST(ApiUrl.SEARCH_WATER_CONNECTION)
-        void searchWaterConnection(@Header("Referer") String referer,
-                            @Body WaterConnectionSearchRequest waterConnectionSearchRequest,
-                            Callback<List<WaterTaxCallback>> taxCallback);
-
-        @POST(ApiUrl.WATER_TAX_DETAILS)
-        void getWaterTax(@Header("Referer") String referer,
-                         @Body WaterTaxRequest waterTaxRequest,
-                         Callback<WaterTaxCallback> taxCallback);
-
-        @GET(ApiUrl.BPA_DETAILS)
-        void getBuildingPlanApprovalDetails(@Path(value = "applicationNo", encode = false) String applicationNo, @Path(value = "authKey", encode = false) String authKey, Callback<BuildingPlanAPIResponse> bpaDetails);
-
-        @FormUrlEncoded
-        @POST(ApiUrl.CITIZEN_ACTIVATE)
-        void activate(@Field("userName") String username,
-                      @Field("activationCode") String activationCode,
-                      Callback<JsonObject> jsonObjectCallback);
-
-        @FormUrlEncoded
-        @POST(ApiUrl.CITIZEN_SEND_OTP)
-        void sendOTP(@Field("identity") String identity,
-                     Callback<JsonObject> jsonObjectCallback);
-
-        @FormUrlEncoded
-        @POST(ApiUrl.CITIZEN_PASSWORD_RECOVER)
-        void recoverPassword(@Field("identity") String identity,
-                             @Field("redirectURL") String redirectURL,
-                             Callback<JsonObject> jsonObjectCallback);
-
-        @FormUrlEncoded
-        @POST(ApiUrl.CITIZEN_PASSWORD_RECOVER)
-        void resetPassword(@Field("identity") String identity,
-                             @Field("token") String token,
-                             @Field("newPassword") String newPassword,
-                             @Field("confirmPassword") String confirmPassword,
-                             Callback<JsonObject> jsonObjectCallback);
-
-        @GET(ApiUrl.CITIZEN_GET_PROFILE)
-        void getProfile(@Query(value = "access_token", encodeValue = false) String access_token,
-                        Callback<ProfileAPIResponse> profileAPIResponseCallback);
 
         @PUT(ApiUrl.CITIZEN_UPDATE_PROFILE)
         void updateProfile(@Body Profile profile,
                            @Query(value = "access_token", encodeValue = false) String access_token,
                            Callback<ProfileAPIResponse> profileAPIResponseCallback);
-
+*/
 
     }
 

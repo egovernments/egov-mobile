@@ -49,7 +49,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -57,7 +56,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -80,37 +78,31 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 
 public class BuildingPlanActivity extends BaseActivity {
 
+    public static String IS_BUILDING_PENALIZATION = "Is_building_penalization";
     CustomEditText searchEditText;
-    ApiController.APIInterface buildingPlanApi;
+    Call<BuildingPlanAPIResponse> buildingPlanAPIResponseCall;
     ProgressBar progressBar;
     boolean isKeyboardVisible=false;
     boolean isBuildingPenalization=false;
     CardView cvBuildingPlanDetails;
     CardView cvBPSDetails;
-
     //Textview for Building plan
     TextView tvApplicationNo, tvApplicationType, tvApplicationStatus, tvOwnerName, tvOwnerMobNo, tvOwnerEmailId, tvOwnerAddress, tvSiteAddress,
             tvNatureOfSite, tvPermissionType, tvApplicantName, tvApplicantMobNo, tvApplicantEmailId;
-
     //Textview for BPS
     TextView tvBPSApplicationNo, tvBPSApplicationStatus, tvBPSApplicantName, tvBPSApplicantMobNo;
     LinearLayout layoutBPSDocsSection;
-
     RecyclerView recyclerView, recyclerViewBPS;
-
-    public static String IS_BUILDING_PENALIZATION="Is_building_penalization";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_plan);
+        setContentViewWithNavBar(R.layout.activity_building_plan, true);
 
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -180,8 +172,6 @@ public class BuildingPlanActivity extends BaseActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setElevation(0);
 
-        buildingPlanApi=ApiController.getCustomAPI(BuildingPlanActivity.this, ApiUrl.BPA_SERVER_ADDRESS);
-
     }
 
     private void hideSoftKeyboard(InputMethodManager imm)
@@ -196,7 +186,7 @@ public class BuildingPlanActivity extends BaseActivity {
 
         if(TextUtils.isEmpty(applicationNo.trim()))
         {
-            Toast.makeText(getApplicationContext(),"Please enter application no", Toast.LENGTH_SHORT).show();
+            showSnackBar("Please enter application no");
             return;
         }
 
@@ -223,19 +213,18 @@ public class BuildingPlanActivity extends BaseActivity {
 
         applicationNo=applicationNo.replaceAll("/","\\$");
 
-        Log.v("Application No", applicationNo);
+        buildingPlanAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), ApiUrl.BPA_SERVER_ADDRESS, this).getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY);
 
-        buildingPlanApi.getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY, new Callback<BuildingPlanAPIResponse>() {
+        buildingPlanAPIResponseCall.enqueue(new retrofit2.Callback<BuildingPlanAPIResponse>() {
             @Override
-            public void success(BuildingPlanAPIResponse buildingPlanAPIResponse, Response response) {
+            public void onResponse(Call<BuildingPlanAPIResponse> call, retrofit2.Response<BuildingPlanAPIResponse> response) {
+
+                BuildingPlanAPIResponse buildingPlanAPIResponse = response.body();
 
                 progressBar.setVisibility(View.GONE);
-                if(TextUtils.isEmpty(buildingPlanAPIResponse.getStatus()))
+                if (TextUtils.isEmpty(buildingPlanAPIResponse.getStatus()) || !buildingPlanAPIResponse.getStatus().equals("success"))
                 {
-                    Toast.makeText(getApplicationContext(), buildingPlanAPIResponse.getError(), Toast.LENGTH_SHORT).show();
-                }
-                else if(!buildingPlanAPIResponse.getStatus().equals("success")){
-                    Toast.makeText(getApplicationContext(), buildingPlanAPIResponse.getError(), Toast.LENGTH_SHORT).show();
+                    showSnackBar(buildingPlanAPIResponse.getError());
                 }
                 else{
                     BuildingPlanAPIResponse.Response bpadetails=buildingPlanAPIResponse.getResponse().get(0);
@@ -260,7 +249,7 @@ public class BuildingPlanActivity extends BaseActivity {
 
                     if(!TextUtils.isEmpty(bpadetails.getDrawingPlain()))
                     {
-                      downloadDocs.add(new DownloadDoc("Drawing-Plan-Document", bpadetails.getDrawingPlain()));
+                        downloadDocs.add(new DownloadDoc("Drawing-Plan-Document", bpadetails.getDrawingPlain()));
                     }
 
                     if(!TextUtils.isEmpty(bpadetails.getProceedingLetter()))
@@ -276,13 +265,12 @@ public class BuildingPlanActivity extends BaseActivity {
                     recyclerView.setAdapter(new FilesDownloadAdapter(BuildingPlanActivity.this, downloadDocs));
 
                 }
+
             }
 
             @Override
-            public void failure(RetrofitError error) {
-
+            public void onFailure(Call<BuildingPlanAPIResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-
             }
         });
 
@@ -298,6 +286,25 @@ public class BuildingPlanActivity extends BaseActivity {
         return getString(R.string.building_plan_label);
     }
 
+    private String getValidUrl(String url) {
+
+        url = url.replace("\\", "/");
+
+        if (url.startsWith("http:")) {
+            return url;
+        } else {
+            url = "http:" + url;
+        }
+
+        return url;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (buildingPlanAPIResponseCall != null && !buildingPlanAPIResponseCall.isCanceled())
+            buildingPlanAPIResponseCall.cancel();
+    }
 
     private class getBuildingPenalizationDetails extends AsyncTask<String, Void, BuildingPenalizationAPIResponse> {
 
@@ -324,7 +331,7 @@ public class BuildingPlanActivity extends BaseActivity {
                 if(TextUtils.isEmpty(buildingPenalizationAPIResponse.getApplicationNo()))
                 {
                     String error=buildingPenalizationAPIResponse.getCurrentStatus();
-                    Toast.makeText(BuildingPlanActivity.this, (TextUtils.isEmpty(error)?genericError:error), Toast.LENGTH_SHORT).show();
+                    showSnackBar(TextUtils.isEmpty(error) ? genericError : error);
                 }
                 else{
 
@@ -372,7 +379,7 @@ public class BuildingPlanActivity extends BaseActivity {
             }
             else
             {
-                Toast.makeText(BuildingPlanActivity.this, genericError, Toast.LENGTH_SHORT).show();
+                showSnackBar(genericError);
             }
 
         }
@@ -395,9 +402,7 @@ public class BuildingPlanActivity extends BaseActivity {
                 androidHttpTransport.call(SOAP_ACTION,envelope);
                 SoapPrimitive result =(SoapPrimitive) envelope.getResponse();
                 buildingPenalizationAPIResponse=new Gson().fromJson(result.toString().trim(), BuildingPenalizationAPIResponse.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
                 e.printStackTrace();
             }
 
@@ -405,23 +410,4 @@ public class BuildingPlanActivity extends BaseActivity {
 
         }
     }
-
-    private String getValidUrl(String url)
-    {
-
-        url=url.replace("\\", "/");
-
-        if(url.startsWith("http:"))
-        {
-            return url;
-        }
-        else
-        {
-            url="http:"+url;
-        }
-
-        return url;
-    }
-
-
 }

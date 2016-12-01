@@ -42,7 +42,6 @@
 
 package org.egovernments.egoverp.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -54,7 +53,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -67,7 +65,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
@@ -75,7 +72,6 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.config.Config;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
@@ -88,9 +84,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
@@ -99,48 +93,34 @@ import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
  **/
 
 @SuppressWarnings("ALL")
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 
+    public static final String STARTUP_MESSAGE = "startUpMessage";
+    List<District> districtsList;
+    List<City> citiesList;
+    ImageView imgLogo;
+    List<String> districts;
     private String username;
     private String password;
-   /* private String url;
-    private String cityName;*/
-
     private ProgressBar progressBar;
-
     private FloatingActionButton loginButton;
     private com.melnykov.fab.FloatingActionButton loginButtonCompat;
     private TextView forgotLabel;
     private Button signupButton;
-
     private EditText username_edittext;
     private EditText password_edittext;
-
     private Handler handler;
-
-    private SessionManager sessionManager;
-
     private ConfigManager configManager;
-
     private CustomAutoCompleteTextView cityAutocompleteTextBox;
     private CustomAutoCompleteTextView districtAutocompleteTextBox;
-
     private Spinner spinnerCity;
     private Spinner spinnerDistrict;
-
-    List<District> districtsList;
-    List<City> citiesList;
-
-    ImageView imgLogo;
-
-    List<String> districts;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sessionManager = new SessionManager(getApplicationContext());
+        setContentViewWithNavBar(R.layout.activity_login, false);
 
         //Checks if session manager believes that the user is logged in.
         if (sessionManager.isLoggedIn()) {
@@ -153,11 +133,16 @@ public class LoginActivity extends Activity {
                 startActivityAnimation(intent, true);
                 finish();
             } else {
-                showToastMsg("Session expired!");
+                showSnackBar("Session expired!");
             }
         }
 
-        setContentView(R.layout.activity_login);
+        String startupMessage = getIntent().getStringExtra(STARTUP_MESSAGE);
+
+        if (!TextUtils.isEmpty(startupMessage)) {
+            showSnackBar(startupMessage);
+        }
+
 
         spinnerCity = (Spinner) findViewById(R.id.signin_city);
         spinnerDistrict = (Spinner) findViewById(R.id.spinner_district);
@@ -179,14 +164,14 @@ public class LoginActivity extends Activity {
         cityAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToastMsg("Fetching municipality list, please wait");
+                showSnackBar("Fetching municipality list, please wait");
             }
         });
 
         districtAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToastMsg("Fetching district list, please wait");
+                showSnackBar("Fetching district list, please wait");
             }
         });
 
@@ -197,7 +182,10 @@ public class LoginActivity extends Activity {
             public void onClick(View v) {
                 username = username_edittext.getText().toString().trim();
                 password = password_edittext.getText().toString().trim();
-                submit(username, password);
+                City selectedCity = getCityByName(cityAutocompleteTextBox.getText().toString());
+                if (validateInputFields(username, password, selectedCity) && validateInternetConnection()) {
+                    loginWithUsernameAndPwd(username, password, selectedCity);
+                }
             }
         };
 
@@ -206,7 +194,7 @@ public class LoginActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 sessionManager.setDemoMode(!sessionManager.isDemoMode());
-                showToastMsg("Demo Mode is "+(sessionManager.isDemoMode()?"Enabled":"Disabled"));
+                showSnackBar("Demo Mode is " + (sessionManager.isDemoMode() ? "Enabled" : "Disabled"));
                 return false;
             }
         });
@@ -256,7 +244,7 @@ public class LoginActivity extends Activity {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     username = username_edittext.getText().toString().trim();
                     password = password_edittext.getText().toString().trim();
-                    submit(username, password);
+                    validateInputFields(username, password);
                     if(imm != null){
                         imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                     }
@@ -275,20 +263,6 @@ public class LoginActivity extends Activity {
         }
 
         new GetAllCitiesTask().execute();
-    }
-
-    private void showToastMsg(String msg)
-    {
-        Toast toast = Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-        toast.show();
-    }
-
-    private void showToastMsg(Integer msg)
-    {
-        Toast toast = Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-        toast.show();
     }
 
     public void showLoginProgress()
@@ -312,10 +286,10 @@ public class LoginActivity extends Activity {
     }
 
     //Invokes call to API
-    private void submit(final String username, final String password) {
+    private Boolean validateInputFields(final String username, final String password, final City selectedCity) {
 
             if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                showToastMsg(R.string.login_field_empty_prompt);
+                showSnackBar(R.string.login_field_empty_prompt);
                 progressBar.setVisibility(View.GONE);
                 forgotLabel.setVisibility(View.VISIBLE);
                 signupButton.setVisibility(View.VISIBLE);
@@ -325,74 +299,17 @@ public class LoginActivity extends Activity {
                 } else
                     loginButtonCompat.setVisibility(View.VISIBLE);
 
-            } else {
+                return false;
 
-                City selectedCity = getCityByName(cityAutocompleteTextBox.getText().toString());
+            } else {
 
                 if(!isValidDistrictAndMunicipality(selectedCity))
                 {
-                    return;
+                    return false;
                 }
-
-
-                if (configManager.getString(API_MULTICITIES).equals("true"))
-                    sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
-                            selectedCity.getCityCode(), selectedCity.getModules()!=null?selectedCity.getModules().toString():null);
-
-                showLoginProgress();
-
-                ApiController.resetAndGetAPI(LoginActivity.this).login(ApiUrl.AUTHORIZATION, username, "read write", password, "password", new Callback<JsonObject>() {
-                    @Override
-                    public void success(JsonObject jsonObject, Response response) {
-
-                        //Stores access token in session manager
-                        sessionManager.loginUser(username, password, AppUtils.getNullAsEmptyString(jsonObject.get("name")),
-                                AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) ,
-                                jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
-                        startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
-
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivityAnimation(intent, true);
-
-                        finish();
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        JsonObject jsonObject = null;
-                        if (error != null) {
-                            if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().contains("400")) {
-                                showToastMsg(error.getLocalizedMessage());
-                            } else {
-                                try {
-                                    jsonObject = (JsonObject) error.getBody();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                if (jsonObject != null && jsonObject.get("error_description")!=null) {
-                                    String errorDescription = jsonObject.get("error_description").getAsString().trim();
-                                    //If user has attempted to log into a yet to be activated account,
-                                    // automatically redirect the user to account activation screen
-                                    if (errorDescription.startsWith("Please activate your account")) {
-                                       showToastMsg("Please contact us because your account has not been activated");
-                                    } else {
-                                        showToastMsg(errorDescription);
-                                    }
-                                } else {
-                                    showToastMsg("An unexpected error occurred while accessing the network!");
-                                }
-                            }
-                        }
-
-                        hideLoginProgress();
-
-                    }
-                });
-
-
             }
 
+        return true;
     }
 
     private void startActivityAnimation(Intent intent, Boolean withAnimation) {
@@ -400,14 +317,6 @@ public class LoginActivity extends Activity {
             startActivity(intent, AppUtils.getTransitionBundle(LoginActivity.this, intent));
         else
             startActivity(intent);
-    }
-
-    class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
-        @Override
-        protected Object doInBackground(String... params) {
-            loadDropdowns();
-            return null;
-        }
     }
 
     public void hideMultiCityComponents()
@@ -596,14 +505,13 @@ public class LoginActivity extends Activity {
         if (selectedCity == null && configManager.getString(API_MULTICITIES).equals("true")) {
 
             String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
-            showToastMsg(errorMsg);
+            showSnackBar(errorMsg);
             CustomAutoCompleteTextView controlToFocus = (TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString()) ? districtAutocompleteTextBox : cityAutocompleteTextBox);
             controlToFocus.requestFocus();
             return false;
         }
         return true;
     }
-
 
     public City getCityByName(String cityName)
     {
@@ -667,6 +575,54 @@ public class LoginActivity extends Activity {
         }
     }
 
+    public void loginWithUsernameAndPwd(final String username, final String password, final City selectedCity) {
+
+        if (configManager.getString(API_MULTICITIES).equals("true"))
+            sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
+                    selectedCity.getCityCode(), selectedCity.getModules() != null ? selectedCity.getModules().toString() : null);
+
+        showLoginProgress();
+
+        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), selectedCity.getUrl(), this)
+                .login(ApiUrl.AUTHORIZATION, username, "read write", password, "password");
+
+        login.enqueue(new retrofit2.Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                if (response.isSuccessful()) {
+
+                    JsonObject jsonObject = response.body();
+
+                    //Stores access token in session manager
+                    sessionManager.loginUser(username, password, AppUtils.getNullAsEmptyString(jsonObject.get("name")),
+                            AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")),
+                            jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
+                    startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_ALL));
+
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivityAnimation(intent, true);
+
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                showSnackBar(t.getLocalizedMessage());
+                hideLoginProgress();
+            }
+        });
+
+    }
+
+    class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
+        @Override
+        protected Object doInBackground(String... params) {
+            loadDropdowns();
+            return null;
+        }
+    }
 }
 
 

@@ -46,7 +46,6 @@ package org.egovernments.egoverp.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -65,7 +64,6 @@ import com.google.gson.Gson;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.config.Config;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.KeyboardUtils;
@@ -80,21 +78,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
-public class WaterChargesViewActivity extends AppCompatActivity {
+public class WaterChargesViewActivity extends BaseActivity {
 
-    private TextView tvConsumerNo;
-    private TextView address;
-    private TextView locality;
-    private TextView ownerContact;
-    private ProgressBar progressBar;
-    private CardView waterTaxCardView;
-    private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
     List<TaxDetail> listBreakups;
     Button btnBreakups;
     FloatingActionButton fabPayWaterTax;
@@ -103,16 +92,18 @@ public class WaterChargesViewActivity extends AppCompatActivity {
     EditText etAmountToPay;
     EditText etMobileNo;
     EditText etMailAddress;
-
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
-
     boolean isKeyboardVisible=false;
-
     String consumerNo;
-
     ConfigManager configManager;
-
-    SessionManager sessionManager;
+    Call<WaterTaxCallback> waterTaxCall;
+    private TextView tvConsumerNo;
+    private TextView address;
+    private TextView locality;
+    private TextView ownerContact;
+    private ProgressBar progressBar;
+    private CardView waterTaxCardView;
+    private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +111,6 @@ public class WaterChargesViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_water_charges_view);
 
         consumerNo=getIntent().getStringExtra(SearchResultActivity.CONSUMER_NO);
-        sessionManager=new SessionManager(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -189,7 +179,7 @@ public class WaterChargesViewActivity extends AppCompatActivity {
                     paymentGatewayUrl=sessionManager.getBaseURL()+paymentGatewayUrl;
 
                     paymentGatewayUrl=paymentGatewayUrl.replace("{consumerNo}", tvConsumerNo.getText().toString());
-                    paymentGatewayUrl=paymentGatewayUrl.replace("{ulbCode}", String.format("%04d", sessionManager.getUrlLocationCode()));
+                    paymentGatewayUrl = paymentGatewayUrl.replace("{ulbCode}", String.format(Locale.getDefault(), "%04d", sessionManager.getUrlLocationCode()));
                     paymentGatewayUrl=paymentGatewayUrl.replace("{amountToPay}", String.valueOf(amountToPay));
                     paymentGatewayUrl=paymentGatewayUrl.replace("{mobileNo}", etMobileNo.getText().toString());
                     paymentGatewayUrl=paymentGatewayUrl.replace("{emailId}", etMailAddress.getText().toString());
@@ -265,85 +255,31 @@ public class WaterChargesViewActivity extends AppCompatActivity {
 
         waterTaxCardView.setVisibility(View.GONE);
 
-        ApiController.getAPI(WaterChargesViewActivity.this)
+
+        waterTaxCall = ApiController.getRetrofit2API(getApplicationContext(), this)
                 .getWaterTax(configManager.getString(REFERER_IP_CONFIG_KEY),
-                        new WaterTaxRequest(String.format("%04d", sessionManager.getUrlLocationCode()), code),
+                        new WaterTaxRequest(String.format(Locale.getDefault(), "%04d", sessionManager.getUrlLocationCode()), code));
+
+        waterTaxCall.enqueue(new retrofit2.Callback<WaterTaxCallback>() {
+            @Override
+            public void onResponse(Call<WaterTaxCallback> call, retrofit2.Response<WaterTaxCallback> response) {
+                showWaterTaxDetails(response);
+            }
+
+            @Override
+            public void onFailure(Call<WaterTaxCallback> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        /*ApiController.getAPI(WaterChargesViewActivity.this)
+                .getWaterTax(configManager.getString(REFERER_IP_CONFIG_KEY),
+                        new WaterTaxRequest(String.format(Locale.getDefault(), "%04d", sessionManager.getUrlLocationCode()), code),
                         new Callback<WaterTaxCallback>() {
                             @Override
                             public void success(WaterTaxCallback taxCallback, Response response) {
 
-                                if (taxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
 
-                                    tvConsumerNo.setText(taxCallback.getConsumerNo());
-                                    address.setText(taxCallback.getPropertyAddress());
-                                    locality.setText(taxCallback.getLocalityName());
-
-                                    ownerContact.setText(taxCallback.getOwnerName()+" / "+taxCallback.getMobileNo());
-
-                                    if(!TextUtils.isEmpty(taxCallback.getMobileNo()))
-                                    {
-                                        etMobileNo.setText(taxCallback.getMobileNo());
-                                    }
-
-                                    arrearsTotal=0; arrearsPenalty=0; currentTotal=0; currentPenalty=0; total=0;
-
-                                    for (TaxDetail taxDetail : taxCallback.getTaxDetails()) {
-                                        if(getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment()))
-                                        {
-                                            currentTotal=currentTotal+taxDetail.getTaxAmount();
-                                            currentPenalty=currentPenalty+taxDetail.getPenalty();
-                                        }
-                                        else
-                                        {
-                                            arrearsTotal+=taxDetail.getTaxAmount();
-                                            arrearsPenalty+=taxDetail.getPenalty();
-                                        }
-                                    }
-
-                                    total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
-
-                                    if(total>0)
-                                    {
-                                        fabPayWaterTax.setVisibility(View.VISIBLE);
-                                        paymentCardView.setVisibility(View.VISIBLE);
-                                    }
-                                    else
-                                    {
-                                        float scale = getResources().getDisplayMetrics().density;
-                                        int dpAsPixels = (int) (10*scale + 0.5f);
-                                        scrollViewWaterTax.setPadding(0,0,0,dpAsPixels);
-                                    }
-
-                                    NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-                                    nf1.setMinimumFractionDigits(0);
-                                    nf1.setMaximumFractionDigits(0);
-
-                                    etAmountToPay.setText(String.valueOf(Math.round(total)));
-                                    if(TextUtils.isEmpty(etMobileNo.getText()))
-                                    {
-                                        etMobileNo.setText(sessionManager.getMobile());
-                                    }
-
-                                    if(!TextUtils.isEmpty(sessionManager.getEmail())) {
-                                        etMailAddress.setText(sessionManager.getEmail());
-                                    }
-
-                                    tvArrearsTotal.setText(nf1.format(arrearsTotal));
-                                    tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
-                                    tvCurrentTotal.setText(nf1.format(currentTotal));
-                                    tvCurrentPenalty.setText(nf1.format(currentPenalty));
-                                    tvTotal.setText(nf1.format(Math.round(total)));
-                                    listBreakups=taxCallback.getTaxDetails();
-                                    waterTaxCardView.setVisibility(View.VISIBLE);
-                                    waterTaxCardView.requestFocus();
-
-                                } else {
-                                    Toast toast = Toast.makeText(WaterChargesViewActivity.this, taxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER, 0, 0);
-                                    toast.show();
-                                    listBreakups.clear();
-                                }
-                                progressBar.setVisibility(View.GONE);
 
                             }
 
@@ -358,11 +294,85 @@ public class WaterChargesViewActivity extends AppCompatActivity {
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
 
-                                progressBar.setVisibility(View.GONE);
+
 
 
                             }
-                        });
+                        });*/
+
+    }
+
+    private void showWaterTaxDetails(retrofit2.Response<WaterTaxCallback> response) {
+        WaterTaxCallback taxCallback = response.body();
+
+        if (taxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
+
+            tvConsumerNo.setText(taxCallback.getConsumerNo());
+            address.setText(taxCallback.getPropertyAddress());
+            locality.setText(taxCallback.getLocalityName());
+
+            ownerContact.setText(taxCallback.getOwnerName() + " / " + taxCallback.getMobileNo());
+
+            if (!TextUtils.isEmpty(taxCallback.getMobileNo())) {
+                etMobileNo.setText(taxCallback.getMobileNo());
+            }
+
+            arrearsTotal = 0;
+            arrearsPenalty = 0;
+            currentTotal = 0;
+            currentPenalty = 0;
+            total = 0;
+
+            for (TaxDetail taxDetail : taxCallback.getTaxDetails()) {
+                if (getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment())) {
+                    currentTotal = currentTotal + taxDetail.getTaxAmount();
+                    currentPenalty = currentPenalty + taxDetail.getPenalty();
+                } else {
+                    arrearsTotal += taxDetail.getTaxAmount();
+                    arrearsPenalty += taxDetail.getPenalty();
+                }
+            }
+
+            total = arrearsTotal + arrearsPenalty + currentPenalty + currentTotal;
+
+            if (total > 0) {
+                fabPayWaterTax.setVisibility(View.VISIBLE);
+                paymentCardView.setVisibility(View.VISIBLE);
+            } else {
+                float scale = getResources().getDisplayMetrics().density;
+                int dpAsPixels = (int) (10 * scale + 0.5f);
+                scrollViewWaterTax.setPadding(0, 0, 0, dpAsPixels);
+            }
+
+            NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi", "IN"));
+            nf1.setMinimumFractionDigits(0);
+            nf1.setMaximumFractionDigits(0);
+
+            etAmountToPay.setText(String.valueOf(Math.round(total)));
+            if (TextUtils.isEmpty(etMobileNo.getText())) {
+                etMobileNo.setText(sessionManager.getMobile());
+            }
+
+            if (!TextUtils.isEmpty(sessionManager.getEmail())) {
+                etMailAddress.setText(sessionManager.getEmail());
+            }
+
+            tvArrearsTotal.setText(nf1.format(arrearsTotal));
+            tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
+            tvCurrentTotal.setText(nf1.format(currentTotal));
+            tvCurrentPenalty.setText(nf1.format(currentPenalty));
+            tvTotal.setText(nf1.format(Math.round(total)));
+            listBreakups = taxCallback.getTaxDetails();
+            waterTaxCardView.setVisibility(View.VISIBLE);
+            waterTaxCardView.requestFocus();
+
+        } else {
+            Toast toast = Toast.makeText(WaterChargesViewActivity.this, taxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            listBreakups.clear();
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     public ArrayList<String> getCurrentFinancialYearInstallments()
@@ -407,5 +417,11 @@ public class WaterChargesViewActivity extends AppCompatActivity {
         viewWaterConnection(consumerNo);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (waterTaxCall != null && !waterTaxCall.isCanceled())
+            waterTaxCall.cancel();
+    }
 }
 

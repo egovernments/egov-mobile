@@ -48,15 +48,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import org.egovernments.egoverp.activities.HomeActivity;
 import org.egovernments.egoverp.activities.LoginActivity;
 import org.egovernments.egoverp.activities.ProfileActivity;
 import org.egovernments.egoverp.api.ApiController;
@@ -68,9 +62,7 @@ import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
 
 import de.greenrobot.event.EventBus;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 /**
  * Service fetches data from server in background
@@ -83,15 +75,9 @@ public class UpdateService extends Service {
     public static final String UPDATE_PROFILE = "UPDATE_PROFILE";
     public static final String GET_GRIEVANCE_COUNT_INFO = "UPDATE_GRIEVANCE_COUNT_INFO";
     public static final String UPDATE_ALL = "UPDATE_ALL";
-
-    public static final String COMPLAINTS_PAGE = "UPDATE_ALL";
-
+    Handler handler;
     private SessionManager sessionManager;
-
     private int flag = 1;
-
-    private Handler handler;
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -113,12 +99,12 @@ public class UpdateService extends Service {
                 case UPDATE_ALL:
                     updateProfile();
                     break;
-                case GET_GRIEVANCE_COUNT_INFO:
+                /*case GET_GRIEVANCE_COUNT_INFO:
                     updateGrievanceCountInfo();
-                    break;
+                    break;*/
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     @Nullable
@@ -127,52 +113,50 @@ public class UpdateService extends Service {
         return null;
     }
 
-    public String returnValidString(String string)
-    {
-        if(!TextUtils.isEmpty(string)){
-            return string;
-        }
-        return "";
-    }
 
     private void updateProfile() {
 
         if (sessionManager.getAccessToken() != null) {
-            ApiController.getAPI(UpdateService.this).getProfile(sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
+
+            Call<ProfileAPIResponse> getProfileDetails = ApiController.getRetrofit2API(getApplicationContext(), null)
+                    .getProfile(sessionManager.getAccessToken());
+
+            getProfileDetails.enqueue(new retrofit2.Callback<ProfileAPIResponse>() {
                 @Override
-                public void success(ProfileAPIResponse profileAPIResponse, Response response) {
+                public void onResponse(Call<ProfileAPIResponse> call, retrofit2.Response<ProfileAPIResponse> response) {
 
-                    ProfileActivity.profile = profileAPIResponse.getProfile();
-                    ProfileUpdatedEvent profileUpdatedEvent=new ProfileUpdatedEvent();
-                    profileUpdatedEvent.setProfile(profileAPIResponse.getProfile());
-                    EventBus.getDefault().post(profileUpdatedEvent);
-
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    if (error != null) {
-                        if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                            handler.post(new ToastRunnable("Failed to fetch profile. " + error.getLocalizedMessage()));
-                        else {
-                            //Flag counter to prevent multiple executions of the below
-                            if (flag == 1) {
-                                sessionManager.invalidateAccessToken();
-                                renewCredentials();
-                            }
-
-                        }
+                    if (response.isSuccessful()) {
+                        ProfileAPIResponse profileAPIResponse = response.body();
+                        ProfileActivity.profile = profileAPIResponse.getProfile();
+                        ProfileUpdatedEvent profileUpdatedEvent = new ProfileUpdatedEvent();
+                        profileUpdatedEvent.setProfile(profileAPIResponse.getProfile());
+                        EventBus.getDefault().post(profileUpdatedEvent);
+                    } else {
                         ProfileActivity.isUpdateFailed = true;
                         EventBus.getDefault().post(new ProfileUpdateFailedEvent());
                     }
 
                 }
 
+                @Override
+                public void onFailure(Call<ProfileAPIResponse> call, Throwable t) {
+                    if (t != null) {
+                        if (!(t.getLocalizedMessage() != null && !t.getLocalizedMessage().equals("Invalid access token")))
+                            //Flag counter to prevent multiple executions of the below
+                            if (flag == 1) {
+                                sessionManager.invalidateAccessToken();
+                                renewCredentials();
+                            }
+
+                    }
+                }
+
             });
+
         }
     }
 
-    private void updateGrievanceCountInfo() {
+    /*private void updateGrievanceCountInfo() {
         Log.v("Access_TOKEN_SERVICE", "token ---- "+sessionManager.getAccessToken());
         if (sessionManager.getAccessToken() != null) {
 
@@ -193,38 +177,29 @@ public class UpdateService extends Service {
                 }
             });
         }
-    }
+    }*/
 
     private void renewCredentials() {
 
-        ApiController.getAPI(UpdateService.this).login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password", new Callback<JsonObject>() {
+        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), null)
+                .login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password");
+
+        login.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
-            public void success(JsonObject jsonObject, Response response) {
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+                JsonObject jsonObject = response.body();
                 sessionManager.loginUser(sessionManager.getUsername(), sessionManager.getPassword(), AppUtils.getNullAsEmptyString(jsonObject.get("name")),
                         AppUtils.getNullAsEmptyString(jsonObject.get("mobileNumber")), AppUtils.getNullAsEmptyString(jsonObject.get("emailId")) , jsonObject.get("access_token").getAsString(), jsonObject.get("cityLat").getAsDouble(), jsonObject.get("cityLng").getAsDouble());
                 updateProfile();
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 sessionManager.invalidateAccessToken();
                 startActivity(new Intent(UpdateService.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
+
     }
 
-    private class ToastRunnable implements Runnable {
-        String mText;
-
-        public ToastRunnable(String text) {
-            mText = text;
-        }
-
-        @Override
-        public void run() {
-            Toast toast = Toast.makeText(UpdateService.this.getApplicationContext(), mText, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-            toast.show();
-        }
-    }
 }

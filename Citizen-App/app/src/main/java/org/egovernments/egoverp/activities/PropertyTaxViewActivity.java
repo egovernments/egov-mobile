@@ -46,11 +46,9 @@ package org.egovernments.egoverp.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -58,7 +56,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -80,18 +77,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
 
 import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
-public class PropertyTaxViewActivity extends AppCompatActivity {
+public class PropertyTaxViewActivity extends BaseActivity {
 
-    private TextView tvAssessmentNo;
-    private TextView tvAddress;
-    private TextView tvOwnerNamePhone;
-    private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
     Button btnBreakups;
     List<TaxDetail> listBreakups;
     FloatingActionButton fabPayPropertyTax;
@@ -101,19 +92,18 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     EditText etAmountToPay;
     EditText etMobileNo;
     EditText etMailAddress;
-
-    private ProgressBar progressBar;
-
-    SessionManager sessionManager;
-
     ConfigManager configManager;
     boolean isVacantLand=false;
-
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
     String referrerIp;
-
     int ulbCode;
     String category;
+    Call<PropertyTaxCallback> propertyTaxCallbackCall;
+    private TextView tvAssessmentNo;
+    private TextView tvAddress;
+    private TextView tvOwnerNamePhone;
+    private TextView tvArrearsTotal, tvArrearsPenalty, tvCurrentTotal, tvCurrentPenalty, tvTotal;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,28 +138,28 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
 
                 if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
                 {
-                    Toast.makeText(getApplicationContext(), "Please fill all payment input details", Toast.LENGTH_SHORT).show();
+                    showSnackBar("Please fill all payment input details");
                     return;
                 }
                 else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
                 {
-                    Toast.makeText(getApplicationContext(), "Please enter valid email address", Toast.LENGTH_SHORT).show();
+                    showSnackBar("Please enter valid email address");
                     return;
                 }
                 else if(etMobileNo.getText().toString().length()<10)
                 {
-                    Toast.makeText(getApplicationContext(), "Please enter valid mobile no", Toast.LENGTH_SHORT).show();
+                    showSnackBar("Please enter valid mobile no");
                     return;
                 }
 
                 int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
                 if(amountToPay<=0)
                 {
-                    Toast.makeText(getApplicationContext(), "Payment amount should be greater than 0", Toast.LENGTH_SHORT).show();
+                    showSnackBar("Payment amount should be greater than 0");
                 }
                 else if(amountToPay> total)
                 {
-                    Toast.makeText(getApplicationContext(), "Payment amount should not be greater than payable amount ("+Math.round(total)+")", Toast.LENGTH_SHORT).show();
+                    showSnackBar("Payment amount should not be greater than payable amount (" + Math.round(total) + ")");
                 }
                 else
                 {
@@ -257,111 +247,35 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (code.length() < 10) {
-            Toast toast = Toast.makeText(PropertyTaxViewActivity.this, "Assessment no. must be at least 10 characters", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            showSnackBar("Assessment no. must be at least 10 characters");
             progressBar.setVisibility(View.GONE);
             return;
         }
 
-        ApiController.getAPI(PropertyTaxViewActivity.this)
+        propertyTaxCallbackCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+                .getPropertyTax(referrerIp, new PropertyViewRequest(String.format(Locale.getDefault(), "%04d", ulbCode), code, category));
+
+        propertyTaxCallbackCall.enqueue(new retrofit2.Callback<PropertyTaxCallback>() {
+            @Override
+            public void onResponse(Call<PropertyTaxCallback> call, retrofit2.Response<PropertyTaxCallback> response) {
+                showPropertyTaxDetails(response);
+            }
+
+            @Override
+            public void onFailure(Call<PropertyTaxCallback> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                listBreakups.clear();
+            }
+        });
+
+        /*ApiController.getAPI(PropertyTaxViewActivity.this)
                 .getPropertyTax(referrerIp,
-                        new PropertyViewRequest(String.format("%04d", ulbCode), code, category),
+                        new PropertyViewRequest(String.format(Locale.getDefault(), "%04d", ulbCode), code, category),
                         new Callback<PropertyTaxCallback>() {
                             @Override
                             public void success(PropertyTaxCallback propertyTaxCallback, Response response) {
 
-                                if (propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
 
-                                    tvAssessmentNo.setText(propertyTaxCallback.getAssessmentNo());
-                                    tvAddress.setText(propertyTaxCallback.getPropertyAddress());
-
-                                    String ownersMobileNos = "";
-                                    int check = 0;
-
-                                    for (TaxOwnerDetail taxOwnerDetail : propertyTaxCallback.getTaxOwnerDetails()) {
-
-                                        if (check > 0) {
-                                            ownersMobileNos += ", ";
-                                        }
-
-                                        if(check==0)
-                                        {
-                                            if(!TextUtils.isEmpty(taxOwnerDetail.getMobileNo()))
-                                            {
-                                                etMobileNo.setText(taxOwnerDetail.getMobileNo());
-                                            }
-                                        }
-
-                                        ownersMobileNos += taxOwnerDetail.getOwnerName()+(TextUtils.isEmpty(taxOwnerDetail.getMobileNo())?"": "/"+taxOwnerDetail.getMobileNo());
-                                        check++;
-                                    }
-
-                                    arrearsTotal=0;
-                                    arrearsPenalty=0;
-                                    currentTotal=0;
-                                    currentPenalty=0;
-                                    total =0;
-
-                                    for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
-                                        if(getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment()))
-                                        {
-                                            currentTotal=currentTotal+taxDetail.getTaxAmount();
-                                            currentPenalty=currentPenalty+taxDetail.getPenalty();
-                                        }
-                                        else
-                                        {
-                                            arrearsTotal+=taxDetail.getTaxAmount();
-                                            arrearsPenalty+=taxDetail.getPenalty();
-                                        }
-                                    }
-
-                                    total=arrearsTotal+arrearsPenalty+currentPenalty+currentTotal;
-
-                                    NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi","IN"));
-                                    //nf1.setMinimumFractionDigits(2);
-                                   // nf1.setMaximumFractionDigits(2);
-
-                                    tvArrearsTotal.setText(nf1.format(arrearsTotal));
-                                    tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
-                                    tvCurrentTotal.setText(nf1.format(currentTotal));
-                                    tvCurrentPenalty.setText(nf1.format(currentPenalty));
-                                    tvTotal.setText(nf1.format(Math.round(total)));
-
-                                    if(total >0)
-                                    {
-                                      etAmountToPay.setText(String.valueOf(Math.round(total)));
-                                      if(TextUtils.isEmpty(etMobileNo.getText()))
-                                      {
-                                          etMobileNo.setText(sessionManager.getMobile());
-                                      }
-
-                                      if(!TextUtils.isEmpty(sessionManager.getEmail())) {
-                                          etMailAddress.setText(sessionManager.getEmail());
-                                      }
-
-                                        fabPayPropertyTax.setVisibility(View.VISIBLE);
-                                        paymentCardView.setVisibility(View.VISIBLE);
-                                    }
-                                    else
-                                    {
-                                        float scale = getResources().getDisplayMetrics().density;
-                                        int dpAsPixels = (int) (10*scale + 0.5f);
-                                        scrollViewPropertyTax.setPadding(0,0,0,dpAsPixels);
-                                    }
-
-                                    tvOwnerNamePhone.setText(ownersMobileNos);
-                                    listBreakups=propertyTaxCallback.getTaxDetails();
-                                    propertyTaxDetailsView.setVisibility(View.VISIBLE);
-                                    propertyTaxDetailsView.requestFocus();
-
-                                } else {
-                                    Toast toast = Toast.makeText(PropertyTaxViewActivity.this, propertyTaxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
-                                    toast.setGravity(Gravity.CENTER, 0, 0);
-                                    toast.show();
-                                    listBreakups.clear();
-                                }
-                                progressBar.setVisibility(View.GONE);
 
 
                             }
@@ -376,12 +290,96 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
 
-                                progressBar.setVisibility(View.GONE);
-                                listBreakups.clear();
+
 
 
                             }
-                        });
+                        });*/
+    }
+
+    private void showPropertyTaxDetails(retrofit2.Response<PropertyTaxCallback> response) {
+        PropertyTaxCallback propertyTaxCallback = response.body();
+
+        if (propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
+
+            tvAssessmentNo.setText(propertyTaxCallback.getAssessmentNo());
+            tvAddress.setText(propertyTaxCallback.getPropertyAddress());
+
+            String ownersMobileNos = "";
+            int check = 0;
+
+            for (TaxOwnerDetail taxOwnerDetail : propertyTaxCallback.getTaxOwnerDetails()) {
+
+                if (check > 0) {
+                    ownersMobileNos += ", ";
+                }
+
+                if (check == 0) {
+                    if (!TextUtils.isEmpty(taxOwnerDetail.getMobileNo())) {
+                        etMobileNo.setText(taxOwnerDetail.getMobileNo());
+                    }
+                }
+
+                ownersMobileNos += taxOwnerDetail.getOwnerName() + (TextUtils.isEmpty(taxOwnerDetail.getMobileNo()) ? "" : "/" + taxOwnerDetail.getMobileNo());
+                check++;
+            }
+
+            arrearsTotal = 0;
+            arrearsPenalty = 0;
+            currentTotal = 0;
+            currentPenalty = 0;
+            total = 0;
+
+            for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
+                if (getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment())) {
+                    currentTotal = currentTotal + taxDetail.getTaxAmount();
+                    currentPenalty = currentPenalty + taxDetail.getPenalty();
+                } else {
+                    arrearsTotal += taxDetail.getTaxAmount();
+                    arrearsPenalty += taxDetail.getPenalty();
+                }
+            }
+
+            total = arrearsTotal + arrearsPenalty + currentPenalty + currentTotal;
+
+            NumberFormat nf1 = NumberFormat.getInstance(new Locale("hi", "IN"));
+            //nf1.setMinimumFractionDigits(2);
+            // nf1.setMaximumFractionDigits(2);
+
+            tvArrearsTotal.setText(nf1.format(arrearsTotal));
+            tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
+            tvCurrentTotal.setText(nf1.format(currentTotal));
+            tvCurrentPenalty.setText(nf1.format(currentPenalty));
+            tvTotal.setText(nf1.format(Math.round(total)));
+
+            if (total > 0) {
+                etAmountToPay.setText(String.valueOf(Math.round(total)));
+                if (TextUtils.isEmpty(etMobileNo.getText())) {
+                    etMobileNo.setText(sessionManager.getMobile());
+                }
+
+                if (!TextUtils.isEmpty(sessionManager.getEmail())) {
+                    etMailAddress.setText(sessionManager.getEmail());
+                }
+
+                fabPayPropertyTax.setVisibility(View.VISIBLE);
+                paymentCardView.setVisibility(View.VISIBLE);
+            } else {
+                float scale = getResources().getDisplayMetrics().density;
+                int dpAsPixels = (int) (10 * scale + 0.5f);
+                scrollViewPropertyTax.setPadding(0, 0, 0, dpAsPixels);
+            }
+
+            tvOwnerNamePhone.setText(ownersMobileNos);
+            listBreakups = propertyTaxCallback.getTaxDetails();
+            propertyTaxDetailsView.setVisibility(View.VISIBLE);
+            propertyTaxDetailsView.requestFocus();
+
+        } else {
+            showSnackBar(propertyTaxCallback.getTaxErrorDetails().getErrorMessage());
+            listBreakups.clear();
+        }
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -434,6 +432,13 @@ public class PropertyTaxViewActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         submit(getIntent().getStringExtra("assessmentNo"), category);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (propertyTaxCallbackCall != null && !propertyTaxCallbackCall.isCanceled())
+            propertyTaxCallbackCall.cancel();
     }
 }
 
