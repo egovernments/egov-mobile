@@ -44,29 +44,28 @@ package org.egovernments.egoverp.activities;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
-import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.models.Profile;
-import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
 import org.egovernments.egoverp.services.UpdateService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * The profile screen activity
@@ -79,7 +78,24 @@ public class ProfileActivity extends BaseActivity {
 
     //private ProgressDialog progressDialog;
     private final int ACTION_UPDATE_REQUIRED = 111;
-    private ProgressBar progressBar;
+    BroadcastReceiver profileDetailsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.dismiss();
+                    Profile profile = (Profile) intent.getSerializableExtra(UpdateService.KEY_PROFILE);
+                    if (profile != null)
+                        updateProfile(profile);
+                    else
+                        finish();
+                }
+            });
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +106,6 @@ public class ProfileActivity extends BaseActivity {
         progressDialog=new ProgressDialog(ProfileActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
-/*
-        final com.melnykov.fab.FloatingActionButton profileEditButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.profile_editcompat);
-*/
-
-        //progressBar = (ProgressBar) findViewById(R.id.profile_placeholder);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -106,13 +117,7 @@ public class ProfileActivity extends BaseActivity {
         };
 
         profileEditButton.setOnClickListener(onClickListener);
-        /*if (Build.VERSION.SDK_INT >= 21) {
-            profileEditButton.setOnClickListener(onClickListener);
-        } else {
-            profileEditButton.setVisibility(View.GONE);
-            profileEditButtonCompat.setVisibility(View.VISIBLE);
-            profileEditButtonCompat.setOnClickListener(onClickListener);
-        }*/
+
         if (profile != null) {
             updateProfile(profile);
         }
@@ -164,7 +169,9 @@ public class ProfileActivity extends BaseActivity {
             sessionManager.setName(profile.getName());
             sessionManager.setMobileNo(profile.getMobileNumber());
 
+        if (getSupportActionBar() != null)
             getSupportActionBar().setTitle(sessionManager.getName());
+
             final TextView name = (TextView) findViewById(R.id.profile_name);
             final TextView emailId = (TextView) findViewById(R.id.profile_email);
             final TextView mobileNo = (TextView) findViewById(R.id.profile_phoneno);
@@ -231,31 +238,17 @@ public class ProfileActivity extends BaseActivity {
         return value;
     }
 
-    //Subscribes the activity to events
     @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(ProfileActivity.this).registerReceiver(profileDetailsReceiver,
+                new IntentFilter(UpdateService.BROADCAST_PROFILE_DETAILS));
     }
 
-    //Unsubscribes the activity to events
     @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    //Updates the profile page when subscribed and a ProfileUpdatedEvent is posted by the UpdateService
-    @SuppressWarnings("unused")
-    public void onEvent(ProfileUpdatedEvent profileUpdatedEvent) {
-        updateProfile(profileUpdatedEvent.getProfile());
-    }
-
-    @SuppressWarnings("unused")
-    public void onEvent(ProfileUpdateFailedEvent profileUpdateFailedEvent) {
-        finish();
-        //progressBar.setVisibility(View.GONE);
-        //progressDialog.show();
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(ProfileActivity.this).unregisterReceiver(profileDetailsReceiver);
     }
 
     void getProfileDetailsFromServer()

@@ -48,8 +48,11 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -67,6 +70,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -94,7 +98,6 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
 import org.egovernments.egoverp.helper.NoFilterAdapter;
@@ -115,7 +118,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.greenrobot.event.EventBus;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -148,6 +150,34 @@ public class NewGrievanceActivity extends BaseActivity {
     private int locationID = 0;
     private LatLng complaintLocLatLng;
     private EditText landmark;
+    BroadcastReceiver addressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+                            String addressResult = intent.getStringExtra(AddressService.KEY_ADDRESS);
+                            if (TextUtils.isEmpty(addressResult)) {
+                                complaintLocLatLng = null;
+                                showSnackBar(R.string.complaint_location_message);
+                            } else {
+                                autoCompleteComplaintLoc.setText(addressResult);
+                            }
+                            landmark.requestFocus();
+                        }
+                    });
+
+                }
+            });
+
+        }
+    };
     private EditText details;
     private int uploadCount = 0;
     //Used as to maintain unique image IDs
@@ -322,6 +352,19 @@ public class NewGrievanceActivity extends BaseActivity {
          if(pictureFab!=null)
          pictureFab.setOnClickListener(onClickListener);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(NewGrievanceActivity.this).registerReceiver(addressReceiver,
+                new IntentFilter(AddressService.BROADCAST_ADDRESS_RECEIVER));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(NewGrievanceActivity.this).unregisterReceiver(addressReceiver);
     }
 
     private void loadComplaintLocationSuggestion(CharSequence s) {
@@ -914,41 +957,6 @@ public class NewGrievanceActivity extends BaseActivity {
         startService(intent);
     }
 
-    //Handles AddressReadyEvent posted by AddressService on success
-    @SuppressWarnings("unused")
-    public void onEvent(final AddressReadyEvent addressReadyEvent) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                if(addressReadyEvent.isFailed())
-                {
-                    complaintLocLatLng=null;
-                    showSnackBar(R.string.complaint_location_message);
-                }
-                else
-                {
-                    autoCompleteComplaintLoc.setText(AddressService.addressResult);
-                }
-                landmark.requestFocus();
-            }
-        });
-    }
-
-    //Subscribes the activity to events
-    @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
     public interface RemoveImageInterface {

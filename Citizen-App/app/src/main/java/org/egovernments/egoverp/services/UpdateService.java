@@ -48,6 +48,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.JsonObject;
 
@@ -56,12 +57,9 @@ import org.egovernments.egoverp.activities.ProfileActivity;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.config.SessionManager;
-import org.egovernments.egoverp.events.ProfileUpdatedEvent;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
-import org.egovernments.egoverp.models.ProfileUpdateFailedEvent;
 
-import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 
 /**
@@ -75,6 +73,10 @@ public class UpdateService extends Service {
     public static final String UPDATE_PROFILE = "UPDATE_PROFILE";
     public static final String GET_GRIEVANCE_COUNT_INFO = "UPDATE_GRIEVANCE_COUNT_INFO";
     public static final String UPDATE_ALL = "UPDATE_ALL";
+
+    public static final String BROADCAST_PROFILE_DETAILS = "BROADCAST_PROFILE_DETAILS";
+    public static final String KEY_PROFILE = "BROADCAST_PROFILE_DETAILS";
+
     Handler handler;
     private SessionManager sessionManager;
     private int flag = 1;
@@ -125,16 +127,15 @@ public class UpdateService extends Service {
                 @Override
                 public void onResponse(Call<ProfileAPIResponse> call, retrofit2.Response<ProfileAPIResponse> response) {
 
+                    Intent boradCastIntent = new Intent(BROADCAST_PROFILE_DETAILS);
                     if (response.isSuccessful()) {
                         ProfileAPIResponse profileAPIResponse = response.body();
                         ProfileActivity.profile = profileAPIResponse.getProfile();
-                        ProfileUpdatedEvent profileUpdatedEvent = new ProfileUpdatedEvent();
-                        profileUpdatedEvent.setProfile(profileAPIResponse.getProfile());
-                        EventBus.getDefault().post(profileUpdatedEvent);
+                        boradCastIntent.putExtra(KEY_PROFILE, profileAPIResponse.getProfile());
                     } else {
                         ProfileActivity.isUpdateFailed = true;
-                        EventBus.getDefault().post(new ProfileUpdateFailedEvent());
                     }
+                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(boradCastIntent);
 
                 }
 

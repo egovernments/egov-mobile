@@ -43,13 +43,17 @@
 package org.egovernments.egoverp.activities;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
@@ -77,7 +81,6 @@ import com.viewpagerindicator.LinePageIndicator;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.events.AddressReadyEvent;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.Grievance;
@@ -95,7 +98,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 
 /**
@@ -111,8 +113,21 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
     private final String[] feedBackText = new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
     Spinner actionsSpinner;
+    String action;
+    BroadcastReceiver addressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView) findViewById(R.id.map_location_text)).setText(intent.getStringExtra(AddressService.KEY_ADDRESS));
+                }
+            });
+
+        }
+    };
     private EditText updateComment;
-    private String action;
     private boolean isComment = false;
     private ProgressBar progressBar;
     private LinearLayout layoutCompComments;
@@ -294,74 +309,91 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                action = (String) actionsSpinner.getSelectedItem();
-                String comment = updateComment.getText().toString().trim();
-                String feedback = "";
-                if (feedbackLayout.getVisibility() == View.VISIBLE) {
-                    feedback = feedbackOptions.get(Math.round(feedbackRatingBar.getRating()));
-                }
-
-                if (action == null) {
-                    showSnackBar("Please select an action");
-                } else {
-                    if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
-                        showSnackBar("Comment is necessary for this action");
-                    } else if (feedback == null) {
-                        showSnackBar("Please select a feedback option");
-                    } else {
-                        switch (action) {
-                            case "Select":
-                                isComment = true;
-                                action = grievance.getStatus();
-                                break;
-                            case "Withdraw":
-                                isComment = false;
-                                action = "WITHDRAWN";
-                                break;
-                            case "Re-open":
-                                isComment = false;
-                                action = "REOPENED";
-                                break;
-                        }
-
-                        progressDialog.show();
-
-                        Call<JsonObject> updateGrievanceCall = ApiController.getRetrofit2API(getApplicationContext(), GrievanceDetailsActivity.this)
-                                .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment),
-                                        sessionManager.getAccessToken());
-
-                        if (validateInternetConnection()) {
-                            updateGrievanceCall.enqueue(new retrofit2.Callback<JsonObject>() {
-                                @Override
-                                public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-
-                                    if (isComment && feedbackLayout.getVisibility() == View.GONE) {
-                                        showSnackBar(R.string.grievanceupdated_msg);
-                                        loadComplaintHistory();
-                                    } else {
-                                        Intent intent = new Intent();
-                                        intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
-                                                isComment && feedbackLayout.getVisibility() == View.VISIBLE ? "Your feedback submitted successfully" : "Grievance updated successfully");
-                                        setResult(RESULT_OK, intent);
-                                        finish();
-                                    }
-                                    progressDialog.dismiss();
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<JsonObject> call, Throwable t) {
-                                    progressDialog.dismiss();
-                                }
-                            });
-                        }
-
-                    }
-                }
+                updateComplaint(feedbackLayout);
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(GrievanceDetailsActivity.this).registerReceiver(addressReceiver,
+                new IntentFilter(AddressService.BROADCAST_ADDRESS_RECEIVER));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(GrievanceDetailsActivity.this).unregisterReceiver(addressReceiver);
+    }
+
+
+    private void updateComplaint(final LinearLayout feedbackLayout) {
+        action = (String) actionsSpinner.getSelectedItem();
+        String comment = updateComment.getText().toString().trim();
+        String feedback = "";
+        if (feedbackLayout.getVisibility() == View.VISIBLE) {
+            feedback = feedbackOptions.get(Math.round(feedbackRatingBar.getRating()));
+        }
+
+        if (action == null) {
+            showSnackBar("Please select an action");
+        } else {
+            if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
+                showSnackBar("Comment is necessary for this action");
+            } else if (feedback == null) {
+                showSnackBar("Please select a feedback option");
+            } else {
+                switch (action) {
+                    case "Select":
+                        isComment = true;
+                        action = grievance.getStatus();
+                        break;
+                    case "Withdraw":
+                        isComment = false;
+                        action = "WITHDRAWN";
+                        break;
+                    case "Re-open":
+                        isComment = false;
+                        action = "REOPENED";
+                        break;
+                }
+
+                progressDialog.show();
+
+                Call<JsonObject> updateGrievanceCall = ApiController.getRetrofit2API(getApplicationContext(), GrievanceDetailsActivity.this)
+                        .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment),
+                                sessionManager.getAccessToken());
+
+                if (validateInternetConnection()) {
+                    updateGrievanceCall.enqueue(new retrofit2.Callback<JsonObject>() {
+                        @Override
+                        public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
+
+                            if (isComment && feedbackLayout.getVisibility() == View.GONE) {
+                                showSnackBar(R.string.grievanceupdated_msg);
+                                loadComplaintHistory();
+                            } else {
+                                Intent intent = new Intent();
+                                intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
+                                        isComment && feedbackLayout.getVisibility() == View.VISIBLE ? "Your feedback submitted successfully" : "Grievance updated successfully");
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            }
+                            progressDialog.dismiss();
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+
+            }
+        }
     }
 
     //Converts status parameters from server to a more readable form. Probably unnecessary but whatevs
@@ -497,33 +529,6 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
                 layoutToggleComments.addView(commentItemTemplate);
             }
         }
-    }
-
-    //Handles AddressReadyEvent posted by AddressService on success
-    @SuppressWarnings("unused")
-    public void onEvent(AddressReadyEvent addressReadyEvent) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((TextView)findViewById(R.id.map_location_text)).setText(AddressService.addressResult);
-            }
-        });
-
-    }
-
-    //Subscribes the activity to events
-    @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     //Load complaint History

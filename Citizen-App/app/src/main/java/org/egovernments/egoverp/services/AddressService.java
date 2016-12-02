@@ -47,16 +47,13 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.egovernments.egoverp.events.AddressReadyEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Service resolves lat/lng data to address in background when
@@ -67,7 +64,9 @@ public class AddressService extends IntentService {
     public static final String LAT = "LAT";
     public static final String LNG = "LNG";
 
-    public static String addressResult = "";
+    public static final String BROADCAST_ADDRESS_RECEIVER = "BROADCAST_ADDRESS_RECEIVER";
+
+    public static final String KEY_ADDRESS = "KEY_ADDRESS";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -89,6 +88,8 @@ public class AddressService extends IntentService {
 
         Geocoder geocoder = new Geocoder(getApplicationContext());
 
+        String addressResult = "";
+
         try {
             addresses = geocoder.getFromLocation(lat, lng, 1);
         } catch (IOException | IllegalArgumentException ioException) {
@@ -99,7 +100,10 @@ public class AddressService extends IntentService {
         // Handle case where no address was found.
         if (addresses == null || addresses.size() == 0) {
             Log.e("Address null", "");
-            EventBus.getDefault().post(new AddressReadyEvent(true));
+            Intent boradCastIntent = new Intent(BROADCAST_ADDRESS_RECEIVER);
+            boradCastIntent.putExtra(KEY_ADDRESS, addressResult);
+            //Put your all data using put extra
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(boradCastIntent);
         } else {
             Address address = addresses.get(0);
             ArrayList<String> addressFragments = new ArrayList<>();
@@ -112,7 +116,11 @@ public class AddressService extends IntentService {
 
             addressResult = TextUtils.join(System.getProperty("line.separator"), addressFragments);
             //Post event on success so that all relevant subscribers can react
-            EventBus.getDefault().post(new AddressReadyEvent());
+            Intent boradCastIntent = new Intent(BROADCAST_ADDRESS_RECEIVER);
+            boradCastIntent.putExtra(KEY_ADDRESS, addressResult);
+            //Put your all data using put extra
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(boradCastIntent);
+
         }
     }
 }
