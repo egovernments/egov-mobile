@@ -583,7 +583,7 @@ public class LoginActivity extends BaseActivity {
 
         showLoginProgress();
 
-        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), selectedCity.getUrl(), this)
+        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), selectedCity.getUrl())
                 .login(ApiUrl.AUTHORIZATION, username, "read write", password, "password");
 
         login.enqueue(new retrofit2.Callback<JsonObject>() {

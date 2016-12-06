@@ -217,7 +217,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 grievanceAdapter.notifyItemInserted(grievanceList.size());
             }
 
-        Call<GrievanceAPIResponse> getMyComplaints = ApiController.getRetrofit2API(getContext(), null)
+        Call<GrievanceAPIResponse> getMyComplaints = ApiController.getRetrofit2API(getContext())
                 .getMyComplaints(page, "10", accessToken, pageTitle);
 
         getMyComplaints.enqueue(new retrofit2.Callback<GrievanceAPIResponse>() {

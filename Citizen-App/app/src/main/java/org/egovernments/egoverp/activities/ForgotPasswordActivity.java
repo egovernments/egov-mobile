@@ -161,7 +161,7 @@ public class ForgotPasswordActivity extends BaseActivity {
             sendButtonCompat.setVisibility(View.GONE);
 
             Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
-                    sessionManager.getBaseURL(), this).recoverPassword(phone, sessionManager.getBaseURL());
+                    sessionManager.getBaseURL()).recoverPassword(phone, sessionManager.getBaseURL());
 
             recoverPasswordCall.enqueue(new retrofit2.Callback<JsonObject>() {
                 @Override

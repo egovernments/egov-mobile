@@ -203,9 +203,17 @@ public class RegisterActivity extends BaseActivity {
         password_edittext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && !TextUtils.isEmpty(password_edittext.getText()) && !AppUtils.isValidPassword(password_edittext.getText().toString(), configManager)){
-                    showSnackBar(getPasswordConstraintInformation());
-                    password_edittext.setText("");
+                TextInputLayout til = (TextInputLayout) findViewById(R.id.textInputLayPwd);
+                if (!hasFocus && !TextUtils.isEmpty(password_edittext.getText())) {
+
+                    if (!AppUtils.isValidPassword(password_edittext.getText().toString(), configManager)) {
+                        til.setError(getPasswordConstraintInformation());
+                        password_edittext.setError(null);
+                        password_edittext.setText("");
+                    } else {
+                        til.setErrorEnabled(false);
+                        til.setError("");
+                    }
                 }
             }
         });
@@ -561,7 +569,7 @@ public class RegisterActivity extends BaseActivity {
 
         progressDialog.show();
 
-        Call<JsonObject> sendOTP = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL(), this)
+        Call<JsonObject> sendOTP = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL())
                 .sendOTPToVerifyBeforeAccountCreate(phoneno_edittext.getText().toString());
 
         sendOTP.enqueue(new retrofit2.Callback<JsonObject>() {
@@ -576,24 +584,6 @@ public class RegisterActivity extends BaseActivity {
                 progressDialog.dismiss();
             }
         });
-
-        /*ApiController.resetAndGetAPI(getApplicationContext()).sendOTP(phoneno_edittext.getText().toString(), new Callback<JsonObject>() {
-            @Override
-            public void success(JsonObject jsonObject, Response response) {
-                progressDialog.dismiss();
-                showOTPVerificationDialog();
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                progressDialog.dismiss();
-                if(!TextUtils.isEmpty(error.getLocalizedMessage())){
-                    Toast toast = Toast.makeText(RegisterActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                    toast.show();
-                }
-            }
-        });*/
 
     }
 
@@ -616,7 +606,7 @@ public class RegisterActivity extends BaseActivity {
         RegisterRequest registerRequest = new RegisterRequest(email_edittext.getText().toString(), phoneno_edittext.getText().toString(),
                 name_edittext.getText().toString(), password_edittext.getText().toString(), deviceID, deviceType, deviceOS, otpCode);
 
-        Call<JsonObject> createAccount = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL(), this)
+        Call<JsonObject> createAccount = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL())
                 .registerUser(registerRequest);
 
         createAccount.enqueue(new retrofit2.Callback<JsonObject>() {
@@ -642,7 +632,7 @@ public class RegisterActivity extends BaseActivity {
 
         progressDialog.show();
 
-        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), this)
+        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext())
                 .login(ApiUrl.AUTHORIZATION, username, "read write", password, "password");
 
         login.enqueue(new retrofit2.Callback<JsonObject>() {

@@ -256,7 +256,7 @@ public class WaterChargesViewActivity extends BaseActivity {
         waterTaxCardView.setVisibility(View.GONE);
 
 
-        waterTaxCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+        waterTaxCall = ApiController.getRetrofit2API(getApplicationContext())
                 .getWaterTax(configManager.getString(REFERER_IP_CONFIG_KEY),
                         new WaterTaxRequest(String.format(Locale.getDefault(), "%04d", sessionManager.getUrlLocationCode()), code));
 

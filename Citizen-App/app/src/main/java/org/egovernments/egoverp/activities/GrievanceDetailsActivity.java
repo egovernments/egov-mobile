@@ -362,7 +362,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
                 progressDialog.show();
 
-                Call<JsonObject> updateGrievanceCall = ApiController.getRetrofit2API(getApplicationContext(), GrievanceDetailsActivity.this)
+                Call<JsonObject> updateGrievanceCall = ApiController.getRetrofit2API(getApplicationContext())
                         .updateGrievance(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment),
                                 sessionManager.getAccessToken());
 
@@ -429,7 +429,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     private void loadComplaintHistory()
     {
 
-        Call<GrievanceCommentAPIResponse> grievanceCommentAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+        Call<GrievanceCommentAPIResponse> grievanceCommentAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext())
                 .getComplaintHistory(grievance.getCrn(), sessionManager.getAccessToken());
 
         grievanceCommentAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceCommentAPIResponse>() {

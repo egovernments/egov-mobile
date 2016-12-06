@@ -71,6 +71,7 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import tr.xip.errorview.ErrorView;
 
 /**
  * The activity containing grievance list
@@ -83,6 +84,7 @@ public class GrievanceActivity extends BaseActivity {
     public static int ACTION_UPDATE_REQUIRED = 111;
     ViewPager viewPager;
     ProgressBar pbHome;
+    ErrorView errorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,7 @@ public class GrievanceActivity extends BaseActivity {
         setContentViewWithTabs(R.layout.activity_grievance, true, true);
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         pbHome=(ProgressBar)findViewById(R.id.pbhome);
+        errorView = (ErrorView) findViewById(R.id.errorView);
 
         com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
 
@@ -154,7 +157,7 @@ public class GrievanceActivity extends BaseActivity {
     {
         showLoader();
 
-        Call<JsonObject> getComplaintCategoriesCount = ApiController.getRetrofit2API(GrievanceActivity.this, GrievanceActivity.this)
+        Call<JsonObject> getComplaintCategoriesCount = ApiController.getRetrofit2API(GrievanceActivity.this)
                 .getComplaintCategoryCount(sessionManager.getAccessToken());
 
         if (validateInternetConnection()) {
@@ -170,6 +173,8 @@ public class GrievanceActivity extends BaseActivity {
                     showSnackBar(t.getLocalizedMessage());
                 }
             });
+        } else {
+            showErrorView(R.string.no_connection, R.string.check_internet);
         }
 
     }
@@ -178,12 +183,14 @@ public class GrievanceActivity extends BaseActivity {
     {
         viewPager.setVisibility(View.GONE);
         pbHome.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
     }
 
     public void hideLoader()
     {
         viewPager.setVisibility(View.VISIBLE);
         pbHome.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
     }
 
     public void loadViewPager(JsonObject categories)
@@ -248,6 +255,34 @@ public class GrievanceActivity extends BaseActivity {
         highlightTabTextView(tabLayout.getTabAt(0).getCustomView(), true);
     }
 
+    void showErrorView(int httpCode) {
+        pbHome.setVisibility(View.GONE);
+        ErrorView.Config config = ErrorView.Config.create().retryVisible(false)
+                .build();
+        errorView.setConfig(config);
+        errorView.setError(httpCode);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    void showErrorView(int title, int subTitle) {
+        pbHome.setVisibility(View.GONE);
+        ErrorView.Config config = ErrorView.Config.create().title(getString(title)).subtitle(getString(subTitle))
+                .build();
+        errorView.setConfig(config);
+        errorView.setOnRetryListener(new ErrorView.RetryListener() {
+            @Override
+            public void onRetry() {
+                loadGrievanceCategories();
+            }
+        });
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void errorOccurred(String errorMsg, int errorCode) {
+        showErrorView(errorCode);
+    }
+
     private class GrievanceFragmentPagerAdapter extends FragmentPagerAdapter {
 
         JsonObject categories;
@@ -288,7 +323,5 @@ public class GrievanceActivity extends BaseActivity {
         }
 
     }
-
-
 }
 

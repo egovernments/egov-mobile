@@ -108,5 +108,6 @@ dependencies {
     compile 'com.viewpagerindicator:library:2.4.1@aar'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.google.android.gms:play-services-location:9+'
+    compile 'com.github.xiprox.errorview:library:2.+'
 }
 apply plugin: 'com.android.application'

@@ -154,10 +154,6 @@ public class NewGrievanceActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, final Intent intent) {
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -172,9 +168,6 @@ public class NewGrievanceActivity extends BaseActivity {
                             landmark.requestFocus();
                         }
                     });
-
-                }
-            });
 
         }
     };
@@ -397,7 +390,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 }
             }
 
-            Call<GrievanceLocationAPIResponse> grievanceLocationAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+            Call<GrievanceLocationAPIResponse> grievanceLocationAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext())
                     .getComplaintLocation(s.toString(), sessionManager.getAccessToken());
 
             grievanceLocationAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceLocationAPIResponse>() {
@@ -583,7 +576,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
         formDatas.put("json_complaint", complaintDetails);
 
-        Call<JsonObject> createComplaintCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+        Call<JsonObject> createComplaintCall = ApiController.getRetrofit2API(getApplicationContext())
                 .createComplaint(sessionManager.getAccessToken(), formDatas);
 
         if (validateInternetConnection()) {
@@ -613,7 +606,7 @@ public class NewGrievanceActivity extends BaseActivity {
         setLoadingHintCustomAutoComplete(autocompleteComplaintType);
 
         //Retrieves the list of complaint to populate dropdown. Dropdown is empty until it succeeds
-        Call<GrievanceTypeAPIResponse> grievanceTypeAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+        Call<GrievanceTypeAPIResponse> grievanceTypeAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext())
                 .getComplaintCategoryAndTypes(sessionManager.getAccessToken());
 
         grievanceTypeAPIResponseCall.enqueue(new retrofit2.Callback<GrievanceTypeAPIResponse>() {

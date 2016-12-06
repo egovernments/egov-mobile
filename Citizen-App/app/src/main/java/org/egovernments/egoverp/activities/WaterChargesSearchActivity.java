@@ -49,7 +49,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
@@ -113,13 +112,14 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         }
         else
         {
-            Toast.makeText(getApplicationContext(), R.string.fill_any_one_details, Toast.LENGTH_SHORT).show();
+            showSnackBar(R.string.fill_any_one_details);
         }
     }
 
     boolean validateInputSearchFields()
     {
-        return (isNotEmpty(etAssessmentNo.getText().toString().trim()) || isNotEmpty(etConsumerNo.getText().toString().trim()) || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()));
+        return (isNotEmpty(etAssessmentNo.getText().toString().trim()) || isNotEmpty(etConsumerNo.getText().toString().trim())
+                || isNotEmpty(etOwnerName.getText().toString().trim()) || isNotEmpty(etMobileNo.getText().toString().trim()));
     }
 
     boolean isNotEmpty(String string)

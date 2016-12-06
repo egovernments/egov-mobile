@@ -63,31 +63,40 @@
 
 
                   <TextView
+                      android:id="@+id/tvSearchTitle"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:text="@string/search_property"
                       android:paddingLeft="16dp"
                       android:paddingRight="16dp"
                       android:paddingTop="16dp"
-                      android:id="@+id/tvSearchTitle" />
+                      android:text="@string/search_property"
+                      android:textAppearance="?android:attr/textAppearanceLarge" />
 
+                  <TextView
+                      android:id="@+id/tvSearchSubTitle"
+                      style="@style/TextAppearance.AppCompat.Body1"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:paddingLeft="16dp"
+                      android:paddingRight="16dp"
+                      android:paddingTop="5dp"
+                      android:text="@string/fill_any_one_details" />
 
 
                   <LinearLayout
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:orientation="horizontal"
                       android:gravity="center"
-                      android:paddingTop="16dp"
+                      android:orientation="horizontal"
+                      android:paddingLeft="16dp"
                       android:paddingRight="16dp"
-                      android:paddingLeft="16dp">
+                      android:paddingTop="10dp">
 
                       <ImageView
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:src="@drawable/ic_business_black_24dp"
-                          android:layout_marginRight="16dp"/>
+                          android:layout_marginRight="16dp"
+                          android:src="@drawable/ic_business_black_24dp" />
 
                       <LinearLayout
                           android:layout_width="match_parent"
@@ -117,12 +126,12 @@
 
                           <TextView
                               android:id="@+id/tvReceiptInfo"
+                              style="@style/TextAppearance.AppCompat.Small"
                               android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              style="@style/TextAppearance.AppCompat.Small"
-                              android:textColor="@color/blue"
                               android:layout_marginLeft="5dp"
-                              android:text="@string/where_can_i_find_my_assessment_no"/>
+                              android:text="@string/where_can_i_find_my_assessment_no"
+                              android:textColor="@color/blue" />
 
                       </LinearLayout>
 
@@ -134,17 +143,17 @@
                   <LinearLayout
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:orientation="horizontal"
                       android:gravity="center"
-                      android:paddingTop="16dp"
+                      android:orientation="horizontal"
+                      android:paddingLeft="16dp"
                       android:paddingRight="16dp"
-                      android:paddingLeft="16dp">
+                      android:paddingTop="16dp">
 
                       <ImageView
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:src="@drawable/ic_person_black_24dp"
-                          android:layout_marginRight="16dp"/>
+                          android:layout_marginRight="16dp"
+                          android:src="@drawable/ic_person_black_24dp" />
 
                       <android.support.design.widget.TextInputLayout
                           android:layout_width="match_parent"
@@ -173,17 +182,17 @@
                   <LinearLayout
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:orientation="horizontal"
                       android:gravity="center"
-                      android:paddingTop="16dp"
+                      android:orientation="horizontal"
+                      android:paddingLeft="16dp"
                       android:paddingRight="16dp"
-                      android:paddingLeft="16dp">
+                      android:paddingTop="16dp">
 
                       <ImageView
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:src="@drawable/ic_call_black_24dp"
-                          android:layout_marginRight="16dp" />
+                          android:layout_marginRight="16dp"
+                          android:src="@drawable/ic_call_black_24dp" />
 
                       <android.support.design.widget.TextInputLayout
                           android:layout_width="match_parent"
@@ -199,9 +208,9 @@
                               android:hint="MOBILE NO"
                               android:imeOptions="actionNext"
                               android:inputType="number"
+                              android:maxLength="10"
                               android:paddingEnd="10dp"
                               android:paddingStart="10dp"
-                              android:maxLength="10"
                               android:singleLine="true"
                               android:textSize="15sp" />
 
@@ -213,16 +222,16 @@
                       android:id="@+id/doorNoContainer"
                       android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:orientation="horizontal"
                       android:gravity="center"
-                      android:visibility="gone"
-                      android:padding="16dp">
+                      android:orientation="horizontal"
+                      android:padding="16dp"
+                      android:visibility="gone">
 
                       <ImageView
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:src="@drawable/ic_door_24dp"
-                          android:layout_marginRight="12dp" />
+                          android:layout_marginRight="12dp"
+                          android:src="@drawable/ic_door_24dp" />
 
                       <android.support.design.widget.TextInputLayout
                           android:layout_width="match_parent"
@@ -255,9 +264,9 @@
               android:id="@+id/fabSearchProperty"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:layout_gravity="right|bottom"
               android:layout_margin="@dimen/fab_margin"
-              android:src="@drawable/ic_search_white_24dp"
-              android:layout_gravity="right|bottom" />
+              android:src="@drawable/ic_search_white_24dp" />
 
       </FrameLayout>
 

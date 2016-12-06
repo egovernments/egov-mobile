@@ -157,20 +157,16 @@ public class ApiController {
     }
 
     //Sets up the API client
-    public static APIInterface getRetrofit2API(Context context, Interceptor.ErrorListener errorListener) {
+    public static APIInterface getRetrofit2API(Context context) {
 
-        SessionManager sessionManager = new SessionManager(context);
+        if (apiInterface == null) {
+            SessionManager sessionManager = new SessionManager(context);
+            okHttpBuilder.interceptors().clear();
+            Interceptor logging = new Interceptor();
+            // set your desired log level none, body, header
+            logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
 
-        okHttpBuilder.interceptors().clear();
-
-        Interceptor logging = new Interceptor();
-        // set your desired log level none, body, header
-        logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
-        logging.setErrorListener(errorListener);
-
-        okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
-
-        if (apiInterface == null || errorListener != null) {
+            okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
 
             Retrofit retrofit = new Retrofit.Builder()
                     .client(client)
@@ -184,16 +180,13 @@ public class ApiController {
         return apiInterface;
     }
 
-    public static APIInterface getRetrofit2API(Context context, String url, Interceptor.ErrorListener errorListener) {
+    public static APIInterface getRetrofit2API(Context context, String url) {
+
         SessionManager sessionManager = new SessionManager(context);
-        apiInterface=null;
-
         okHttpBuilder.interceptors().clear();
-
         Interceptor logging = new Interceptor();
         //set your desired log level none, body, header
         logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
-        logging.setErrorListener(errorListener);
         okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -201,9 +194,8 @@ public class ApiController {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(url)
                 .build();
+        return retrofit.create(APIInterface.class);
 
-        apiInterface = retrofit.create(APIInterface.class);
-        return apiInterface;
     }
 
     public interface APIInterface {

@@ -120,7 +120,7 @@ public class UpdateService extends Service {
 
         if (sessionManager.getAccessToken() != null) {
 
-            Call<ProfileAPIResponse> getProfileDetails = ApiController.getRetrofit2API(getApplicationContext(), null)
+            Call<ProfileAPIResponse> getProfileDetails = ApiController.getRetrofit2API(getApplicationContext())
                     .getProfile(sessionManager.getAccessToken());
 
             getProfileDetails.enqueue(new retrofit2.Callback<ProfileAPIResponse>() {
@@ -182,7 +182,7 @@ public class UpdateService extends Service {
 
     private void renewCredentials() {
 
-        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext(), null)
+        Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext())
                 .login(ApiUrl.AUTHORIZATION, sessionManager.getUsername(), "read write", sessionManager.getPassword(), "password");
 
         login.enqueue(new retrofit2.Callback<JsonObject>() {

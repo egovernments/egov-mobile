@@ -73,12 +73,11 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
+import tr.xip.errorview.ErrorView;
 
 
 public class BuildingPlanActivity extends BaseActivity {
@@ -98,6 +97,8 @@ public class BuildingPlanActivity extends BaseActivity {
     TextView tvBPSApplicationNo, tvBPSApplicationStatus, tvBPSApplicantName, tvBPSApplicantMobNo;
     LinearLayout layoutBPSDocsSection;
     RecyclerView recyclerView, recyclerViewBPS;
+
+    ErrorView errorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,8 @@ public class BuildingPlanActivity extends BaseActivity {
 
         recyclerViewBPS=(RecyclerView)findViewById(R.id.recylerviewBPSFiles);
         recyclerViewBPS.setLayoutManager(new LinearLayoutManager(this));
+
+        errorView = (ErrorView) findViewById(R.id.errorView);
 
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
         {
@@ -210,10 +213,11 @@ public class BuildingPlanActivity extends BaseActivity {
 
         progressBar.setVisibility(View.VISIBLE);
         cvBuildingPlanDetails.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
 
         applicationNo=applicationNo.replaceAll("/","\\$");
 
-        buildingPlanAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), ApiUrl.BPA_SERVER_ADDRESS, this).getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY);
+        buildingPlanAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), ApiUrl.BPA_SERVER_ADDRESS).getBuildingPlanApprovalDetails(applicationNo, ApiUrl.BPA_AUTH_KEY);
 
         buildingPlanAPIResponseCall.enqueue(new retrofit2.Callback<BuildingPlanAPIResponse>() {
             @Override
@@ -306,6 +310,19 @@ public class BuildingPlanActivity extends BaseActivity {
             buildingPlanAPIResponseCall.cancel();
     }
 
+    void showErrorView(int httpCode) {
+        ErrorView.Config config = ErrorView.Config.create().retryVisible(false)
+                .build();
+        errorView.setConfig(config);
+        errorView.setError(httpCode);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void errorOccurred(String errorMsg, int errorCode) {
+        showErrorView(errorCode);
+    }
+
     private class getBuildingPenalizationDetails extends AsyncTask<String, Void, BuildingPenalizationAPIResponse> {
 
 
@@ -314,6 +331,7 @@ public class BuildingPlanActivity extends BaseActivity {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
             cvBPSDetails.setVisibility(View.GONE);
+            errorView.setVisibility(View.GONE);
         }
 
         @Override
@@ -380,6 +398,7 @@ public class BuildingPlanActivity extends BaseActivity {
             else
             {
                 showSnackBar(genericError);
+                showErrorView(500);
             }
 
         }
@@ -402,7 +421,7 @@ public class BuildingPlanActivity extends BaseActivity {
                 androidHttpTransport.call(SOAP_ACTION,envelope);
                 SoapPrimitive result =(SoapPrimitive) envelope.getResponse();
                 buildingPenalizationAPIResponse=new Gson().fromJson(result.toString().trim(), BuildingPenalizationAPIResponse.class);
-            } catch (IOException | XmlPullParserException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

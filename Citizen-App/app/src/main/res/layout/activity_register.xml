@@ -56,13 +56,11 @@
             android:id="@+id/toolbar"
             layout="@layout/view_toolbar" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:clipToPadding="false">
 
                 <LinearLayout
@@ -70,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:paddingBottom="60dp"
+                    android:paddingBottom="20dp"
                     android:paddingEnd="20dp"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
@@ -137,11 +135,11 @@
                                         android:id="@+id/autocomplete_district"
                                         android:layout_width="match_parent"
                                         android:layout_height="50dp"
+                                        android:background="@null"
                                         android:drawableLeft="@drawable/ic_place_black_24dp"
                                         android:drawablePadding="5dp"
                                         android:drawableStart="@drawable/ic_place_black_24dp"
                                         android:gravity="center_vertical"
-                                        android:background="@null"
                                         android:hint="@string/loading_label"
                                         android:imeOptions="actionNext"
                                         android:inputType="textNoSuggestions"
@@ -255,8 +253,8 @@
                                     android:id="@+id/signup_phoneno"
                                     android:layout_width="match_parent"
                                     android:layout_height="50dp"
-                                    android:background="@null"
                                     android:layout_gravity="center_horizontal"
+                                    android:background="@null"
                                     android:drawableLeft="@drawable/ic_call_black_24dp"
                                     android:drawablePadding="5dp"
                                     android:drawableStart="@drawable/ic_call_black_24dp"
@@ -288,8 +286,8 @@
                                     android:id="@+id/signup_email"
                                     android:layout_width="match_parent"
                                     android:layout_height="50dp"
-                                    android:background="@null"
                                     android:layout_gravity="center_horizontal"
+                                    android:background="@null"
                                     android:drawableLeft="@drawable/ic_mail_black_24dp"
                                     android:drawablePadding="5dp"
                                     android:drawableStart="@drawable/ic_mail_black_24dp"
@@ -314,6 +312,7 @@
                                 android:gravity="center_horizontal" />
 
                             <android.support.design.widget.TextInputLayout
+                                android:id="@+id/textInputLayPwd"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:paddingTop="5dp">
@@ -322,8 +321,8 @@
                                     android:id="@+id/signup_password"
                                     android:layout_width="match_parent"
                                     android:layout_height="50dp"
-                                    android:background="@null"
                                     android:layout_gravity="center_horizontal"
+                                    android:background="@null"
                                     android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
                                     android:drawablePadding="5dp"
                                     android:drawableStart="@drawable/ic_vpn_key_black_24dp"
@@ -349,8 +348,8 @@
                             <android.support.design.widget.TextInputLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:paddingTop="5dp"
-                                android:background="@drawable/bottom_edittext">
+                                android:background="@drawable/bottom_edittext"
+                                android:paddingTop="5dp">
 
                                 <EditText
                                     android:id="@+id/signup_confirmpassword"
@@ -382,17 +381,14 @@
 
             </ScrollView>
 
-            <Button
-                android:id="@+id/signup_register"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_alignParentBottom="true"
-                android:background="@color/colorAccent"
-                android:text="@string/registerbutton_label"
-                android:textColor="@android:color/white" />
 
-
-        </RelativeLayout>
+        <Button
+            android:id="@+id/signup_register"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/colorAccent"
+            android:text="@string/registerbutton_label"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 

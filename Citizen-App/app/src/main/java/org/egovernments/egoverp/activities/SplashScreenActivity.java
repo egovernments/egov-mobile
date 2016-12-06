@@ -90,18 +90,12 @@ public class SplashScreenActivity extends Activity {
      * Duration of wait
      **/
     private final int SPLASH_DISPLAY_LENGTH = 2000;
-
+    private final String PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=";
+    private final String MARKET_URL = "market://details?id=";
     private ConfigManager configManager;
-
     private Thread timerThread;
-
     private Handler handler;
-
     private SessionManager sessionManager;
-
-    private final String PLAYSTORE_URL="https://play.google.com/store/apps/details?id=";
-    private final String MARKET_URL="market://details?id=";
-
     private AlertDialog errorAlertDialog;
 
     @Override
@@ -182,10 +176,106 @@ public class SplashScreenActivity extends Activity {
             }
         }
         else{
-            showErrorAlert("No Connection!", "Please check your internet connection and try again",
+            showErrorAlert(getString(R.string.no_connection), getString(R.string.check_internet),
                     getString(R.string.try_again), R.drawable.ic_network_wifi_black_48dp,
                     ContextCompat.getColor(SplashScreenActivity.this, R.color.red));
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkReadSMSPermision() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_SMS},
+                    REQUEST_CODE_ASK_PERMISSION_READ_SMS);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(getApplicationContext(), R.string.permission_readsms_denied, Toast.LENGTH_LONG).show();
+                    timerThread.start();
+                } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    timerThread.start();
+                }
+                break;
+        }
+    }
+
+    public void startTimerThread() {
+        new GetLatestAppVersion().execute();
+    }
+
+    public void launchScreen() {
+        if (Build.VERSION.SDK_INT < 23) {
+            timerThread.start();
+        } else {
+            if (checkReadSMSPermision()) {
+                timerThread.start();
+            }
+        }
+    }
+
+    void showUpdateAlert(boolean isForceUpdate, String title, String content) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle(title);
+        builder.setMessage(content);
+        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+
+        if (!isForceUpdate) {
+            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    launchScreen();
+                }
+            });
+        }
+        builder.create().show();
+    }
+
+    void showErrorAlert(String errorTitle, String errorDesc, String btnText, int imageResourceId, int imgColor) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_imagery_notification, null);
+        ((TextView) dialogView.findViewById(R.id.tvTitle)).setText(errorTitle);
+        ((TextView) dialogView.findViewById(R.id.tvContent)).setText(errorDesc);
+        ImageView imageView = (ImageView) dialogView.findViewById(R.id.imgAlert);
+        imageView.setImageResource(imageResourceId);
+        imageView.setColorFilter(imgColor, PorterDuff.Mode.SRC_ATOP);
+
+        Button btnAction = (Button) dialogView.findViewById(R.id.btnAction);
+        btnAction.setText(btnText);
+        btnAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                errorAlertDialog.dismiss();
+                startInitialConditionCheck();
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setCancelable(false);
+        errorAlertDialog = builder.create();
+        errorAlertDialog.show();
+
     }
 
     class GetCityTask extends AsyncTask<String, Integer, Object> {
@@ -246,7 +336,6 @@ public class SplashScreenActivity extends Activity {
         }
     }
 
-
     class GetLatestAppVersion extends AsyncTask<String, Integer, JsonObject>{
 
         final String KEY_RESULT="result";
@@ -298,109 +387,6 @@ public class SplashScreenActivity extends Activity {
             }
 
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkReadSMSPermision() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_SMS);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_SMS},
-                    REQUEST_CODE_ASK_PERMISSION_READ_SMS);
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast.makeText(getApplicationContext(), R.string.permission_readsms_denied, Toast.LENGTH_LONG).show();
-                    timerThread.start();
-                }
-                else if(grantResults[0]== PackageManager.PERMISSION_GRANTED)
-                {
-                    timerThread.start();
-                }
-                break;
-        }
-    }
-
-    public void startTimerThread()
-    {
-        new GetLatestAppVersion().execute();
-    }
-
-
-    public void launchScreen(){
-        if (Build.VERSION.SDK_INT < 23) {
-            timerThread.start();
-        } else {
-            if(checkReadSMSPermision()) {
-                timerThread.start();
-            }
-        }
-    }
-
-
-    void showUpdateAlert(boolean isForceUpdate, String title, String content){
-        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
-        builder.setCancelable(false);
-        builder.setTitle(title);
-        builder.setMessage(content);
-        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
-                }
-                finish();
-            }
-        });
-
-        if(!isForceUpdate)
-        {
-            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    launchScreen();
-                }
-            });
-        }
-        builder.create().show();
-    }
-
-    void showErrorAlert(String errorTitle, String errorDesc, String btnText, int imageResourceId, int imgColor)
-    {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_imagery_notification, null);
-        ((TextView)dialogView.findViewById(R.id.tvTitle)).setText(errorTitle);
-        ((TextView)dialogView.findViewById(R.id.tvContent)).setText(errorDesc);
-        ImageView imageView=(ImageView)dialogView.findViewById(R.id.imgAlert);
-        imageView.setImageResource(imageResourceId);
-        imageView.setColorFilter(imgColor, PorterDuff.Mode.SRC_ATOP);
-
-        Button btnAction=(Button) dialogView.findViewById(R.id.btnAction);
-        btnAction.setText(btnText);
-        btnAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                errorAlertDialog.dismiss();
-                startInitialConditionCheck();
-            }
-        });
-
-        builder.setView(dialogView);
-        builder.setCancelable(false);
-        errorAlertDialog=builder.create();
-        errorAlertDialog.show();
-
     }
 
 }

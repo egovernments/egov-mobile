@@ -179,7 +179,7 @@ public class ResetPasswordActivity extends BaseActivity {
 
 
         Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
-                sessionManager.getBaseURL(), this).recoverPassword(mobileNo, sessionManager.getBaseURL());
+                sessionManager.getBaseURL()).recoverPassword(mobileNo, sessionManager.getBaseURL());
 
         recoverPasswordCall.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
@@ -271,7 +271,7 @@ public class ResetPasswordActivity extends BaseActivity {
             progressBar.setVisibility(View.VISIBLE);
 
             Call<JsonObject> recoverPassword = ApiController.getRetrofit2API(ResetPasswordActivity.this,
-                    sessionManager.getBaseURL(), this).resetPassword(mobileNo, etOtp.getText().toString(),
+                    sessionManager.getBaseURL()).resetPassword(mobileNo, etOtp.getText().toString(),
                     etNewPwd.getText().toString(), etConfirmPwd.getText().toString());
 
             recoverPassword.enqueue(new retrofit2.Callback<JsonObject>() {

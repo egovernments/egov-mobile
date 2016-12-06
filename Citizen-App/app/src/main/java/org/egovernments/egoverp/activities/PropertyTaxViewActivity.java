@@ -252,7 +252,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
             return;
         }
 
-        propertyTaxCallbackCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+        propertyTaxCallbackCall = ApiController.getRetrofit2API(getApplicationContext())
                 .getPropertyTax(referrerIp, new PropertyViewRequest(String.format(Locale.getDefault(), "%04d", ulbCode), code, category));
 
         propertyTaxCallbackCall.enqueue(new retrofit2.Callback<PropertyTaxCallback>() {

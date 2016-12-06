@@ -43,15 +43,20 @@
 package org.egovernments.egoverp.activities;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -78,6 +83,11 @@ import java.util.ArrayList;
 
 import retrofit2.Call;
 
+import static org.egovernments.egoverp.api.Interceptor.BROADCAST_ERROR;
+import static org.egovernments.egoverp.api.Interceptor.DATA_ERROR_CODE;
+import static org.egovernments.egoverp.api.Interceptor.DATA_ERROR_MSG;
+import static org.egovernments.egoverp.api.Interceptor.DATA_UNAUTHORIZED_ERROR;
+
 /**
  * The activity sets up common features of layout for other activities
  **/
@@ -98,7 +108,18 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
     protected boolean isHasNavBar = false;
     protected boolean isTabSupport=false;
     protected TabLayout tabLayout;
+    BroadcastReceiver errorReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
 
+            if (intent.getBooleanExtra(DATA_UNAUTHORIZED_ERROR, false)) {
+                sessionTimeOutError();
+            } else {
+                errorOccurred(intent.getStringExtra(DATA_ERROR_MSG),
+                        intent.getIntExtra(DATA_ERROR_CODE, 0));
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -439,7 +460,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
             }
         });
 
-        Call<JsonObject> logoutCall = ApiController.getRetrofit2API(getApplicationContext(), this).logout(sessionManager.getAccessToken());
+        Call<JsonObject> logoutCall = ApiController.getRetrofit2API(getApplicationContext()).logout(sessionManager.getAccessToken());
 
         logoutCall.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
@@ -573,8 +594,19 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         snackbar.show();
     }
 
+    public void showSnackbar(String message, int gravity) {
+        ContentFrameLayout layout = (ContentFrameLayout) findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make(layout, message, Snackbar.LENGTH_LONG);
+        View view = snackbar.getView();
+
+        ContentFrameLayout.LayoutParams params = (ContentFrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = gravity;
+        view.setLayoutParams(params);
+        snackbar.show();
+    }
+
     @Override
-    public void errorOccurred(String errorMsg) {
+    public void errorOccurred(String errorMsg, int errorCode) {
         showSnackBar(errorMsg);
     }
 
@@ -589,5 +621,21 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
             showSnackBar("No internet connection");
         return hasInternetConnection;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(BaseActivity.this).registerReceiver(errorReceiver,
+                new IntentFilter(BROADCAST_ERROR));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(BaseActivity.this).unregisterReceiver(errorReceiver);
+    }
+
+
+
 
 }

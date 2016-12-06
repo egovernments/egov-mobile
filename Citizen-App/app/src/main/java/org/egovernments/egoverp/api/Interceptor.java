@@ -1,5 +1,10 @@
 package org.egovernments.egoverp.api;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,6 +18,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.internal.Platform;
 import okio.Buffer;
 import okio.BufferedSource;
 
@@ -22,10 +28,14 @@ import okio.BufferedSource;
 
 public class Interceptor implements okhttp3.Interceptor {
 
+    public static final String BROADCAST_ERROR = "BROADCAST_ERROR";
+    public static final String DATA_UNAUTHORIZED_ERROR = "DATA_UNAUTHORIZED_ERROR";
+    public static final String DATA_ERROR_MSG = "DATA_ERROR_MSG";
+    public static final String DATA_ERROR_CODE = "DATA_ERROR_CODE";
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final Interceptor.Logger logger;
     private Level level = Level.NONE;
-    private ErrorListener errorListener = null;
+    private Context context;
 
     public Interceptor() {
         this(Logger.DEFAULT);
@@ -48,12 +58,13 @@ public class Interceptor implements okhttp3.Interceptor {
         this.level = level;
     }
 
-    public void setErrorListener(ErrorListener errorListener) {
-        this.errorListener = errorListener;
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        Response response = null;
         try {
             Interceptor.Level level = this.level;
 
@@ -102,7 +113,7 @@ public class Interceptor implements okhttp3.Interceptor {
             }
 
             long startNs = System.nanoTime();
-            Response response = chain.proceed(request);
+            response = chain.proceed(request);
             long tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs);
 
             ResponseBody responseBody = response.body();
@@ -146,14 +157,23 @@ public class Interceptor implements okhttp3.Interceptor {
             return response;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw errorHandlerFromResponse(ex);
+            throw errorHandlerFromResponse(ex, (response == null ? 0 : response.code()));
         }
     }
 
-    private IOException errorHandlerFromResponse(IOException ex) {
-        if (errorListener != null) {
-            errorListener.errorOccurred(ex.getLocalizedMessage());
-        }
+
+    private void sendErrorToBroadCast(String errorMessage, int errorCode, Boolean isUnauthorizedError) {
+        //send error to broadcast listeners
+        Intent broadCastIntent = new Intent(BROADCAST_ERROR);
+        broadCastIntent.putExtra(DATA_UNAUTHORIZED_ERROR, isUnauthorizedError);
+        broadCastIntent.putExtra(DATA_ERROR_MSG, errorMessage);
+        broadCastIntent.putExtra(DATA_ERROR_CODE, errorCode);
+        LocalBroadcastManager.getInstance(this.context).sendBroadcast(broadCastIntent);
+    }
+
+    private IOException errorHandlerFromResponse(IOException ex, int errorCode) {
+        //send error to broadcast listeners
+        sendErrorToBroadCast(ex.getLocalizedMessage(), errorCode, false);
         return ex;
     }
 
@@ -206,13 +226,8 @@ public class Interceptor implements okhttp3.Interceptor {
             default:
                 errorMsg = "An unexpected error occurred!";
         }
-        if (errorListener != null) {
-            if (isSessionExpired) {
-                errorListener.sessionTimeOutError();
-            } else {
-                errorListener.errorOccurred(errorMsg);
-            }
-        }
+
+        sendErrorToBroadCast(errorMsg, responseCode, isSessionExpired);
 
         return errorMsg;
 
@@ -284,7 +299,7 @@ public class Interceptor implements okhttp3.Interceptor {
         Logger DEFAULT = new Logger() {
             @Override
             public void log(String message) {
-                //Platform.get().log(message);
+                Platform.get().log(Log.INFO, message, null);
             }
         };
 
@@ -292,7 +307,7 @@ public class Interceptor implements okhttp3.Interceptor {
     }
 
     public interface ErrorListener {
-        void errorOccurred(String errorMsg);
+        void errorOccurred(String errorMsg, int errorCode);
 
         void sessionTimeOutError();
     }

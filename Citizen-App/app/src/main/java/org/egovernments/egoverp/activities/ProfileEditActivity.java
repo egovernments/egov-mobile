@@ -245,7 +245,7 @@ public class ProfileEditActivity extends BaseActivity {
 
             progressDialog.show();
 
-            Call<ProfileAPIResponse> profileAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext(), this)
+            Call<ProfileAPIResponse> profileAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext())
                     .updateProfile(update_profile, sessionManager.getAccessToken());
 
             profileAPIResponseCall.enqueue(new retrofit2.Callback<ProfileAPIResponse>() {

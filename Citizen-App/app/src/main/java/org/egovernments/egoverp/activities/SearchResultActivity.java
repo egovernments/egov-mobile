@@ -298,7 +298,7 @@ public class SearchResultActivity extends BaseActivity {
     {
         showLoadingIndicator();
 
-        propertySearchCall = ApiController.getRetrofit2API(getApplicationContext(), null)
+        propertySearchCall = ApiController.getRetrofit2API(getApplicationContext())
                 .searchProperty(referrerIp, propertySearchRequest);
 
         propertySearchCall.enqueue(new retrofit2.Callback<List<PropertyTaxCallback>>() {
@@ -348,7 +348,7 @@ public class SearchResultActivity extends BaseActivity {
 
         showLoadingIndicator();
 
-        Call<List<WaterTaxCallback>> waterConnectionResultsCall = ApiController.getRetrofit2API(getApplicationContext(), null)
+        Call<List<WaterTaxCallback>> waterConnectionResultsCall = ApiController.getRetrofit2API(getApplicationContext())
                 .searchWaterConnection(referrerIp, waterConnectionSearchRequest);
 
         waterConnectionResultsCall.enqueue(new retrofit2.Callback<List<WaterTaxCallback>>() {
