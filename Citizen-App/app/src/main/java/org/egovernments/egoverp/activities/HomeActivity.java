@@ -296,4 +296,9 @@ public class HomeActivity extends BaseActivity {
         getWindow().setEnterTransition(enterTransition);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(0, 0);
+    }
 }

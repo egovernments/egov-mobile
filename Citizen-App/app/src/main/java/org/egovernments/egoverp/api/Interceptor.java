@@ -163,12 +163,16 @@ public class Interceptor implements okhttp3.Interceptor {
 
 
     private void sendErrorToBroadCast(String errorMessage, int errorCode, Boolean isUnauthorizedError) {
-        //send error to broadcast listeners
-        Intent broadCastIntent = new Intent(BROADCAST_ERROR);
-        broadCastIntent.putExtra(DATA_UNAUTHORIZED_ERROR, isUnauthorizedError);
-        broadCastIntent.putExtra(DATA_ERROR_MSG, errorMessage);
-        broadCastIntent.putExtra(DATA_ERROR_CODE, errorCode);
-        LocalBroadcastManager.getInstance(this.context).sendBroadcast(broadCastIntent);
+
+        if (this.context != null) {
+            //send error to broadcast listeners
+            Intent broadCastIntent = new Intent(BROADCAST_ERROR);
+            broadCastIntent.putExtra(DATA_UNAUTHORIZED_ERROR, isUnauthorizedError);
+            broadCastIntent.putExtra(DATA_ERROR_MSG, errorMessage);
+            broadCastIntent.putExtra(DATA_ERROR_CODE, errorCode);
+            LocalBroadcastManager.getInstance(this.context).sendBroadcast(broadCastIntent);
+        }
+
     }
 
     private IOException errorHandlerFromResponse(IOException ex, int errorCode) {
