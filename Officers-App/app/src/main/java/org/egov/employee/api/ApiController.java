@@ -43,13 +43,8 @@
 package org.egov.employee.api;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 import org.egov.employee.config.AppPreference;
 import org.egov.employee.data.ComplaintViewAPIResponse;
@@ -62,20 +57,26 @@ import org.egov.employee.data.TaskAPISearchResponse;
 
 import java.util.Map;
 
-import retrofit.Call;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.http.Body;
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.Multipart;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.PartMap;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.PartMap;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
 
 /**
  * Created by egov on 11/1/16.
@@ -83,101 +84,86 @@ import retrofit.http.Query;
 
 public class ApiController {
 
+    private final static okhttp3.OkHttpClient.Builder okHttpBuilder = SSLTrustManager.createClient();
     public static APIInterface apiInterface = null;
 
-    private final static OkHttpClient client = SSLTrustManager.createClient();
+    private static OkHttpClient getOkHttpClient(Context context) {
+        okHttpBuilder.interceptors().clear();
 
-    public static Response getCityURL(String url, LoggingInterceptor.ErrorListener errorListener) {
+        Interceptor logging = new Interceptor(context);
+        // set your desired log level none, body, header
+        logging.setLevel(Interceptor.Level.BODY);
+        return okHttpBuilder.addInterceptor(logging).build();
+    }
+
+    public static Response getResponseFromUrl(Context context, HttpUrl url) {
 
         try {
-
-            client.interceptors().clear();
-
-            LoggingInterceptor logging = new LoggingInterceptor();
-            // set your desired log level none, body, header
-            logging.setLevel(LoggingInterceptor.Level.BODY);
-            logging.setErrorListener(errorListener);
-            client.interceptors().add(logging);
-
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            return client.newCall(request).execute();
+            return getOkHttpClient(context).newCall(request).execute();
 
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static Response getCityURL(String url, int cityCode, LoggingInterceptor.ErrorListener errorListener) {
+    public static Response getCityURL(Context context, String url, int cityCode) {
 
         try {
-
-            LoggingInterceptor logging = new LoggingInterceptor();
-            // set your desired log level none, body, header
-            logging.setLevel(LoggingInterceptor.Level.BODY);
-            logging.setErrorListener(errorListener);
-            client.interceptors().add(logging);
-
             Request request = new Request.Builder()
                     .url(url + "&code=" + cityCode)
                     .build();
-            return client.newCall(request).execute();
+            return getOkHttpClient(context).newCall(request).execute();
         } catch (Exception e) {
             return null;
         }
-
     }
 
+    //Sets up the API client
+    public static APIInterface getAPI(Context context) {
+        if (apiInterface == null) {
+            okHttpBuilder.interceptors().clear();
+            Interceptor logging = new Interceptor(context);
+            // set your desired log level none, body, header
+            logging.setLevel(Interceptor.Level.BODY);
 
-    /*public static List<City> getAllCitiesURLs(String url) throws IOException {
+            AppPreference preference = new AppPreference(context);
 
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
+            okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .client(client)
+                    .baseUrl(preference.getActiveCityUrl().endsWith("/") ? preference.getActiveCityUrl() : preference.getActiveCityUrl() + "/")
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            Response response = client.newCall(request).execute();
-            if (!response.isSuccessful())
-                throw new IOException();
-            Type type = new TypeToken<List<City>>() {
-            }.getType();
-            return new Gson().fromJson(response.body().charStream(), type);
-        } catch (Exception e) {
-            return null;
+            apiInterface = retrofit.create(APIInterface.class);
         }
 
-    }*/
+        return apiInterface;
+    }
 
-    //Sets up the API client
-    public static APIInterface getAPI(Context context, LoggingInterceptor.ErrorListener errorListener) {
-        /*SessionManager sessionManager = new SessionManager(context);
-        if (apiInterface == null) {
+    public static APIInterface getAPI(Context context, String baseUrl) {
 
+        apiInterface = null;
 
-        }*/
-
-        client.interceptors().clear();
-
-        LoggingInterceptor logging = new LoggingInterceptor();
+        okHttpBuilder.interceptors().clear();
+        Interceptor logging = new Interceptor(context);
         // set your desired log level none, body, header
-        logging.setLevel(LoggingInterceptor.Level.BODY);
-        logging.setErrorListener(errorListener);
+        logging.setLevel(Interceptor.Level.BODY);
+        okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
 
-        client.interceptors().add(logging);
-
-        AppPreference preference=new AppPreference(context);
-
-        Log.v("ACTIVE CITY URL", preference.getActiveCityUrl());
-
-
-        Retrofit restAdapter = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl((preference.getActiveCityUrl().endsWith("/") ? preference.getActiveCityUrl() : preference.getActiveCityUrl() + "/"))
                 .build();
 
-        apiInterface = restAdapter.create(APIInterface.class);
+        apiInterface = retrofit.create(APIInterface.class);
+
+
         return apiInterface;
     }
 
@@ -192,7 +178,7 @@ public class ApiController {
 
         @POST(ApiUrl.EMPLOYEE_LOG)
         Call<JsonObject> addDeviceLog(@Query(value = "deviceId") String deviceId, @Query(value = "deviceType") String deivceType,
-                                           @Query(value = "deviceOS") String deviceOS, @Query(value = "access_token") String accessToken);
+                                      @Query(value = "deviceOS") String deviceOS, @Query(value = "access_token") String accessToken);
 
         @POST(ApiUrl.EMPLOYEE_LOGOUT)
         Call<JsonObject> logout(@Query("access_token") String accessToken);

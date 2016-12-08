@@ -53,8 +53,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 
 import org.egov.employee.activity.Homepage;
 import org.egov.employee.adapter.TasksListAdapater;
@@ -68,20 +66,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
- * Created by egov on 14/12/15.
+ * Task Fragment by work category
  */
 public class TasksFragment extends Fragment implements TasksItemClickListener.TaskItemClickedIndex {
 
     RecyclerView recyclerviewTasks;
     Toolbar mToolbar;
     AppBarLayout appBarLayout;
-    Activity mActivity;
     TasksItemClickListener listener;
     List<Task> tasks;
     String workflowtype;
@@ -120,7 +116,7 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
             workflowtype = getArguments().getString("workFlowType");
             totalItemsCount = getArguments().getInt("itemsCount");
             accessToken=getArguments().getString("accessToken");
-            tasks=new ArrayList<Task>();
+            tasks = new ArrayList<>();
             _areItemsLoaded=true;
             loadInboxListItems();
         }
@@ -162,7 +158,7 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
             workflowtype = getArguments().getString("workFlowType");
             totalItemsCount = getArguments().getInt("itemsCount");
             accessToken=getArguments().getString("accessToken");
-            tasks=new ArrayList<Task>();
+            tasks = new ArrayList<>();
             _areItemsLoaded=true;
             loadInboxListItems();
         }
@@ -202,12 +198,12 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
 
             if(((Homepage)getActivity()).checkInternetConnectivity(TasksFragment.this, currentMethodName)) {
 
-                Call<TaskAPIResponse> getInboxList = ApiController.getAPI(getActivity().getApplicationContext(), ((Homepage) getActivity())).getInboxItemsByCategory(workflowtype, ((currentPage - 1) * pagePerItems), pagePerItems, accessToken);
+                Call<TaskAPIResponse> getInboxList = ApiController.getAPI(getActivity().getApplicationContext()).getInboxItemsByCategory(workflowtype, ((currentPage - 1) * pagePerItems), pagePerItems, accessToken);
 
                 Callback<TaskAPIResponse> inboxListCallback = new Callback<TaskAPIResponse>() {
 
                     @Override
-                    public void onResponse(Response<TaskAPIResponse> response, Retrofit retrofit) {
+                    public void onResponse(Call<TaskAPIResponse> getInboxList, Response<TaskAPIResponse> response) {
 
                         if(currentPage ==1)
                         {
@@ -230,7 +226,7 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
                     }
 
                     @Override
-                    public void onFailure(Throwable t) {
+                    public void onFailure(Call<TaskAPIResponse> getInboxList, Throwable t) {
 
                     }
                 };
@@ -243,13 +239,13 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
     }
 
 
-    private void hideViews() {
+    /*private void hideViews() {
         appBarLayout.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
     }
 
     private void showViews() {
         appBarLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-    }
+    }*/
 
     @Override
     public void onAttach(Activity activity) {

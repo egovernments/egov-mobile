@@ -42,8 +42,10 @@
 
 package org.egov.employee.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -52,6 +54,7 @@ import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.IntentCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -64,28 +67,44 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.LoggingInterceptor;
+import org.egov.employee.api.Interceptor;
 import org.egov.employee.config.AppPreference;
 import org.egov.employee.config.NavMenuItems;
 
 import java.lang.reflect.Method;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static org.egov.employee.api.Interceptor.BROADCAST_ERROR;
+import static org.egov.employee.api.Interceptor.DATA_ERROR_CODE;
+import static org.egov.employee.api.Interceptor.DATA_ERROR_MSG;
+import static org.egov.employee.api.Interceptor.DATA_UNAUTHORIZED_ERROR;
 
 /**
  * Created by egov on 15/12/15.
  */
-public abstract class BaseActivity extends AppCompatActivity implements LoggingInterceptor.ErrorListener {
+public abstract class BaseActivity extends AppCompatActivity implements Interceptor.ErrorListener {
 
     AppPreference preference;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle drawerToggle;
     NavigationView navigationView;
     Toolbar toolbar;
+    BroadcastReceiver errorReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            if (intent.getBooleanExtra(DATA_UNAUTHORIZED_ERROR, false)) {
+                sessionTimeOutError();
+            } else {
+                errorOccurred(intent.getStringExtra(DATA_ERROR_MSG),
+                        intent.getIntExtra(DATA_ERROR_CODE, 0));
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,26 +118,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         }
     }
 
+    //error message function called from error listener when receive an error response from server
+
     protected abstract int getLayoutResource();
 
-    //error message function called from error listener when receive an error response from server
-    @Override
-    public void showSnackBar(String msg) {
+    void showSnackBar(String msg) {
         Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show();
-    }
-
-    //user session timeout function handle
-    @Override
-    public void sessionTimeOutError() {
-
-        //clear current access token
-        preference.setApiAccessToken("");
-
-        Intent intent = new Intent(this, SplashScreen.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("isFromSessionTimeOut", true);
-        startActivity(intent);
-
     }
 
     //check internet connection available method with retry function parameter
@@ -183,7 +188,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         return false;
     }
 
-
     public void recordEmployeeLog()
     {
         if(TextUtils.isEmpty(preference.getApiAccessToken()))
@@ -195,15 +199,15 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         String deviceOS=Integer.toString(Build.VERSION.SDK_INT);
         String deviceType="mobile";
 
-        Call<JsonObject> jsonDeviceLog = ApiController.getAPI(getApplicationContext(), BaseActivity.this).addDeviceLog(deviceId, deviceOS, deviceType, preference.getApiAccessToken());
+        Call<JsonObject> jsonDeviceLog = ApiController.getAPI(getApplicationContext()).addDeviceLog(deviceId, deviceOS, deviceType, preference.getApiAccessToken());
         final Callback<JsonObject> deviceLog = new Callback<JsonObject>() {
             @Override
-            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
 
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
 
             }
         };
@@ -307,12 +311,43 @@ public abstract class BaseActivity extends AppCompatActivity implements LoggingI
         this.overridePendingTransition(0,0);
     }
 
-
     public void enableBackButton()
     {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    public void errorOccurred(String errorMsg, int errorCode) {
+        showSnackBar(errorMsg);
+    }
+
+    //user session timeout function handle
+    @Override
+    public void sessionTimeOutError() {
+
+        //clear current access token
+        preference.setApiAccessToken("");
+
+        Intent intent = new Intent(this, SplashScreen.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("isFromSessionTimeOut", true);
+        startActivity(intent);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(BaseActivity.this).registerReceiver(errorReceiver,
+                new IntentFilter(BROADCAST_ERROR));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(BaseActivity.this).unregisterReceiver(errorReceiver);
     }
 
 }

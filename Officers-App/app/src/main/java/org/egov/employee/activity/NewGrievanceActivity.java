@@ -91,8 +91,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
 import com.viewpagerindicator.LinePageIndicator;
 
 import org.egov.employee.adapter.NoFilterAdapter;
@@ -120,10 +118,11 @@ import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -133,57 +132,39 @@ import retrofit.Retrofit;
 
 public class NewGrievanceActivity extends BaseActivity {
 
+    //Codes used to start image picker tasks
+    private static final int CAMERA_PHOTO = 111;
+    private static final int GALLERY_PHOTO = 222;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
+    final private int REQUEST_CODE_ASK_COMPLAINT_LOCATION = 777;
+    int complaintTypeID;
+    ImageView imgMapPick;
+    ImageView imgClear;
     private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
     private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
     private List<String> grievanceTypes = new ArrayList<>(); //stores grievance types string for adapter
     private List<String> grievanceTypeCategories = new ArrayList<>(); //stores grievance categories string for adapter
-
     private ProgressDialog progressDialog;
-
     private Dialog imagePickerDialog;
-
     private AutoCompleteTextView autoCompleteComplaintLoc;
-
     private CustomAutoCompleteTextView autocompleteComplaintType;
     private CustomAutoCompleteTextView autoCompleteComplaintCategory;
-
     private List<GrievanceLocation> grievanceLocations;
-
     private int locationID = 0;
-    private int complaintTypeID;
     private LatLng complaintLocLatLng;
-
     private EditText etComplainantName;
     private EditText etComplainantMobNo;
     private EditText etComplainantEmail;
     private EditText etLandmark;
     private EditText etDetails;
-
-    //Codes used to start image picker tasks
-    private static final int CAMERA_PHOTO = 111;
-    private static final int GALLERY_PHOTO = 222;
-
     private int uploadCount = 0;
-
     //Used as to maintain unique image IDs
     private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
-
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
-
     private ViewPager viewPager;
-
     private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
-
     private File cacheDir;
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
-    final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
-    final private int REQUEST_CODE_ASK_COMPLAINT_LOCATION = 777;
-
-
-    ImageView imgMapPick;
-    ImageView imgClear;
-
     private boolean isPickedLocationFromMap=false;
 
     @Override
@@ -267,75 +248,7 @@ public class NewGrievanceActivity extends BaseActivity {
                                                             //When 2 or more characters are entered, API is called to provide a matching location name
                                                             @Override
                                                             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-                                                                if (autoCompleteComplaintLoc.getText().toString().length() > 0) {
-                                                                    imgClear.setVisibility(View.VISIBLE);
-                                                                } else {
-                                                                    imgClear.setVisibility(View.GONE);
-                                                                }
-
-                                                                //used to skip below statements when populate address from maps
-                                                                if (isPickedLocationFromMap) {
-                                                                    isPickedLocationFromMap = false;
-                                                                    locationID = 0;
-                                                                    autoCompleteComplaintLoc.setAdapter(null);
-                                                                    return;
-                                                                } else { //if any text change detected from autocomplete text
-                                                                    complaintLocLatLng=null;
-                                                                }
-
-                                                                if (s.length() >= 3) {
-
-                                                                    if (autoCompleteComplaintLoc.getAdapter() != null) {
-                                                                        int pos = ((NoFilterAdapter) autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(autoCompleteComplaintLoc.getText().toString());
-                                                                        if (pos >= 0) {
-                                                                            locationID = grievanceLocations.get(pos).getId();
-                                                                            return;
-                                                                        } else {
-                                                                            locationID = 0;
-                                                                        }
-                                                                    }
-
-
-
-                                                                    Call<GrievanceLocationAPIResponse> apiGetComplaintLocation = ApiController.getAPI(getApplicationContext(), NewGrievanceActivity.this)
-                                                                            .getComplaintLocation(s.toString(),preference.getApiAccessToken());
-
-                                                                    Callback<GrievanceLocationAPIResponse> getComplaintLocationCallBack = new Callback<GrievanceLocationAPIResponse>() {
-
-                                                                        @Override
-                                                                        public void onResponse(Response<GrievanceLocationAPIResponse> response, Retrofit retrofit) {
-
-                                                                            GrievanceLocationAPIResponse grievanceLocationAPIResponse=response.body();
-
-                                                                            grievanceLocations = new ArrayList<>();
-                                                                            grievanceLocations = grievanceLocationAPIResponse.getGrievanceLocation();
-
-                                                                            ArrayList<String> strings = new ArrayList<>();
-                                                                            try {
-                                                                                for (int i = 0; i < grievanceLocations.size(); i++) {
-                                                                                    strings.add(grievanceLocations.get(i).getName());
-                                                                                }
-                                                                                NoFilterAdapter<String> adapter = new NoFilterAdapter<>(NewGrievanceActivity.this,
-                                                                                        android.R.layout.select_dialog_item, strings);
-                                                                                autoCompleteComplaintLoc.setAdapter(adapter);
-
-                                                                            } catch (Exception e) {
-                                                                                e.printStackTrace();
-                                                                            }
-
-                                                                        }
-
-                                                                        @Override
-                                                                        public void onFailure(Throwable t) {
-                                                                            showSnackBar(t.getLocalizedMessage());
-                                                                        }
-                                                                    };
-
-                                                                    apiGetComplaintLocation.enqueue(getComplaintLocationCallBack);
-
-                                                                }
+                                                                loadLocationSuggestionList(s);
                                                             }
 
                                                             @Override
@@ -430,6 +343,76 @@ public class NewGrievanceActivity extends BaseActivity {
 
     }
 
+    private void loadLocationSuggestionList(CharSequence s) {
+        if (autoCompleteComplaintLoc.getText().toString().length() > 0) {
+            imgClear.setVisibility(View.VISIBLE);
+        } else {
+            imgClear.setVisibility(View.GONE);
+        }
+
+        //used to skip below statements when populate address from maps
+        if (isPickedLocationFromMap) {
+            isPickedLocationFromMap = false;
+            locationID = 0;
+            autoCompleteComplaintLoc.setAdapter(null);
+            return;
+        } else { //if any text change detected from autocomplete text
+            complaintLocLatLng = null;
+        }
+
+        if (s.length() >= 3) {
+
+            if (autoCompleteComplaintLoc.getAdapter() != null) {
+                int pos = ((NoFilterAdapter) autoCompleteComplaintLoc.getAdapter()).getItems().indexOf(autoCompleteComplaintLoc.getText().toString());
+                if (pos >= 0) {
+                    locationID = grievanceLocations.get(pos).getId();
+                    return;
+                } else {
+                    locationID = 0;
+                }
+            }
+
+
+            Call<GrievanceLocationAPIResponse> apiGetComplaintLocation = ApiController.getAPI(getApplicationContext())
+                    .getComplaintLocation(s.toString(), preference.getApiAccessToken());
+
+            Callback<GrievanceLocationAPIResponse> getComplaintLocationCallBack = new Callback<GrievanceLocationAPIResponse>() {
+
+                @Override
+                public void onResponse(Call<GrievanceLocationAPIResponse> call, Response<GrievanceLocationAPIResponse> response) {
+
+                    GrievanceLocationAPIResponse grievanceLocationAPIResponse = response.body();
+
+                    grievanceLocations = new ArrayList<>();
+                    grievanceLocations = grievanceLocationAPIResponse.getGrievanceLocation();
+
+                    ArrayList<String> strings = new ArrayList<>();
+                    try {
+                        for (int i = 0; i < grievanceLocations.size(); i++) {
+                            strings.add(grievanceLocations.get(i).getName());
+                        }
+                        NoFilterAdapter<String> adapter = new NoFilterAdapter<>(NewGrievanceActivity.this,
+                                android.R.layout.select_dialog_item, strings);
+                        autoCompleteComplaintLoc.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<GrievanceLocationAPIResponse> call, Throwable t) {
+                    showSnackBar(t.getLocalizedMessage());
+                }
+            };
+
+            apiGetComplaintLocation.enqueue(getComplaintLocationCallBack);
+
+        }
+    }
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_new_grievance;
@@ -459,8 +442,6 @@ public class NewGrievanceActivity extends BaseActivity {
     public void validateAndSubmitGrievance()
     {
         String complaintDetails = etDetails.getText().toString().trim();
-        double lat;
-        double lng;
         String landmarkDetails = etLandmark.getText().toString().trim();
 
         String complainantName=AppUtils.isEmptyReturnNull(etComplainantName.getText().toString());
@@ -610,16 +591,17 @@ public class NewGrievanceActivity extends BaseActivity {
             formDatas.put("files\"; filename=\"" + uploadFile.getName(), fileBody);
         }
 
-        RequestBody complaintDetails = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(grievanceRequest).toString());
+        RequestBody complaintDetails = RequestBody.create(MediaType.parse("text/plain"),
+                new Gson().toJson(grievanceRequest));
 
         formDatas.put("json_complaint", complaintDetails);
 
 
-        Call<JsonObject> createComplaint=ApiController.getAPI(getApplicationContext(), NewGrievanceActivity.this).createComplaint(preference.getApiAccessToken(), formDatas);
+        Call<JsonObject> createComplaint = ApiController.getAPI(getApplicationContext()).createComplaint(preference.getApiAccessToken(), formDatas);
 
         Callback<JsonObject> createComplaintCallBack = new Callback<JsonObject>() {
             @Override
-            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 progressDialog.dismiss();
                 Intent intent=new Intent();
                 intent.putExtra(GrievanceActivity.RESULT_MESSAGE, "Grievance successfully registered");
@@ -628,7 +610,7 @@ public class NewGrievanceActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<JsonObject> createComplaint, Throwable t) {
                 showSnackBar(t.getLocalizedMessage());
                 progressDialog.dismiss();
             }
@@ -644,13 +626,13 @@ public class NewGrievanceActivity extends BaseActivity {
         setLoadingHintCustomAutoComplete(autoCompleteComplaintCategory);
         setLoadingHintCustomAutoComplete(autocompleteComplaintType);
 
-        Call<GrievanceTypeAPIResponse> apiGetComplaintCategoriesAndTypes = ApiController.getAPI(getApplicationContext(), NewGrievanceActivity.this)
+        Call<GrievanceTypeAPIResponse> apiGetComplaintCategoriesAndTypes = ApiController.getAPI(getApplicationContext())
                 .getComplaintCategoriesAndTypes(preference.getApiAccessToken());
 
         Callback<GrievanceTypeAPIResponse> getComplaintCategoriesCallBack = new Callback<GrievanceTypeAPIResponse>() {
 
             @Override
-            public void onResponse(Response<GrievanceTypeAPIResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<GrievanceTypeAPIResponse> call, Response<GrievanceTypeAPIResponse> response) {
 
 
                 GrievanceTypeAPIResponse grievanceTypeAPIResponse=response.body();
@@ -731,7 +713,7 @@ public class NewGrievanceActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<GrievanceTypeAPIResponse> call, Throwable t) {
                 showSnackBar(t.getLocalizedMessage());
                 setLoadingFailedHintCustomAutoComplete(autoCompleteComplaintCategory);
                 setLoadingFailedHintCustomAutoComplete(autocompleteComplaintType);
@@ -867,129 +849,6 @@ public class NewGrievanceActivity extends BaseActivity {
         });
     }
 
-    //Interface defined to be able to invoke function in fragment class. May be unnecessary
-    public interface RemoveImageInterface {
-        void removeFragmentImage(int position, UploadImageFragment fragment);
-    }
-
-    //Custom adapter for viewpager
-    private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
-
-        public GrievanceImagePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-
-        @Override
-        public int getItemPosition(Object object) {
-            // Returning none cause all fragments to be refreshed when data set changed. Is memory intensive
-            return PagerAdapter.POSITION_NONE;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Bundle args = new Bundle();
-            args.putString("uri", (uriArrayList.get(position)).toString());
-            args.putInt("pos", position);
-            UploadImageFragment fragment = new UploadImageFragment(this, uriArrayList.get(position));
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return uriArrayList.size();
-        }
-
-        @Override
-        public void removeFragmentImage(int position, UploadImageFragment fragment) {
-
-            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-
-            uriArrayList.remove(position);
-            uploadCount--;
-
-            imageID.add(String.valueOf(position + 1));
-
-            this.notifyDataSetChanged();
-
-            viewPager.setCurrentItem(position);
-
-        }
-    }
-
-    //The fragments of the viewpager
-    public static class UploadImageFragment extends Fragment {
-        RemoveImageInterface removeInf = null;
-        Integer fragmentPosition = -1;
-        Uri uri = null;
-
-
-        public UploadImageFragment() {
-        }
-
-
-        @SuppressLint("ValidFragment")
-        public UploadImageFragment(RemoveImageInterface removeInf, Uri uri) {
-            this.removeInf = removeInf;
-            this.uri = uri;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-            View view = inflater.inflate(R.layout.fragment_upload_image, container, false);
-            ImageView imageView = (ImageView) view.findViewById(R.id.image_viewpager_item);
-
-            ImageView cancel_button = (ImageView) view.findViewById(R.id.viewpager_cancel);
-
-            //Draws the cancel icon in top right corner
-            Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_cancel_white_24dp);
-            drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-            cancel_button.setImageDrawable(drawable);
-
-            Bundle arg = this.getArguments();
-
-            //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
-            Bitmap ThumbImage = null;
-            try {
-                /*ThumbImage = ThumbnailUtils
-                        .extractThumbnail(MediaStore.Images.Media.getBitmap
-                                (getActivity().getContentResolver(),
-                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
-                ThumbImage=MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-
-
-            if (ThumbImage != null) {
-                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
-            } else {
-                ((NewGrievanceActivity)getActivity()).showSnackBar("An error was encountered retrieving this image");
-            }
-
-            imageView.setImageBitmap(ThumbImage);
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-            fragmentPosition = arg.getInt("pos");
-
-            cancel_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    removeInf.removeFragmentImage(fragmentPosition, UploadImageFragment.this);
-
-                }
-            });
-
-            return view;
-
-        }
-
-    }
-
     //Function converts lat/lng value from exif data to degrees
     private Double convertToDegree(String stringDMS) {
         Double result;
@@ -1027,16 +886,6 @@ public class NewGrievanceActivity extends BaseActivity {
         }
         return "image/jpeg";
     }
-
-    /*//find selected location id from location collections
-    public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
-        for (GrievanceLocation complaintLocation : grievanceLocations) {
-            if (complaintLocation.getName().equals(complaintLocationName)) {
-                return complaintLocation;
-            }
-        }
-        return null;
-    }*/
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -1097,6 +946,16 @@ public class NewGrievanceActivity extends BaseActivity {
         return true;
     }
 
+    /*//find selected location id from location collections
+    public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
+        for (GrievanceLocation complaintLocation : grievanceLocations) {
+            if (complaintLocation.getName().equals(complaintLocationName)) {
+                return complaintLocation;
+            }
+        }
+        return null;
+    }*/
+
     @TargetApi(Build.VERSION_CODES.M)
     private boolean checkReadAccessPermission() {
         int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -1153,6 +1012,129 @@ public class NewGrievanceActivity extends BaseActivity {
     protected void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    //Interface defined to be able to invoke function in fragment class. May be unnecessary
+    public interface RemoveImageInterface {
+        void removeFragmentImage(int position, UploadImageFragment fragment);
+    }
+
+    //The fragments of the viewpager
+    public static class UploadImageFragment extends Fragment {
+        RemoveImageInterface removeInf = null;
+        Integer fragmentPosition = -1;
+        Uri uri = null;
+
+
+        public UploadImageFragment() {
+        }
+
+
+        @SuppressLint("ValidFragment")
+        public UploadImageFragment(RemoveImageInterface removeInf, Uri uri) {
+            this.removeInf = removeInf;
+            this.uri = uri;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+            View view = inflater.inflate(R.layout.fragment_upload_image, container, false);
+            ImageView imageView = (ImageView) view.findViewById(R.id.image_viewpager_item);
+
+            ImageView cancel_button = (ImageView) view.findViewById(R.id.viewpager_cancel);
+
+            //Draws the cancel icon in top right corner
+            Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_cancel_white_24dp);
+            drawable.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+            cancel_button.setImageDrawable(drawable);
+
+            Bundle arg = this.getArguments();
+
+            //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
+            Bitmap ThumbImage = null;
+            try {
+                /*ThumbImage = ThumbnailUtils
+                        .extractThumbnail(MediaStore.Images.Media.getBitmap
+                                (getActivity().getContentResolver(),
+                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
+                ThumbImage = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+
+            if (ThumbImage != null) {
+                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
+            } else {
+                ((NewGrievanceActivity) getActivity()).showSnackBar("An error was encountered retrieving this image");
+            }
+
+            imageView.setImageBitmap(ThumbImage);
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            fragmentPosition = arg.getInt("pos");
+
+            cancel_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    removeInf.removeFragmentImage(fragmentPosition, UploadImageFragment.this);
+
+                }
+            });
+
+            return view;
+
+        }
+
+    }
+
+    //Custom adapter for viewpager
+    private class GrievanceImagePagerAdapter extends FragmentStatePagerAdapter implements RemoveImageInterface {
+
+        GrievanceImagePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+
+        @Override
+        public int getItemPosition(Object object) {
+            // Returning none cause all fragments to be refreshed when data set changed. Is memory intensive
+            return PagerAdapter.POSITION_NONE;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Bundle args = new Bundle();
+            args.putString("uri", (uriArrayList.get(position)).toString());
+            args.putInt("pos", position);
+            UploadImageFragment fragment = new UploadImageFragment(this, uriArrayList.get(position));
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return uriArrayList.size();
+        }
+
+        @Override
+        public void removeFragmentImage(int position, UploadImageFragment fragment) {
+
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
+            uriArrayList.remove(position);
+            uploadCount--;
+
+            imageID.add(String.valueOf(position + 1));
+
+            this.notifyDataSetChanged();
+
+            viewPager.setCurrentItem(position);
+
+        }
     }
 
 }

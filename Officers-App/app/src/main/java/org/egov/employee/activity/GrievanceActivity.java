@@ -71,10 +71,9 @@ import java.util.List;
 import java.util.Map;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -167,20 +166,20 @@ public class GrievanceActivity extends BaseActivity {
     {
         showLoader();
 
-        Call<JsonObject> apiGetComplaintCategories = ApiController.getAPI(getApplicationContext(), GrievanceActivity.this)
+        Call<JsonObject> apiGetComplaintCategories = ApiController.getAPI(getApplicationContext())
                 .getComplaintCategories(preference.getApiAccessToken());
 
         Callback<JsonObject> getComplaintCategoriesCallBack = new Callback<JsonObject>() {
 
             @Override
-            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> apiGetComplaintCategories, Response<JsonObject> response) {
                 JsonObject respJson = response.body();
                 //load grievance categories from server response
                 loadViewPager(respJson.get("result").getAsJsonObject());
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<JsonObject> apiGetComplaintCategories, Throwable t) {
                 showSnackBar(t.getLocalizedMessage());
             }
         };
@@ -267,7 +266,7 @@ public class GrievanceActivity extends BaseActivity {
         JsonObject categories;
         List<String> titles;
 
-        public GrievanceFragmentPagerAdapter(FragmentManager fm, JsonObject categories) {
+        GrievanceFragmentPagerAdapter(FragmentManager fm, JsonObject categories) {
             super(fm);
             this.categories=categories;
             titles=new ArrayList<>();
@@ -291,7 +290,7 @@ public class GrievanceActivity extends BaseActivity {
             return GrievanceFragment.instantiateItem(preference.getApiAccessToken(), titles.get(position), position, preference.getActiveCityUrl()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
         }
 
-        public View getTabView(int position) {
+        View getTabView(int position) {
             String currentKey=titles.get(position).toString();
             View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_default_layout, null);
             TextView tvTitle = (TextView) v.findViewById(R.id.title);

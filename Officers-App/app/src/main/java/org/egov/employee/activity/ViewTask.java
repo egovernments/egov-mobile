@@ -72,8 +72,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
 
 import org.egov.employee.adapter.ImageGridAdapter;
 import org.egov.employee.adapter.UriImageGridAdapter;
@@ -99,14 +97,20 @@ import java.util.Locale;
 import java.util.Map;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ViewTask extends BaseActivity {
 
     private static final int REQUEST_CODE_ASK_PERMISSION_CALL = 115;
+    private static final int PICK_PHOTO_FROM_CAMERA = 111;
+    private static final int PICK_PHOTO_FROM_GALLERY = 222;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
+    public String GrievanceModuleName = "GRIEVANCE";
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -119,31 +123,20 @@ public class ViewTask extends BaseActivity {
     JsonArray forwardDept;
     JsonArray forwardDesg;
     JsonArray forwardUser;
-
-    private File cacheDir;
-
-    private static final int PICK_PHOTO_FROM_CAMERA = 111;
-    private static final int PICK_PHOTO_FROM_GALLERY = 222;
-
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS_CAMERA = 456;
-    final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
-
     ArrayList<Uri> listUploadDocs=new ArrayList<>();
-
-
-    public String GrievanceModuleName="GRIEVANCE";
-
     AutoHeightGridView imgUploadGridView;
     Button btnClearAttachments;
-
+    private File cacheDir;
     private ArrayList<String> imageIdxForCamera = new ArrayList<>(Arrays.asList("1", "2", "3"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(viewTask.getTask());
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(viewTask.getTask());
+        }
 
         cacheDir = this.getExternalCacheDir() == null ? this.getCacheDir() : this.getExternalCacheDir();
 
@@ -167,46 +160,6 @@ public class ViewTask extends BaseActivity {
         else{
             return R.layout.activity_view_task;
         }
-    }
-
-    public class ComplaintComponents{
-
-        ProgressBar pb;
-        ProgressBar pbCompHistory;
-        ProgressBar pbCombActions;
-        ScrollView svContent;
-        LinearLayout layoutLandMark;
-        LinearLayout layoutCompComments;
-        LinearLayout layoutToggleComments;
-        LinearLayout layoutForward;
-        LinearLayout layoutCompAttachments;
-        LinearLayout layoutCompHistory;
-        LinearLayout layoutCompActions;
-
-        TextView tvComplaintNo;
-        TextView tvComplaintDate;
-        TextView tvComplainantName;
-        TextView tvComplainantMobileNo;
-        TextView tvComplaintType;
-        TextView tvComplaintLoc;
-        TextView tvComplaintDesc;
-        TextView tvComplaintLandmark;
-        TextView tvComplaintStatus;
-        TextView tvCall;
-        TextView tvOpenMap;
-
-        EditText etComments;
-
-        Spinner spinnerCompStatus;
-        Spinner spinnerForwardDept;
-        Spinner spinnerForwardDesg;
-        Spinner spinnerForwardEmp;
-
-        Button btnAction;
-        Button btnMoreComments;
-        Button btnAttachPhotos;
-
-        AutoHeightGridView girdCompImg;
     }
 
     public void initializeListenersAndComponentsForComplaint()
@@ -371,17 +324,17 @@ public class ViewTask extends BaseActivity {
 
         if(ViewTask.this.checkInternetConnectivity(ViewTask.this, currentMethodName)) {
 
-            Call<ComplaintViewAPIResponse> getCompDetails = ApiController.getAPI(getApplicationContext(), ViewTask.this).getComplaintDetails(viewTask.getRefNum(), preference.getApiAccessToken());
+            Call<ComplaintViewAPIResponse> getCompDetails = ApiController.getAPI(getApplicationContext()).getComplaintDetails(viewTask.getRefNum(), preference.getApiAccessToken());
 
             Callback<ComplaintViewAPIResponse> complaintDetailsCallBack = new Callback<ComplaintViewAPIResponse>() {
 
                 @Override
-                public void onResponse(Response<ComplaintViewAPIResponse> response, Retrofit retrofit) {
+                public void onResponse(Call<ComplaintViewAPIResponse> getCompDetails, Response<ComplaintViewAPIResponse> response) {
                     showComplaintDetails(response.body().getComplaintDetails(), complaintComponents);
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<ComplaintViewAPIResponse> getCompDetails, Throwable t) {
 
                 }
             };
@@ -398,19 +351,19 @@ public class ViewTask extends BaseActivity {
         complaintComponents.pbCompHistory.setVisibility(View.VISIBLE);
         complaintComponents.layoutCompHistory.setVisibility(View.GONE);
 
-        Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory = ApiController.getAPI(getApplicationContext(), ViewTask.this).getComplaintHistory(viewTask.getRefNum(), preference.getApiAccessToken());
+        Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory = ApiController.getAPI(getApplicationContext()).getComplaintHistory(viewTask.getRefNum(), preference.getApiAccessToken());
 
         Callback<ComplaintViewAPIResponse.HistoryAPIResponse> complaintHistoryCallBack = new Callback<ComplaintViewAPIResponse.HistoryAPIResponse>() {
 
             @Override
-            public void onResponse(Response<ComplaintViewAPIResponse.HistoryAPIResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory, Response<ComplaintViewAPIResponse.HistoryAPIResponse> response) {
                 complaintComponents.pbCompHistory.setVisibility(View.GONE);
                 complaintComponents.layoutCompHistory.setVisibility(View.VISIBLE);
                 loadComplaintComments(response.body().getResult().getComments(), complaintComponents.layoutToggleComments, complaintComponents.layoutCompComments, complaintComponents.btnMoreComments);
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory, Throwable t) {
 
             }
         };
@@ -512,7 +465,6 @@ public class ViewTask extends BaseActivity {
 
     }
 
-
     public void updateComplaint(String complaintStatus, int approvalPosition, String complaintComments)
     {
         JsonObject jsonParams=new JsonObject();
@@ -542,11 +494,11 @@ public class ViewTask extends BaseActivity {
         pb.setMessage("Updating Complaint...");
         pb.show();
 
-        Call<JsonObject> complaintUpdate=ApiController.getAPI(getApplicationContext(), ViewTask.this).updateComplaint(viewTask.getRefNum(), preference.getApiAccessToken(), uploadPics);
+        Call<JsonObject> complaintUpdate = ApiController.getAPI(getApplicationContext()).updateComplaint(viewTask.getRefNum(), preference.getApiAccessToken(), uploadPics);
 
         Callback<JsonObject> complaintUpdateCallBack = new Callback<JsonObject>() {
             @Override
-            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> complaintUpdate, Response<JsonObject> response) {
 
                 pb.dismiss();
                 setResult(RESULT_OK, new Intent());
@@ -554,7 +506,7 @@ public class ViewTask extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<JsonObject> complaintUpdate, Throwable t) {
                 pb.dismiss();
             }
         };
@@ -572,8 +524,6 @@ public class ViewTask extends BaseActivity {
         }
         return "image/jpeg";
     }
-
-
 
     public boolean validateComplaintActionControls(ComplaintComponents complaintComponents)
     {
@@ -633,20 +583,20 @@ public class ViewTask extends BaseActivity {
         complaintComponents.layoutCompActions.setVisibility(View.GONE);
         complaintComponents.pbCombActions.setVisibility(View.VISIBLE);
 
-        Call<JsonObject> loadCompStatusAndDeps=ApiController.getAPI(getApplicationContext(), ViewTask.this).getComplaintActions(viewTask.getRefNum(), preference.getApiAccessToken());
+        Call<JsonObject> loadCompStatusAndDeps = ApiController.getAPI(getApplicationContext()).getComplaintActions(viewTask.getRefNum(), preference.getApiAccessToken());
         fillComplaintActions(loadCompStatusAndDeps, complaintComponents, OPERATION_LOAD_COMPLAINT_STATUS_DEPS);
 
     }
 
     public void loadForwardDesignations(int departmentId, ComplaintComponents complaintComponents){
         setSpinnerOptionsFromJsonArray(complaintComponents.spinnerForwardDesg, forwardDesg, "name", "LOADING DESIGNATIONS", "");
-        Call<JsonObject> loadForwardDesgn=ApiController.getAPI(getApplicationContext(), ViewTask.this).getForwardDetails(String.valueOf(departmentId),"", preference.getApiAccessToken());
+        Call<JsonObject> loadForwardDesgn = ApiController.getAPI(getApplicationContext()).getForwardDetails(String.valueOf(departmentId), "", preference.getApiAccessToken());
         fillComplaintActions(loadForwardDesgn, complaintComponents, OPERATION_FORWARD_DESIGNATION);
     }
 
     public void loadForwardUsers(int departmentId, int designationId, ComplaintComponents complaintComponents){
         setSpinnerOptionsFromJsonArray(complaintComponents.spinnerForwardEmp, forwardUser, "name", "LOADING USERS", "");
-        Call<JsonObject> loadForwardUsers=ApiController.getAPI(getApplicationContext(), ViewTask.this).getForwardDetails(String.valueOf(departmentId),String.valueOf(designationId), preference.getApiAccessToken());
+        Call<JsonObject> loadForwardUsers = ApiController.getAPI(getApplicationContext()).getForwardDetails(String.valueOf(departmentId), String.valueOf(designationId), preference.getApiAccessToken());
         fillComplaintActions(loadForwardUsers, complaintComponents, OPERATION_FORWARD_USERS);
     }
 
@@ -655,7 +605,7 @@ public class ViewTask extends BaseActivity {
         Callback<JsonObject> complaintDetailsCallBack = new Callback<JsonObject>() {
 
             @Override
-            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> actionCall, Response<JsonObject> response) {
                 JsonObject resultJObj=response.body().get("result").getAsJsonObject();
                 if(operation.equals(OPERATION_LOAD_COMPLAINT_STATUS_DEPS))
                 {
@@ -678,7 +628,7 @@ public class ViewTask extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<JsonObject> actionCall, Throwable t) {
 
             }
         };
@@ -951,7 +901,6 @@ public class ViewTask extends BaseActivity {
         }
     }
 
-
     public void setComplaintAddressFromLatLng(final TextView textViewAddress, Double[] locationDetails)
     {
         class GetAddressFromLatLng extends AsyncTask<Double, Integer, String>
@@ -981,6 +930,46 @@ public class ViewTask extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class ComplaintComponents {
+
+        ProgressBar pb;
+        ProgressBar pbCompHistory;
+        ProgressBar pbCombActions;
+        ScrollView svContent;
+        LinearLayout layoutLandMark;
+        LinearLayout layoutCompComments;
+        LinearLayout layoutToggleComments;
+        LinearLayout layoutForward;
+        LinearLayout layoutCompAttachments;
+        LinearLayout layoutCompHistory;
+        LinearLayout layoutCompActions;
+
+        TextView tvComplaintNo;
+        TextView tvComplaintDate;
+        TextView tvComplainantName;
+        TextView tvComplainantMobileNo;
+        TextView tvComplaintType;
+        TextView tvComplaintLoc;
+        TextView tvComplaintDesc;
+        TextView tvComplaintLandmark;
+        TextView tvComplaintStatus;
+        TextView tvCall;
+        TextView tvOpenMap;
+
+        EditText etComments;
+
+        Spinner spinnerCompStatus;
+        Spinner spinnerForwardDept;
+        Spinner spinnerForwardDesg;
+        Spinner spinnerForwardEmp;
+
+        Button btnAction;
+        Button btnMoreComments;
+        Button btnAttachPhotos;
+
+        AutoHeightGridView girdCompImg;
     }
 
 

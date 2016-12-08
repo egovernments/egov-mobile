@@ -69,7 +69,6 @@ import com.google.gson.JsonObject;
 
 import org.egov.employee.adapter.SearchListAdapater;
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.LoggingInterceptor;
 import org.egov.employee.data.SearchResultItem;
 import org.egov.employee.data.Task;
 import org.egov.employee.data.TaskAPISearchResponse;
@@ -79,9 +78,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SearchableActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
@@ -236,7 +235,7 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
 
         JsonObject searchJson=new JsonObject();
         searchJson.addProperty("searchText", searchText);
-        searchRunnable=new SearchRunnable(SearchableActivity.this, searchJson);
+        searchRunnable = new SearchRunnable(searchJson);
         searchRunnable.run();
 
     }
@@ -244,7 +243,6 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
     class SearchRunnable implements Runnable {
 
         JsonObject searchJsonObject;
-        LoggingInterceptor.ErrorListener listener;
         SearchListAdapater searchListAdapater;
         boolean hasNextPage=false;
         List<SearchResultItem> searchResultItemList;
@@ -254,9 +252,8 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
         int pageNo=1;
         int resultLimit=10;
 
-        public SearchRunnable(LoggingInterceptor.ErrorListener listener, JsonObject searchJsonObject)
+        public SearchRunnable(JsonObject searchJsonObject)
         {
-            this.listener=listener;
             this.searchJsonObject=searchJsonObject;
             hasNextPage=false;
             searchListAdapater=null;
@@ -301,11 +298,11 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
             }
 
 
-            Call<TaskAPISearchResponse> searchInboxItemsCall = ApiController.getAPI(getApplicationContext(), listener).searchInboxItems("application/json",searchJsonObject, pageNo, resultLimit, preference.getApiAccessToken());
-            retrofit.Callback<TaskAPISearchResponse> searchInboxItemsCallBack = new retrofit.Callback<TaskAPISearchResponse>() {
+            Call<TaskAPISearchResponse> searchInboxItemsCall = ApiController.getAPI(getApplicationContext()).searchInboxItems("application/json", searchJsonObject, pageNo, resultLimit, preference.getApiAccessToken());
+            Callback<TaskAPISearchResponse> searchInboxItemsCallBack = new Callback<TaskAPISearchResponse>() {
 
                 @Override
-                public void onResponse(Response<TaskAPISearchResponse> response, Retrofit retrofit) {
+                public void onResponse(Call<TaskAPISearchResponse> call, Response<TaskAPISearchResponse> response) {
                     hasNextPage=response.body().getResult().isHasNextPage();
 
 
@@ -328,7 +325,7 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<TaskAPISearchResponse> call, Throwable t) {
 
                 }
             };

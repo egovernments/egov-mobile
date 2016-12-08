@@ -97,10 +97,9 @@ import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Displays the details of a complaint when clicked in GrievanceActivity recycler view
@@ -112,30 +111,23 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     public static final String GRIEVANCE_SUPPORT_DOCS = "GrievanceSupportDocs";
 
     private static Grievance grievance;
-
-    private EditText updateComment;
-
-    private ProgressDialog progressDialog;
-
-    private String action;
-
-    private boolean isComment = false;
-
-    private ProgressBar progressBar;
-
-    private LinearLayout layoutCompComments;
-
-    private LinearLayout layoutToggleComments;
-
-    private Button btnMoreComments;
-
+    private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
+    private final String[] feedBackText = new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
     Spinner actionsSpinner;
-
+    private EditText updateComment;
+    private ProgressDialog progressDialog;
+    private String action;
+    private boolean isComment = false;
+    private ProgressBar progressBar;
+    private LinearLayout layoutCompComments;
+    private LinearLayout layoutToggleComments;
+    private Button btnMoreComments;
     private RatingBar feedbackRatingBar;
     private TextView tvRatingBar;
 
-    private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
-    private final String[] feedBackText=new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
+    public static Grievance getGrievance() {
+        return grievance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -363,12 +355,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
                         progressDialog.show();
 
 
-                        Call<JsonObject> updateComplaint = ApiController.getAPI(getApplicationContext(), GrievanceDetailsActivity.this).updateComplaint(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), preference.getApiAccessToken());
+                        Call<JsonObject> updateComplaint = ApiController.getAPI(getApplicationContext()).updateComplaint(grievance.getCrn(), new GrievanceUpdate(action, feedback.toUpperCase(), comment), preference.getApiAccessToken());
 
                         Callback<JsonObject> updateComplaintCallback = new Callback<JsonObject>() {
 
                             @Override
-                            public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+                            public void onResponse(Call<JsonObject> updateComplaint, Response<JsonObject> response) {
                                 progressDialog.dismiss();
                                 if(isComment && feedbackLayout.getVisibility() == View.GONE)
                                 {
@@ -385,7 +377,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
                             }
 
                             @Override
-                            public void onFailure(Throwable t) {
+                            public void onFailure(Call<JsonObject> updateComplaint, Throwable t) {
                                 progressDialog.dismiss();
                                 showSnackBar(t.getLocalizedMessage());
                             }
@@ -502,10 +494,6 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         return 0;
     }
 
-    public static Grievance getGrievance() {
-        return grievance;
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
@@ -519,12 +507,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     private void loadComplaintHistory()
     {
 
-        Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory = ApiController.getAPI(getApplicationContext(), GrievanceDetailsActivity.this).getComplaintHistory(grievance.getCrn(), preference.getApiAccessToken());
+        Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory = ApiController.getAPI(getApplicationContext()).getComplaintHistory(grievance.getCrn(), preference.getApiAccessToken());
 
         Callback<ComplaintViewAPIResponse.HistoryAPIResponse> complaintHistoryCallBack = new Callback<ComplaintViewAPIResponse.HistoryAPIResponse>() {
 
             @Override
-            public void onResponse(Response<ComplaintViewAPIResponse.HistoryAPIResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory, Response<ComplaintViewAPIResponse.HistoryAPIResponse> response) {
                 actionsSpinner.setSelection(0);
                 updateComment.getText().clear();
                 progressBar.setVisibility(View.GONE);
@@ -532,34 +520,13 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ComplaintViewAPIResponse.HistoryAPIResponse> getCompHistory, Throwable t) {
                 showSnackBar(t.getLocalizedMessage());
                 progressBar.setVisibility(View.GONE);
             }
         };
         getCompHistory.enqueue(complaintHistoryCallBack);
 
-    }
-
-    //The viewpager custom adapter
-    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
-
-        public GrievanceImagePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (grievance.getSupportDocsSize() != 0) {
-                return GrievanceImageFragment.instantiateItem(position, preference.getApiAccessToken(), grievance.getSupportDocs().get(position).getFileId());
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return grievance.getSupportDocsSize();
-        }
     }
 
     //If lat/lng is available attempt to resolve it to an address
@@ -652,7 +619,6 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         }
     }
 
-
     //Handles AddressReadyEvent posted by AddressService on success
     @SuppressWarnings("unused")
     public void onEvent(AddressReadyEvent addressReadyEvent) {
@@ -688,5 +654,26 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //The viewpager custom adapter
+    private class GrievanceImagePagerAdapter extends FragmentPagerAdapter {
+
+        GrievanceImagePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (grievance.getSupportDocsSize() != 0) {
+                return GrievanceImageFragment.instantiateItem(position, preference.getApiAccessToken(), grievance.getSupportDocs().get(position).getFileId());
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return grievance.getSupportDocsSize();
+        }
     }
 }

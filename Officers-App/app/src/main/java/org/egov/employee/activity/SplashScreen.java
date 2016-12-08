@@ -56,12 +56,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.squareup.okhttp.Response;
 
 import org.egov.employee.api.ApiController;
 import org.egov.employee.application.EgovApp;
@@ -70,21 +68,20 @@ import org.egov.employee.utils.AppUtils;
 import java.util.Date;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Retrofit;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class SplashScreen extends BaseActivity {
 
+    private final String PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=";
+    private final String MARKET_URL = "market://details?id=";
     ProgressBar pbsplash;
     LinearLayout layerror;
     Boolean isFromSessionTimeOut;
     Boolean isFromLogOut;
-
     String serverErrorMsg;
-
-    private final String PLAYSTORE_URL="https://play.google.com/store/apps/details?id=";
-    private final String MARKET_URL="market://details?id=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,32 +201,28 @@ public class SplashScreen extends BaseActivity {
         ((TextView)findViewById(R.id.tvinfosplash)).setVisibility(View.VISIBLE);
     }
 
+
     @Override
-    public void showSnackBar(String msg) {
-        super.showSnackBar(msg);
-        serverErrorMsg=msg;
+    public void errorOccurred(String errorMsg, int errorCode) {
+        serverErrorMsg = errorMsg;
     }
 
     public void logOutCurrentUser()
     {
 
         showLogOutMsg();
-        Call<JsonObject> requestLogOut = ApiController.getAPI(getApplicationContext(), SplashScreen.this).logout(preference.getApiAccessToken());
+        Call<JsonObject> requestLogOut = ApiController.getAPI(getApplicationContext()).logout(preference.getApiAccessToken());
         final Callback<JsonObject> logoutCallback = new Callback<JsonObject>() {
-
             @Override
-            public void onResponse(retrofit.Response<JsonObject> response, Retrofit retrofit) {
+            public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                 preference.setApiAccessToken("");
                 preference.setActiveCityCode(-1);
                 getMunicipalityDetails();
             }
 
             @Override
-            public void onFailure(Throwable t) {
-
-                Toast.makeText(getApplicationContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 finish();
-
             }
         };
 
@@ -242,6 +235,35 @@ public class SplashScreen extends BaseActivity {
         return R.layout.activity_splash_screen;
     }
 
+    void showUpdateAlert(boolean isForceUpdate, String title, String content) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
+        builder.setCancelable(false);
+        builder.setTitle(title);
+        builder.setMessage(content);
+        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                }
+                finish();
+            }
+        });
+
+        if (!isForceUpdate) {
+            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    proceedAppLaunchWithUserLoggedInCondition();
+                }
+            });
+        }
+        builder.create().show();
+    }
+
     class getCityResource extends AsyncTask<String, Integer, Response>
     {
 
@@ -252,13 +274,18 @@ public class SplashScreen extends BaseActivity {
 
         @Override
         protected Response doInBackground(String... params) {
-            Response response=null;
+            Response response;
+
+            HttpUrl.Builder urlBuilder = HttpUrl.parse(EgovApp.getInstance().getCityResourceUrl()).newBuilder();
+
             if(EgovApp.getInstance().isMultiCitySupport() && !TextUtils.isEmpty(preference.getApiAccessToken()) && preference.getActiveCityCode() !=-1)
             {
-                response = ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), preference.getActiveCityCode(), SplashScreen.this);
+                HttpUrl url = urlBuilder
+                        .addQueryParameter("code", String.valueOf(preference.getActiveCityCode())).build();
+                response = ApiController.getResponseFromUrl(SplashScreen.this, url);
             }
             else {
-                response = ApiController.getCityURL(EgovApp.getInstance().getCityResourceUrl(), SplashScreen.this);
+                response = ApiController.getResponseFromUrl(SplashScreen.this, urlBuilder.build());
             }
             return response;
         }
@@ -300,7 +327,6 @@ public class SplashScreen extends BaseActivity {
         }
     }
 
-
     class AppVersionCheck extends AsyncTask<String, Integer, JsonObject>{
 
         final String KEY_SUCCESS="success";
@@ -319,7 +345,9 @@ public class SplashScreen extends BaseActivity {
             Response response=null;
             JsonObject responseJson=null;
             try {
-                response = ApiController.getCityURL(EgovApp.getInstance().getAppVersionCheckApiUrl()+getApplicationContext().getPackageName(), SplashScreen.this);
+
+                HttpUrl.Builder urlBuilder = HttpUrl.parse(EgovApp.getInstance().getAppVersionCheckApiUrl() + getApplicationContext().getPackageName()).newBuilder();
+                response = ApiController.getResponseFromUrl(getApplicationContext(), urlBuilder.build());
                 if(response!=null) {
                     if (response.code() == 200) {
                         responseJson=new JsonParser().parse(response.body().string()).getAsJsonObject();
@@ -367,37 +395,6 @@ public class SplashScreen extends BaseActivity {
             }
 
         }
-    }
-
-
-    void showUpdateAlert(boolean isForceUpdate, String title, String content){
-        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
-        builder.setCancelable(false);
-        builder.setTitle(title);
-        builder.setMessage(content);
-        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
-                }
-                finish();
-            }
-        });
-
-        if(!isForceUpdate)
-        {
-            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    proceedAppLaunchWithUserLoggedInCondition();
-                }
-            });
-        }
-        builder.create().show();
     }
 
 }

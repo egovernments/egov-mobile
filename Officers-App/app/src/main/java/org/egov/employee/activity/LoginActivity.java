@@ -70,10 +70,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends BaseActivity {
 
@@ -104,7 +103,6 @@ public class LoginActivity extends BaseActivity {
 
         if(EgovApp.getInstance().isMultiCitySupport())
         {
-            List<String> options = new ArrayList<>();
 
             Type listOfTestObject = new TypeToken<List<MultiDistrictsAPIResponse>>(){}.getType();
             districts=new Gson().fromJson(preference.getCitiesList(), listOfTestObject);
@@ -252,12 +250,12 @@ public class LoginActivity extends BaseActivity {
             preference.setUserName("");
             preference.setPwd("");
 
-            Call<JsonObject> jsonLogin = ApiController.getAPI(getApplicationContext(), LoginActivity.this).login(ApiUrl.AUTHORIZATION,
+            Call<JsonObject> jsonLogin = ApiController.getAPI(getApplicationContext(), preference.getActiveCityUrl()).login(ApiUrl.AUTHORIZATION,
                     username, "read write", pwd, "password");
 
             final Callback<JsonObject> login = new Callback<JsonObject>() {
                 @Override
-                public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+                public void onResponse(Call<JsonObject> jsonLogin, Response<JsonObject> response) {
 
                     JsonObject respJson=response.body();
                     try {
@@ -306,7 +304,7 @@ public class LoginActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<JsonObject> jsonLogin, Throwable t) {
                     showLoginControls();
                 }
             };

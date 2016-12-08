@@ -44,8 +44,8 @@ package org.egov.employee.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,22 +63,18 @@ import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Homepage extends BaseActivity implements TasksItemClickListener {
 
-    Toolbar toolbar;
+    public static final int ACTION_UPDATE_REQUIRED = 111;
+    public RelativeLayout homePageLoader;
+    public LinearLayout inboxEmptyInfo;
     ViewPager pager;
     TasksAdapter adapter;
     SlidingTabLayout tabs;
-    public RelativeLayout homePageLoader;
-    public LinearLayout inboxEmptyInfo;
-
-    public static final int ACTION_UPDATE_REQUIRED=111;
-
     String WORK_FLOW_TYPE_COMPLAINT="Complaint";
 
     @Override
@@ -102,7 +98,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.colorAccent);
+                return ContextCompat.getColor(getApplicationContext(), R.color.colorAccent);
             }
         });
 
@@ -122,25 +118,24 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         if(checkInternetConnectivity(Homepage.this, currentMethodName)) {
             inboxEmptyInfo.setVisibility(View.GONE);
             homePageLoader.setVisibility(View.VISIBLE);
-            Call<JsonObject> jsonInboxCategoryList = ApiController.getAPI(getApplicationContext(), Homepage.this).inboxCategoryWithItemsCount(preference.getApiAccessToken());
+            Call<JsonObject> jsonInboxCategoryList = ApiController.getAPI(getApplicationContext()).inboxCategoryWithItemsCount(preference.getApiAccessToken());
 
             Callback<JsonObject> inboxCategoryListCallback = new Callback<JsonObject>() {
-
                 @Override
-                public void onResponse(Response<JsonObject> response, Retrofit retrofit) {
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     JsonObject respJson = response.body();
                     //load worklist categories from server response
                     setWorkListCategoryTabs(respJson.get("result").getAsJsonArray());
                 }
 
                 @Override
-                public void onFailure(Throwable t) {
+                public void onFailure(Call<JsonObject> call, Throwable t) {
                     homePageLoader.setVisibility(View.GONE);
                 }
             };
+
             jsonInboxCategoryList.enqueue(inboxCategoryListCallback);
         }
-
     }
 
     public void setWorkListCategoryTabs(JsonArray responseArray)

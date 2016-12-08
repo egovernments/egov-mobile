@@ -59,7 +59,6 @@ import android.widget.ProgressBar;
 
 import org.egov.employee.adapter.GrievanceListAdapater;
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.LoggingInterceptor;
 import org.egov.employee.data.Grievance;
 import org.egov.employee.data.GrievanceAPIResponse;
 import org.egov.employee.data.GrievanceItemInterface;
@@ -71,41 +70,31 @@ import java.util.List;
 import java.util.Locale;
 
 import offices.org.egov.egovemployees.R;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
- * Created by egov on 20/4/16.
+ * Grievance Fragment by category
  */
-public class GrievanceFragment extends android.support.v4.app.Fragment implements LoggingInterceptor.ErrorListener {
-
-    GrievanceItemInterface grievanceItemInterface;
-
-    private List<Grievance> grievanceList=new ArrayList<>();
-
-    private RecyclerView recyclerView;
-
-    private ProgressBar progressBar;
-
-    private CardView cvNoComplaints;
+public class GrievanceFragment extends android.support.v4.app.Fragment {
 
     public GrievanceListAdapater grievanceAdapter;
-
-    //The currently visible page no.
-    private int pageNo = 1;
-    private int position;
-
-    private boolean loading = true;
-    private boolean isPaginationEnded = false;
+    GrievanceItemInterface grievanceItemInterface;
+    int position;
     EndlessRecyclerOnScrollListener onScrollListener;
-
     String accessToken;
     String pageTitle;
-
     Bundle downImageArgs;
+    private List<Grievance> grievanceList=new ArrayList<>();
+    private RecyclerView recyclerView;
+    private ProgressBar progressBar;
+    private CardView cvNoComplaints;
+    //The currently visible page no.
+    private int pageNo = 1;
+    private boolean loading = true;
+    private boolean isPaginationEnded = false;
 
     public static GrievanceFragment instantiateItem(String access_token, String title, int position, String imageDownloadUrl) {
         GrievanceFragment imageFragment = new GrievanceFragment();
@@ -230,13 +219,13 @@ public class GrievanceFragment extends android.support.v4.app.Fragment implement
             }
 
 
-        Call<GrievanceAPIResponse> apiGetMyComplaints = ApiController.getAPI(getActivity().getApplicationContext(), this)
+        Call<GrievanceAPIResponse> apiGetMyComplaints = ApiController.getAPI(getActivity().getApplicationContext())
                 .getMyComplaints(page, "10", accessToken, pageTitle);
 
         Callback<GrievanceAPIResponse> getMyComplaintsCallBack = new Callback<GrievanceAPIResponse>() {
 
             @Override
-            public void onResponse(Response<GrievanceAPIResponse> response, Retrofit retrofit) {
+            public void onResponse(Call<GrievanceAPIResponse> call, Response<GrievanceAPIResponse> response) {
 
                 GrievanceAPIResponse grievanceAPIResponse=response.body();
 
@@ -283,7 +272,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment implement
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<GrievanceAPIResponse> call, Throwable t) {
                 loading=false;
                 updateFailedEvent();
             }
@@ -379,19 +368,9 @@ public class GrievanceFragment extends android.support.v4.app.Fragment implement
            grievanceList = null;
        }
 
-    @Override
-    public void showSnackBar(String msg) {
-        ((BaseActivity)getActivity()).showSnackBar(msg);
-    }
+    class WrapContentLinearLayoutManager extends LinearLayoutManager {
 
-    @Override
-    public void sessionTimeOutError() {
-        ((BaseActivity)getActivity()).sessionTimeOutError();
-    }
-
-    public class WrapContentLinearLayoutManager extends LinearLayoutManager {
-
-            public WrapContentLinearLayoutManager(Context context)
+        WrapContentLinearLayoutManager(Context context)
             {
                 super(context);
             }
