@@ -44,12 +44,16 @@ package org.egov.employee.activity;
 
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -85,7 +89,6 @@ import org.egov.employee.data.ComplaintViewAPIResponse;
 import org.egov.employee.data.Grievance;
 import org.egov.employee.data.GrievanceUpdate;
 import org.egov.employee.data.SupportDoc;
-import org.egov.employee.event.AddressReadyEvent;
 import org.egov.employee.service.AddressService;
 
 import java.text.ParseException;
@@ -95,7 +98,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import de.greenrobot.event.EventBus;
 import offices.org.egov.egovemployees.R;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -114,6 +116,19 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
     private final String[] feedBackText = new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
     Spinner actionsSpinner;
+    BroadcastReceiver addressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView) findViewById(R.id.map_location_text)).setText(intent.getStringExtra(AddressService.KEY_ADDRESS));
+                }
+            });
+
+        }
+    };
     private EditText updateComment;
     private ProgressDialog progressDialog;
     private String action;
@@ -575,26 +590,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             ComplaintHistory comment=grievanceComments.get(i);
             TextView tvUserName=(TextView)commentItemTemplate.findViewById(R.id.commenter_name);
 
-
-
-            //Log.v("USERNAME", preference.getUserName()+"<>"+ comment.getUpdatedBy().split("::")[0] +" -> ");
-
             if(preference.getUserName().equals(comment.getUpdatedBy()) || (preference.getUserName().equals(comment.getUpdatedBy().split("::")[0])))
                 tvUserName.setText("Me");
             else if (comment.getUpdatedUserType().equals("EMPLOYEE")) {
                 tvUserName.setText(comment.getUser());
                 tvUserName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorAccent));
             }
-
-            /*if (comment.getUpdatedUserType().equals("EMPLOYEE") || !comment.getUpdatedUserType().equals("CITIZEN")) {
-                tvUserName.setText(comment.getUser());
-                tvUserName.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary));
-            }
-            else
-            {
-                tvUserName.setText(comment.getUpdatedBy());
-            }*/
-
 
             ((TextView)commentItemTemplate.findViewById(R.id.comment_datetime)).setText(formatDateString(comment.getDate(), "MMM dd, yyyy hh:mm:ss aa", "dd/MM/yyyy hh:mm aa"));
             if(!TextUtils.isEmpty(comment.getComments()))
@@ -619,31 +620,17 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         }
     }
 
-    //Handles AddressReadyEvent posted by AddressService on success
-    @SuppressWarnings("unused")
-    public void onEvent(AddressReadyEvent addressReadyEvent) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ((TextView)findViewById(R.id.map_location_text)).setText(AddressService.addressResult);
-            }
-        });
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(GrievanceDetailsActivity.this).registerReceiver(addressReceiver,
+                new IntentFilter(AddressService.BROADCAST_ADDRESS_RECEIVER));
     }
 
-    //Subscribes the activity to events
     @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(GrievanceDetailsActivity.this).unregisterReceiver(addressReceiver);
     }
 
     @Override

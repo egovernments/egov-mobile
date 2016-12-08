@@ -49,8 +49,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -68,6 +71,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -102,7 +106,6 @@ import org.egov.employee.data.GrievanceRequest;
 import org.egov.employee.data.GrievanceType;
 import org.egov.employee.data.GrievanceTypeAPIResponse;
 import org.egov.employee.data.GrievanceTypeCategory;
-import org.egov.employee.event.AddressReadyEvent;
 import org.egov.employee.service.AddressService;
 import org.egov.employee.utils.AppUtils;
 import org.egov.employee.utils.ImageCompressionHelper;
@@ -116,7 +119,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.greenrobot.event.EventBus;
 import offices.org.egov.egovemployees.R;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -157,6 +159,27 @@ public class NewGrievanceActivity extends BaseActivity {
     private EditText etComplainantMobNo;
     private EditText etComplainantEmail;
     private EditText etLandmark;
+    BroadcastReceiver addressReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, final Intent intent) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.dismiss();
+                    String addressResult = intent.getStringExtra(AddressService.KEY_ADDRESS);
+                    if (TextUtils.isEmpty(addressResult)) {
+                        complaintLocLatLng = null;
+                        showSnackBar(getString(R.string.complaint_location_message));
+                    } else {
+                        autoCompleteComplaintLoc.setText(addressResult);
+                    }
+                    etLandmark.requestFocus();
+                }
+            });
+
+        }
+    };
     private EditText etDetails;
     private int uploadCount = 0;
     //Used as to maintain unique image IDs
@@ -976,42 +999,17 @@ public class NewGrievanceActivity extends BaseActivity {
         startService(intent);
     }
 
-    //Handles AddressReadyEvent posted by AddressService on success
-    @SuppressWarnings("unused")
-    public void onEvent(final AddressReadyEvent addressReadyEvent) {
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.dismiss();
-                if(addressReadyEvent.isFailed())
-                {
-                    complaintLocLatLng=null;
-                    showSnackBar(getString(R.string.complaint_location_message));
-                    //Toast.makeText(getApplicationContext(), "Unknown location! No issues.\n Still you can file a complaint", Toast.LENGTH_LONG).show();
-                    //autoCompleteComplaintLoc.setText("Unknown location ("+ AppUtils.round(complaintLocLatLng.latitude, 2) +", "+AppUtils.round(complaintLocLatLng.longitude, 2)+")");
-                }
-                else
-                {
-                    autoCompleteComplaintLoc.setText(AddressService.addressResult);
-                }
-                etLandmark.requestFocus();
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(NewGrievanceActivity.this).registerReceiver(addressReceiver,
+                new IntentFilter(AddressService.BROADCAST_ADDRESS_RECEIVER));
     }
 
-    //Subscribes the activity to events
     @Override
-    protected void onStart() {
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    //Unsubscribes the activity to events
-    @Override
-    protected void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(NewGrievanceActivity.this).unregisterReceiver(addressReceiver);
     }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary

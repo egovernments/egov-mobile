@@ -42,12 +42,9 @@
 
 <resources>
     <string name="app_name">eGovOfficials</string>
-    <string name="option_logout">Logout</string>
-    <string name="option_profile">Profile</string>
     <string name="title_activity_homepage">Worklist</string>
     <string name="title_activity_view_task">ViewTask</string>
     <string name="title_activity_image_view">ImageViewer</string>
-    <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="complaint_details">COMPLAINT DETAILS</string>
     <string name="complaint_no">COMPLAINT NO</string>
     <string name="complaint_filed_date">COMPLAINT DATE</string>
@@ -90,7 +87,6 @@
     <string name="processing_label">Processing</string>
     <string name="completed_label">Completed</string>
     <string name="rejected_label">Rejected</string>
-    <string name="comment_label">Comment</string>
     <string name="action_label">Action</string>
     <string name="forwarded_label">Forwarded</string>
     <string name="withdrawn_label">Withdrawn</string>
