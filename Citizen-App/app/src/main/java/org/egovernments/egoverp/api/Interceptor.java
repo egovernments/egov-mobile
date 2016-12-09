@@ -37,8 +37,9 @@ public class Interceptor implements okhttp3.Interceptor {
     private Level level = Level.NONE;
     private Context context;
 
-    public Interceptor() {
+    public Interceptor(Context context) {
         this(Logger.DEFAULT);
+        this.context = context;
     }
 
     private Interceptor(Interceptor.Logger logger) {

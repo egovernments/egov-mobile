@@ -292,7 +292,7 @@ public class SplashScreenActivity extends Activity {
 
                 if (configManager.getString(API_MULTICITIES).equals("false")) {
                     City city = new Gson().
-                            fromJson(ApiController.getResponseFromUrl(urlBuilder.build()), City.class);
+                            fromJson(ApiController.getResponseFromUrl(null, urlBuilder.build()), City.class);
 
                     if (city != null) {
                         sessionManager.setBaseURL(city.getUrl(), city.getCityName(),
@@ -311,10 +311,11 @@ public class SplashScreenActivity extends Activity {
                     }
                 } else {
 
+                    urlBuilder = HttpUrl.parse(configManager.getString(Config.API_MULTIPLE_CITIES_URL)).newBuilder();
                     HttpUrl url = urlBuilder
                             .addQueryParameter("code", String.valueOf(sessionManager.getUrlLocationCode())).build();
                     City activeCity = new Gson().
-                            fromJson(ApiController.getResponseFromUrl(url), City.class);
+                            fromJson(ApiController.getResponseFromUrl(null, url), City.class);
 
                     if (activeCity != null) {
                         sessionManager.setBaseURL(activeCity.getUrl(), activeCity.getCityName(),
@@ -364,7 +365,7 @@ public class SplashScreenActivity extends Activity {
             JsonObject response = null;
             try {
                 HttpUrl.Builder urlBuilder = HttpUrl.parse(configManager.getString(Config.API_APP_VERSION_CHECK) + getApplicationContext().getPackageName()).newBuilder();
-                String resp = ApiController.getResponseFromUrl(urlBuilder.build());
+                String resp = ApiController.getResponseFromUrl(null, urlBuilder.build());
                 response=new JsonParser().parse(resp).getAsJsonObject();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -403,5 +404,4 @@ public class SplashScreenActivity extends Activity {
     }
 
 }
-
 

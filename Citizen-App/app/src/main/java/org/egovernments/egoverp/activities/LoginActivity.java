@@ -66,7 +66,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
@@ -81,9 +83,11 @@ import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.services.UpdateService;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.HttpUrl;
 import retrofit2.Call;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
@@ -345,7 +349,12 @@ public class LoginActivity extends BaseActivity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(configManager.getString(Config.API_MULTIPLE_CITIES_URL));
+
+        Type type = new TypeToken<List<District>>() {
+        }.getType();
+        HttpUrl url = HttpUrl.parse(configManager.getString(Config.API_MULTIPLE_CITIES_URL));
+        districtsList = new Gson().fromJson(ApiController.getResponseFromUrl(getApplicationContext(), url)
+                , type);
 
         if (districtsList != null) {
 

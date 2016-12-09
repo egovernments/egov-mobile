@@ -44,6 +44,7 @@ package org.egovernments.egoverp.api;
 
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -51,7 +52,6 @@ import com.google.gson.reflect.TypeToken;
 
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
-import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
@@ -99,57 +99,38 @@ public class ApiController {
     public static APIInterface apiInterface = null;
 
 
-    private static OkHttpClient getOkHttpClient() {
+    private static OkHttpClient getOkHttpClient(Context context) {
         okHttpBuilder.interceptors().clear();
-
-        Interceptor logging = new Interceptor();
+        Interceptor logging = new Interceptor(context);
         // set your desired log level none, body, header
         logging.setLevel(Interceptor.Level.BODY);
         return okHttpBuilder.addInterceptor(logging).build();
     }
 
-    public static String getResponseFromUrl(HttpUrl url) throws IOException {
+    public static String getResponseFromUrl(@Nullable Context context, HttpUrl url) throws IOException {
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            Response response = getOkHttpClient().newCall(request).execute();
+            Response response = getOkHttpClient(context).newCall(request).execute();
             return response.body().string();
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static List<District> getAllCitiesURLs(String url) throws IOException {
+    public static List<District> getAllCitiesURLs(Context context, String url) throws IOException {
 
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-
-            Response response = getOkHttpClient().newCall(request).execute();
+            Response response = getOkHttpClient(context).newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException();
             Type type = new TypeToken<List<District>>() {
             }.getType();
             return new Gson().fromJson(response.body().charStream(), type);
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    public static City getCityURL(String url, int cityCode) throws IOException {
-
-        try {
-            Request request = new Request.Builder()
-                    .url(url + "&code=" + cityCode)
-                    .build();
-
-            Response response = okHttpBuilder.build().newCall(request).execute();
-            if (!response.isSuccessful())
-                throw new IOException();
-            return new Gson().fromJson(response.body().charStream(), City.class);
         } catch (Exception e) {
             return null;
         }
@@ -162,7 +143,7 @@ public class ApiController {
         if (apiInterface == null) {
             SessionManager sessionManager = new SessionManager(context);
             okHttpBuilder.interceptors().clear();
-            Interceptor logging = new Interceptor();
+            Interceptor logging = new Interceptor(context);
             // set your desired log level none, body, header
             logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
 
@@ -184,7 +165,7 @@ public class ApiController {
 
         SessionManager sessionManager = new SessionManager(context);
         okHttpBuilder.interceptors().clear();
-        Interceptor logging = new Interceptor();
+        Interceptor logging = new Interceptor(context);
         //set your desired log level none, body, header
         logging.setLevel((sessionManager.getKeyDebugLog() ? Interceptor.Level.BODY : Interceptor.Level.NONE));
         okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();

@@ -45,6 +45,7 @@ package org.egovernments.egoverp.activities;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -55,6 +56,7 @@ import android.support.v4.content.IntentCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ContentFrameLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -635,7 +637,18 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         LocalBroadcastManager.getInstance(BaseActivity.this).unregisterReceiver(errorReceiver);
     }
 
+    void showAlertDialogWithMessage(String title, String message) {
+        new AlertDialog.Builder(BaseActivity.this)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                }).show();
+    }
 
 
 }

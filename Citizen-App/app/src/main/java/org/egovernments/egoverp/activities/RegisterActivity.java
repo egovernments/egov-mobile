@@ -367,7 +367,7 @@ public class RegisterActivity extends BaseActivity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(configManager.getString(API_MULTIPLE_CITIES_URL));
+        districtsList = ApiController.getAllCitiesURLs(null, configManager.getString(API_MULTIPLE_CITIES_URL));
 
         if (districtsList != null) {
 
@@ -569,7 +569,7 @@ public class RegisterActivity extends BaseActivity {
 
         progressDialog.show();
 
-        Call<JsonObject> sendOTP = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL())
+        Call<JsonObject> sendOTP = ApiController.getRetrofit2API(getApplicationContext(), sessionManager.getBaseURL())
                 .sendOTPToVerifyBeforeAccountCreate(phoneno_edittext.getText().toString());
 
         sendOTP.enqueue(new retrofit2.Callback<JsonObject>() {
@@ -606,7 +606,7 @@ public class RegisterActivity extends BaseActivity {
         RegisterRequest registerRequest = new RegisterRequest(email_edittext.getText().toString(), phoneno_edittext.getText().toString(),
                 name_edittext.getText().toString(), password_edittext.getText().toString(), deviceID, deviceType, deviceOS, otpCode);
 
-        Call<JsonObject> createAccount = ApiController.getRetrofit2API(RegisterActivity.this, sessionManager.getBaseURL())
+        Call<JsonObject> createAccount = ApiController.getRetrofit2API(getApplicationContext(), sessionManager.getBaseURL())
                 .registerUser(registerRequest);
 
         createAccount.enqueue(new retrofit2.Callback<JsonObject>() {
@@ -671,6 +671,12 @@ public class RegisterActivity extends BaseActivity {
         getWindow().setEnterTransition(enterTransition);
     }
 
+    @Override
+    public void errorOccurred(String errorMsg, int errorCode) {
+        //super.errorOccurred(errorMsg, errorCode);
+        showAlertDialogWithMessage("Error", errorMsg);
+    }
+
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
 
         @Override
@@ -680,7 +686,6 @@ public class RegisterActivity extends BaseActivity {
         }
 
     }
-
 }
 
 
