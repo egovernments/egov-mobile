@@ -111,10 +111,11 @@ public class AppUtils {
     /* PASSWORD LEVEL LOW VALIDATION */
     public static boolean checkPasswordLowLevel(String password)
     {
-        String numExp=".*[0-9].*";
+        /*String numExp=".*[0-9].*";
         String alphaCapExp=".*[A-Z].*";
         String alphaSmallExp=".*[a-z].*";
-        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length() >= 6));
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length() >= 6));*/
+        return (password.length() >= 6);
     }
 
     /* PASSWORD LEVEL MEDIUM VALIDATION */
