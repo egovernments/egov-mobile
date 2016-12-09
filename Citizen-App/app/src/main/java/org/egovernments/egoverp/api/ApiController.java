@@ -73,6 +73,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -96,19 +97,7 @@ public class ApiController {
     private final static okhttp3.OkHttpClient.Builder okHttpBuilder = SSLTrustManager.createClient();
     public static APIInterface apiInterface = null;
 
-    public static City getCityURL(String url) throws IOException{
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = okHttpBuilder.build().newCall(request).execute();
-            return new Gson().fromJson(response.body().charStream(), City.class);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static String getResponseFromUrl(String url)throws IOException{
+    public static String getResponseFromUrl(Context context, HttpUrl url) throws IOException {
         try {
             Request request = new Request.Builder()
                     .url(url)

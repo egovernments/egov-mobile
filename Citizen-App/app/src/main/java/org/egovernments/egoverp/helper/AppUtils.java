@@ -114,7 +114,7 @@ public class AppUtils {
         String numExp=".*[0-9].*";
         String alphaCapExp=".*[A-Z].*";
         String alphaSmallExp=".*[a-z].*";
-        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length()>=4));
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length() >= 6));
     }
 
     /* PASSWORD LEVEL MEDIUM VALIDATION */

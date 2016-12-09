@@ -67,6 +67,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -80,6 +81,8 @@ import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.models.City;
 
 import java.io.IOException;
+
+import okhttp3.HttpUrl;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
@@ -285,8 +288,12 @@ public class SplashScreenActivity extends Activity {
 
             try {
 
+                HttpUrl.Builder urlBuilder = HttpUrl.parse(configManager.getString(Config.API_CITY_URL)).newBuilder();
+
                 if (configManager.getString(API_MULTICITIES).equals("false")) {
-                    City city = ApiController.getCityURL(configManager.getString(Config.API_CITY_URL));
+                    City city = new Gson().
+                            fromJson(ApiController.getResponseFromUrl(getApplicationContext(), urlBuilder.build()), City.class);
+
                     if (city != null) {
                         sessionManager.setBaseURL(city.getUrl(), city.getCityName(),
                                 city.getCityCode(), city.getModules()!=null?city.getModules().toString():null);
@@ -303,7 +310,12 @@ public class SplashScreenActivity extends Activity {
                         sessionManager.logoutUser();
                     }
                 } else {
-                    City activeCity=ApiController.getCityURL(configManager.getString(Config.API_MULTIPLE_CITIES_URL), sessionManager.getUrlLocationCode());
+
+                    HttpUrl url = urlBuilder
+                            .addQueryParameter("code", String.valueOf(sessionManager.getUrlLocationCode())).build();
+                    City activeCity = new Gson().
+                            fromJson(ApiController.getResponseFromUrl(getApplicationContext(), url), City.class);
+
                     if (activeCity != null) {
                         sessionManager.setBaseURL(activeCity.getUrl(), activeCity.getCityName(),
                                 activeCity.getCityCode(), activeCity.getModules()!=null?activeCity.getModules().toString():null);
@@ -351,7 +363,8 @@ public class SplashScreenActivity extends Activity {
         protected JsonObject doInBackground(String... params) {
             JsonObject response = null;
             try {
-                String resp = ApiController.getResponseFromUrl(configManager.getString(Config.API_APP_VERSION_CHECK)+getApplicationContext().getPackageName());
+                HttpUrl.Builder urlBuilder = HttpUrl.parse(configManager.getString(Config.API_APP_VERSION_CHECK) + getApplicationContext().getPackageName()).newBuilder();
+                String resp = ApiController.getResponseFromUrl(getApplicationContext(), urlBuilder.build());
                 response=new JsonParser().parse(resp).getAsJsonObject();
             } catch (Exception e) {
                 e.printStackTrace();
