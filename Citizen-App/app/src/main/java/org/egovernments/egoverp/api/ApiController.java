@@ -74,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -97,12 +98,22 @@ public class ApiController {
     private final static okhttp3.OkHttpClient.Builder okHttpBuilder = SSLTrustManager.createClient();
     public static APIInterface apiInterface = null;
 
-    public static String getResponseFromUrl(Context context, HttpUrl url) throws IOException {
+
+    private static OkHttpClient getOkHttpClient() {
+        okHttpBuilder.interceptors().clear();
+
+        Interceptor logging = new Interceptor();
+        // set your desired log level none, body, header
+        logging.setLevel(Interceptor.Level.BODY);
+        return okHttpBuilder.addInterceptor(logging).build();
+    }
+
+    public static String getResponseFromUrl(HttpUrl url) throws IOException {
         try {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            Response response = okHttpBuilder.build().newCall(request).execute();
+            Response response = getOkHttpClient().newCall(request).execute();
             return response.body().string();
         } catch (Exception e) {
             return null;
@@ -116,7 +127,7 @@ public class ApiController {
                     .url(url)
                     .build();
 
-            Response response = okHttpBuilder.build().newCall(request).execute();
+            Response response = getOkHttpClient().newCall(request).execute();
             if (!response.isSuccessful())
                 throw new IOException();
             Type type = new TypeToken<List<District>>() {
