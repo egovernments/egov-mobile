@@ -81,12 +81,10 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
-import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
-import org.egovernments.egoverp.helper.PasswordLevel;
 import org.egovernments.egoverp.listeners.SMSListener;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
@@ -207,7 +205,7 @@ public class RegisterActivity extends BaseActivity {
                 if (!hasFocus && !TextUtils.isEmpty(password_edittext.getText())) {
 
                     if (!AppUtils.isValidPassword(password_edittext.getText().toString(), configManager)) {
-                        til.setError(getPasswordConstraintInformation());
+                        til.setError(AppUtils.getPasswordConstraintInformation(configManager, getApplicationContext()));
                         password_edittext.setError(null);
                         password_edittext.setText("");
                     } else {
@@ -254,24 +252,6 @@ public class RegisterActivity extends BaseActivity {
         return matcher.matches();
     }
 
-
-    private String getPasswordConstraintInformation()
-    {
-        String pwdLevel=configManager.getString(Config.APP_PASSWORD_LEVEL);
-        if(pwdLevel.equals(PasswordLevel.HIGH))
-        {
-            return getResources().getString(R.string.password_level_high);
-        }
-        else if(pwdLevel.equals(PasswordLevel.MEDIUM))
-        {
-            return getResources().getString(R.string.password_level_medium);
-        }
-        else
-        {
-            return getResources().getString(R.string.password_level_low);
-        }
-    }
-
     private void validateAndCreateAnAccount(final String name, final String email, final String phoneno,
                                             final String password, final String confirmpassword) {
 
@@ -290,7 +270,7 @@ public class RegisterActivity extends BaseActivity {
         } else if(TextUtils.isEmpty(password)){
             showSnackBar("Please enter the password");
         } else if (!AppUtils.isValidPassword(password, configManager)) {
-            showSnackBar(getPasswordConstraintInformation());
+            showSnackBar(AppUtils.getPasswordConstraintInformation(configManager, getApplicationContext()));
         } else if (!password.equals(confirmpassword)) {
             showSnackBar("Passwords do not match");
         } else {

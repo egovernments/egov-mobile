@@ -45,7 +45,6 @@ package org.egovernments.egoverp.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -75,7 +74,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by egov on 5/4/16.
+ * Apputil class
  */
 public class AppUtils {
 
@@ -108,14 +107,19 @@ public class AppUtils {
         return bd.doubleValue();
     }
 
+
+    /* PASSWORD LEVEL LOW VALIDATION */
+    public static boolean checkPasswordNoneLevel(String password) {
+        return password.length() >= 6;
+    }
+
     /* PASSWORD LEVEL LOW VALIDATION */
     public static boolean checkPasswordLowLevel(String password)
     {
-        /*String numExp=".*[0-9].*";
+        String numExp = ".*[0-9].*";
         String alphaCapExp=".*[A-Z].*";
         String alphaSmallExp=".*[a-z].*";
-        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length() >= 6));*/
-        return (password.length() >= 6);
+        return (password.matches(numExp) && password.matches(alphaCapExp) && password.matches(alphaSmallExp) && (password.length() >= 6));
     }
 
     /* PASSWORD LEVEL MEDIUM VALIDATION */
@@ -147,10 +151,11 @@ public class AppUtils {
         else if(pwdLevel.equals(PasswordLevel.MEDIUM))
         {
             return AppUtils.checkPasswordMediumLevel(password);
-        }
-        else
+        } else if (pwdLevel.equals(PasswordLevel.LOW))
         {
             return AppUtils.checkPasswordLowLevel(password);
+        } else {
+            return AppUtils.checkPasswordNoneLevel(password);
         }
     }
 
@@ -203,10 +208,23 @@ public class AppUtils {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static Bundle getTransitionBundle(Activity activity, Intent i) {
+    public static Bundle getTransitionBundle(Activity activity) {
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity, true);
         ActivityOptionsCompat transitionActivityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         return transitionActivityOptions.toBundle();
+    }
+
+    public static String getPasswordConstraintInformation(ConfigManager configManager, Context context) {
+        String pwdLevel = configManager.getString(Config.APP_PASSWORD_LEVEL);
+        if (pwdLevel.equals(PasswordLevel.HIGH)) {
+            return context.getString(R.string.password_level_high);
+        } else if (pwdLevel.equals(PasswordLevel.MEDIUM)) {
+            return context.getString(R.string.password_level_medium);
+        } else if (pwdLevel.equals(PasswordLevel.LOW)) {
+            return context.getString(R.string.password_level_low);
+        } else {
+            return context.getString(R.string.password_level_none);
+        }
     }
 
 }

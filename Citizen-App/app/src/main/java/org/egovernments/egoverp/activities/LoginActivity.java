@@ -318,7 +318,7 @@ public class LoginActivity extends BaseActivity {
 
     private void startActivityAnimation(Intent intent, Boolean withAnimation) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && withAnimation)
-            startActivity(intent, AppUtils.getTransitionBundle(LoginActivity.this, intent));
+            startActivity(intent, AppUtils.getTransitionBundle(LoginActivity.this));
         else
             startActivity(intent);
     }
