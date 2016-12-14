@@ -43,10 +43,17 @@
 package org.egovernments.egoverp.models;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class GrievanceUpdate {
 
+    @SerializedName("action")
     private String action;
+
+    @SerializedName("feedback")
     private String feedback;
+
+    @SerializedName("comment")
     private String comment;
 
     public GrievanceUpdate(String action, String feedback, String comment) {

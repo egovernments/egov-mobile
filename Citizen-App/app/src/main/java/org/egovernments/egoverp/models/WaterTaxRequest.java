@@ -42,9 +42,13 @@
 
 package org.egovernments.egoverp.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class WaterTaxRequest {
 
+    @SerializedName("ulbCode")
     private String ulbCode;
+    @SerializedName("consumerNo")
     private String consumerNo;
 
     public WaterTaxRequest(String ulbCode, String consumerNo) {

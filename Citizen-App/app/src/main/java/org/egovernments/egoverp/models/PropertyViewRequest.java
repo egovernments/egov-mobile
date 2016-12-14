@@ -43,10 +43,17 @@
 package org.egovernments.egoverp.models;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class PropertyViewRequest {
 
+    @SerializedName("ulbCode")
     private String ulbCode;
+
+    @SerializedName("assessmentNo")
     private String assessmentNo;
+
+    @SerializedName("category")
     private String category;
 
     public PropertyViewRequest(String ulbCode, String assessmentNo, String category) {

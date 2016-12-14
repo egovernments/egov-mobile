@@ -43,19 +43,36 @@
 package org.egovernments.egoverp.models;
 
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * POJO class, used by register user API calls
  **/
 
 public class RegisterRequest {
 
+    @SerializedName("emailId")
     private String emailId;
+
+    @SerializedName("mobileNumber")
     private String mobileNumber;
+
+    @SerializedName("name")
     private String name;
+
+    @SerializedName("password")
     private String password;
+
+    @SerializedName("deviceId")
     private String deviceId;
+
+    @SerializedName("deviceType")
     private String deviceType;
+
+    @SerializedName("OSVersion")
     private String OSVersion;
+
+    @SerializedName("activationCode")
     private String activationCode;
 
     public RegisterRequest(String emailId, String mobileNumber, String name, String password, String deviceId, String deviceType, String OSVersion, String activationCode) {

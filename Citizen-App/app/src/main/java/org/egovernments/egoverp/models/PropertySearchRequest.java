@@ -43,15 +43,28 @@
 package org.egovernments.egoverp.models;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class PropertySearchRequest implements Serializable {
 
+    @SerializedName("ulbCode")
     int ulbCode;
+
+    @SerializedName("assessmentNo")
     String assessmentNo;
+
+    @SerializedName("ownerName")
     String ownerName;
+
+    @SerializedName("mobileNumber")
     String mobileNumber;
+
+    @SerializedName("category")
     String category;
+
+    @SerializedName("doorNo")
     String doorNo;
 
     public PropertySearchRequest(int ulbCode, String assessmentNo, String ownerName, String mobileNumber, String doorNo, String category) {

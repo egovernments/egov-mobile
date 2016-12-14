@@ -43,14 +43,25 @@
 package org.egovernments.egoverp.models;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class WaterConnectionSearchRequest implements Serializable {
 
+    @SerializedName("ulbCode")
     int ulbCode;
+
+    @SerializedName("assessmentNo")
     String assessmentNo;
+
+    @SerializedName("consumerNo")
     String consumerNo;
+
+    @SerializedName("ownerName")
     String ownerName;
+
+    @SerializedName("mobileNo")
     String mobileNo;
 
     public WaterConnectionSearchRequest(int ulbCode, String assessmentNo, String consumerNo, String ownerName, String mobileNo) {
@@ -61,12 +72,12 @@ public class WaterConnectionSearchRequest implements Serializable {
         this.mobileNo = mobileNo;
     }
 
-    public void setAssessmentNo(String assessmentNo) {
-        this.assessmentNo = assessmentNo;
-    }
-
     public String getAssessmentNo() {
         return assessmentNo;
+    }
+
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
     }
 
     public int getUlbCode() {
