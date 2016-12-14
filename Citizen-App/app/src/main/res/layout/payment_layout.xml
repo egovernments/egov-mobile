@@ -3,14 +3,14 @@
     android:id="@+id/cvPayment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="2dp"
-    android:focusable="true"
-    card_view:cardUseCompatPadding="true"
-    android:layout_marginTop="0dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginLeft="5dp"
     android:layout_marginBottom="5dp"
-    card_view:cardElevation="2dp">
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="0dp"
+    android:focusable="true"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,11 +25,19 @@
             android:paddingBottom="0dp">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Payment Details" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:layout_marginBottom="10dp"
-                android:text="Payment Details"
-                style="@style/TextAppearance.AppCompat.Medium" />
+                android:layout_weight="1"
+                android:text="@string/please_tap_u20b9_symbol_to_pay_tax" />
 
 
             <android.support.design.widget.TextInputLayout
@@ -105,22 +113,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:orientation="horizontal"
             android:paddingBottom="10dp"
-            android:paddingRight="5dp"
-            android:orientation="horizontal">
+            android:paddingRight="5dp">
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fabpay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:src="@drawable/ic_rupee_24dp"
-                android:layout_marginTop="6dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_marginBottom="@dimen/fab_margin"
                 android:layout_marginRight="@dimen/fab_margin"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_marginTop="6dp"
+                android:clickable="true"
+                android:src="@drawable/ic_rupee_24dp" />
 
 
         </LinearLayout>

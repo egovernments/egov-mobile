@@ -219,4 +219,6 @@ Links to:</string>
     <string name="try_again">TRY AGAIN</string>
     <string name="no_connection">No Connection!</string>
     <string name="check_internet">Please check your internet connection and try again</string>
+    <string name="please_click_symbol_to_pay_tax">Please tap \u20B9 symbol to pay tax</string>
+    <string name="please_tap_u20b9_symbol_to_pay_tax">(Please tap ₹ symbol to pay tax)</string>
 </resources>
