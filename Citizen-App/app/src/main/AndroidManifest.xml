@@ -101,6 +101,7 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:label="@string/createaccount_label"
+            android:launchMode="singleTask"
             android:parentActivityName=".activities.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
@@ -175,8 +176,8 @@
             android:name=".activities.GrievanceDetailsActivity"
             android:label="@string/grievancedetails_label"
             android:parentActivityName=".activities.GrievanceActivity"
-            android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -251,6 +252,7 @@
         <activity
             android:name=".activities.ResetPasswordActivity"
             android:label="@string/title_activity_reset_password"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme"/>
         <activity
             android:name=".activities.SOSActivity"

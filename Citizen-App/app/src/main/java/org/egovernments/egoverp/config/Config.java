@@ -59,7 +59,8 @@ public class Config {
     public static final String APP_PAYMENT_GATEWAY_VACANTLAND_TAX = "app.payment.gateway.vacantland.tax";
     public static final String APP_PAYMENT_GATEWAY_PROPERTY_TAX = "app.payment.gateway.property.tax";
     public static final String APP_PAYMENT_GATEWAY_WATER_TAX = "app.payment.gateway.water.tax";
-
+    public final static String ACCOUNT_RECOVERY_MESSAGE = "Your OTP for recovering password is";
+    public final static String ACCOUNT_VERIFICATION_MESSAGE = "Use OTP";
 
     public class Modules
     {
@@ -74,6 +75,5 @@ public class Config {
         public static final String PROPERTY_TAX ="app.module.propertytax";
         public static final String PGR="app.module.pgr";
     }
-
 
 }

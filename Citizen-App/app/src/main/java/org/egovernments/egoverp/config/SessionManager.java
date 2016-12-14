@@ -55,54 +55,30 @@ import java.util.Calendar;
 
 public class SessionManager {
 
-    private SharedPreferences pref;
-
-    private SharedPreferences.Editor editor;
-
     private static final String BASE_URL = "Base URL";
-
     private static final String URL_CREATED_TIME = "Url timeout";
-
     private static final String URL_LOCATION = "Url location";
-
     private static final String URL_LOCATION_CODE = "Url location code";
-
     private static final String PREF_NAME = "CredentialsPref";
-
     private static final String IS_LOGGED_IN = "IsLoggedIn";
-
     private static final String KEY_PASSWORD = "password";
-
     private static final String KEY_USERNAME = "username";
-
     private static final String KEY_NAME = "name";
-
     private static final String KEY_MOBILE = "mobile";
-
     private static final String KEY_EMAIL = "email";
-
     private static final String KEY_ACCESS_TOKEN = "access_token";
-
     private static final String KEY_DEMO_MODE = "demoMode";
-
     private static final String KEY_CITY_LAT = "cityLatitude";
     private static final String KEY_CITY_LNG = "cityLongitude";
-
     private static final String KEY_DEBUG_LOG="isLogEnabled";
-
     private static final String KEY_TERMS_AGREED="isTermsAgreed";
-
     private static final String KEY_PROFILE_NOTIFY_DIMISSED="isProfileDismissed";
-
     private static final String KEY_RESET_PASSWORD_LAST_TIME="resetPwdLastTime";
-
     private static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
-
-    private static final String KEY_OTP_LOCAL_BROADCAST_RUNNING="isOTPBroadcastRunning";
-
     private static final String KEY_DISABLE_MODULE_JSON="modulesDisabledJson";
-
     private static final String KEY_APP_VERSION_CODE="appVersionCode";
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
@@ -207,15 +183,15 @@ public class SessionManager {
         return Double.parseDouble(pref.getString(KEY_CITY_LNG, "0"));
     }
 
+    public boolean isDemoMode() {
+        return pref.getBoolean(KEY_DEMO_MODE, false);
+    }
+
     public void setDemoMode(boolean isEnabled)
     {
         editor = pref.edit();
         editor.putBoolean(KEY_DEMO_MODE, isEnabled);
         editor.apply();
-    }
-
-    public boolean isDemoMode() {
-        return pref.getBoolean(KEY_DEMO_MODE, false);
     }
 
     public void setProfileNotifyDimissed(boolean isAgreed)
@@ -230,6 +206,10 @@ public class SessionManager {
         return pref.getBoolean(KEY_PROFILE_NOTIFY_DIMISSED, false);
     }
 
+    public boolean isTermsAgreed() {
+        return pref.getBoolean(KEY_TERMS_AGREED, false);
+    }
+
     public void setTermsAgreed(boolean isAgreed)
     {
         editor = pref.edit();
@@ -237,11 +217,9 @@ public class SessionManager {
         editor.apply();
     }
 
-    public boolean isTermsAgreed()
-    {
-        return pref.getBoolean(KEY_TERMS_AGREED, false);
+    public boolean getKeyDebugLog() {
+        return pref.getBoolean(KEY_DEBUG_LOG, false);
     }
-
 
     public void setKeyDebugLog(boolean isEnabled)
     {
@@ -250,8 +228,8 @@ public class SessionManager {
         editor.apply();
     }
 
-    public boolean getKeyDebugLog() {
-        return pref.getBoolean(KEY_DEBUG_LOG, false);
+    public String getName() {
+        return pref.getString(KEY_NAME, "UNKOWN");
     }
 
     public void setName(String name)
@@ -259,10 +237,6 @@ public class SessionManager {
         editor = pref.edit();
         editor.putString(KEY_NAME, name);
         editor.apply();
-    }
-
-    public String getName() {
-        return pref.getString(KEY_NAME, "UNKOWN");
     }
 
     public void setMobileNo(String mobileNo)
@@ -280,6 +254,10 @@ public class SessionManager {
         return pref.getString(KEY_EMAIL, "----");
     }
 
+    public Long getForgotPasswordTime() {
+        return pref.getLong(KEY_RESET_PASSWORD_LAST_TIME, 0l);
+    }
+
     public void setForgotPasswordTime(long milliseconds)
     {
         editor = pref.edit();
@@ -287,8 +265,8 @@ public class SessionManager {
         editor.apply();
     }
 
-    public Long getForgotPasswordTime() {
-        return pref.getLong(KEY_RESET_PASSWORD_LAST_TIME, 0l);
+    public String getResetPasswordLastMobileNo() {
+        return pref.getString(KEY_RESET_PASSWORD_LAST_MOBILE_NO, "");
     }
 
     public void setResetPasswordLastMobileNo(String mobileNo)
@@ -298,29 +276,10 @@ public class SessionManager {
         editor.apply();
     }
 
-    public String getResetPasswordLastMobileNo() {
-        return pref.getString(KEY_RESET_PASSWORD_LAST_MOBILE_NO, "");
-    }
-
-    public void setOTPLocalBroadCastRunning(boolean isRunning)
+    public Integer getAppVersionCode()
     {
-        editor = pref.edit();
-        editor.putBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, isRunning);
-        editor.apply();
+        return pref.getInt(KEY_APP_VERSION_CODE, 0);
     }
-
-    public boolean isOTPLocalBroadCastRunning()
-    {
-        return pref.getBoolean(KEY_OTP_LOCAL_BROADCAST_RUNNING, false);
-    }
-
-    public void setDisabledModulesJson(String modulesJson)
-    {
-        editor = pref.edit();
-        editor.putString(KEY_DISABLE_MODULE_JSON, modulesJson);
-        editor.apply();
-    }
-
 
     public void setAppVersionCode(int versionCode)
     {
@@ -329,13 +288,15 @@ public class SessionManager {
         editor.apply();
     }
 
-    public Integer getAppVersionCode()
-    {
-        return pref.getInt(KEY_APP_VERSION_CODE, 0);
-    }
-
     public String getDisabledModulesJson()
     {
         return pref.getString(KEY_DISABLE_MODULE_JSON, "");
+    }
+
+    public void setDisabledModulesJson(String modulesJson)
+    {
+        editor = pref.edit();
+        editor.putString(KEY_DISABLE_MODULE_JSON, modulesJson);
+        editor.apply();
     }
 }

@@ -78,6 +78,9 @@ public class ResetPasswordActivity extends BaseActivity {
 
     public static String MESSAGE_SENT_TO="messageSentTo";
 
+    public static boolean isRunning = false;
+    public static boolean isBroadCastRunning = false;
+
     EditText etOtp, etNewPwd, etConfirmPwd;
     String mobileNo;
     FloatingActionButton fab;
@@ -85,6 +88,12 @@ public class ResetPasswordActivity extends BaseActivity {
     Button btnResendOTP;
     TextView tvCountDown;
     CountDownTimer countDownTimer;
+    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setOTPFromIntent(intent);
+        }
+    };
     private ConfigManager configManager;
 
     @Override
@@ -137,25 +146,6 @@ public class ResetPasswordActivity extends BaseActivity {
                 }
             });
         }
-
-        if(!TextUtils.isEmpty(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE)))
-        {
-            etOtp.setText(getIntent().getStringExtra(SMSListener.PARAM_OTP_CODE));
-            etNewPwd.requestFocus();
-        }
-
-        BroadcastReceiver otpReceiver=new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-                etNewPwd.requestFocus();
-
-            }
-        };
-
-        LocalBroadcastManager.getInstance(ResetPasswordActivity.this).registerReceiver(otpReceiver,
-                new IntentFilter(SMSListener.OTP_LISTENER));
 
         btnResendOTP.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,7 +225,6 @@ public class ResetPasswordActivity extends BaseActivity {
                 public void onFinish() {
                     tvCountDown.setText(R.string.otp_exipry_message);
                     sessionManager.setForgotPasswordTime(0L);
-
                 }
 
             }.start();
@@ -297,15 +286,55 @@ public class ResetPasswordActivity extends BaseActivity {
         }
     }
 
+
     @Override
-    protected void onStart() {
-        super.onStart();
-        sessionManager.setOTPLocalBroadCastRunning(true);
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        sessionManager.setOTPLocalBroadCastRunning(false);
+    protected void onStart() {
+        super.onStart();
+        isRunning = true;
+        LocalBroadcastManager.getInstance(ResetPasswordActivity.this).registerReceiver(otpReceiver,
+                new IntentFilter(SMSListener.OTP_LISTENER));
+        isBroadCastRunning = true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setOTPFromIntent(getIntent());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(ResetPasswordActivity.this).unregisterReceiver(otpReceiver);
+        isBroadCastRunning = false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isRunning = false;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            setOTPFromIntent(data);
+        }
+    }
+
+    public void setOTPFromIntent(Intent intent) {
+        if (!TextUtils.isEmpty(intent.getStringExtra(SMSListener.PARAM_OTP_CODE))) {
+            etOtp.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+            etNewPwd.requestFocus();
+        }
+    }
+
 }

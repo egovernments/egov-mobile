@@ -52,26 +52,28 @@ import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.egovernments.egoverp.activities.RegisterActivity;
+import org.egovernments.egoverp.activities.ResetPasswordActivity;
 import org.egovernments.egoverp.activities.SplashScreenActivity;
 import org.egovernments.egoverp.config.SessionManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.egovernments.egoverp.config.Config.ACCOUNT_RECOVERY_MESSAGE;
+import static org.egovernments.egoverp.config.Config.ACCOUNT_VERIFICATION_MESSAGE;
+
 /**
- * Created by egov on 8/8/16.
+ * Listener for OTP SMS
  */
 public class SMSListener extends BroadcastReceiver {
-
-    SmsMessage currentSMS;
-    String message;
-    SessionManager sessionManager;
 
     public static String OTP_LISTENER="OTP_Listener";
     public static String PARAM_LAUCNH_FROM_SMS ="isLaunchFromSMS";
     public static String PARAM_OTP_CODE ="OTP_code";
-    final String RECOVERY_MESSAGE ="Your OTP for recovering password is";
-    final String ACCOUNT_ACTIVATION_MESSAGE ="Use OTP";
+    SmsMessage currentSMS;
+    String message;
+    SessionManager sessionManager;
 
     public void onReceive(Context context, Intent intent) {
 
@@ -95,57 +97,62 @@ public class SMSListener extends BroadcastReceiver {
 
                         sessionManager=new SessionManager(context);
 
-                        if((message.contains(RECOVERY_MESSAGE) || message.contains(ACCOUNT_ACTIVATION_MESSAGE))
+                        if ((message.contains(ACCOUNT_RECOVERY_MESSAGE) || message.contains(ACCOUNT_VERIFICATION_MESSAGE))
                                 && TextUtils.isEmpty(sessionManager.getAccessToken()))
                         {
 
                             long lastOtpSentTime;
 
                             String otpCode=getOTPCode(message);
-                            boolean isRunning =sessionManager.isOTPLocalBroadCastRunning();
+                            boolean isRunning = ResetPasswordActivity.isRunning || RegisterActivity.isRunning;
+                            boolean isSMSListenerActive = ResetPasswordActivity.isBroadCastRunning || RegisterActivity.isBroadcastRunning;
 
-                            if(message.contains("Your OTP for recovering password is"))
+                            if (message.contains(ACCOUNT_RECOVERY_MESSAGE))
                             {
                                 lastOtpSentTime=sessionManager.getForgotPasswordTime();
                                 long expiryOTPTime=lastOtpSentTime+(5*60*1000); //CALCULATE OTP Expiry Time (+5 mins)
                                 if(lastOtpSentTime<expiryOTPTime) {
-                                    if(isRunning)
+                                    Intent appLaunchIntent;
+                                    if (isRunning && isSMSListenerActive)
                                     {
                                         Intent otpIntent = new Intent(OTP_LISTENER);
                                         otpIntent.putExtra(PARAM_OTP_CODE, otpCode);
                                         LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
-                                    }
-                                    else
+                                        return;
+                                    } else if (!isRunning)
                                     {
-                                        Intent appLaunchIntent = new Intent(context, SplashScreenActivity.class);
+                                        appLaunchIntent = new Intent(context, SplashScreenActivity.class);
                                         appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         appLaunchIntent.putExtra(PARAM_LAUCNH_FROM_SMS, true);
-                                        appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
-                                        context.startActivity(appLaunchIntent);
+                                    } else {
+                                        appLaunchIntent = new Intent(context, ResetPasswordActivity.class);
+                                        appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     }
+
+                                    appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
+                                    context.startActivity(appLaunchIntent);
                                 }
                             }
                             else
                             {
-                                if(isRunning)
+                                if (isRunning && isSMSListenerActive)
                                 {
                                     Intent otpIntent = new Intent(OTP_LISTENER);
                                     otpIntent.putExtra(PARAM_OTP_CODE, otpCode);
                                     LocalBroadcastManager.getInstance(context).sendBroadcast(otpIntent);
+                                } else {
+                                    Intent appLaunchIntent = new Intent(context, RegisterActivity.class);
+                                    appLaunchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    appLaunchIntent.putExtra(PARAM_OTP_CODE, otpCode);
+                                    context.startActivity(appLaunchIntent);
                                 }
                             }
-
-                            //Log.i("isForeGround -----> ", ""+isForeground(context, ForgotPasswordActivity.class.getPackage().getName()));
-
                         }
-
-
                     }
 
                 }
 
-
-            } // bundle is null
+            }
 
         } catch (Exception e) {
             Log.e("SmsReceiver", "Exception smsReceiver" +e);
@@ -168,7 +175,7 @@ public class SMSListener extends BroadcastReceiver {
     private String getOTPCode(String message)
     {
         String otpCode=null;
-        if(message.contains(RECOVERY_MESSAGE)) {
+        if (message.contains(ACCOUNT_RECOVERY_MESSAGE)) {
             message=message.trim();
             otpCode=message.substring(message.length()-5, message.length());
         }

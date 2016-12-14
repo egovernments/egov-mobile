@@ -105,6 +105,9 @@ import static org.egovernments.egoverp.config.Config.API_MULTIPLE_CITIES_URL;
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends BaseActivity {
 
+    public static Boolean isRunning = false;
+    public static Boolean isBroadcastRunning = false;
+
     List<District> districtsList;
     List<City> citiesList;
     boolean isMultiCity = true;
@@ -118,6 +121,12 @@ public class RegisterActivity extends BaseActivity {
     private String deviceID;
     private String deviceOS;
     private String deviceType;
+    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setOTPCode(intent);
+        }
+    };
     private TextView municipalityInfo;
     private TextInputLayout nameInputLayout;
     private ConfigManager configManager;
@@ -226,23 +235,17 @@ public class RegisterActivity extends BaseActivity {
 
         new GetAllCitiesTask().execute();
 
-        BroadcastReceiver otpReceiver=new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-            if(alertDialog!=null && alertDialog.isShowing()) {
-                EditText etOTP=(EditText) alertDialog.findViewById(R.id.etOTP);
-                if(etOTP!=null) {
-                    etOTP.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-                    etOTP.setSelection(etOTP.getText().length());
-                }
-                registerAccount(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
-            }
-            }
-        };
+    }
 
-        LocalBroadcastManager.getInstance(RegisterActivity.this).registerReceiver(otpReceiver,
-                new IntentFilter(SMSListener.OTP_LISTENER));
-
+    private void setOTPCode(Intent intent) {
+        if (alertDialog != null && alertDialog.isShowing()) {
+            EditText etOTP = (EditText) alertDialog.findViewById(R.id.etOTP);
+            if (etOTP != null) {
+                etOTP.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                etOTP.setSelection(etOTP.getText().length());
+            }
+            registerAccount(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+        }
     }
 
     private boolean isValidEmail(String email) {
@@ -568,15 +571,37 @@ public class RegisterActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        sessionManager.setOTPLocalBroadCastRunning(true);
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        sessionManager.setOTPLocalBroadCastRunning(false);
+    protected void onStart() {
+        super.onStart();
+        isRunning = true;
+        LocalBroadcastManager.getInstance(RegisterActivity.this).registerReceiver(otpReceiver,
+                new IntentFilter(SMSListener.OTP_LISTENER));
+        isBroadcastRunning = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setOTPCode(getIntent());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(RegisterActivity.this).unregisterReceiver(otpReceiver);
+        isBroadcastRunning = false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isRunning = false;
     }
 
     public void registerAccount(final String otpCode)
