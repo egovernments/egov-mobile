@@ -56,6 +56,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +65,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import org.egovernments.egoverp.R;
@@ -92,6 +95,9 @@ public class SOSActivity extends BaseActivity {
         Gson gson = new Gson();
         ArrayList<EmergencyContact> emergencyContacts = gson.fromJson(parser.parse(loadJSONFromAsset()), new TypeToken<List<EmergencyContact>>() {
         }.getType());
+
+        Log.v("JSON String", loadJSONFromAsset());
+        Log.v("list", "" + emergencyContacts);
 
         recyclerView.setAdapter(new SOSAdapter(SOSActivity.this, emergencyContacts));
 
@@ -240,7 +246,12 @@ public class SOSActivity extends BaseActivity {
     }
 
     public class EmergencyContact {
+        @SerializedName("contactName")
+        @Expose
         String contactName;
+
+        @Expose
+        @SerializedName("contactNo")
         String contactNo;
 
         public EmergencyContact(String contactNo, String contactName) {
