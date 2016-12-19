@@ -236,7 +236,9 @@
             android:name=".activities.SearchResultActivity"
             android:label="@string/title_activity_search_result"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activities.PaymentGatewayActivity" />
+        <activity
+            android:name=".activities.PaymentGatewayActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.CitizenCharterActivity"
             android:label="@string/citizen_charter_label"

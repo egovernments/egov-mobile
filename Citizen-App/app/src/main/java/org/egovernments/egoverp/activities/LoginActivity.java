@@ -134,7 +134,7 @@ public class LoginActivity extends BaseActivity {
                 //Start fetching data from server
                 startService(new Intent(LoginActivity.this, UpdateService.class).putExtra(UpdateService.KEY_METHOD, UpdateService.UPDATE_PROFILE));
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivityAnimation(intent, true);
+                startActivityAnimation(intent, false);
                 finish();
             } else {
                 showSnackBar("Session expired!");
