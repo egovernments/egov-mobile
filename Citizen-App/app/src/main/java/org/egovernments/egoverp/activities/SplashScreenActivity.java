@@ -171,7 +171,7 @@ public class SplashScreenActivity extends Activity {
             } else {
                 if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString(Config.APP_TIMEOUTDAYS))
                         || TextUtils.isEmpty(sessionManager.getBaseURL())
-                        || sessionManager.getAppVersionCode()!=AppUtils.getAppVersionCode(SplashScreenActivity.this)) {
+                        || !sessionManager.getAppVersionCode().equals(AppUtils.getAppVersionCode(SplashScreenActivity.this))) {
                     new GetCityTask().execute();
                 } else {
                     startTimerThread();
@@ -203,9 +203,9 @@ public class SplashScreenActivity extends Activity {
             case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
                 if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(getApplicationContext(), R.string.permission_readsms_denied, Toast.LENGTH_LONG).show();
-                    timerThread.start();
+                    startTimerThread();
                 } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    timerThread.start();
+                    startTimerThread();
                 }
                 break;
         }
@@ -377,7 +377,7 @@ public class SplashScreenActivity extends Activity {
         protected void onPostExecute(JsonObject response) {
             super.onPostExecute(response);
 
-            if(response!=null && TextUtils.isEmpty(response.toString()))
+            if (response != null && !TextUtils.isEmpty(response.toString()))
             {
                 JsonObject appDetails=response.get(KEY_RESULT).getAsJsonObject();
 
