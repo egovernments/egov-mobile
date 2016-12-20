@@ -592,7 +592,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
-
+                    progressDialog.dismiss();
                 }
             });
         }
