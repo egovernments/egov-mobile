@@ -42,27 +42,56 @@
 
 package org.egov.employee.data;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * POJO class used to upload grievances
  **/
 
 public class GrievanceRequest {
 
+    @Expose
+    @SerializedName("location")
     private int locationId;
+
+    @Expose
+    @SerializedName("lat")
     private double lat;
+
+    @Expose
+    @SerializedName("lng")
     private double lng;
+
+    @Expose
+    @SerializedName("details")
     private String details;
+
+    @Expose
+    @SerializedName("complaintTypeId")
     private int complaintTypeId;
+
+    @Expose
+    @SerializedName("landmarkDetails")
     private String landmarkDetails;
+
+    @Expose
+    @SerializedName("complainantName")
     private String complainantName;
+
+    @Expose
+    @SerializedName("complainantMobileNo")
     private String complainantMobileNo;
-    private String complainantEmai;
+
+    @Expose
+    @SerializedName("complainantEmail")
+    private String complainantEmail;
 
     //Constructor for use with lat/lng
-    public GrievanceRequest(String complainantName, String complainantMobileNo, String complainantEmai, double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
+    public GrievanceRequest(String complainantName, String complainantMobileNo, String complainantEmail, double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
         this.complainantName = complainantName;
         this.complainantMobileNo = complainantMobileNo;
-        this.complainantEmai = complainantEmai;
+        this.complainantEmail = complainantEmail;
         this.lat = lat;
         this.lng = lng;
         this.details = details;
@@ -71,10 +100,10 @@ public class GrievanceRequest {
     }
 
     //Constructor for use with locationID
-    public GrievanceRequest(String complainantName, String complainantMobileNo, String complainantEmai, int locationId, String details, int complaintTypeId, String landmarkDetails) {
+    public GrievanceRequest(String complainantName, String complainantMobileNo, String complainantEmail, int locationId, String details, int complaintTypeId, String landmarkDetails) {
         this.complainantName = complainantName;
         this.complainantMobileNo = complainantMobileNo;
-        this.complainantEmai = complainantEmai;
+        this.complainantEmail = complainantEmail;
         this.locationId = locationId;
         this.details = details;
         this.complaintTypeId = complaintTypeId;

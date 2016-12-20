@@ -66,6 +66,7 @@ public class Interceptor implements okhttp3.Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = null;
+        Boolean isCustomErrorThrown = false;
         try {
             Interceptor.Level level = this.level;
 
@@ -152,13 +153,17 @@ public class Interceptor implements okhttp3.Interceptor {
 
 
             if (!response.isSuccessful()) {
+                isCustomErrorThrown = true;
                 throw new IOException(errorHandlerFromResponse(response.body().string(), response.code()));
             }
 
             return response;
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw errorHandlerFromResponse(ex, (response == null ? 0 : response.code()));
+            if (isCustomErrorThrown)
+                throw errorHandlerFromResponse(ex, (response == null ? 0 : response.code()));
+            else
+                throw ex;
         }
     }
 
