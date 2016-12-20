@@ -42,17 +42,37 @@
 
 package org.egovernments.egoverp.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * POJO class used to upload grievances
  **/
 
 public class GrievanceRequest {
 
+    @Expose
+    @SerializedName("location")
     private int locationId;
+
+    @Expose
+    @SerializedName("lat")
     private double lat;
+
+    @Expose
+    @SerializedName("lng")
     private double lng;
+
+    @Expose
+    @SerializedName("details")
     private String details;
+
+    @Expose
+    @SerializedName("complaintTypeId")
     private int complaintTypeId;
+
+    @Expose
+    @SerializedName("landmarkDetails")
     private String landmarkDetails;
 
     //Constructor for use with lat/lng
