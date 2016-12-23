@@ -55,8 +55,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical">
 
 
 
@@ -64,7 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="INSTALLMENT #"
+            android:text="@string/installment"
             android:textSize="@dimen/field_labelSize" />
 
 
@@ -95,15 +95,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="DEMAND"
+                android:text="@string/demand"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:id="@+id/propertytax_taxamount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:gravity="right"
+                android:textColor="@color/dataLabelColor"
                 android:textSize="@dimen/data_labelSize" />
 
 
@@ -129,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="PENALTY"
+                android:text="@string/penalty"
                 android:textSize="@dimen/field_labelSize" />
 
 
@@ -137,8 +137,8 @@
                 android:id="@+id/propertytax_penalty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:gravity="right"
+                android:textColor="@color/dataLabelColor"
                 android:textSize="@dimen/data_labelSize" />
 
 
@@ -162,16 +162,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="BALANCE"
+                android:text="@string/balance"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:id="@+id/propertytax_total"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:textColor="@color/dataLabelColor"
-                style="@style/TextAppearance.AppCompat.Medium"/>
+                android:textColor="@color/dataLabelColor" />
 
         </LinearLayout>
 
@@ -182,32 +182,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:weightSum="2"
         android:visibility="gone"
-        android:layout_marginTop="5dp">
+        android:weightSum="2">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:visibility="invisible"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="invisible">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="COLLECTION"
+                android:text="@string/collection"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:gravity="right"
-                android:textSize="@dimen/data_labelSize"
-                android:text="-"/>
+                android:text="-"
+                android:textColor="@color/dataLabelColor"
+                android:textSize="@dimen/data_labelSize" />
 
 
         </LinearLayout>

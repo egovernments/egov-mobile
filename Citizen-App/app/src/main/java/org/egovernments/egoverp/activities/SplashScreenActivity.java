@@ -302,7 +302,7 @@ public class SplashScreenActivity extends Activity {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast toast = Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. Please ensure you are connected to the internet.", Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(SplashScreenActivity.this, R.string.unexcepted_error, Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                 toast.show();
                             }
@@ -325,7 +325,7 @@ public class SplashScreenActivity extends Activity {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast toast = Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. Please ensure you are connected to the internet.", Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(SplashScreenActivity.this, R.string.unexcepted_error, Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                                 toast.show();
                             }
@@ -338,7 +338,7 @@ public class SplashScreenActivity extends Activity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast toast = Toast.makeText(SplashScreenActivity.this, "An unexpected error occurred while retrieving server info. Please ensure you are connected to the internet.", Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(SplashScreenActivity.this, R.string.unexcepted_error, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                         toast.show();
                     }
@@ -377,28 +377,31 @@ public class SplashScreenActivity extends Activity {
         protected void onPostExecute(JsonObject response) {
             super.onPostExecute(response);
 
-            if (response != null && !TextUtils.isEmpty(response.toString()))
+            try
             {
-                JsonObject appDetails=response.get(KEY_RESULT).getAsJsonObject();
+                if (response != null && !TextUtils.isEmpty(response.get(KEY_RESULT).getAsString())) {
+                    JsonObject appDetails = response.get(KEY_RESULT).getAsJsonObject();
 
-                if(AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()){
-                    if(appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean())
-                    {
-                        showUpdateAlert(true, getString(R.string.update_available_alert_title),
-                                getString(R.string.update_force_alert_content));
+                    if (AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()) {
+                        if (appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean()) {
+                            showUpdateAlert(true, getString(R.string.update_available_alert_title),
+                                    getString(R.string.update_force_alert_content));
+                        } else {
+                            showUpdateAlert(false, getString(R.string.update_available_alert_title),
+                                    getString(R.string.alert_recommended_update_content));
+                        }
                     }
                     else{
-                        showUpdateAlert(false, getString(R.string.update_available_alert_title),
-                                getString(R.string.alert_recommended_update_content));
+                        launchScreen();
                     }
                 }
                 else{
                     launchScreen();
                 }
-            }
-            else{
+            } catch (Exception ex) {
                 launchScreen();
             }
+
 
         }
     }

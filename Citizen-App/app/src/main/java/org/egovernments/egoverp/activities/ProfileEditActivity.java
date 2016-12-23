@@ -224,21 +224,21 @@ public class ProfileEditActivity extends BaseActivity {
         String aadhaarCard = profileAadhaar.getText().toString().trim();
 
         if (mobileNumber.length() != 10) {
-            showSnackBar("Phone no. must be 10 digits");
+            showSnackBar(getString(R.string.phone_no_10_digits));
         } else if (TextUtils.isEmpty(mobileNumber)) {
-            showSnackBar("Please enter mobile number");
+            showSnackBar(getString(R.string.please_enter_mobile_no));
         } else if (TextUtils.isEmpty(emailId)) {
-            showSnackBar("Please enter email ID");
+            showSnackBar(getString(R.string.please_enter_email_id));
         } else if (!TextUtils.isEmpty(altContactNumber) && altContactNumber.length() != 10) {
-            showSnackBar("Alternate Phone no. must be 10 digits");
+            showSnackBar(getString(R.string.alternate_phone_no_10_digits));
         } else if (!AppUtils.isValidEmail(emailId)) {
-            showSnackBar("Please enter a valid email ID");
+            showSnackBar(getString(R.string.please_enter_valid_email));
         } else if (TextUtils.isEmpty(dob)) {
-            showSnackBar("Please enter date of birth");
+            showSnackBar(getString(R.string.please_enter_dob));
         } else  if(!TextUtils.isEmpty(profileAadhaar.getText()) && profileAadhaar.getText().length()!=12) {
-            showSnackBar("Please enter valid aadhar card number");
+            showSnackBar(getString(R.string.please_enter_aadhar));
         } else  if(!TextUtils.isEmpty(profilePAN.getText()) && !AppUtils.isValidPANNo(profilePAN.getText().toString())) {
-            showSnackBar("Please enter valid pan card number");
+            showSnackBar(getString(R.string.please_enter_valid_pan));
         }else {
 
             final Profile update_profile = new Profile(name, emailId, mobileNumber, mobileNumber, altContactNumber, gender, panCard, dob, aadhaarCard);
@@ -254,7 +254,7 @@ public class ProfileEditActivity extends BaseActivity {
 
                     ProfileAPIResponse profileAPIResponse = response.body();
 
-                    showSnackBar("Profile updated successfully");
+                    showSnackBar(getString(R.string.profile_upate_success));
 
                     ProfileActivity.profile = profileAPIResponse.getProfile();
 
@@ -270,58 +270,6 @@ public class ProfileEditActivity extends BaseActivity {
                     progressDialog.dismiss();
                 }
             });
-
-            /*ApiController.getAPI(ProfileEditActivity.this).updateProfile(update_profile, sessionManager.getAccessToken(), new Callback<ProfileAPIResponse>() {
-                @Override
-                public void success(ProfileAPIResponse profileAPIResponse, Response response) {
-
-                    showSnackBar("Profile updated successfully");
-
-                    ProfileActivity.profile = profileAPIResponse.getProfile();
-
-                    progressDialog.dismiss();
-                    Intent intent = new Intent();
-                    setResult(RESULT_OK, intent);
-
-                    finish();
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                    if (error.getLocalizedMessage() != null)
-                        if (error.getLocalizedMessage().equals(CustomErrorHandler.SESSION_EXPRIED_MESSAGE)) {
-                            Toast toast = Toast.makeText(ProfileEditActivity.this, R.string.session_timeout, Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                            sessionManager.logoutUser();
-                            startActivity(new Intent(ProfileEditActivity.this, LoginActivity.class));
-                        } else if (error.getLocalizedMessage().contains("400")) {
-                            try {
-                                ErrorResponse errorResponse = (ErrorResponse) error.getBodyAs(ErrorResponse.class);
-                                Toast toast = Toast.makeText(ProfileEditActivity.this, errorResponse.getErrorStatus().getMessage(), Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            } catch (Exception e) {
-                                Toast toast = Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        } else {
-                            Toast toast = Toast.makeText(ProfileEditActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                            toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                            toast.show();
-                        }
-                    else {
-                        Toast toast = Toast.makeText(ProfileEditActivity.this, "An unexpected error occurred while accessing the network", Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                        toast.show();
-                    }
-
-                    progressDialog.dismiss();
-
-                }
-            });*/
 
         }
     }

@@ -150,28 +150,28 @@ public class WaterChargesViewActivity extends BaseActivity {
 
                 if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
                 {
-                    Toast.makeText(getApplicationContext(), "Please fill all payment input details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.please_fill_payment_details), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
                 {
-                    Toast.makeText(getApplicationContext(), "Please enter valid email address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.please_enter_valid_email), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 else if(etMobileNo.getText().toString().length()<10)
                 {
-                    Toast.makeText(getApplicationContext(), "Please enter valid mobile no", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.please_enter_valid_mobile_no), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
                 if(amountToPay<=0)
                 {
-                    Toast.makeText(getApplicationContext(), "Payment amount should be greater than 0", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.payment_amount_greater_than_0), Toast.LENGTH_SHORT).show();
                 }
                 else if(amountToPay> total)
                 {
-                    Toast.makeText(getApplicationContext(), "Payment amount should not be greater than payable amount ("+Math.round(total)+")", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.payment_amount_should_not_greater) + "(" + Math.round(total) + ")", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -246,7 +246,7 @@ public class WaterChargesViewActivity extends BaseActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (code.length() < 10) {
-            Toast toast = Toast.makeText(WaterChargesViewActivity.this, "Consumer code must be at least 10 characters", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(WaterChargesViewActivity.this, R.string.consumer_code_10_chars, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             progressBar.setVisibility(View.GONE);
@@ -271,34 +271,6 @@ public class WaterChargesViewActivity extends BaseActivity {
                 progressBar.setVisibility(View.GONE);
             }
         });
-
-        /*ApiController.getAPI(WaterChargesViewActivity.this)
-                .getWaterTax(configManager.getString(REFERER_IP_CONFIG_KEY),
-                        new WaterTaxRequest(String.format(Locale.getDefault(), "%04d", sessionManager.getUrlLocationCode()), code),
-                        new Callback<WaterTaxCallback>() {
-                            @Override
-                            public void success(WaterTaxCallback taxCallback, Response response) {
-
-
-
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                Toast toast;
-                                if (error.getLocalizedMessage() != null)
-                                    toast = Toast.makeText(WaterChargesViewActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                else
-                                    toast = Toast.makeText(WaterChargesViewActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
-
-
-
-
-                            }
-                        });*/
 
     }
 

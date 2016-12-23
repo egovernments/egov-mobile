@@ -189,7 +189,7 @@ public class BuildingPlanActivity extends BaseActivity {
 
         if(TextUtils.isEmpty(applicationNo.trim()))
         {
-            showSnackBar("Please enter application no");
+            showSnackBar(getString(R.string.please_enter_application_no));
             return;
         }
 
@@ -253,17 +253,17 @@ public class BuildingPlanActivity extends BaseActivity {
 
                     if(!TextUtils.isEmpty(bpadetails.getDrawingPlain()))
                     {
-                        downloadDocs.add(new DownloadDoc("Drawing-Plan-Document", bpadetails.getDrawingPlain()));
+                        downloadDocs.add(new DownloadDoc(getString(R.string.drawing_plan_document), bpadetails.getDrawingPlain()));
                     }
 
                     if(!TextUtils.isEmpty(bpadetails.getProceedingLetter()))
                     {
-                        downloadDocs.add(new DownloadDoc("Proceeding-Letter", bpadetails.getProceedingLetter()));
+                        downloadDocs.add(new DownloadDoc(getString(R.string.proceeding_letter), bpadetails.getProceedingLetter()));
                     }
 
                     if(!TextUtils.isEmpty(bpadetails.getScrutinyReport()))
                     {
-                        downloadDocs.add(new DownloadDoc("Scrutiny-Report", bpadetails.getScrutinyReport()));
+                        downloadDocs.add(new DownloadDoc(getString(R.string.scruntiny_report), bpadetails.getScrutinyReport()));
                     }
 
                     recyclerView.setAdapter(new FilesDownloadAdapter(BuildingPlanActivity.this, downloadDocs));
@@ -377,8 +377,8 @@ public class BuildingPlanActivity extends BaseActivity {
                             String[] docsPath=buildingPenalizationAPIResponse.getDocPath().split("##");
 
                             if(docsPath.length>0) {
-                                downloadDocs.add(new DownloadDoc("Proceeding-Document", getValidUrl(docsPath[0])));
-                                downloadDocs.add(new DownloadDoc("Plan-Document", getValidUrl(docsPath[1])));
+                                downloadDocs.add(new DownloadDoc(getString(R.string.procedding_document), getValidUrl(docsPath[0])));
+                                downloadDocs.add(new DownloadDoc(getString(R.string.plan_document), getValidUrl(docsPath[1])));
                             }
 
                         }

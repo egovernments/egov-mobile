@@ -55,6 +55,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -218,7 +219,7 @@ public class GrievanceActivity extends BaseActivity {
             return;
         }
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 highlightTabTextView(tab.getCustomView(), true);
@@ -238,6 +239,7 @@ public class GrievanceActivity extends BaseActivity {
 
     }
 
+    @SuppressWarnings("ConstantConditions")
     void setTabCount(GrievanceFragmentPagerAdapter pagerAdapter)
     {
         //tabLayout.setTabTextColors(Color.parseColor("#000"), Color.parseColor("#fff"));
@@ -288,7 +290,7 @@ public class GrievanceActivity extends BaseActivity {
         JsonObject categories;
         List<String> titles;
 
-        public GrievanceFragmentPagerAdapter(FragmentManager fm, JsonObject categories) {
+        GrievanceFragmentPagerAdapter(FragmentManager fm, JsonObject categories) {
             super(fm);
             this.categories=categories;
             titles=new ArrayList<>();
@@ -312,9 +314,10 @@ public class GrievanceActivity extends BaseActivity {
             return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles.get(position), position, sessionManager.getBaseURL()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
         }
 
-        public View getTabView(int position) {
-            String currentKey=titles.get(position).toString();
-            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_default_layout, null);
+        View getTabView(int position) {
+            String currentKey = titles.get(position);
+            final ViewGroup nullParent = null;
+            View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_default_layout, nullParent);
             TextView tvTitle = (TextView) v.findViewById(R.id.title);
             tvTitle.setText(currentKey);
             TextView tvCount = (TextView) v.findViewById(R.id.count);

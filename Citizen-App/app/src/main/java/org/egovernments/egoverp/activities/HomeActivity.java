@@ -57,6 +57,7 @@ import android.text.TextUtils;
 import android.transition.Slide;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 
@@ -138,8 +139,8 @@ public class HomeActivity extends BaseActivity {
                     }
                 };
 
-                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#227585"), "Update your profile",
-                        "Please, update your profile details.", "UPDATE NOW", "LATER", notificationCallBackInterface);
+                NotificationItem notificationItem = new NotificationItem(Color.parseColor("#227585"), getString(R.string.update_your_profile),
+                        getString(R.string.update_profile_message), getString(R.string.update_now), getString(R.string.later), notificationCallBackInterface);
                 homeItemList.add(new HomeItem(getString(R.string.profile_label), R.drawable.ic_person_black_36dp, "Update or review your profile details.", true, notificationItem));
             }
 
@@ -252,7 +253,8 @@ public class HomeActivity extends BaseActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(false);
 
-        View viewTermsAndConditions=getLayoutInflater().inflate(R.layout.layout_terms_conditions, null, false);
+        final ViewGroup nullParent = null;
+        View viewTermsAndConditions = getLayoutInflater().inflate(R.layout.layout_terms_conditions, nullParent, false);
 
        /* wv.setWebViewClient(new WebViewClient() {
             @Override

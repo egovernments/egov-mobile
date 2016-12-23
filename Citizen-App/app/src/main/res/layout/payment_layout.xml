@@ -28,7 +28,7 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Payment Details" />
+                android:text="@string/payment_details" />
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Caption"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:ems="10"
-                    android:hint="AMOUNT TO PAY*"
+                    android:hint="@string/amount_to_pay"
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:paddingEnd="10dp"
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:ems="10"
-                    android:hint="MOBILE NO*"
+                    android:hint="@string/mobile_no_with_star"
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLength="10"
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:ems="10"
-                    android:hint="EMAIL ADDRESS*"
+                    android:hint="@string/email_address_with_star"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:paddingEnd="10dp"

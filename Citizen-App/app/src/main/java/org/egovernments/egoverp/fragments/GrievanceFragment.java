@@ -272,71 +272,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             }
         });
 
-
-            /*ApiController.getAPI(getActivity()).getMyComplaints(page, "10", accessToken, pageTitle, new Callback<GrievanceAPIResponse>() {
-                        @Override
-                        public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
-
-                            //If the request is a refresh request
-                            for(Grievance grievance:grievanceAPIResponse.getResult())
-                            {
-                                if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat()>0)
-                                {
-                                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                                    List<Address> addresses;
-                                    try {
-                                        addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
-                                        String location=(TextUtils.isEmpty(addresses.get(0).getSubLocality())?addresses.get(0).getThoroughfare():addresses.get(0).getSubLocality());
-                                        grievance.setLocationName(returnValidString(location));
-                                        grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            if (page.equals("1")) {
-                                if(grievanceList!=null) {
-                                    grievanceList.clear();
-                                }
-                                grievanceList = grievanceAPIResponse.getResult();
-                                grievanceAdapter=new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
-                                recyclerView.setAdapter(grievanceAdapter);
-                                progressBar.setVisibility(View.GONE);
-                            }
-                            //If the request is a next page request
-                            else {
-                                grievanceList.remove(grievanceList.size() - 1);
-                                grievanceAdapter.notifyItemRemoved(grievanceList.size());
-                                grievanceList.addAll(grievanceList.size(), grievanceAPIResponse.getResult());
-                                grievanceAdapter.notifyItemInserted(grievanceList.size());
-                            }
-
-                            if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
-                                isPaginationEnded=true;
-                            }
-                            loading=false;
-                            updateSuccessEvent();
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (error != null) {
-                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                                    Toast.makeText(getActivity(), ""+error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                else {
-                                    Toast.makeText(getActivity(), "Session expired! Please, logout and login again.", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                            loading=false;
-                            updateFailedEvent();
-                        }
-
-
-                    }
-
-            );*/
-        }
+    }
 
        public void updateSuccessEvent()
        {

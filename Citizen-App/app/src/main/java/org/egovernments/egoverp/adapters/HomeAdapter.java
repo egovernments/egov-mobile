@@ -52,6 +52,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
@@ -137,8 +138,8 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if(homeItem.isGrievanceItem())
             {
                 viewHolder.layoutGrievance.setVisibility(View.VISIBLE);
-                DrawableCompat.setTint(viewHolder.pbGrievanceFiled.getProgressDrawable(), context.getResources().getColor(R.color.blue));
-                DrawableCompat.setTint(viewHolder.pbGrievanceResolved.getProgressDrawable(), context.getResources().getColor(R.color.green));
+                DrawableCompat.setTint(viewHolder.pbGrievanceFiled.getProgressDrawable(), ContextCompat.getColor(context, R.color.blue));
+                DrawableCompat.setTint(viewHolder.pbGrievanceResolved.getProgressDrawable(), ContextCompat.getColor(context, R.color.green));
 
                 viewHolder.pbGrievanceFiled.setIndeterminate(true);
                 viewHolder.pbGrievanceResolved.setIndeterminate(true);

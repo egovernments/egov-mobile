@@ -68,10 +68,8 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
     public static final String COMPLAINT_SUPPORT_DOCS = "grievanceSupportDocs";
 
     public static final String POSITION = "position";
-
-    private ArrayList<SupportDoc> supportDocs;
-
     private static SessionManager sessionManager;
+    private ArrayList<SupportDoc> supportDocs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,23 +88,17 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
         viewPager.setCurrentItem(position);
     }
 
-    private class ImageFragmentPagerAdapter extends FragmentPagerAdapter {
-        public ImageFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            return supportDocs.size();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return ImageFragment.instantiateItem(sessionManager.getAccessToken(), supportDocs.get(position).getFileId());
-        }
-    }
-
     public static class ImageFragment extends Fragment {
+        static ImageFragment instantiateItem(String access_token, String fileId) {
+            ImageFragment imageFragment = new ImageFragment();
+            Bundle args = new Bundle();
+            args.putString("access_token", access_token);
+            args.putString("fileId", fileId);
+            args.putString("type", "download");
+            imageFragment.setArguments(args);
+            return imageFragment;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container,
@@ -152,16 +144,22 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
             return swipeView;
         }
 
-        static ImageFragment instantiateItem(String access_token, String fileId) {
-            ImageFragment imageFragment = new ImageFragment();
-            Bundle args = new Bundle();
-            args.putString("access_token", access_token);
-            args.putString("fileId", fileId);
-            args.putString("type", "download");
-            imageFragment.setArguments(args);
-            return imageFragment;
+    }
+
+    private class ImageFragmentPagerAdapter extends FragmentPagerAdapter {
+        ImageFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
+        @Override
+        public int getCount() {
+            return supportDocs.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return ImageFragment.instantiateItem(sessionManager.getAccessToken(), supportDocs.get(position).getFileId());
+        }
     }
 
 }

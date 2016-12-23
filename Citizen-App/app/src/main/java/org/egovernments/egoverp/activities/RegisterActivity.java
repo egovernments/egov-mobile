@@ -169,18 +169,19 @@ public class RegisterActivity extends BaseActivity {
         cityAutoCompleteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSnackBar("Fetching municipality list, please wait");
+                showSnackBar(getString(R.string.fetch_list_municipality));
             }
         });
 
         districtAutoCompleteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSnackBar("Fetching districts list, please wait");
+                showSnackBar(getString(R.string.fetch_district_list));
             }
         });
 
-        deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        deviceID = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
         deviceOS = Integer.toString(Build.VERSION.SDK_INT);
         deviceType = "mobile";
 
@@ -261,21 +262,21 @@ public class RegisterActivity extends BaseActivity {
         final City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
 
         if ((selectedCity == null && isMultiCity)) {
-            showSnackBar("Please select the your district and city");
+            showSnackBar(getString(R.string.please_select_your_district_municipality));
         } else if(TextUtils.isEmpty(name)){
-            showSnackBar("Please enter your name");
+            showSnackBar(getString(R.string.please_enter_your_name));
         } else if(TextUtils.isEmpty(phoneno)){
-            showSnackBar("Please enter your phone no");
+            showSnackBar(getString(R.string.please_enter_your_phone_no));
         } else if (phoneno.length() != 10) {
-            showSnackBar("Phone no. must be 10 digits");
+            showSnackBar(getString(R.string.phone_no_10_digits));
         } else if(!TextUtils.isEmpty(email) && !isValidEmail(email)){
-            showSnackBar("Please enter a valid email ID");
+            showSnackBar(getString(R.string.please_enter_valid_email));
         } else if(TextUtils.isEmpty(password)){
-            showSnackBar("Please enter the password");
+            showSnackBar(getString(R.string.please_enter_password));
         } else if (!AppUtils.isValidPassword(password, configManager)) {
             showSnackBar(AppUtils.getPasswordConstraintInformation(configManager, getApplicationContext()));
         } else if (!password.equals(confirmpassword)) {
-            showSnackBar("Passwords do not match");
+            showSnackBar(getString(R.string.password_do_not_match));
         } else {
 
             if(isMultiCity) {
@@ -294,7 +295,7 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void run() {
                 cityAutoCompleteTextView.setOnClickListener(null);
-                cityAutoCompleteTextView.setHint("Loading failed");
+                cityAutoCompleteTextView.setHint(getString(R.string.loading_failed));
                 cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
                 cityAutoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
                     @Override
@@ -307,8 +308,6 @@ public class RegisterActivity extends BaseActivity {
                         }
                     }
                 });
-
-                showSnackBar("An unexpected error occurred while retrieving the list of available municipalities");
 
                 cityAutoCompleteTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
                 cityAutoCompleteTextView.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
@@ -372,7 +371,7 @@ public class RegisterActivity extends BaseActivity {
     {
         if(citiesList!=null){ citiesList.clear(); }
 
-        cityAutoCompleteTextView.setHint("Loading");
+        cityAutoCompleteTextView.setHint(getString(R.string.loading_label));
         cityAutoCompleteTextView.setOnClickListener(null);
         cityAutoCompleteTextView.setAdapter(null);
 
@@ -432,7 +431,7 @@ public class RegisterActivity extends BaseActivity {
                 ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_spinner_dropdown_item, autocompleteList);
                 //String hintText = (autocompleteList.size() > 0 ? (isDistrict ? "District" : "Municipality") : (isDistrict ? "Districts Not Found!" : "Municipalities Not Found!"));
 
-                autocompleteTextBox.setHint((isDistrict ? "District" : "Municipality"));
+                autocompleteTextBox.setHint((isDistrict ? getString(R.string.district) : getString(R.string.municipality)));
                 autocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds((isDistrict ? R.drawable.ic_place_black_24dp : R.drawable.ic_location_city_black_24dp), 0, (autocompleteList.size() > 0 ? R.drawable.ic_keyboard_arrow_down_black_24dp : 0), 0);
                 autocompleteTextBox.setOnClickListener(null);
                 autocompleteTextBox.setAdapter(autoCompleteAdapter);
@@ -526,17 +525,17 @@ public class RegisterActivity extends BaseActivity {
         dialogBuilder.setView(dialogView);
         final EditText etOTP=(EditText)dialogView.findViewById(R.id.etOTP);
 
-        dialogBuilder.setPositiveButton("SIGN UP", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton(R.string.sing_up, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(!TextUtils.isEmpty(etOTP.getText()))
                     registerAccount(etOTP.getText().toString());
                 else
-                    showSnackBar("Please enter OTP code");
+                    showSnackBar(getString(R.string.please_enter_otp_code));
             }
         });
 
-        dialogBuilder.setNeutralButton("GENERATE OTP", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNeutralButton(R.string.generate_otp, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendOTPCode();
@@ -679,7 +678,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     public void errorOccurred(String errorMsg, int errorCode) {
         //super.errorOccurred(errorMsg, errorCode);
-        showAlertDialogWithMessage("Error", errorMsg);
+        showAlertDialogWithMessage(getString(R.string.error), errorMsg);
     }
 
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {

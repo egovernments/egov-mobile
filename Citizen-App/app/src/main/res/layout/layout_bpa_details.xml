@@ -45,12 +45,12 @@
     android:id="@+id/cvBuildingPlanDetails"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="2dp"
-    card_view:cardUseCompatPadding="true"
     android:layout_margin="5dp"
-    android:visibility="gone"
     android:layout_marginBottom="10dp"
-    card_view:cardElevation="2dp">
+    android:visibility="gone"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,282 +61,322 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="16dp"
+            android:paddingBottom="5dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="5dp">
+            android:paddingTop="16dp">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="BPA APPLICATION"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Title" />
+                android:gravity="left"
+                android:text="@string/bpa_application" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="@string/application_no"
-                android:textColor="#8A000000"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:textColor="#8A000000" />
 
             <TextView
                 android:id="@+id/tvApplicationNo"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#DE000000"
-                style="@style/TextAppearance.AppCompat.Body1"/>
+                android:textColor="#DE000000" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="APPLICATION TYPE"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/application_type" />
 
             <TextView
                 android:id="@+id/tvApplicationType"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Body1"
                  />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="APPLICATION STATUS"
+                android:text="@string/application_status"
                 android:textSize="@dimen/field_labelSize" />
 
             <TextView
                 android:id="@+id/tvApplicationStatus"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/Base.TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/dotted_line"
-                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
                 android:layerType="software" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="OWNER DETAILS"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body2" />
+                android:gravity="left"
+                android:text="@string/owner_details" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/owner_label"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/owner_label" />
 
             <TextView
                 android:id="@+id/tvOwnerName"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Base.TextAppearance.AppCompat.Body1" />
+                android:layout_height="wrap_content" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="OWNER MOBILE NO"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/owner_mobile_no" />
 
             <TextView
                 android:id="@+id/tvOwnerMobNo"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dataLabelColor"
                 android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:textColor="@color/dataLabelColor" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="OWNER EMAIL ID"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/owner_email_id" />
 
             <TextView
                 android:id="@+id/tvOwnerEmailId"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1"  />
+                android:gravity="left" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="OWNER ADDRESS"
-                style="@style/TextAppearance.AppCompat.Caption"/>
+                android:text="@string/owner_address" />
 
             <TextView
                 android:id="@+id/tvOwnerAddress"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Body1"
                  />
 
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/dotted_line"
-                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
                 android:layerType="software" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="SITE DETAILS"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body2" />
+                android:gravity="left"
+                android:text="@string/site_details" />
 
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="SITE ADDRESS"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/site_address" />
 
             <TextView
                 android:id="@+id/tvSiteAddress"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:layout_height="wrap_content" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="NATURE OF SITE"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/nature_of_site" />
 
             <TextView
                 android:id="@+id/tvNatureOfSite"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="PERMISSION TYPE"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/permission_type" />
 
             <TextView
                 android:id="@+id/tvPermissionType"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-               style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/dotted_line"
-                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
                 android:layerType="software" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="APPLICANT DETAILS"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body2" />
+                android:gravity="left"
+                android:text="@string/applicant_details" />
 
 
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/applicant_name"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/applicant_name" />
 
             <TextView
                 android:id="@+id/tvApplicantName"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/TextAppearance.AppCompat.Body1"/>
+                android:layout_height="wrap_content" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="@string/applicant_mobile_no"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/applicant_mobile_no" />
 
             <TextView
                 android:id="@+id/tvApplicantMobNo"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="5dp" android:layout_marginBottom="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="APPLICANT EMAIL ID"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/applicant_email_id" />
 
             <TextView
                 android:id="@+id/tvApplicantEmailId"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/dotted_line"
-                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
                 android:layerType="software" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="DOCUMENTS"
-                style="@style/TextAppearance.AppCompat.Body2" />
+                android:text="@string/documents" />
 
 
         </LinearLayout>
@@ -346,10 +386,10 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recylerViewFiles"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:paddingBottom="20dp"
-            android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:layout_height="wrap_content">
+            android:paddingRight="10dp">
 
         </android.support.v7.widget.RecyclerView>
 

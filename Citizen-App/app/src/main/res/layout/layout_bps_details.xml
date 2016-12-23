@@ -45,12 +45,12 @@
     android:id="@+id/cvBPSDetails"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="2dp"
-    card_view:cardUseCompatPadding="true"
     android:layout_margin="5dp"
-    android:visibility="gone"
     android:layout_marginBottom="10dp"
-    card_view:cardElevation="2dp">
+    android:visibility="gone"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,68 +61,68 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="16dp"
+            android:paddingBottom="5dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="5dp">
+            android:paddingTop="16dp">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="@string/application_no"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/application_no" />
 
             <TextView
                 android:id="@+id/tvBPSApplicationNo"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:layout_marginBottom="10dp" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="APPLICATION STATUS"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/application_status" />
 
             <TextView
                 android:id="@+id/tvBPSApplicationStatus"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body1" />
+                android:gravity="left" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/applicant_name"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/applicant_name" />
 
             <TextView
                 android:id="@+id/tvBPSApplicantName"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body1"
                  />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="@string/applicant_mobile_no"
-                style="@style/TextAppearance.AppCompat.Caption" />
+                android:text="@string/applicant_mobile_no" />
 
             <TextView
                 android:id="@+id/tvBPSApplicantMobNo"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                style="@style/TextAppearance.AppCompat.Body1"
                  />
 
 
@@ -133,30 +133,31 @@
             android:id="@+id/layoutBPSDocsSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical">
+            android:paddingRight="16dp">
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/dotted_line"
-                android:layout_marginTop="5dp" android:layout_marginBottom="5dp"
                 android:layerType="software" />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text="DOCUMENTS"
                 android:paddingBottom="10dp"
-                style="@style/TextAppearance.AppCompat.Body2" />
+                android:text="@string/documents" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recylerviewBPSFiles"
                 android:layout_width="match_parent"
-                android:paddingBottom="20dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp">
 
             </android.support.v7.widget.RecyclerView>
 

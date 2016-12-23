@@ -93,39 +93,31 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Created by egov on 22/9/16.
+ * Complaint location picker activity
  */
 
 public class GrievanceLocPickerActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnCameraIdleListener,
         MapWrapperLayout.OnDragListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public static final String DEFAULT_LOCATION_LAT = "defaultLat";
+    public static final String DEFAULT_LOCATION_LNG = "defaultLng";
+    public static final String SELECTED_LOCATION_LAT = "selectedLat";
+    public static final String SELECTED_LOCATION_LNG = "selectedLng";
+    public static final String SELECTED_LOCATION_ADDRESS = "selectedLocAddress";
+    private static final long POLLING_FREQ = 1000 * 30;
+    private static final long FASTEST_UPDATE_FREQ = 1000 * 5;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
     SessionManager sessionManager;
     PinView pinView;
-
     Handler addressUpdateHandler;
     GoogleMap googleMap;
     Geocoder geocoder;
     Runnable updateAddressRunnable;
-
     LocationManager locationManager;
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
-
-    private static final long POLLING_FREQ = 1000 * 30;
-    private static final long FASTEST_UPDATE_FREQ = 1000 * 5;
-
+    LatLng defaultLatLng = null;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-
-    public static final String DEFAULT_LOCATION_LAT="defaultLat";
-    public static final String DEFAULT_LOCATION_LNG="defaultLng";
-
-    public static final String SELECTED_LOCATION_LAT="selectedLat";
-    public static final String SELECTED_LOCATION_LNG="selectedLng";
-    public static final String SELECTED_LOCATION_ADDRESS="selectedLocAddress";
-
-    LatLng defaultLatLng=null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -232,7 +224,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
                     finish();
                 }
                 else {
-                    Toast.makeText(this, "Please wait, Google map still loading...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.gmap_loading, Toast.LENGTH_SHORT).show();
                 }
                 return true;
             default:

@@ -200,7 +200,7 @@ public class NewGrievanceActivity extends BaseActivity {
         autocompleteComplaintType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSnackBar("Fetching type list, please wait");
+                showSnackBar(getString(R.string.fetch_complaint_list));
             }
         });
 
@@ -336,7 +336,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
                     imagePickerDialog.show();
                 } else {
-                    showSnackBar("Limited to 3 image");
+                    showSnackBar(getString(R.string.limit_3_image));
                 }
 
             }
@@ -452,19 +452,19 @@ public class NewGrievanceActivity extends BaseActivity {
 
         for(GrievanceType grievanceType:grievanceAllTypes)
         {
-            if(autocompleteComplaintType.getText().toString().toUpperCase().equals(grievanceType.getName().toUpperCase()))
+            if (autocompleteComplaintType.getText().toString().trim().toUpperCase().equals(grievanceType.getName().trim().toUpperCase()))
             {
                 complaintTypeID =grievanceType.getId();
             }
         }
 
         if (complaintTypeID == 0) {
-            showSnackBar("Please select complaint type");
+            showSnackBar(getString(R.string.please_select_complaint_type));
         }
         else if (locationID == 0 && (complaintLocLatLng == null)) {
-            showSnackBar("Please select location on map or select a location from dropdown");
+            showSnackBar(getString(R.string.please_select_location_map_or_dropdown));
         }else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
-            showSnackBar("Please enter complaint details (at least 10 characters");
+            showSnackBar(getString(R.string.complaint_details_10_chars));
         } else {
             GrievanceRequest grievanceRequest;
             if (complaintLocLatLng != null) {
@@ -585,7 +585,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                     progressDialog.dismiss();
                     Intent intent = new Intent();
-                    intent.putExtra(GrievanceActivity.RESULT_MESSAGE, "Grievance successfully registered");
+                    intent.putExtra(GrievanceActivity.RESULT_MESSAGE, getString(R.string.grievance_registered));
                     setResult(RESULT_OK, intent);
                     finish();
                 }
@@ -1005,7 +1005,7 @@ public class NewGrievanceActivity extends BaseActivity {
             if (ThumbImage != null) {
                 ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
             } else {
-                Toast toast = Toast.makeText(getActivity(), "An error was encountered retrieving this image", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getActivity(), R.string.error_while_retrieve_image, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
             }

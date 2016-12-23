@@ -76,11 +76,10 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
-
-    private List<Grievance> grievances;
     GrievanceItemInterface grievanceItemInterface;
-    private WeakReference<Context> contextWeakReference;
     Bundle downloadArgs;
+    private List<Grievance> grievances;
+    private WeakReference<Context> contextWeakReference;
 
     public GrievanceListAdapater(Context context, List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface, Bundle downloadArgs)
     {
@@ -196,39 +195,7 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
         return grievances.size();
     }
 
-    public static class GrievanceViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView complaintType;
-        private TextView complaintDate;
-        private ImageView complaintImage;
-        private TextView complaintLocation;
-        private TextView complaintNo;
-        private CardView complaintCardView;
-
-        public GrievanceViewHolder(View v) {
-            super(v);
-            complaintCardView = (CardView) v.findViewById(R.id.complaint_card);
-            complaintType = (TextView) v.findViewById(R.id.complaint_type);
-            complaintDate = (TextView) v.findViewById(R.id.complaint_date);
-            complaintImage = (ImageView) v.findViewById(R.id.complaint_image);
-            complaintLocation = (TextView) v.findViewById(R.id.complaint_location);
-            complaintNo = (TextView) v.findViewById(R.id.complaint_no);
-        }
-
-    }
-
-    public static class ProgressViewHolder extends RecyclerView.ViewHolder{
-
-        ProgressBar progressBar;
-        ProgressViewHolder(View itemView)
-        {
-            super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
-        }
-
-    }
-
-    public String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
+    String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
 
         String formatIfToday="hh:mm a";
         String formatIfCurrentYear="MMM dd";
@@ -259,6 +226,38 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
         df=new SimpleDateFormat(resultFormat);
         return df.format(infoDate);
+
+    }
+
+    static class GrievanceViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView complaintType;
+        private TextView complaintDate;
+        private ImageView complaintImage;
+        private TextView complaintLocation;
+        private TextView complaintNo;
+        private CardView complaintCardView;
+
+        GrievanceViewHolder(View v) {
+            super(v);
+            complaintCardView = (CardView) v.findViewById(R.id.complaint_card);
+            complaintType = (TextView) v.findViewById(R.id.complaint_type);
+            complaintDate = (TextView) v.findViewById(R.id.complaint_date);
+            complaintImage = (ImageView) v.findViewById(R.id.complaint_image);
+            complaintLocation = (TextView) v.findViewById(R.id.complaint_location);
+            complaintNo = (TextView) v.findViewById(R.id.complaint_no);
+        }
+
+    }
+
+    static class ProgressViewHolder extends RecyclerView.ViewHolder {
+
+        ProgressBar progressBar;
+
+        ProgressViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+        }
 
     }
 

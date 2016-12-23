@@ -115,18 +115,18 @@ public class ResetPasswordActivity extends BaseActivity {
         TextView tvResetPws=(TextView)findViewById(R.id.tvResetPwd);
         tvCountDown=(TextView)findViewById(R.id.tvCountDown);
 
-        String recoveryMessage = "OTP has been sent to your registered ";
+        String recoveryMessage = "";
         mobileNo=getIntent().getStringExtra(MESSAGE_SENT_TO);
 
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
 
         if(!TextUtils.isEmpty(mobileNo))
         {
-            recoveryMessage=recoveryMessage+"mobile no ("+mobileNo+") and mail";
+            recoveryMessage = getString(R.string.otp_sent_part1) + mobileNo + getString(R.string.otp_sent_part2);
         }
         else
         {
-            recoveryMessage=recoveryMessage+"mobile no and mail";
+            recoveryMessage = getString(R.string.otp_sent_mobile_no_email);
         }
 
         tvResetPws.setText(recoveryMessage);
@@ -162,7 +162,7 @@ public class ResetPasswordActivity extends BaseActivity {
     {
 
         final ProgressDialog progressDialog=new ProgressDialog(ResetPasswordActivity.this);
-        progressDialog.setMessage("Resending OTP...");
+        progressDialog.setMessage(getString(R.string.resending_otp));
         progressDialog.show();
 
 
@@ -218,7 +218,7 @@ public class ResetPasswordActivity extends BaseActivity {
 
                     msText = msText.replace("-", "");
 
-                    tvCountDown.setText("Your OTP will be expire in " + msText);
+                    tvCountDown.setText(getString(R.string.otp_will_expire) + msText);
 
                 }
 
@@ -239,15 +239,15 @@ public class ResetPasswordActivity extends BaseActivity {
     {
         if(TextUtils.isEmpty(etOtp.getText()))
         {
-            showSnackBar("Please enter the otp code");
+            showSnackBar(getString(R.string.please_enter_otp_code));
         }
         else if(TextUtils.isEmpty(etNewPwd.getText()))
         {
-            showSnackBar("Please enter the new password");
+            showSnackBar(getString(R.string.please_enter_new_pwd));
         }
         else if(!etNewPwd.getText().toString().equals(etConfirmPwd.getText().toString()))
         {
-            showSnackBar("Password doesn't match");
+            showSnackBar(getString(R.string.password_do_not_match));
         }
         else if (!AppUtils.isValidPassword(etNewPwd.getText().toString(), configManager)) {
             showSnackBar(AppUtils.getPasswordConstraintInformation(configManager, getApplicationContext()));
@@ -270,7 +270,7 @@ public class ResetPasswordActivity extends BaseActivity {
                         sessionManager.setResetPasswordLastMobileNo("");
 
                         Intent openLoginScreen = new Intent(ResetPasswordActivity.this, LoginActivity.class);
-                        openLoginScreen.putExtra(LoginActivity.STARTUP_MESSAGE, "Your password successfully changed, Please login now");
+                        openLoginScreen.putExtra(LoginActivity.STARTUP_MESSAGE, getString(R.string.password_changed_successfully));
                         startActivity(openLoginScreen);
                         finish();
                     }

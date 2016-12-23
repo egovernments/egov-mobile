@@ -44,6 +44,7 @@ package org.egovernments.egoverp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -74,10 +75,10 @@ public class CitizenCharterActivity extends BaseActivity {
         GridLayoutManager gridLayoutManager=new GridLayoutManager(CitizenCharterActivity.this, getResources().getInteger(R.integer.homegridcolumns));
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        homeItemList.add(new HomeItem("Revenue Section", R.drawable.ic_rupee_24dp, "", getResources().getColor(R.color.propertytax_color)));
-        homeItemList.add(new HomeItem("Engineering Section", R.drawable.ic_build_black_36dp, "", getResources().getColor(R.color.watertax_color)));
-        homeItemList.add(new HomeItem("Health Section", R.drawable.ic_heartbeat_36dp, "", getResources().getColor(R.color.grievance_color)));
-        homeItemList.add(new HomeItem("Town Planing Section", R.drawable.ic_town_plan_36dp, "", getResources().getColor(R.color.vacand_land_color)));
+        homeItemList.add(new HomeItem(getString(R.string.revenue_section), R.drawable.ic_rupee_24dp, "", ContextCompat.getColor(this, R.color.propertytax_color)));
+        homeItemList.add(new HomeItem(getString(R.string.engineering_secion), R.drawable.ic_build_black_36dp, "", ContextCompat.getColor(this, R.color.watertax_color)));
+        homeItemList.add(new HomeItem(getString(R.string.health_section), R.drawable.ic_heartbeat_36dp, "", ContextCompat.getColor(this, R.color.grievance_color)));
+        homeItemList.add(new HomeItem(getString(R.string.town_planing_section), R.drawable.ic_town_plan_36dp, "", ContextCompat.getColor(this, R.color.vacand_land_color)));
 
 
 

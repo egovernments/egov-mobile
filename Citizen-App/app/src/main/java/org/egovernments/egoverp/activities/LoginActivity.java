@@ -137,7 +137,7 @@ public class LoginActivity extends BaseActivity {
                 startActivityAnimation(intent, false);
                 finish();
             } else {
-                showSnackBar("Session expired!");
+                showSnackBar(getString(R.string.session_expired));
             }
         }
 
@@ -168,14 +168,14 @@ public class LoginActivity extends BaseActivity {
         cityAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSnackBar("Fetching municipality list, please wait");
+                showSnackBar(getString(R.string.fetch_list_municipality));
             }
         });
 
         districtAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSnackBar("Fetching district list, please wait");
+                showSnackBar(getString(R.string.fetch_district_list));
             }
         });
 
@@ -441,7 +441,7 @@ public class LoginActivity extends BaseActivity {
                 ArrayAdapter<String> autoCompleteAdapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_spinner_dropdown_item, autocompleteList);
                 //String hintText = (autocompleteList.size() > 0 ? (isDistrict ? "District" : "Municipality") : (isDistrict ? "Districts Not Found!" : "Municipalities Not Found!"));
 
-                autocompleteTextBox.setHint((isDistrict ? "District" : "Municipality"));
+                autocompleteTextBox.setHint((isDistrict ? getString(R.string.district) : getString(R.string.municipality)));
                 autocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds((isDistrict ? R.drawable.ic_place_black_24dp : R.drawable.ic_location_city_black_24dp), 0, (autocompleteList.size() > 0 ? R.drawable.ic_keyboard_arrow_down_black_24dp : 0), 0);
                 autocompleteTextBox.setOnClickListener(null);
                 autocompleteTextBox.setAdapter(autoCompleteAdapter);
@@ -513,7 +513,7 @@ public class LoginActivity extends BaseActivity {
     {
         if (selectedCity == null && configManager.getString(API_MULTICITIES).equals("true")) {
 
-            String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? "Please select your district and municipality!" : "Selected municipality is not found!");
+            String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? getString(R.string.please_select_your_district_municipality) : getString(R.string.municipality_not_found));
             showSnackBar(errorMsg);
             CustomAutoCompleteTextView controlToFocus = (TextUtils.isEmpty(districtAutocompleteTextBox.getText().toString()) ? districtAutocompleteTextBox : cityAutocompleteTextBox);
             controlToFocus.requestFocus();
@@ -540,7 +540,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void run() {
                 districtAutocompleteTextBox.setOnClickListener(null);
-                districtAutocompleteTextBox.setHint("Loading failed");
+                districtAutocompleteTextBox.setHint(getString(R.string.loading_failed));
                 districtAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_place_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
                 districtAutocompleteTextBox.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
                     @Override
@@ -555,7 +555,7 @@ public class LoginActivity extends BaseActivity {
                 });
 
                 cityAutocompleteTextBox.setOnClickListener(null);
-                cityAutocompleteTextBox.setHint("Loading failed");
+                cityAutocompleteTextBox.setHint(R.string.loading_failed);
                 cityAutocompleteTextBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location_city_black_24dp, 0, R.drawable.ic_refresh_black_24dp, 0);
                 cityAutocompleteTextBox.setDrawableClickListener(new CustomAutoCompleteTextView.DrawableClickListener() {
                     @Override

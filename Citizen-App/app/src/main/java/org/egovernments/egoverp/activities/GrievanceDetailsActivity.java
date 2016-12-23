@@ -338,12 +338,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         }
 
         if (action == null) {
-            showSnackBar("Please select an action");
+            showSnackBar(getString(R.string.please_select_action));
         } else {
             if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
-                showSnackBar("Comment is necessary for this action");
+                showSnackBar(getString(R.string.comment_is_necessary_action));
             } else if (feedback == null) {
-                showSnackBar("Please select a feedback option");
+                showSnackBar(getString(R.string.feedback_rating_info));
             } else {
                 switch (action) {
                     case "Select":
@@ -377,7 +377,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
                             } else {
                                 Intent intent = new Intent();
                                 intent.putExtra(GrievanceActivity.RESULT_MESSAGE,
-                                        isComment && feedbackLayout.getVisibility() == View.VISIBLE ? "Your feedback submitted successfully" : "Grievance updated successfully");
+                                        isComment && feedbackLayout.getVisibility() == View.VISIBLE ? getString(R.string.feedback_submitted) : getString(R.string.grievance_updated));
                                 setResult(RESULT_OK, intent);
                                 finish();
                             }
@@ -515,7 +515,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             }
             else
             {
-                String commentText="Status has been changed into "+comment.getStatus();
+                String commentText = getString(R.string.status_changed_into) + comment.getStatus();
                 ((TextView)commentItemTemplate.findViewById(R.id.comment_text)).setText(commentText);
             }
 

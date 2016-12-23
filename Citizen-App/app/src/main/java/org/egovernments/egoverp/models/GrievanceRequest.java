@@ -52,7 +52,7 @@ import com.google.gson.annotations.SerializedName;
 public class GrievanceRequest {
 
     @Expose
-    @SerializedName("location")
+    @SerializedName("locationId")
     private int locationId;
 
     @Expose

@@ -56,7 +56,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,12 +95,7 @@ public class SOSActivity extends BaseActivity {
         ArrayList<EmergencyContact> emergencyContacts = gson.fromJson(parser.parse(loadJSONFromAsset()), new TypeToken<List<EmergencyContact>>() {
         }.getType());
 
-        Log.v("JSON String", loadJSONFromAsset());
-        Log.v("list", "" + emergencyContacts);
-
         recyclerView.setAdapter(new SOSAdapter(SOSActivity.this, emergencyContacts));
-
-
     }
 
     @Override
@@ -140,7 +134,7 @@ public class SOSActivity extends BaseActivity {
     }
 
     public String loadJSONFromAsset() {
-        String json = null;
+        String json;
         try {
             InputStream is = getApplicationContext().getAssets().open("SOS.json");
             int size = is.available();

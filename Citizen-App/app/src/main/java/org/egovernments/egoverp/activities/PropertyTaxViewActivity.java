@@ -138,28 +138,28 @@ public class PropertyTaxViewActivity extends BaseActivity {
 
                 if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
                 {
-                    showSnackBar("Please fill all payment input details");
+                    showSnackBar(getString(R.string.please_fill_payment_details));
                     return;
                 }
                 else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
                 {
-                    showSnackBar("Please enter valid email address");
+                    showSnackBar(getString(R.string.please_enter_valid_email));
                     return;
                 }
                 else if(etMobileNo.getText().toString().length()<10)
                 {
-                    showSnackBar("Please enter valid mobile no");
+                    showSnackBar(getString(R.string.please_enter_valid_mobile_no));
                     return;
                 }
 
                 int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
                 if(amountToPay<=0)
                 {
-                    showSnackBar("Payment amount should be greater than 0");
+                    showSnackBar(getString(R.string.payment_amount_greater_than_0));
                 }
                 else if(amountToPay> total)
                 {
-                    showSnackBar("Payment amount should not be greater than payable amount (" + Math.round(total) + ")");
+                    showSnackBar(getString(R.string.payment_amount_should_not_greater) + "(" + Math.round(total) + ")");
                 }
                 else
                 {
@@ -247,7 +247,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (code.length() < 10) {
-            showSnackBar("Assessment no. must be at least 10 characters");
+            showSnackBar(getString(R.string.assement_no_10_chars));
             progressBar.setVisibility(View.GONE);
             return;
         }
@@ -267,34 +267,6 @@ public class PropertyTaxViewActivity extends BaseActivity {
                 listBreakups.clear();
             }
         });
-
-        /*ApiController.getAPI(PropertyTaxViewActivity.this)
-                .getPropertyTax(referrerIp,
-                        new PropertyViewRequest(String.format(Locale.getDefault(), "%04d", ulbCode), code, category),
-                        new Callback<PropertyTaxCallback>() {
-                            @Override
-                            public void success(PropertyTaxCallback propertyTaxCallback, Response response) {
-
-
-
-
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-
-                                Toast toast;
-                                if (error.getLocalizedMessage() != null)
-                                    toast = Toast.makeText(PropertyTaxViewActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT);
-                                else                                    toast = Toast.makeText(PropertyTaxViewActivity.this, "An unexpected error occurred", Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.show();
-
-
-
-
-                            }
-                        });*/
     }
 
     private void showPropertyTaxDetails(retrofit2.Response<PropertyTaxCallback> response) {

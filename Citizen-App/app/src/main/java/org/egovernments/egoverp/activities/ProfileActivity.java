@@ -104,7 +104,7 @@ public class ProfileActivity extends BaseActivity {
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
         progressDialog=new ProgressDialog(ProfileActivity.this);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage(getString(R.string.loading_label));
         progressDialog.setCancelable(false);
 
         final View.OnClickListener onClickListener = new View.OnClickListener() {

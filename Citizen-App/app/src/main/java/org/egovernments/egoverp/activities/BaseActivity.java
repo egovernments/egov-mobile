@@ -642,7 +642,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
                 .setTitle(title)
                 .setMessage(message)
                 .setCancelable(false)
-                .setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

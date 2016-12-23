@@ -324,13 +324,13 @@ public class SearchResultActivity extends BaseActivity {
                         }
                         else
                         {
-                            showEmptyMessage(R.drawable.ic_business_black_36dp,"No property found");
+                            showEmptyMessage(R.drawable.ic_business_black_36dp, getString(R.string.no_property_found));
                         }
                     } else {
                         loadPropertiesResultIntoRecyclerView(propertyTaxCallbacks);
                     }
                 } else {
-                    showEmptyMessage(R.drawable.ic_business_black_36dp, "No property found");
+                    showEmptyMessage(R.drawable.ic_business_black_36dp, getString(R.string.no_property_found));
                 }
 
             }
@@ -372,13 +372,13 @@ public class SearchResultActivity extends BaseActivity {
                         }
                         else
                         {
-                            showEmptyMessage(R.drawable.ic_water_tab_black_36dp,"No water connection found");
+                            showEmptyMessage(R.drawable.ic_water_tab_black_36dp, getString(R.string.no_water_connection_found));
                         }
                     } else {
                         loadWaterConnectionsResultIntoRecyclerView(waterTaxCallbacks);
                     }
                 } else {
-                    showEmptyMessage(R.drawable.ic_water_tab_black_36dp, "No water connection found");
+                    showEmptyMessage(R.drawable.ic_water_tab_black_36dp, getString(R.string.no_water_connection_found));
                 }
             }
 
@@ -388,34 +388,14 @@ public class SearchResultActivity extends BaseActivity {
             }
         });
 
-        /*ApiController.getAPI(SearchResultActivity.this)
-                .searchWaterConnection(referrerIp, waterConnectionSearchRequest, new Callback<List<WaterTaxCallback>>() {
-                    @Override
-                    public void success(List<WaterTaxCallback> waterTaxCallbacks, Response response) {
-
-                        if(isExited){
-                            return;
-                        }
-
-
-
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-
-                    }
-
-                });*/
-
     }
 
 
     public void showModifySearchCriteriaDialog()
     {
         new AlertDialog.Builder(SearchResultActivity.this)
-                .setMessage("Your search criteria was returns more than 100 records. so, please re-modify the your search criteria for find the accurate results!")
-                .setPositiveButton("MODIFY", new DialogInterface.OnClickListener() {
+                .setMessage(R.string.search_criteria_100_remodify)
+                .setPositiveButton(R.string.modify, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         SearchResultActivity.this.finish();

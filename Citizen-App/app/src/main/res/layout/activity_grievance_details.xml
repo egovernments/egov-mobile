@@ -117,7 +117,7 @@
                         android:id="@+id/details_complaintNo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="123123"
+                        android:text=""
                         android:textColor="@android:color/white"
                         android:textSize="24sp" />
 
@@ -165,8 +165,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:paddingLeft="5dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingLeft="5dp">
 
                         <TextView
                             android:id="@+id/details_complaint_status_label"
@@ -303,7 +303,7 @@
                                             android:id="@+id/map_location_text"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Loading..."
+                                            android:text="@string/loading_label"
                                             android:textColor="@color/dataLabelColor"
                                             android:textSize="14sp" />
 
@@ -459,8 +459,8 @@
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
                         android:orientation="vertical"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="12dp">
+                        android:paddingBottom="12dp"
+                        android:paddingTop="10dp">
 
                         <Button
                             android:id="@+id/btnmorecomments"
@@ -521,10 +521,10 @@
                                 android:id="@+id/commentbox_label"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="UPDATE COMPLAINT"
+                                android:layout_marginBottom="5dp"
                                 android:layout_marginLeft="15dp"
                                 android:layout_marginTop="15dp"
-                                android:layout_marginBottom="5dp"
+                                android:text="@string/updatecomplaint"
                                 android:textSize="@dimen/field_labelSize" />
 
 
@@ -549,33 +549,33 @@
                                     android:id="@+id/feedback_layout"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:orientation="vertical"
                                     android:gravity="center"
+                                    android:orientation="vertical"
                                     android:visibility="gone">
 
                                     <TextView
+                                        style="@style/TextAppearance.AppCompat.Caption"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/your_rating"
-                                        android:paddingTop="10dp"
                                         android:paddingLeft="10dp"
-                                        style="@style/TextAppearance.AppCompat.Caption" />
+                                        android:paddingTop="10dp"
+                                        android:text="@string/your_rating" />
 
                                     <RatingBar
                                         android:id="@+id/feedbackRatingBar"
-                                        android:theme="@style/EgovRatingBarStyle"
                                         android:layout_width="wrap_content"
-                                        android:stepSize="1"
+                                        android:layout_height="wrap_content"
                                         android:numStars="5"
-                                        android:layout_height="wrap_content" />
+                                        android:stepSize="1"
+                                        android:theme="@style/EgovRatingBarStyle" />
 
                                     <TextView
                                         android:id="@+id/tvRatingBar"
+                                        style="@style/TextAppearance.AppCompat.Caption"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:padding="5dp"
-                                        android:textColor="@color/primaryText"
-                                        style="@style/TextAppearance.AppCompat.Caption" />
+                                        android:textColor="@color/primaryText" />
 
                                 </LinearLayout>
 

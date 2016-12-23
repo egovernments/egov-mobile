@@ -73,25 +73,25 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_archive_black_36dp"
                     android:layout_marginBottom="5dp"
+                    android:src="@drawable/ic_archive_black_36dp"
                     android:tint="@color/iconstintcolor" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/nocomplaints"
                     android:layout_marginBottom="5dp"
+                    android:text="@string/nocomplaints"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/textView3"
+                    style="@style/TextAppearance.AppCompat.Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="(Please click on + circle below to register a complaint)"
-                    style="@style/TextAppearance.AppCompat.Small"
                     android:layout_marginBottom="5dp"
+                    android:text="@string/complaint_create_info"
                     android:textSize="12sp"/>
 
 
