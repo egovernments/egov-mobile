@@ -82,7 +82,6 @@ import com.viewpagerindicator.LinePageIndicator;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.fragments.GrievanceImageFragment;
-import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.Grievance;
 import org.egovernments.egoverp.models.GrievanceComment;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
@@ -260,7 +259,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_closed);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
+                actionsSpinner.setAdapter(adapter);
 
                 commentBoxLabel.setText(getResources().getString(R.string.feedback));
 
@@ -282,9 +281,11 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_open);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(new NothingSelectedSpinnerAdapter(adapter, R.layout.spinner_view_template, GrievanceDetailsActivity.this));
+                actionsSpinner.setAdapter(adapter);
                 commentBoxLabel.setText(getResources().getString(R.string.updatecomplaint));
             }
+
+            actionsSpinner.setSelection(0);
         }
         else
         {
