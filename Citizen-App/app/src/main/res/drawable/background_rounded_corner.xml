@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ /*******************************************************************************
   ~  eGov suite of products aim to improve the internal efficiency,transparency,
   ~      accountability and the service delivery of the government  organizations.
@@ -39,36 +39,10 @@
   ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~  ******************************************************************************/
   -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-<resources>
+    <corners android:radius="2dp" />
+    <solid android:color="@color/yellow" />
 
-    <color name="colorPrimary">#6B4F2C</color>
-    <color name="colorAccent">#F2851F</color>
-    <color name="colorPrimaryDark">#5D4037</color>
-    <color name="blackOverlay">#BF000000</color>
-    <color name="dataLabelColor">#424242</color>
-    <color name="primaryText">#212121</color>
-    <color name="dividerColor">#757575</color>
-    <color name="imageBackground">#ffd6d7d7</color>
-    <color name="dividercolor">#1f000000</color>
-    <color name="iconstintcolor">#757575</color>
-    <color name="green">#4BAE4D</color>
-    <color name="red">#E53935</color>
-    <color name="yellow">#FE9700</color>
-    <color name="blue">#1083c2</color>
-    <color name="navhighlight">#E8E8E8</color>
-
-    <color name="home_color">#899BA6</color>
-    <color name="grievance_color">#F85555</color>
-    <color name="propertytax_color">#009588</color>
-    <color name="vacand_land_color">#F4A460</color>
-    <color name="watertax_color">#40A4DF</color>
-    <color name="citizen_charter_color">#BA68C8</color>
-    <color name="sos_color">#F44336</color>
-    <color name="aboutus_color">#227585</color>
-    <color name="sla_color">#B32356</color>
-    <color name="bpacolor">#795548</color>
-    <color name="bpcolor">#FF8A65</color>
-    <color name="profile_color">#899BA6</color>
-    <color name="logout_color">#899BA6</color>
-</resources>
+</shape>

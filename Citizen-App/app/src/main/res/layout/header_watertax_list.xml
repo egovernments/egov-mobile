@@ -282,7 +282,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:gravity="left|bottom"
                     android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btnbreakups"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/view_breakups"
+                        android:textColor="#2095F3" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -312,21 +322,15 @@
 
         </LinearLayout>
 
-        <LinearLayout
+
+        <Button
+            android:id="@+id/btnViewPaymentHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-
-            <Button
-                android:id="@+id/btnbreakups"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/view_breakups"
-                android:textColor="#2095F3" />
-        </LinearLayout>
+            android:layout_gravity="end"
+            android:layout_margin="5dp"
+            android:text="@string/view_payment_history"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 

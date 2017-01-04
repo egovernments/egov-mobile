@@ -71,7 +71,7 @@ public class WaterTaxCallback {
     private List<TaxDetail> taxDetails = new ArrayList<>();
     @SerializedName("errorDetails")
     @Expose
-    private TaxErrorDetails errorDetails;
+    private ErrorDetail errorDetail;
 
     /**
      * @return The consumerNo
@@ -116,10 +116,10 @@ public class WaterTaxCallback {
     }
 
     /**
-     * @return The errorDetails
+     * @return The errorDetail
      */
-    public TaxErrorDetails getTaxErrorDetails() {
-        return errorDetails;
+    public ErrorDetail getTaxErrorDetails() {
+        return errorDetail;
     }
 
 }

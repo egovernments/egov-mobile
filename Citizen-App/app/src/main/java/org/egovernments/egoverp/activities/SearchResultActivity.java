@@ -313,11 +313,11 @@ public class SearchResultActivity extends BaseActivity {
                     if (propertyTaxCallbacks.size() == 1) {
                         PropertyTaxCallback propertyTaxCallback = propertyTaxCallbacks.get(0);
 
-                        if (propertyTaxCallback.getTaxErrorDetails() == null
+                        if (propertyTaxCallback.getErrorDetail() == null
                                 && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
-                                TextUtils.isEmpty(propertyTaxCallback.getTaxErrorDetails().getErrorMessage())
+                                TextUtils.isEmpty(propertyTaxCallback.getErrorDetail().getErrorMessage())
                                         && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
-                                propertyTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")
+                                propertyTaxCallback.getErrorDetail().getErrorMessage().equals("SUCCESS")
                                         && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
                             SearchResultActivity.this.finish();
                             openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());

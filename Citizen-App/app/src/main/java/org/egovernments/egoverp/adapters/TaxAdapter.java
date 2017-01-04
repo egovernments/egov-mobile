@@ -62,10 +62,12 @@ public class TaxAdapter extends BaseAdapter {
 
     private WeakReference<Context> contextWeakReference;
     private List<TaxDetail> taxDetails;
+    private Context context;
 
     public TaxAdapter(List<TaxDetail> taxDetails, Context context) {
         this.taxDetails = taxDetails;
         this.contextWeakReference = new WeakReference<>(context);
+        this.context = context;
     }
 
     @Override
@@ -113,21 +115,22 @@ public class TaxAdapter extends BaseAdapter {
         //nf1.setMaximumFractionDigits(2);
 
         taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
-        taxViewHolder.taxAmount.setText(nf1.format(taxDetail.getTaxAmount()));
+        taxViewHolder.taxAmount.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTaxAmount())));
         /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
         String chequePenalty="";
         if(taxDetail.getChqBouncePenalty()>0)
         {
-            chequePenalty="(CHEQ.PENALTY : "+nf1.format(taxDetail.getChqBouncePenalty())+")";
+            chequePenalty = "(CHEQ.PENALTY : " + context.getString(R.string.rupee_value, nf1.format(taxDetail.getChqBouncePenalty())) + ")";
         }
-        taxViewHolder.taxPenalty.setText(nf1.format(taxDetail.getPenalty()+taxDetail.getChqBouncePenalty())+chequePenalty);
+        taxViewHolder.taxPenalty.setText(context.getString(R.string.rupee_value,
+                nf1.format(taxDetail.getPenalty() + taxDetail.getChqBouncePenalty()) + chequePenalty));
         /*taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());*/
-        taxViewHolder.taxTotal.setText(nf1.format(taxDetail.getTotalAmount()));
+        taxViewHolder.taxTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
 
         return view;
     }
 
-    public static class TaxViewHolder {
+    private static class TaxViewHolder {
 
         private TextView taxAmount;
         private TextView taxChequePenalty;

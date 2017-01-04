@@ -68,7 +68,7 @@ public class PropertyTaxCallback {
     private List<TaxDetail> taxDetails = new ArrayList<>();
     @SerializedName("errorDetails")
     @Expose
-    private TaxErrorDetails taxErrorDetails;
+    private ErrorDetail errorDetail;
 
     /**
      * @return The assessmentNo
@@ -106,10 +106,10 @@ public class PropertyTaxCallback {
     }
 
     /**
-     * @return The taxErrorDetails
+     * @return The errorDetail
      */
-    public TaxErrorDetails getTaxErrorDetails() {
-        return taxErrorDetails;
+    public ErrorDetail getErrorDetail() {
+        return errorDetail;
     }
 
 }

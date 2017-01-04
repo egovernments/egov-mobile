@@ -123,6 +123,12 @@ public class ApiUrl {
     public final static String SEARCH_WATER_CONNECTION = "/restapi/watercharges/getwatertaxdetailsByOwnerDetails";
     public final static String WATER_TAX_DETAILS = "/restapi/watercharges/getwatertaxdetails";
 
+    /* Payment history for water charges, property tax, vacant land tax*/
+    public final static String PAYMENT_HISTORY_FOR_WC_PT = "/restapi/getPaymentByUserServiceAndConsumerCode";
+
+    /* Download payment receipt file for WC and PT */
+    public final static String DOWNLOAD_PAYMENT_RECEIPT_WC_PT = "/restapi/downloadReceipt";
+
     /**
      *  Building plan approval
      */

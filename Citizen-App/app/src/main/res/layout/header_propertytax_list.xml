@@ -153,7 +153,7 @@
                         android:id="@+id/propertytax_arrears_total_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:text="@string/arrears_total"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -162,7 +162,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:textColor="@color/dataLabelColor"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -178,7 +178,7 @@
                         android:id="@+id/propertytax_arrears_penalty_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:text="@string/arrears_penalty"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -187,7 +187,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:textColor="@color/dataLabelColor"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -210,7 +210,7 @@
                         android:id="@+id/propertytax_current_total_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:text="@string/current_total"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -219,7 +219,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:textColor="@color/dataLabelColor"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -235,7 +235,7 @@
                         android:id="@+id/propertytax_current_penalty_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:text="@string/current_penalty"
                         android:textSize="@dimen/field_labelSize" />
 
@@ -244,7 +244,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:textColor="@color/dataLabelColor"
                         android:textSize="@dimen/data_labelSize" />
 
@@ -269,7 +269,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="left|bottom"
                 android:orientation="vertical">
+
+
+                <Button
+                    android:id="@+id/btnbreakups"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/view_breakups"
+                    android:textColor="#2095F3" />
+
+
             </LinearLayout>
             
             <LinearLayout
@@ -282,7 +294,7 @@
                     android:id="@+id/propertytax_total_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:text="@string/total"
                     android:textSize="@dimen/field_labelSize" />
 
@@ -290,7 +302,7 @@
                     android:id="@+id/propertytax_total"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:textColor="@color/dataLabelColor"
                     android:textSize="24sp" />
 
@@ -301,21 +313,15 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnViewPaymentHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="end"
+            android:layout_margin="5dp"
+            android:text="@string/view_payment_history"
+            android:textColor="@android:color/white" />
 
-
-            <Button
-                android:id="@+id/btnbreakups"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/view_breakups"
-                android:textColor="#2095F3" />
-        </LinearLayout>
 
     </LinearLayout>
 

@@ -58,18 +58,22 @@ import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
 import org.egovernments.egoverp.models.GrievanceLocationAPIResponse;
 import org.egovernments.egoverp.models.GrievanceTypeAPIResponse;
 import org.egovernments.egoverp.models.GrievanceUpdate;
+import org.egovernments.egoverp.models.PaymentHistoryRequest;
 import org.egovernments.egoverp.models.Profile;
 import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.PropertyViewRequest;
+import org.egovernments.egoverp.models.ReceiptDownloadRequest;
 import org.egovernments.egoverp.models.RegisterRequest;
+import org.egovernments.egoverp.models.Transaction;
 import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +82,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -92,6 +97,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 
 public class ApiController {
 
@@ -179,6 +185,7 @@ public class ApiController {
 
     }
 
+    @SuppressWarnings("all")
     public interface APIInterface {
 
         @FormUrlEncoded
@@ -255,6 +262,13 @@ public class ApiController {
         Call<WaterTaxCallback> getWaterTax(@Header("Referer") String referer,
                                            @Body WaterTaxRequest waterTaxRequest);
 
+        @POST(ApiUrl.PAYMENT_HISTORY_FOR_WC_PT)
+        Call<ArrayList<Transaction>> getPaymentHistory(@Header("Referer") String referer, @Body PaymentHistoryRequest paymentHistoryRequest);
+
+        @POST(ApiUrl.DOWNLOAD_PAYMENT_RECEIPT_WC_PT)
+        @Streaming
+        Call<ResponseBody> downloadPaymentReceipt(@Header("Referer") String referer, @Body ReceiptDownloadRequest receiptDownloadRequest);
+
         @GET(ApiUrl.BPA_DETAILS)
         Call<BuildingPlanAPIResponse> getBuildingPlanApprovalDetails(@Path(value = "applicationNo") String applicationNo, @Path(value = "authKey") String authKey);
 
@@ -265,6 +279,7 @@ public class ApiController {
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGOUT)
         Call<JsonObject> logout(@Field("access_token") String access_token);
+
 
         /*@GET(ApiUrl.COMPLAINTS_COUNT_DETAILS)
         void getComplaintCountDetails(@Query(value = "access_token", encodeValue = false) String access_token,

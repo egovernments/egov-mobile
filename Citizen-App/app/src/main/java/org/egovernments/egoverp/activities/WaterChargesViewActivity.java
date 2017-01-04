@@ -47,7 +47,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -67,6 +66,7 @@ import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.KeyboardUtils;
+import org.egovernments.egoverp.models.PaymentHistoryRequest;
 import org.egovernments.egoverp.models.TaxDetail;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
@@ -97,6 +97,7 @@ public class WaterChargesViewActivity extends BaseActivity {
     String consumerNo;
     ConfigManager configManager;
     Call<WaterTaxCallback> waterTaxCall;
+    Button paymentHistoryViewButton;
     private TextView tvConsumerNo;
     private TextView address;
     private TextView locality;
@@ -111,9 +112,6 @@ public class WaterChargesViewActivity extends BaseActivity {
         setContentView(R.layout.activity_water_charges_view);
 
         consumerNo=getIntent().getStringExtra(SearchResultActivity.CONSUMER_NO);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -211,6 +209,7 @@ public class WaterChargesViewActivity extends BaseActivity {
         etMailAddress=(EditText)findViewById(R.id.etMail);
 
         btnBreakups=(Button)findViewById(R.id.btnbreakups);
+        paymentHistoryViewButton = (Button) findViewById(R.id.btnViewPaymentHistory);
 
         btnBreakups.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,6 +219,20 @@ public class WaterChargesViewActivity extends BaseActivity {
                 startActivity(intentViewBreakup);
             }
         });
+
+        paymentHistoryViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentPaymentHistory = new Intent(WaterChargesViewActivity.this, PaymentHistoryActivity.class);
+                intentPaymentHistory.putExtra(PaymentHistoryActivity.REFERRER_IP, configManager.getString(REFERER_IP_CONFIG_KEY));
+                intentPaymentHistory.putExtra(PaymentHistoryActivity.SERVICE_NAME,
+                        PaymentHistoryRequest.ServiceName.WATER_TAX.name());
+                intentPaymentHistory.putExtra(PaymentHistoryActivity.CONSUMER_CODE, consumerNo);
+
+                startActivity(intentPaymentHistory);
+            }
+        });
+
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setElevation(0);
@@ -329,11 +342,11 @@ public class WaterChargesViewActivity extends BaseActivity {
                 etMailAddress.setText(sessionManager.getEmail());
             }
 
-            tvArrearsTotal.setText(nf1.format(arrearsTotal));
-            tvArrearsPenalty.setText(nf1.format(arrearsPenalty));
-            tvCurrentTotal.setText(nf1.format(currentTotal));
-            tvCurrentPenalty.setText(nf1.format(currentPenalty));
-            tvTotal.setText(nf1.format(Math.round(total)));
+            tvArrearsTotal.setText(getString(R.string.rupee_value, nf1.format(arrearsTotal)));
+            tvArrearsPenalty.setText(getString(R.string.rupee_value, nf1.format(arrearsPenalty)));
+            tvCurrentTotal.setText(getString(R.string.rupee_value, nf1.format(currentTotal)));
+            tvCurrentPenalty.setText(getString(R.string.rupee_value, nf1.format(currentPenalty)));
+            tvTotal.setText(getString(R.string.rupee_value, nf1.format(Math.round(total))));
             listBreakups = taxCallback.getTaxDetails();
             waterTaxCardView.setVisibility(View.VISIBLE);
             waterTaxCardView.requestFocus();

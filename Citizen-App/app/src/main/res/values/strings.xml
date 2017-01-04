@@ -92,7 +92,7 @@
     <string name="completed_label">Completed</string>
     <string name="rejected_label">Rejected</string>
     <string name="comment_label">Comment</string>
-    <string name="action_label">Action</string>
+    <string name="action_label">ACTION</string>
     <string name="login_field_empty_prompt">Please enter both username and password</string>
     <string name="processing_msg">Processing request</string>
     <string name="menu_label">Menu</string>
@@ -323,4 +323,10 @@ Links to:</string>
     <string name="modify">MODIFY</string>
     <string name="unexcepted_error">An unexpected error occurred while retrieving server info. Please ensure you are connected to the internet.</string>
     <string name="consumer_code_10_chars">Consumer code must be at least 10 characters</string>
+    <string name="view_payment_history">View Payment History</string>
+    <string name="title_activity_payment_history">Payment History</string>
+    <string name="rupee_value">\u20B9 %1$s</string>
+    <string name="no_payment_history">No payment history</string>
+    <string name="download_start_msg">Download started</string>
+    <string name="permission_denied">Permission Denied, Please allow to proceed !</string>
 </resources>

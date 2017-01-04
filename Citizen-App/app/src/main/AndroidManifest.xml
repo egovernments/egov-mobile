@@ -38,7 +38,7 @@
   ~
   ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~  ******************************************************************************/
-  -->
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.egovernments.egoverp"
@@ -132,16 +132,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GrievanceActivity" />
         </activity>
-
         <activity
             android:name=".activities.GrievanceLocPickerActivity"
             android:label="@string/pick_complaint_location"
             android:parentActivityName=".activities.GrievanceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
-
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity
             android:name=".activities.PropertyTaxSearchActivity"
             android:label="@string/propertytax_label"
@@ -158,20 +155,15 @@
             android:name=".activities.PropertyTaxBreakupsDetails"
             android:label="@string/title_activity_property_tax_breakups_details"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".activities.WaterChargesSearchActivity"
             android:label="@string/watertax_label"
-            android:theme="@style/AppTheme">
-        </activity>
-
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".activities.WaterChargesViewActivity"
             android:label="@string/watertax_label"
             android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".activities.GrievanceDetailsActivity"
             android:label="@string/grievancedetails_label"
@@ -255,7 +247,7 @@
             android:name=".activities.ResetPasswordActivity"
             android:label="@string/title_activity_reset_password"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activities.SOSActivity"
             android:label="@string/sos_label"
@@ -271,6 +263,12 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".activities.PaymentHistoryActivity"
+            android:label="@string/title_activity_payment_history"
+            android:theme="@style/AppTheme"></activity>
+
+        <service android:name=".services.DownloadService" />
 
     </application>
 
