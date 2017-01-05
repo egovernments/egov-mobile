@@ -112,9 +112,10 @@ public class SplashScreenActivity extends Activity {
             public void run() {
                 try {
                     sleep(SPLASH_DISPLAY_LENGTH);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
+
+                    if (SplashScreenActivity.this.isFinishing()) {
+                        return;
+                    }
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -141,10 +142,14 @@ public class SplashScreenActivity extends Activity {
                             }
 
                             startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
-                            finish();
 
                         }
                     });
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    finish();
                 }
             }
         };
@@ -216,6 +221,7 @@ public class SplashScreenActivity extends Activity {
     }
 
     public void launchScreen() {
+
         if (Build.VERSION.SDK_INT < 23) {
             timerThread.start();
         } else {
@@ -223,61 +229,71 @@ public class SplashScreenActivity extends Activity {
                 timerThread.start();
             }
         }
+
     }
 
     void showUpdateAlert(boolean isForceUpdate, String title, String content) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
-        builder.setCancelable(false);
-        builder.setTitle(title);
-        builder.setMessage(content);
-        builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
-                } catch (android.content.ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
-                }
-                finish();
-            }
-        });
 
-        if (!isForceUpdate) {
-            builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+        if (!this.isFinishing()) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+            builder.setCancelable(false);
+            builder.setTitle(title);
+            builder.setMessage(content);
+            builder.setPositiveButton(R.string.alert_button_update_text, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                    launchScreen();
+                    final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(MARKET_URL + appPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PLAYSTORE_URL + appPackageName)));
+                    }
+                    finish();
                 }
             });
+
+            if (!isForceUpdate) {
+                builder.setNegativeButton(R.string.alert_button_notnow_text, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        launchScreen();
+                    }
+                });
+            }
+            builder.create().show();
         }
-        builder.create().show();
     }
 
+    @SuppressWarnings("all")
     void showErrorAlert(String errorTitle, String errorDesc, String btnText, int imageResourceId, int imgColor) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_imagery_notification, null);
-        ((TextView) dialogView.findViewById(R.id.tvTitle)).setText(errorTitle);
-        ((TextView) dialogView.findViewById(R.id.tvContent)).setText(errorDesc);
-        ImageView imageView = (ImageView) dialogView.findViewById(R.id.imgAlert);
-        imageView.setImageResource(imageResourceId);
-        imageView.setColorFilter(imgColor, PorterDuff.Mode.SRC_ATOP);
 
-        Button btnAction = (Button) dialogView.findViewById(R.id.btnAction);
-        btnAction.setText(btnText);
-        btnAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                errorAlertDialog.dismiss();
-                startInitialConditionCheck();
-            }
-        });
+        if (!this.isFinishing()) {
 
-        builder.setView(dialogView);
-        builder.setCancelable(false);
-        errorAlertDialog = builder.create();
-        errorAlertDialog.show();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreenActivity.this);
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.dialog_imagery_notification, null);
+            ((TextView) dialogView.findViewById(R.id.tvTitle)).setText(errorTitle);
+            ((TextView) dialogView.findViewById(R.id.tvContent)).setText(errorDesc);
+            ImageView imageView = (ImageView) dialogView.findViewById(R.id.imgAlert);
+            imageView.setImageResource(imageResourceId);
+            imageView.setColorFilter(imgColor, PorterDuff.Mode.SRC_ATOP);
+
+            Button btnAction = (Button) dialogView.findViewById(R.id.btnAction);
+            btnAction.setText(btnText);
+            btnAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    errorAlertDialog.dismiss();
+                    startInitialConditionCheck();
+                }
+            });
+
+            builder.setView(dialogView);
+            builder.setCancelable(false);
+            errorAlertDialog = builder.create();
+            errorAlertDialog.show();
+        }
 
     }
 

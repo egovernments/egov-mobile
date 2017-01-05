@@ -43,18 +43,17 @@
 package org.egovernments.egoverp.helper;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
@@ -111,7 +110,7 @@ public class AppUtils {
     }
 
 
-    /* PASSWORD LEVEL LOW VALIDATION */
+    /* PASSWORD LEVEL NONE VALIDATION */
     public static boolean checkPasswordNoneLevel(String password) {
         return password.length() >= 6;
     }
@@ -230,21 +229,14 @@ public class AppUtils {
         }
     }
 
-    public static void downloadFileByUrl(Context context, String url, String fileNameWithExt) {
-        DownloadManager downloadmanager;
-        Environment
-                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                .mkdirs();
-
-        downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(url);
-        DownloadManager.Request request = new DownloadManager.Request(uri)
-                .setTitle(fileNameWithExt)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                        fileNameWithExt)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        downloadmanager.enqueue(request);
+    public static boolean checkPermission(Activity activity, String permission) {
+        int result = ContextCompat.checkSelfPermission(activity,
+                permission);
+        return result == PackageManager.PERMISSION_GRANTED;
     }
 
+    public static void requestPermission(Activity activity, String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+    }
 
 }

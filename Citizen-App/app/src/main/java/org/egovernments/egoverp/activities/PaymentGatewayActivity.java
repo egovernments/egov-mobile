@@ -45,7 +45,9 @@ package org.egovernments.egoverp.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -69,11 +71,16 @@ import java.util.regex.Matcher;
 @SuppressLint("SetJavaScriptEnabled")
 public class PaymentGatewayActivity extends AppCompatActivity {
 
+    public static final int REQUEST_CODE_STORAGE_PERMISSION = 154;
     public static String PAYMENT_GATEWAY_URL="paymentGatewayURL";
     ProgressBar progressBar;
     WebView webView;
     String referrerIp;
     SessionManager sessionManager;
+
+    String receiptNo;
+    String referenceNo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,9 +111,33 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.loadUrl(url);
-
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @Nullable String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_STORAGE_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startDownloadReceipt(receiptNo, referenceNo);
+                } else {
+                    Snackbar snackBar = Snackbar.make(findViewById(R.id.contentView), R.string.permission_denied, Snackbar.LENGTH_LONG);
+                    snackBar.show();
+                }
+                break;
+        }
+    }
+
+    private void startDownloadReceipt(String receiptNo, String referenceNo) {
+        String fileName = receiptNo.replaceAll(Matcher.quoteReplacement(File.separator), "-");
+        Intent intent = new Intent(PaymentGatewayActivity.this, DownloadService.class);
+        intent.putExtra(DownloadService.DOWNLOAD_FILE_NAME_WITH_EXT, fileName + ".pdf");
+        intent.putExtra(DownloadService.REFERRER_IP, referrerIp);
+        intent.putExtra(DownloadService.ULB_CODE, String.valueOf(sessionManager.getUrlLocationCode()));
+        intent.putExtra(DownloadService.RECEIPT_NO, receiptNo);
+        intent.putExtra(DownloadService.REFERENCE_NO, referenceNo);
+        startService(intent);
+        Toast.makeText(getApplicationContext(), R.string.download_start_msg, Toast.LENGTH_SHORT).show();
+    }
 
     class PaymentGatewayInterface {
         Context mContext;
@@ -122,15 +153,15 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         @SuppressWarnings("unused")
         @JavascriptInterface
         public void downloadReceipt(String receiptNo, String referenceNo) {
-            String fileName = receiptNo.replaceAll(Matcher.quoteReplacement(File.separator), "-");
-            Intent intent = new Intent(PaymentGatewayActivity.this, DownloadService.class);
-            intent.putExtra(DownloadService.DOWNLOAD_FILE_NAME_WITH_EXT, fileName + ".pdf");
-            intent.putExtra(DownloadService.REFERRER_IP, referrerIp);
-            intent.putExtra(DownloadService.ULB_CODE, String.valueOf(sessionManager.getUrlLocationCode()));
-            intent.putExtra(DownloadService.RECEIPT_NO, receiptNo);
-            intent.putExtra(DownloadService.REFERENCE_NO, referenceNo);
-            startService(intent);
-            Toast.makeText(getApplicationContext(), R.string.download_start_msg, Toast.LENGTH_SHORT).show();
+
+            if (AppUtils.checkPermission(PaymentGatewayActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                startDownloadReceipt(receiptNo, referenceNo);
+            } else {
+                PaymentGatewayActivity.this.receiptNo = receiptNo;
+                PaymentGatewayActivity.this.referenceNo = referenceNo;
+                AppUtils.requestPermission(PaymentGatewayActivity.this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE_PERMISSION);
+            }
         }
 
         @JavascriptInterface
@@ -149,4 +180,6 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         }
 
     }
+
+
 }

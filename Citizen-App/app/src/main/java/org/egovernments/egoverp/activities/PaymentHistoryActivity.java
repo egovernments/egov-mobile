@@ -4,8 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -81,10 +79,10 @@ public class PaymentHistoryActivity extends BaseActivity {
             @Override
             public void click(int pos) {
                 downloadRequestedPos = pos;
-                if (checkPermission()) {
+                if (AppUtils.checkPermission(PaymentHistoryActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     startDownloadReceipt(pos);
                 } else {
-                    requestPermission();
+                    AppUtils.requestPermission(PaymentHistoryActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
                 }
             }
         };
@@ -134,7 +132,6 @@ public class PaymentHistoryActivity extends BaseActivity {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -172,15 +169,6 @@ public class PaymentHistoryActivity extends BaseActivity {
         }
     }
 
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        return result == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

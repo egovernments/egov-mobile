@@ -42,11 +42,15 @@
 
 package org.egovernments.egoverp.activities;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -59,16 +63,21 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.helper.AppUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 public class PdfViewerActivity extends AppCompatActivity {
 
+    public static final int REQUEST_CODE_DOWNLOAD = 548;
     public static String PDF_URL="pdfURL";
     public static String PAGE_TITLE="pageTitle";
 
     ProgressBar progressBar;
+    String url;
+    String contentDisposition;
+    String mimetype;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,37 +115,46 @@ public class PdfViewerActivity extends AppCompatActivity {
                                         String contentDisposition, String mimetype,
                                         long contentLength) {
 
-                try {
-                    url= URLDecoder.decode(url, "UTF-8");
-
-                    Log.v("DOWNLOAD", url);
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                if (AppUtils.checkPermission(PdfViewerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    downloadFile(url, contentDisposition, mimetype);
+                } else {
+                    PdfViewerActivity.this.url = url;
+                    PdfViewerActivity.this.contentDisposition = contentDisposition;
+                    PdfViewerActivity.this.mimetype = mimetype;
+                    AppUtils.requestPermission(PdfViewerActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_DOWNLOAD);
                 }
-
-                final String filename= URLUtil.guessFileName(url, contentDisposition, mimetype);
-
-                DownloadManager.Request request = new DownloadManager.Request(
-                        Uri.parse(url));
-
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                dm.enqueue(request);
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //This is important!
-                intent.addCategory(Intent.CATEGORY_OPENABLE); //CATEGORY.OPENABLE
-                intent.setType("*/*");//any application,any extension
-                Toast.makeText(getApplicationContext(), "Downloading File", //To notify the Client that the file is being downloaded
-                        Toast.LENGTH_LONG).show();
 
             }
         });
 
         webView.loadUrl(url);
+    }
 
+    private void downloadFile(String url, String contentDisposition, String mimetype) {
+        try {
+            url = URLDecoder.decode(url, "UTF-8");
 
+            Log.v("DOWNLOAD", url);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        final String filename = URLUtil.guessFileName(url, contentDisposition, mimetype);
+
+        DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(url));
+
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+        DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        dm.enqueue(request);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //This is important!
+        intent.addCategory(Intent.CATEGORY_OPENABLE); //CATEGORY.OPENABLE
+        intent.setType("*/*");//any application,any extension
+        Toast.makeText(getApplicationContext(), "Downloading File", //To notify the Client that the file is being downloaded
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -147,6 +165,20 @@ public class PdfViewerActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @Nullable String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_DOWNLOAD:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    downloadFile(this.url, this.contentDisposition, this.mimetype);
+                } else {
+                    Snackbar snackBar = Snackbar.make(findViewById(R.id.contentView), R.string.permission_denied, Snackbar.LENGTH_LONG);
+                    snackBar.show();
+                }
+                break;
+        }
     }
 
 
