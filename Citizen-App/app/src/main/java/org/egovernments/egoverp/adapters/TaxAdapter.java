@@ -48,6 +48,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
@@ -102,6 +103,11 @@ public class TaxAdapter extends BaseAdapter {
             /*taxViewHolder.taxRebate = (TextView) view.findViewById(R.id.propertytax_rebate);*/
             taxViewHolder.taxTotal = (TextView) view.findViewById(R.id.propertytax_total);
 
+            taxViewHolder.layoutBreakupDetails = (LinearLayout) view.findViewById(R.id.layoutBreakupDetails);
+            taxViewHolder.layoutInstallmentDetails = (LinearLayout) view.findViewById(R.id.layoutInstallmentDetails);
+            taxViewHolder.layoutTotalFooter = (LinearLayout) view.findViewById(R.id.layoutTotalFooter);
+            taxViewHolder.tvTotal = (TextView) view.findViewById(R.id.tvTotal);
+
             view.setTag(taxViewHolder);
         }
 
@@ -114,29 +120,40 @@ public class TaxAdapter extends BaseAdapter {
         //nf1.setMinimumFractionDigits(2);
         //nf1.setMaximumFractionDigits(2);
 
-        taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
-        taxViewHolder.taxAmount.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTaxAmount())));
-        /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
-        String chequePenalty="";
-        if(taxDetail.getChqBouncePenalty()>0)
+        if (position == taxDetails.size() - 1)
         {
-            chequePenalty = "(CHEQ.PENALTY : " + context.getString(R.string.rupee_value, nf1.format(taxDetail.getChqBouncePenalty())) + ")";
-        }
-        taxViewHolder.taxPenalty.setText(context.getString(R.string.rupee_value,
-                nf1.format(taxDetail.getPenalty() + taxDetail.getChqBouncePenalty()) + chequePenalty));
+            taxViewHolder.layoutInstallmentDetails.setVisibility(View.GONE);
+            taxViewHolder.layoutBreakupDetails.setVisibility(View.GONE);
+            taxViewHolder.layoutTotalFooter.setVisibility(View.VISIBLE);
+            taxViewHolder.tvTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
+        } else {
+            taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
+            taxViewHolder.taxAmount.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTaxAmount())));
+        /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
+            String chequePenalty = "";
+            if (taxDetail.getChqBouncePenalty() > 0) {
+                chequePenalty = "(CHEQ.PENALTY : " + context.getString(R.string.rupee_value, nf1.format(taxDetail.getChqBouncePenalty())) + ")";
+            }
+            taxViewHolder.taxPenalty.setText(context.getString(R.string.rupee_value,
+                    nf1.format(taxDetail.getPenalty() + taxDetail.getChqBouncePenalty()) + chequePenalty));
         /*taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());*/
-        taxViewHolder.taxTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
+            taxViewHolder.taxTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
+        }
 
         return view;
     }
 
     private static class TaxViewHolder {
 
+        private LinearLayout layoutInstallmentDetails;
+        private LinearLayout layoutBreakupDetails;
+        private LinearLayout layoutTotalFooter;
         private TextView taxAmount;
         private TextView taxChequePenalty;
         private TextView taxPenalty;
         private TextView taxInstallment;
         private TextView taxRebate;
         private TextView taxTotal;
+        private TextView tvTotal;
     }
 }

@@ -68,13 +68,17 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
                 }
             });
 
+            holder.tvStatus.setText("SUCCESS");
+
         } else if (transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.FAILED.getValue()) ||
                 transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.CANCELLED.getValue())) {
             color = ContextCompat.getColor(context, R.color.red);
+            holder.tvStatus.setText("FAILED");
+        } else {
+            holder.tvStatus.setText("PENDING FOR RECONSIDERATION");
         }
 
         bgShape.setColor(color);
-        holder.tvStatus.setText(transaction.getReceiptStatus());
     }
 
     @Override

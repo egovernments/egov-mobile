@@ -53,6 +53,7 @@
 
 
     <LinearLayout
+        android:id="@+id/layoutInstallmentDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
@@ -80,6 +81,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutBreakupDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -209,7 +211,6 @@
                 android:textColor="@color/dataLabelColor"
                 android:textSize="@dimen/data_labelSize" />
 
-
         </LinearLayout>
 
 
@@ -232,5 +233,30 @@
         android:layout_height="wrap_content"
         android:textColor="@color/dataLabelColor"
         android:textSize="@dimen/data_labelSize" />-->
+
+
+    <LinearLayout
+        android:id="@+id/layoutTotalFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/total"
+            android:textSize="@dimen/field_labelSize" />
+
+        <TextView
+            android:id="@+id/tvTotal"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textColor="@color/dataLabelColor" />
+
+    </LinearLayout>
 
 </LinearLayout>

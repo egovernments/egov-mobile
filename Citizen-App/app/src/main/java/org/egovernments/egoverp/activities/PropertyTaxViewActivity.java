@@ -355,10 +355,14 @@ public class PropertyTaxViewActivity extends BaseActivity {
                 float scale = getResources().getDisplayMetrics().density;
                 int dpAsPixels = (int) (10 * scale + 0.5f);
                 scrollViewPropertyTax.setPadding(0, 0, 0, dpAsPixels);
+                btnBreakups.setVisibility(View.GONE);
             }
 
             tvOwnerNamePhone.setText(ownersMobileNos);
             listBreakups = propertyTaxCallback.getTaxDetails();
+
+            listBreakups.add(new TaxDetail(total));
+
             propertyTaxDetailsView.setVisibility(View.VISIBLE);
             propertyTaxDetailsView.requestFocus();
 

@@ -67,6 +67,10 @@ public class TaxDetail {
     @Expose
     private Double totalAmount;
 
+    public TaxDetail(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     /**
      * @return The installment
      */
