@@ -97,9 +97,9 @@ public class HomeActivity extends BaseActivity {
 
             configManager = AppUtils.getConfigManager(getApplicationContext());
 
-           /* if (!sessionManager.isTermsAgreed()) {*/
-            showTermsAndCondition();
-            /*}*/
+            if (!sessionManager.isTermsAgreed()) {
+                showTermsAndCondition();
+            }
 
             List<HomeItem> homeItemList = new ArrayList<>();
 
