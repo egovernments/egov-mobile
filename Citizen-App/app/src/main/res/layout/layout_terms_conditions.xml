@@ -42,27 +42,33 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
+        style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/terms_and_condition"
-        style="@style/TextAppearance.AppCompat.Large"
-        android:padding="15dp"/>
+        android:padding="15dp"
+        android:text="@string/terms_and_condition" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:layout_height="match_parent">
 
-        <TextView
+        <WebView
+            android:id="@+id/termsAndConditionWV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/terms_content"/>
+            android:layout_height="match_parent"></WebView>
 
-    </ScrollView>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
 
 </LinearLayout>

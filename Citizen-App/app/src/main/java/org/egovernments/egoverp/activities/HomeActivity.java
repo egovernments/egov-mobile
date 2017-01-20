@@ -58,6 +58,9 @@ import android.transition.Slide;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
 
@@ -77,7 +80,8 @@ import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
-    public static String GRIEVANCE_INFO_BROADCAST="GRIEVANCE-COUNT-INFO";
+    public static String GRIEVANCE_INFO_BROADCAST = "GRIEVANCE-COUNT-INFO";
+    ConfigManager configManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,44 +93,44 @@ public class HomeActivity extends BaseActivity {
             setupWindowAnimations();
         }
 
-        if(!sessionManager.isTermsAgreed())
-        {
+        try {
+
+            configManager = AppUtils.getConfigManager(getApplicationContext());
+
+           /* if (!sessionManager.isTermsAgreed()) {*/
             showTermsAndCondition();
-        }
+            /*}*/
 
-        List<HomeItem> homeItemList = new ArrayList<>();
+            List<HomeItem> homeItemList = new ArrayList<>();
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
-        recyclerView.setHasFixedSize(true);
-        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);*/
+            final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
+            recyclerView.setHasFixedSize(true);
 
-        final int homeGridColumnsCount=getResources().getInteger(R.integer.homegridcolumns);
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(HomeActivity.this, homeGridColumnsCount);
-        recyclerView.setLayoutManager(gridLayoutManager);
+            /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(linearLayoutManager);*/
 
-        CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
-            @Override
-            public void onItemClicked(View view, int position) {
-                HomeItem homeItem = ((HomeAdapter)recyclerView.getAdapter()).getItem(position);
-                String homeItemTitle=homeItem.getTitle();
-                openPage(homeItemTitle);
-            }
-        };
+            final int homeGridColumnsCount = getResources().getInteger(R.integer.homegridcolumns);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(HomeActivity.this, homeGridColumnsCount);
+            recyclerView.setLayoutManager(gridLayoutManager);
 
-        try
-        {
+            CardViewOnClickListener.OnItemClickCallback onItemClickCallback = new CardViewOnClickListener.OnItemClickCallback() {
+                @Override
+                public void onItemClicked(View view, int position) {
+                    HomeItem homeItem = ((HomeAdapter) recyclerView.getAdapter()).getItem(position);
+                    String homeItemTitle = homeItem.getTitle();
+                    openPage(homeItemTitle);
+                }
+            };
 
-            ConfigManager configManager= AppUtils.getConfigManager(getApplicationContext());
 
-            City.Modules disabledModules=null;
-            if(!TextUtils.isEmpty(sessionManager.getDisabledModulesJson()))
-                disabledModules=new Gson().fromJson(sessionManager.getDisabledModulesJson(), City.Modules.class);
+            City.Modules disabledModules = null;
+            if (!TextUtils.isEmpty(sessionManager.getDisabledModulesJson()))
+                disabledModules = new Gson().fromJson(sessionManager.getDisabledModulesJson(), City.Modules.class);
 
-            if(!sessionManager.isProfileNotifyDismissed()) {
+            if (!sessionManager.isProfileNotifyDismissed()) {
 
-                NotificationItem.NotificationCallBackInterface notificationCallBackInterface=new NotificationItem.NotificationCallBackInterface() {
+                NotificationItem.NotificationCallBackInterface notificationCallBackInterface = new NotificationItem.NotificationCallBackInterface() {
                     @Override
                     public void positiveButtonClicked(int position) {
                         startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
@@ -145,9 +149,8 @@ public class HomeActivity extends BaseActivity {
             }
 
             //check for pgr module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.PGR,"true"))
-                    && (disabledModules == null || !disabledModules.isPgrDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.PGR, "true"))
+                    && (disabledModules == null || !disabledModules.isPgrDisable())) {
                 HomeItem grievanceItem = new HomeItem(getString(R.string.grievances_label), getString(R.string.grievances_label2), R.drawable.ic_archive_black_36dp,
                         "File grievances or review and update previously filed grievances", ContextCompat.getColor(HomeActivity.this, R.color.grievance_color));
                 //grievanceItem.setGrievanceItem(true);
@@ -155,40 +158,35 @@ public class HomeActivity extends BaseActivity {
             }
 
             //check for property tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.PROPERTY_TAX,"true"))
-                    && (disabledModules == null || !disabledModules.isPropertyTaxDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.PROPERTY_TAX, "true"))
+                    && (disabledModules == null || !disabledModules.isPropertyTaxDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.propertytax_label), getString(R.string.propertytax_label2), R.drawable.ic_business_black_36dp,
                         "View property tax details for an assessment number", ContextCompat.getColor(HomeActivity.this, R.color.propertytax_color)));
             }
 
             //check for vacant land tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.VACANT_LAND_TAX,"true"))
-                    && (disabledModules == null || !disabledModules.isVacantLandTaxDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.VACANT_LAND_TAX, "true"))
+                    && (disabledModules == null || !disabledModules.isVacantLandTaxDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.vacantlandtax_label), getString(R.string.vacantlandtax_label2), R.drawable.ic_vacant_land_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.vacand_land_color)));
             }
 
             //check for water tax module enabled or not
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.WATER_CHARGE,"true") )
-                    && (disabledModules == null || !disabledModules.isWaterChargeDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.WATER_CHARGE, "true"))
+                    && (disabledModules == null || !disabledModules.isWaterChargeDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.watertax_label), getString(R.string.watertax_label2), R.drawable.ic_water_tab_black_36dp,
                         "View water tax details for a consumer code", ContextCompat.getColor(HomeActivity.this, R.color.watertax_color)));
             }
 
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.BPA,"true"))
-                    && (disabledModules == null || !disabledModules.isBPADisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.BPA, "true"))
+                    && (disabledModules == null || !disabledModules.isBPADisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.building_plan_label), getString(R.string.building_plan_label2),
                         R.drawable.ic_town_plan_36dp, "", ContextCompat.getColor(HomeActivity.this, R.color.bpacolor)));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.BPS,"true"))
-                    && (disabledModules == null || !disabledModules.isBPSDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.BPS, "true"))
+                    && (disabledModules == null || !disabledModules.isBPSDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.building_penalization_label), getString(R.string.building_penalization_label2), R.drawable.ic_location_city_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.bpcolor)));
             }
@@ -199,73 +197,65 @@ public class HomeActivity extends BaseActivity {
                         "", ContextCompat.getColor(HomeActivity.this, R.color.birthdeathcolor)));
             }*/
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.CITIZEN_CHARTER,"true"))
-                    && (disabledModules == null || !disabledModules.isCitizenCharterDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.CITIZEN_CHARTER, "true"))
+                    && (disabledModules == null || !disabledModules.isCitizenCharterDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.citizen_charter_label), getString(R.string.citizen_charter_label2), R.drawable.ic_grid_on_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.citizen_charter_color)));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.SOS,"true"))
-                    && (disabledModules == null || !disabledModules.isSOSDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.SOS, "true"))
+                    && (disabledModules == null || !disabledModules.isSOSDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.sos_label), getString(R.string.sos_label2), R.drawable.ic_call_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.sos_color)));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.SLA,"true"))
-                    && (disabledModules == null || !disabledModules.isSLADisable()))
-            {
-                homeItemList.add(new HomeItem(getString(R.string.sla_label),getString(R.string.sla_label2), R.drawable.ic_access_time_white_36dp,
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.SLA, "true"))
+                    && (disabledModules == null || !disabledModules.isSLADisable())) {
+                homeItemList.add(new HomeItem(getString(R.string.sla_label), getString(R.string.sla_label2), R.drawable.ic_access_time_white_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.sla_color)));
             }
 
-            if(Boolean.valueOf((String)configManager.get(Config.Modules.ABOUT_US,"true"))
-                    && (disabledModules == null || !disabledModules.isAboutUsDisable()))
-            {
+            if (Boolean.valueOf((String) configManager.get(Config.Modules.ABOUT_US, "true"))
+                    && (disabledModules == null || !disabledModules.isAboutUsDisable())) {
                 homeItemList.add(new HomeItem(getString(R.string.aboutus_label), getString(R.string.aboutus_label2), R.drawable.ic_info_black_36dp,
                         "", ContextCompat.getColor(HomeActivity.this, R.color.aboutus_color)));
             }
 
-        }
-        catch (IOException ex)
-        {
+            final HomeAdapter homeAdapter = new HomeAdapter(HomeActivity.this, homeItemList, onItemClickCallback);
+            recyclerView.setAdapter(homeAdapter);
+
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (homeAdapter.getItem(position).isNotificationItem()) {
+                        return homeGridColumnsCount;
+                    }
+                    return 1;
+                }
+            });
+
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        final HomeAdapter homeAdapter = new HomeAdapter(HomeActivity.this, homeItemList, onItemClickCallback);
-        recyclerView.setAdapter(homeAdapter);
-
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if(homeAdapter.getItem(position).isNotificationItem()){
-                  return homeGridColumnsCount;
-                }
-                return 1;
-            }
-        });
-
     }
 
-    public void showTermsAndCondition()
-    {
+    public void showTermsAndCondition() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setCancelable(false);
 
         final ViewGroup nullParent = null;
         View viewTermsAndConditions = getLayoutInflater().inflate(R.layout.layout_terms_conditions, nullParent, false);
-
-       /* wv.setWebViewClient(new WebViewClient() {
+        final ProgressBar progressBar = (ProgressBar) viewTermsAndConditions.findViewById(R.id.progressBar);
+        WebView termsAndConditionWV = (WebView) viewTermsAndConditions.findViewById(R.id.termsAndConditionWV);
+        termsAndConditionWV.loadUrl(configManager.getString(Config.APP_TERMS_AND_CONS_URL));
+        termsAndConditionWV.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
             }
-        });*/
-
+        });
         alert.setView(viewTermsAndConditions);
-
         alert.setPositiveButton(R.string.i_agree, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
@@ -273,14 +263,12 @@ public class HomeActivity extends BaseActivity {
                 dialog.dismiss();
             }
         });
-
         alert.setNegativeButton(R.string.dont_agree, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
                 finish();
             }
         });
-
         alert.show();
     }
 

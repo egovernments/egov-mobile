@@ -61,6 +61,7 @@ public class Config {
     public static final String APP_PAYMENT_GATEWAY_WATER_TAX = "app.payment.gateway.water.tax";
     public final static String ACCOUNT_RECOVERY_MESSAGE = "Your OTP for recovering password is";
     public final static String ACCOUNT_VERIFICATION_MESSAGE = "Use OTP";
+    public final static String APP_TERMS_AND_CONS_URL = "app.termsAndConditionUrl";
 
     public class Modules
     {
