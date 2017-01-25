@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ /*******************************************************************************
   ~  eGov suite of products aim to improve the internal efficiency,transparency,
   ~      accountability and the service delivery of the government  organizations.
@@ -40,18 +39,50 @@
   ~      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~  ******************************************************************************/
   -->
-
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tasks_list"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    android:clipToPadding="false"
-    android:scrollbars="vertical"
-    android:scrollbarStyle="outsideOverlay"
-    android:background="@color/pagebgcolor"
-    android:listSelector="@android:color/transparent"
-    />
+    android:orientation="vertical">
+
+
+    <!--<RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:gravity="center">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="ALL"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="NORMAL"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="10dp"
+            android:text="HIGH"/>
+
+    </RadioGroup>-->
+
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tasks_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/pagebgcolor"
+        android:clipToPadding="false"
+        android:listSelector="@android:color/transparent"
+        android:padding="8dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical" />
+</LinearLayout>
 
     <!--android:paddingTop="200dp"-->

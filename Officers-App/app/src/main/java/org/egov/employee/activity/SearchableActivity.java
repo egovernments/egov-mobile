@@ -84,6 +84,7 @@ import retrofit2.Response;
 
 public class SearchableActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
+    public static final String XY_LOCATIONS = "xyLocations";
     CoordinatorLayout rootLayout;
     SearchView searchView;
     SearchRunnable searchRunnable;
@@ -126,7 +127,7 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
             public void onClick(Task task) {
 
                 Intent openTaskScreen=new Intent(SearchableActivity.this, ViewTask.class);
-                openTaskScreen.putExtra("task", task);
+                openTaskScreen.putExtra(ViewTask.TASK, task);
                 startActivityForResult(openTaskScreen, Homepage.ACTION_UPDATE_REQUIRED);
 
             }
@@ -137,7 +138,7 @@ public class SearchableActivity extends BaseActivity implements SearchView.OnQue
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startAnimation(Bundle savedInstanceState)
     {
-            final int xyLocations[]= getIntent().getIntArrayExtra("xyLocations");
+        final int xyLocations[] = getIntent().getIntArrayExtra(XY_LOCATIONS);
             if (savedInstanceState == null) {
                 rootLayout.setVisibility(View.INVISIBLE);
                 final ViewTreeObserver viewTreeObserver = rootLayout.getViewTreeObserver();

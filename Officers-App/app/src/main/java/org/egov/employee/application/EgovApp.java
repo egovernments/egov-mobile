@@ -45,8 +45,13 @@ package org.egov.employee.application;
 import android.app.Application;
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.egov.employee.config.AppConfigReader;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -54,14 +59,18 @@ import java.util.Properties;
  */
 public class EgovApp extends Application {
 
-    private static EgovApp appinstance;
-    private Context context;
-    private static Properties appConfig;
-
     private static final String KEY_MULTICITY="app.type.ismulticity";
     private static final String KEY_URL_RESOURCE="app.resource.serverurl";
     private static final String KEY_URL_TIMEOUT="app.refresh.serverurl.days";
     private static final String KEY_APP_VERSION_CHECK="app.version.check";
+    private static final String KEY_GRIEVANCE_PRIORITY_LIST = "app.grievance.priority.json";
+    private static EgovApp appinstance;
+    private static Properties appConfig;
+    private Context context;
+
+    public static EgovApp getInstance() {
+        return appinstance;
+    }
 
     @Override
     public void onCreate() {
@@ -78,11 +87,6 @@ public class EgovApp extends Application {
             AppConfigReader appConfigReader = new AppConfigReader(context);
             appConfig = appConfigReader.getProperties("app.conf");
         }
-    }
-
-    public static EgovApp getInstance()
-    {
-        return appinstance;
     }
 
     public Boolean isMultiCitySupport()
@@ -103,6 +107,12 @@ public class EgovApp extends Application {
     public String getAppVersionCheckApiUrl()
     {
         return appConfig.get(KEY_APP_VERSION_CHECK).toString();
+    }
+
+    public HashMap<String, String> getGrievancePriorityList() {
+        Type type = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        return new Gson().fromJson(appConfig.get(KEY_GRIEVANCE_PRIORITY_LIST).toString(), type);
     }
 
 }

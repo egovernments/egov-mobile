@@ -44,7 +44,7 @@ package org.egov.employee.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,13 +54,18 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.egov.employee.adapter.TasksAdapter;
 import org.egov.employee.api.ApiController;
+import org.egov.employee.application.EgovApp;
 import org.egov.employee.config.NavMenuItems;
-import org.egov.employee.controls.SlidingTabLayout;
 import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
+
+import java.util.HashMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import offices.org.egov.egovemployees.R;
 import retrofit2.Call;
@@ -74,7 +79,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     public LinearLayout inboxEmptyInfo;
     ViewPager pager;
     TasksAdapter adapter;
-    SlidingTabLayout tabs;
+    TabLayout tabs;
     String WORK_FLOW_TYPE_COMPLAINT="Complaint";
 
     @Override
@@ -89,18 +94,18 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         inboxEmptyInfo.setVisibility(View.GONE);
 
         // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs = (TabLayout) findViewById(R.id.tabs);
         //tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
-        tabs.setCustomTabView(R.layout.custom_tabstrip, R.id.tabtext, R.id.badgetext);
+        /*tabs.setCustomTabView(R.layout.custom_tabstrip, R.id.tabtext, R.id.badgetext);*/
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+        /*tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return ContextCompat.getColor(getApplicationContext(), R.color.colorAccent);
             }
-        });
+        });*/
 
         getWorkListCategory();
 
@@ -146,9 +151,16 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         for(int i=0;i<responseArray.size();i++)
         {
             JsonObject workflowType = responseArray.get(i).getAsJsonObject();
-            if(workflowType.get("workflowtype").getAsString().equals(WORK_FLOW_TYPE_COMPLAINT))
+            if (workflowType.get(TasksAdapter.WORK_FLOW_TYPE).getAsString().equals(WORK_FLOW_TYPE_COMPLAINT))
             {
-                jsonWorkflowTypes.add(workflowType);
+                setTitle("Grievances (" + workflowType.get(TasksAdapter.INBOX_LIST_COUNT).getAsInt() + ")");
+                HashMap<String, String> grievancePriority = EgovApp.getInstance().getGrievancePriorityList();
+                SortedSet<String> keys = new TreeSet<String>(grievancePriority.keySet());
+                for (String key : keys) {
+                    workflowType.addProperty(TasksAdapter.PRIORITY_NAME, key);
+                    workflowType.addProperty(TasksAdapter.PRIORITY_VALUE, grievancePriority.get(key));
+                    jsonWorkflowTypes.add(new JsonParser().parse(workflowType.toString()).getAsJsonObject());
+                }
                 break;
             }
         }
@@ -163,7 +175,8 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
         // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        /*tabs.setViewPager(pager);*/
+        tabs.setupWithViewPager(pager);
     }
 
 
@@ -175,7 +188,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     @Override
     public void onTaskItemClicked(Task clickedTask) {
         Intent openTaskScreen=new Intent(Homepage.this, ViewTask.class);
-        openTaskScreen.putExtra("task", clickedTask);
+        openTaskScreen.putExtra(ViewTask.TASK, clickedTask);
         startActivityForResult(openTaskScreen, ACTION_UPDATE_REQUIRED);
     }
 
@@ -211,9 +224,8 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
                 searchActionBarLocation[1] = searchActionBarLocation[1]+menuButton.getHeight() / 2;
             }
 
-
             Intent searchScreen=new Intent(Homepage.this, SearchableActivity.class);
-            searchScreen.putExtra("xyLocations", searchActionBarLocation);
+            searchScreen.putExtra(SearchableActivity.XY_LOCATIONS, searchActionBarLocation);
             startActivity(searchScreen);
         }
 

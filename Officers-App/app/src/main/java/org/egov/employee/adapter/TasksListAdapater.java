@@ -42,6 +42,10 @@
 
 package org.egov.employee.adapter;
 
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -66,11 +70,11 @@ import offices.org.egov.egovemployees.R;
  */
 public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final String PRIORITY_STR_FORMAT = "Priority is";
+    static TasksItemClickListener.TaskItemClickedIndex tasksItemListener;
     private final int VIEW_ITEM = 1;
     private final int VIEW_PROG = 0;
-
     List<Task> tasks;
-    static TasksItemClickListener.TaskItemClickedIndex tasksItemListener;
 
     public TasksListAdapater(List<Task> tasks, TasksItemClickListener.TaskItemClickedIndex tasksItemClickListener)
     {
@@ -82,7 +86,6 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         RecyclerView.ViewHolder vh=null;
         if(viewType==VIEW_ITEM) {
-
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_task_list, viewGroup, false);
             vh = new TaskViewHolder(v);
         }
@@ -126,14 +129,43 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
             //grievance list item condition for displaying complaint no instead of nature of task
             if(taskName.toUpperCase().equals("GRIEVANCE"))
             {
-                itemDetails=itemDetails.substring(itemDetails.indexOf("for"),itemDetails.length());
+                int endIdx = itemDetails.indexOf(PRIORITY_STR_FORMAT) > -1 ? itemDetails.indexOf(PRIORITY_STR_FORMAT) : itemDetails.length();
+
+                if (endIdx < itemDetails.length()) {
+                    taskViewHolder.tvPriority.setVisibility(View.VISIBLE);
+                    String priorityStr = itemDetails.substring(itemDetails.indexOf(PRIORITY_STR_FORMAT), itemDetails.length());
+                    priorityStr = priorityStr.replace(PRIORITY_STR_FORMAT, "").trim();
+                    taskViewHolder.tvPriority.setText(priorityStr);
+
+                    int priorityColor = R.color.bluecolor;
+
+                    if (priorityStr.toLowerCase().equals("high")) {
+                        priorityColor = R.color.redcolor;
+                        taskViewHolder.tvPriority.setText("Pri");
+                    } else if (priorityStr.toLowerCase().equals("normal"))
+                        priorityColor = R.color.bluecolor;
+                    else if (priorityStr.toLowerCase().equals("low"))
+                        priorityColor = R.color.greencolor;
+
+                    Drawable clone = taskViewHolder.tvPriority.getBackground().getConstantState().newDrawable();
+                    DrawableCompat.setTint(clone, ContextCompat.getColor(taskViewHolder.tvPriority.getContext(), priorityColor));
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                        taskViewHolder.tvPriority.setBackground(clone);
+                    else
+                        taskViewHolder.tvPriority.setBackgroundDrawable(clone);
+
+                }
+
+                itemDetails = itemDetails.substring(itemDetails.indexOf("for"), endIdx);
+
             }
 
-            taskViewHolder.tvnatureoftask.setText(currentTask.getRefNum());
-            taskViewHolder.tvsender.setText(currentTask.getCitizenName()+"("+ currentTask.getCitizenPhoneno() +")");
-            taskViewHolder.tvtaskdatetime.setText(taskDate);
-            taskViewHolder.tvtaskdetails.setText(itemDetails);
-            taskViewHolder.tvtaskstatus.setText(currentTask.getStatus());
+            taskViewHolder.tvNatureOfTask.setText(currentTask.getRefNum());
+            taskViewHolder.tvSender.setText(currentTask.getCitizenName() + "(" + currentTask.getCitizenPhoneno() + ")");
+            taskViewHolder.tvTaskDateTime.setText(taskDate);
+            taskViewHolder.tvTaskDetails.setText(itemDetails);
+            taskViewHolder.tvTaskStatus.setText(currentTask.getStatus());
         }
         else
         {
@@ -150,46 +182,6 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return tasks.size();
-    }
-
-    public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tvnatureoftask;
-        public TextView tvsender;
-        public TextView tvtaskdatetime;
-        public TextView tvtaskdetails;
-        public TextView tvtaskstatus;
-        public CardView cardView;
-        public View itemView;
-
-        TaskViewHolder(View itemView)
-        {
-            super(itemView);
-            this.itemView=itemView;
-            cardView=(CardView)itemView.findViewById(R.id.taskcvlist);
-            cardView.setOnClickListener(this);
-            tvnatureoftask=(TextView)itemView.findViewById(R.id.tvnatureoftsk);
-            tvsender=(TextView)itemView.findViewById(R.id.tvsender);
-            tvtaskdatetime=(TextView)itemView.findViewById(R.id.tvdate);
-            tvtaskdetails=(TextView)itemView.findViewById(R.id.tvdetails);
-            tvtaskstatus=(TextView)itemView.findViewById(R.id.tvstatus);
-        }
-
-        @Override
-        public void onClick(View v) {
-            tasksItemListener.onTaskItemClickedIdx(tasks.get(getAdapterPosition()));
-        }
-
-    }
-
-    public static class ProgressViewHolder extends RecyclerView.ViewHolder{
-
-        ProgressBar progressBar;
-        ProgressViewHolder(View itemView)
-        {
-            super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
-        }
-
     }
 
     public String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
@@ -228,5 +220,46 @@ public class TasksListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public static class ProgressViewHolder extends RecyclerView.ViewHolder {
+
+        ProgressBar progressBar;
+
+        ProgressViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+        }
+
+    }
+
+    public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private TextView tvNatureOfTask;
+        private TextView tvSender;
+        private TextView tvTaskDateTime;
+        private TextView tvTaskDetails;
+        private TextView tvTaskStatus;
+        private TextView tvPriority;
+        private CardView cardView;
+        private View itemView;
+
+        TaskViewHolder(View itemView) {
+            super(itemView);
+            this.itemView = itemView;
+            cardView = (CardView) itemView.findViewById(R.id.taskcvlist);
+            cardView.setOnClickListener(this);
+            tvNatureOfTask = (TextView) itemView.findViewById(R.id.tvnatureoftsk);
+            tvSender = (TextView) itemView.findViewById(R.id.tvsender);
+            tvTaskDateTime = (TextView) itemView.findViewById(R.id.tvdate);
+            tvTaskDetails = (TextView) itemView.findViewById(R.id.tvdetails);
+            tvTaskStatus = (TextView) itemView.findViewById(R.id.tvstatus);
+            tvPriority = (TextView) itemView.findViewById(R.id.tvPriority);
+        }
+
+        @Override
+        public void onClick(View v) {
+            tasksItemListener.onTaskItemClickedIdx(tasks.get(getAdapterPosition()));
+        }
+
     }
 }

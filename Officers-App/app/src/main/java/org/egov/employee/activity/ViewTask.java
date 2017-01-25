@@ -105,6 +105,7 @@ import retrofit2.Response;
 
 public class ViewTask extends BaseActivity {
 
+    public static final String TASK = "task";
     private static final int REQUEST_CODE_ASK_PERMISSION_CALL = 115;
     private static final int PICK_PHOTO_FROM_CAMERA = 111;
     private static final int PICK_PHOTO_FROM_GALLERY = 222;
@@ -152,7 +153,7 @@ public class ViewTask extends BaseActivity {
 
     @Override
     protected int getLayoutResource() {
-        viewTask=(Task) getIntent().getSerializableExtra("task");
+        viewTask = (Task) getIntent().getSerializableExtra(TASK);
         if(viewTask.getTask().toUpperCase().equals(GrievanceModuleName))
         {
             return R.layout.activity_view_complaint;

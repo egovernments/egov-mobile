@@ -55,6 +55,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.egov.employee.activity.Homepage;
+import org.egov.employee.adapter.TasksAdapter;
 import org.egov.employee.adapter.TasksListAdapater;
 import org.egov.employee.api.ApiController;
 import org.egov.employee.data.Task;
@@ -82,6 +83,7 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
     List<Task> tasks;
     String workflowtype;
     String accessToken;
+    String priority;
     int totalItemsCount;
     int pagePerItems=10;
     int currentPage=1;
@@ -102,7 +104,7 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerviewTasks.setLayoutManager(layoutManager);
 
-        recyclerviewTasks.setOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
+        recyclerviewTasks.addOnScrollListener(new EndlessRecyclerOnScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int current_page) {
                 //add progress item
@@ -113,38 +115,14 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
 
         if(getUserVisibleHint() && !_areItemsLoaded)
         {
-            workflowtype = getArguments().getString("workFlowType");
-            totalItemsCount = getArguments().getInt("itemsCount");
-            accessToken=getArguments().getString("accessToken");
+            workflowtype = getArguments().getString(TasksAdapter.WORK_FLOW_TYPE);
+            totalItemsCount = getArguments().getInt(TasksAdapter.ITEMS_COUNT);
+            accessToken = getArguments().getString(TasksAdapter.ACCESS_TOKEN);
+            priority = getArguments().getString(TasksAdapter.PRIORITY_VALUE);
             tasks = new ArrayList<>();
             _areItemsLoaded=true;
             loadInboxListItems();
         }
-
-
-        /* TasksItemClickListener listener=new TasksItemClickListener() {
-            @Override
-            public void onTaskItemClicked(int position) {
-                if(mActivity!=null)
-                startActivity(new Intent(mActivity, ViewTask.class));
-            }
-        };*/
-
-        //recyclerviewTasks.setAdapter(new TasksListAdapater(tasks, this));
-
-
-
-        /*recyclerviewTasks.setOnScrollListener(new HidingScrollListener() {
-            @Override
-            public void onHide() {
-                hideViews();
-            }
-
-            @Override
-            public void onShow() {
-                showViews();
-            }
-        });*/
 
         return v;
     }
@@ -155,9 +133,10 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
         super.setUserVisibleHint(isVisibleToUser);
         if(isVisibleToUser && !_areItemsLoaded && getActivity()!=null)
         {
-            workflowtype = getArguments().getString("workFlowType");
-            totalItemsCount = getArguments().getInt("itemsCount");
-            accessToken=getArguments().getString("accessToken");
+            workflowtype = getArguments().getString(TasksAdapter.WORK_FLOW_TYPE);
+            totalItemsCount = getArguments().getInt(TasksAdapter.ITEMS_COUNT);
+            accessToken = getArguments().getString(TasksAdapter.ACCESS_TOKEN);
+            priority = getArguments().getString(TasksAdapter.PRIORITY_VALUE);
             tasks = new ArrayList<>();
             _areItemsLoaded=true;
             loadInboxListItems();
@@ -198,7 +177,8 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
 
             if(((Homepage)getActivity()).checkInternetConnectivity(TasksFragment.this, currentMethodName)) {
 
-                Call<TaskAPIResponse> getInboxList = ApiController.getAPI(getActivity().getApplicationContext()).getInboxItemsByCategory(workflowtype, ((currentPage - 1) * pagePerItems), pagePerItems, accessToken);
+                Call<TaskAPIResponse> getInboxList = ApiController.getAPI(getActivity().getApplicationContext()).getInboxItemsByCategory(workflowtype,
+                        ((currentPage - 1) * pagePerItems), pagePerItems, priority, accessToken);
 
                 Callback<TaskAPIResponse> inboxListCallback = new Callback<TaskAPIResponse>() {
 
@@ -238,14 +218,6 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
 
     }
 
-
-    /*private void hideViews() {
-        appBarLayout.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-    }
-
-    private void showViews() {
-        appBarLayout.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
-    }*/
 
     @Override
     public void onAttach(Activity activity) {

@@ -49,6 +49,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.egov.employee.fragment.TasksFragment;
 
@@ -57,8 +58,15 @@ import org.egov.employee.fragment.TasksFragment;
  */
 public class TasksAdapter extends FragmentStatePagerAdapter {
 
-    JsonArray tasksList;
+    public static final String WORK_FLOW_TYPE_NAME = "workflowtypename";
+    public static final String PRIORITY_NAME = "priorityName";
+    public static final String WORK_FLOW_TYPE = "workflowtype";
+    public static final String ITEMS_COUNT = "itemsCount";
+    public static final String ACCESS_TOKEN = "accessToken";
+    public static final String PRIORITY_VALUE = "priorityValue";
+    public static final String INBOX_LIST_COUNT = "inboxlistcount";
     private static String TAG=TasksAdapter.class.getName().toString();
+    JsonArray tasksList;
     private String accessToken;
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
@@ -73,9 +81,13 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle bundle = new Bundle();
-        bundle.putString("workFlowType", tasksList.get(position).getAsJsonObject().get("workflowtype").getAsString());
-        bundle.putInt("itemsCount", tasksList.get(position).getAsJsonObject().get("inboxlistcount").getAsInt());
-        bundle.putString("accessToken", accessToken);
+
+        JsonObject workFlowJsonObj = tasksList.get(position).getAsJsonObject();
+
+        bundle.putString(WORK_FLOW_TYPE, workFlowJsonObj.get(WORK_FLOW_TYPE).getAsString());
+        bundle.putInt(ITEMS_COUNT, workFlowJsonObj.get(INBOX_LIST_COUNT).getAsInt());
+        bundle.putString(ACCESS_TOKEN, accessToken);
+        bundle.putString(PRIORITY_VALUE, workFlowJsonObj.get(PRIORITY_VALUE).getAsString());
 
         TasksFragment taskstab = new TasksFragment();
         taskstab.setArguments(bundle);
@@ -89,7 +101,7 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         try
         {
-            return tasksList.get(position).getAsJsonObject().get("workflowtypename").getAsString().toUpperCase();
+            return getTitle(position);
         }
         catch (Exception ex)
         {
@@ -108,6 +120,14 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
             Log.e(TAG, ex.toString());
         }
         return null;
+    }
+
+    String getTitle(int position) {
+        JsonObject jsonObject = tasksList.get(position).getAsJsonObject();
+        if (jsonObject.has(PRIORITY_NAME)) {
+            return jsonObject.get(PRIORITY_NAME).getAsString().toUpperCase();
+        }
+        return jsonObject.get(WORK_FLOW_TYPE_NAME).getAsString().toUpperCase();
     }
 
     // This method return the Number of tabs for the tabs Strip
