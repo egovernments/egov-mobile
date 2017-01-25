@@ -57,7 +57,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import org.egov.employee.adapter.GrievanceListAdapater;
+import org.egov.employee.adapter.GrievanceListAdapter;
 import org.egov.employee.api.ApiController;
 import org.egov.employee.data.Grievance;
 import org.egov.employee.data.GrievanceAPIResponse;
@@ -80,14 +80,14 @@ import retrofit2.Response;
  */
 public class GrievanceFragment extends android.support.v4.app.Fragment {
 
-    public GrievanceListAdapater grievanceAdapter;
+    public GrievanceListAdapter grievanceAdapter;
     GrievanceItemInterface grievanceItemInterface;
     int position;
     EndlessRecyclerOnScrollListener onScrollListener;
     String accessToken;
     String pageTitle;
     Bundle downImageArgs;
-    private List<Grievance> grievanceList=new ArrayList<>();
+    private List<Grievance> grievanceList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private CardView cvNoComplaints;
@@ -96,13 +96,12 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
     private boolean loading = true;
     private boolean isPaginationEnded = false;
 
-    public static GrievanceFragment instantiateItem(String access_token, String title, int position, String imageDownloadUrl) {
+    public static GrievanceFragment instantiateItem(String access_token, String title, int position) {
         GrievanceFragment imageFragment = new GrievanceFragment();
         Bundle args = new Bundle();
         args.putString("access_token", access_token);
         args.putString("title", title);
         args.putInt("position", position);
-        args.putString("downImgUrl", imageDownloadUrl);
         imageFragment.setArguments(args);
         return imageFragment;
     }
@@ -110,12 +109,10 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        {
-            if(progressBar!=null)
-            {
-                if(progressBar.getVisibility()==View.VISIBLE)
-                refreshGrievanceList();
+        if (isVisibleToUser) {
+            if (progressBar != null) {
+                if (progressBar.getVisibility() == View.VISIBLE)
+                    refreshGrievanceList();
             }
         }
     }
@@ -127,9 +124,9 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
 
         View fragmentView = inflater.inflate(R.layout.fragment_grievance, container, false);
 
-        cvNoComplaints=(CardView)fragmentView.findViewById(R.id.cvnocomplaintsnotify);
-        progressBar = (ProgressBar)fragmentView.findViewById(R.id.grievance_recylerview_placeholder);
-        recyclerView = (RecyclerView)fragmentView.findViewById(R.id.recylerview);
+        cvNoComplaints = (CardView) fragmentView.findViewById(R.id.cvnocomplaintsnotify);
+        progressBar = (ProgressBar) fragmentView.findViewById(R.id.grievance_recylerview_placeholder);
+        recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recylerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setClickable(true);
         final WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(getActivity());
@@ -137,19 +134,18 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         Bundle bundle = getArguments();
-        accessToken=bundle.getString("access_token");
-        pageTitle=bundle.getString("title");
-        position=bundle.getInt("position");
+        accessToken = bundle.getString("access_token");
+        pageTitle = bundle.getString("title");
+        position = bundle.getInt("position");
 
-        downImageArgs=new Bundle();
-        downImageArgs.putString("downImgUrl",bundle.getString("downImgUrl"));
+        downImageArgs = new Bundle();
         downImageArgs.putString("access_token", accessToken);
 
-        onScrollListener=new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        onScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
 
-                if(!loading && !isPaginationEnded) {
+                if (!loading && !isPaginationEnded) {
                     pageNo++;
                     loading = true;
                     updateComplaints(String.valueOf(pageNo));
@@ -160,7 +156,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         //Enables infinite scrolling (pagination)
         recyclerView.addOnScrollListener(onScrollListener);
 
-        grievanceItemInterface=new GrievanceItemInterface() {
+        grievanceItemInterface = new GrievanceItemInterface() {
             @Override
             public void clickedItem(Grievance grievance) {
                 Intent intent = new Intent(getActivity(), GrievanceDetailsActivity.class);
@@ -172,8 +168,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             }
         };
 
-        if(position==0)
-        {
+        if (position == 0) {
             refreshGrievanceList();
         }
 
@@ -181,42 +176,39 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         return fragmentView;
     }
 
-    public void refreshGrievanceList()
-    {
-        loading=true;
-        isPaginationEnded =false;
-        pageNo=1;
+    public void refreshGrievanceList() {
+        loading = true;
+        isPaginationEnded = false;
+        pageNo = 1;
         onScrollListener.resetScrollListenerValues();
         updateComplaints("1");
     }
 
-    public String returnValidString(String string)
-    {
-        if(!TextUtils.isEmpty(string)){
+    public String returnValidString(String string) {
+        if (!TextUtils.isEmpty(string)) {
             return string;
         }
         return "";
     }
 
+    @SuppressWarnings("ALL")
     private void updateComplaints(final String page) {
 
 
-            if(grievanceAdapter==null) {
+        if (grievanceAdapter == null) {
+            cvNoComplaints.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else if (grievanceList != null) {
+            if (grievanceList.size() == 0) {
                 cvNoComplaints.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             }
-            else if(grievanceList!=null)
-            {
-                if(grievanceList.size()==0){
-                    cvNoComplaints.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                }
-            }
+        }
 
-            if(grievanceAdapter!=null) {
-                grievanceList.add(null);
-                grievanceAdapter.notifyItemInserted(grievanceList.size());
-            }
+        if (grievanceAdapter != null) {
+            grievanceList.add(null);
+            grievanceAdapter.notifyItemInserted(grievanceList.size());
+        }
 
 
         Call<GrievanceAPIResponse> apiGetMyComplaints = ApiController.getAPI(getActivity().getApplicationContext())
@@ -227,17 +219,15 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             @Override
             public void onResponse(Call<GrievanceAPIResponse> call, Response<GrievanceAPIResponse> response) {
 
-                GrievanceAPIResponse grievanceAPIResponse=response.body();
+                GrievanceAPIResponse grievanceAPIResponse = response.body();
 
-                for(Grievance grievance:grievanceAPIResponse.getResult())
-                {
-                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat()>0)
-                    {
+                for (Grievance grievance : grievanceAPIResponse.getResult()) {
+                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {
                         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
                         List<Address> addresses;
                         try {
-                            addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
-                            String location=(TextUtils.isEmpty(addresses.get(0).getSubLocality())?addresses.get(0).getThoroughfare():addresses.get(0).getSubLocality());
+                            addresses = geocoder.getFromLocation(grievance.getLat(), grievance.getLng(), 1);
+                            String location = (TextUtils.isEmpty(addresses.get(0).getSubLocality()) ? addresses.get(0).getThoroughfare() : addresses.get(0).getSubLocality());
                             grievance.setLocationName(returnValidString(location));
                             grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
                         } catch (IOException e) {
@@ -247,11 +237,11 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 }
 
                 if (page.equals("1")) {
-                    if(grievanceList!=null) {
+                    if (grievanceList != null) {
                         grievanceList.clear();
                     }
                     grievanceList = grievanceAPIResponse.getResult();
-                    grievanceAdapter=new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
+                    grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface, downImageArgs);
                     recyclerView.setAdapter(grievanceAdapter);
                     progressBar.setVisibility(View.GONE);
                 }
@@ -264,126 +254,56 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 }
 
                 if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
-                    isPaginationEnded=true;
+                    isPaginationEnded = true;
                 }
-                loading=false;
+                loading = false;
                 updateSuccessEvent();
 
             }
 
             @Override
             public void onFailure(Call<GrievanceAPIResponse> call, Throwable t) {
-                loading=false;
+                loading = false;
                 updateFailedEvent();
             }
         };
 
-
         apiGetMyComplaints.enqueue(getMyComplaintsCallBack);
 
-            /*ApiController.getAPI(getActivity()).getMyComplaints(page, "10", accessToken, pageTitle, new Callback<GrievanceAPIResponse>() {
-                        @Override
-                        public void success(GrievanceAPIResponse grievanceAPIResponse, Response response) {
+    }
 
-                            //If the request is a refresh request
-                            for(Grievance grievance:grievanceAPIResponse.getResult())
-                            {
-                                if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat()>0)
-                                {
-                                    Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                                    List<Address> addresses;
-                                    try {
-                                        addresses = geocoder.getFromLocation(grievance.getLat(),grievance.getLng(), 1);
-                                        String location=(TextUtils.isEmpty(addresses.get(0).getSubLocality())?addresses.get(0).getThoroughfare():addresses.get(0).getSubLocality());
-                                        grievance.setLocationName(returnValidString(location));
-                                        grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            if (page.equals("1")) {
-                                if(grievanceList!=null) {
-                                    grievanceList.clear();
-                                }
-                                grievanceList = grievanceAPIResponse.getResult();
-                                grievanceAdapter=new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
-                                recyclerView.setAdapter(grievanceAdapter);
-                                progressBar.setVisibility(View.GONE);
-                            }
-                            //If the request is a next page request
-                            else {
-                                grievanceList.remove(grievanceList.size() - 1);
-                                grievanceAdapter.notifyItemRemoved(grievanceList.size());
-                                grievanceList.addAll(grievanceList.size(), grievanceAPIResponse.getResult());
-                                grievanceAdapter.notifyItemInserted(grievanceList.size());
-                            }
-
-                            if (grievanceAPIResponse.getStatus().getHasNextPage().equals("false")) {
-                                isPaginationEnded=true;
-                            }
-                            loading=false;
-                            updateSuccessEvent();
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (error != null) {
-                                if (error.getLocalizedMessage() != null && !error.getLocalizedMessage().equals("Invalid access token"))
-                                    Toast.makeText(getActivity(), ""+error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                                else {
-                                    Toast.makeText(getActivity(), "Session expired! Please, logout and login again.", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                            loading=false;
-                            updateFailedEvent();
-                        }
-
-
-                    }
-
-            );*/
+    public void updateSuccessEvent() {
+        //check and show no complaint information
+        if (grievanceList.size() == 0) {
+            cvNoComplaints.setVisibility(View.VISIBLE);
+        } else {
+            cvNoComplaints.setVisibility(View.GONE);
         }
+    }
 
-       public void updateSuccessEvent()
-       {
-           //check and show no complaint information
-           if(grievanceList.size()==0)
-           {
-               cvNoComplaints.setVisibility(View.VISIBLE);
-           }
-           else
-           {
-               cvNoComplaints.setVisibility(View.GONE);
-           }
-       }
-
-       public void updateFailedEvent()
-       {
-           progressBar.setVisibility(View.GONE);
-           grievanceList = new ArrayList<>();
-           grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
-           recyclerView.setAdapter(grievanceAdapter);
-           grievanceList = null;
-       }
+    public void updateFailedEvent() {
+        progressBar.setVisibility(View.GONE);
+        grievanceList = new ArrayList<>();
+        grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface, downImageArgs);
+        recyclerView.setAdapter(grievanceAdapter);
+        grievanceList = null;
+    }
 
     class WrapContentLinearLayoutManager extends LinearLayoutManager {
 
-        WrapContentLinearLayoutManager(Context context)
-            {
-                super(context);
-            }
-
-            @Override
-            public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-                try {
-                    super.onLayoutChildren(recycler, state);
-                } catch (IndexOutOfBoundsException e) {
-                    Log.e("probe", "meet a IOOBE in RecyclerView");
-                }
-            }
+        WrapContentLinearLayoutManager(Context context) {
+            super(context);
         }
 
-
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("probe", "meet a IOOBE in RecyclerView");
+            }
+        }
     }
+
+
+}

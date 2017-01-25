@@ -42,25 +42,18 @@
 
 package org.egov.employee.adapter;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import org.egov.employee.data.Grievance;
 import org.egov.employee.data.GrievanceItemInterface;
 
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,23 +64,22 @@ import java.util.Locale;
 import offices.org.egov.egovemployees.R;
 
 /**
- * Created by egov on 15/12/15.
+ * Grievance List Adapter
  */
-public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class GrievanceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_ITEM = 1;
+    @SuppressWarnings("ALL")
     private final int VIEW_PROG = 0;
-
-    private List<Grievance> grievances;
-    GrievanceItemInterface grievanceItemInterface;
-    private WeakReference<Context> contextWeakReference;
+    @SuppressWarnings("ALL")
     Bundle downloadArgs;
+    private List<Grievance> grievances;
+    private GrievanceItemInterface grievanceItemInterface;
 
-    public GrievanceListAdapater(Context context, List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface, Bundle downloadArgs)
+    public GrievanceListAdapter(List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface, Bundle downloadArgs)
     {
         this.grievances =tasks;
         this.grievanceItemInterface =grievanceItemInterface;
-        this.contextWeakReference = new WeakReference<>(context);
         this.downloadArgs=downloadArgs;
     }
 
@@ -138,47 +130,13 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
             if (ci.getLocationName() != null)
                 viewHolder.complaintLocation.setText(ci.getChildLocationName() + " - " + ci.getLocationName());
 
-            if (ci.getSupportDocsSize() == 0) {
-                Picasso.with(contextWeakReference.get())
-                        .load(R.drawable.ic_error_outline_white_60dp)
-                        .into(((GrievanceViewHolder) viewHolder).complaintImage);
-            } else {
-
-                final String url = downloadArgs.getString("downImgUrl")
-                        + ci.getSupportDocs().get(0).getFileId()
-                        + "?access_token=" + downloadArgs.getString("access_token");
-
-                //When loading image, first attempt to retrieve from disk or memory before attempting to download.
-                //Still requires internet connection as the plugin attempts to contact the server to see if the image must be revalidated
-                Picasso.with(contextWeakReference.get())
-                        .load(url)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.ic_broken_image_white_18dp)
-                        .into(viewHolder.complaintImage, new Callback() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError() {
-                                Picasso.with(contextWeakReference.get())
-                                        .load(url)
-                                        .placeholder(R.drawable.placeholder)
-                                        .error(R.drawable.ic_broken_image_white_18dp)
-                                        .into(viewHolder.complaintImage);
-                            }
-                        });
-            }
-
             viewHolder.complaintCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     grievanceItemInterface.clickedItem(ci);
                 }
             });
-            viewHolder.complaintNo.setText("Grievance No.: " + ci.getCrn());
+            viewHolder.complaintNo.setText(ci.getCrn());
         }
         else
         {
@@ -197,51 +155,19 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
         return grievances.size();
     }
 
-    public static class GrievanceViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView complaintType;
-        private TextView complaintDate;
-        private ImageView complaintImage;
-        private TextView complaintLocation;
-        private TextView complaintNo;
-        private CardView complaintCardView;
-
-        public GrievanceViewHolder(View v) {
-            super(v);
-            complaintCardView = (CardView) v.findViewById(R.id.complaint_card);
-            complaintType = (TextView) v.findViewById(R.id.complaint_type);
-            complaintDate = (TextView) v.findViewById(R.id.complaint_date);
-            complaintImage = (ImageView) v.findViewById(R.id.complaint_image);
-            complaintLocation = (TextView) v.findViewById(R.id.complaint_location);
-            complaintNo = (TextView) v.findViewById(R.id.complaint_no);
-        }
-
-    }
-
-    public static class ProgressViewHolder extends RecyclerView.ViewHolder{
-
-        ProgressBar progressBar;
-        ProgressViewHolder(View itemView)
-        {
-            super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
-        }
-
-    }
-
-    public String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
+    private String dateTimeInfo(String dateStr, String dateFormat) throws ParseException {
 
         String formatIfToday="hh:mm a";
         String formatIfCurrentYear="MMM dd";
         String formatIfNotCurrentYear="dd/MM/yyyy";
 
-        SimpleDateFormat df=new SimpleDateFormat(dateFormat);
+        SimpleDateFormat df = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
         Date infoDate=df.parse(dateStr);
         Date nowDate=new Date();
 
         String resultFormat=formatIfNotCurrentYear;
 
-        df=new SimpleDateFormat(formatIfCurrentYear);
+        df = new SimpleDateFormat(formatIfCurrentYear, Locale.ENGLISH);
 
         Calendar infocal = Calendar.getInstance();
         infocal.setTime(infoDate);
@@ -258,8 +184,38 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
             resultFormat=formatIfCurrentYear;
         }
 
-        df=new SimpleDateFormat(resultFormat);
+        df = new SimpleDateFormat(resultFormat, Locale.ENGLISH);
         return df.format(infoDate);
+
+    }
+
+    private static class GrievanceViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView complaintType;
+        private TextView complaintDate;
+        private TextView complaintLocation;
+        private TextView complaintNo;
+        private CardView complaintCardView;
+
+        private GrievanceViewHolder(View v) {
+            super(v);
+            complaintCardView = (CardView) v.findViewById(R.id.complaint_card);
+            complaintType = (TextView) v.findViewById(R.id.complaint_type);
+            complaintDate = (TextView) v.findViewById(R.id.complaint_date);
+            complaintLocation = (TextView) v.findViewById(R.id.complaint_location);
+            complaintNo = (TextView) v.findViewById(R.id.complaint_no);
+        }
+
+    }
+
+    private static class ProgressViewHolder extends RecyclerView.ViewHolder {
+
+        ProgressBar progressBar;
+
+        ProgressViewHolder(View itemView) {
+            super(itemView);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.progressBar);
+        }
 
     }
 

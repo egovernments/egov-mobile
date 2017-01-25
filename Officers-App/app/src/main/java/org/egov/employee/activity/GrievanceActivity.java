@@ -63,7 +63,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.egov.employee.api.ApiController;
-import org.egov.employee.api.ApiUrl;
 import org.egov.employee.config.NavMenuItems;
 
 import java.util.ArrayList;
@@ -224,7 +223,7 @@ public class GrievanceActivity extends BaseActivity {
             return;
         }
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 highlightTabTextView(tab.getCustomView(), true);
@@ -244,20 +243,19 @@ public class GrievanceActivity extends BaseActivity {
 
     }
 
+    @SuppressWarnings("ALL")
     void setTabCount(GrievanceFragmentPagerAdapter pagerAdapter)
     {
         //tabLayout.setTabTextColors(Color.parseColor("#000"), Color.parseColor("#fff"));
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            View view = tab.getCustomView();
-            if(view !=null)
-            {
-                view = pagerAdapter.getTabView(i);
-            }
-            else {
-                tab.setCustomView(pagerAdapter.getTabView(i));
+            if (tab != null) {
+                View view = tab.getCustomView();
+                if (view == null)
+                    tab.setCustomView(pagerAdapter.getTabView(i));
             }
         }
+
         highlightTabTextView(tabLayout.getTabAt(0).getCustomView(), true);
     }
 
@@ -287,9 +285,10 @@ public class GrievanceActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return GrievanceFragment.instantiateItem(preference.getApiAccessToken(), titles.get(position), position, preference.getActiveCityUrl()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
+            return GrievanceFragment.instantiateItem(preference.getApiAccessToken(), titles.get(position), position);
         }
 
+        @SuppressWarnings("ALL")
         View getTabView(int position) {
             String currentKey=titles.get(position).toString();
             View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_default_layout, null);
