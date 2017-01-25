@@ -52,7 +52,7 @@
     <string name="complaintID_label">COMPLAINT NO</string>
     <string name="forgotpassword_hint">Enter mobile no.</string>
     <string name="forgotpassword_text">Please enter your registered phone number. A recovery message will be sent to your phone and to your registered email ID.</string>
-    <string name="login_username">Email ID or Phone No.</string>
+    <string name="login_username">Phone No.</string>
     <string name="login_password">Password</string>
     <string name="login_forgotlabel">Forgot Password?</string>
     <string name="registration_buttonlabel">Create an account</string>

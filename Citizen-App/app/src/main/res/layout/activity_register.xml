@@ -228,7 +228,7 @@
                                     android:ems="10"
                                     android:hint="@string/fullname_label"
                                     android:imeOptions="actionNext"
-                                    android:inputType="textPersonName"
+                                    android:inputType="textPersonName|textCapWords"
                                     android:maxLength="64"
                                     android:paddingEnd="10dp"
                                     android:paddingStart="10dp"

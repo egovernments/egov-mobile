@@ -84,7 +84,6 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
     EndlessRecyclerOnScrollListener onScrollListener;
     String accessToken;
     String pageTitle;
-    Bundle downImageArgs;
     private List<Grievance> grievanceList=new ArrayList<>();
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
@@ -95,13 +94,12 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
     private boolean loading = true;
     private boolean isPaginationEnded = false;
 
-    public static GrievanceFragment instantiateItem(String access_token, String title, int position, String imageDownloadUrl) {
+    public static GrievanceFragment instantiateItem(String access_token, String title, int position) {
         GrievanceFragment imageFragment = new GrievanceFragment();
         Bundle args = new Bundle();
         args.putString("access_token", access_token);
         args.putString("title", title);
         args.putInt("position", position);
-        args.putString("downImgUrl", imageDownloadUrl);
         imageFragment.setArguments(args);
         return imageFragment;
     }
@@ -139,10 +137,6 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         accessToken=bundle.getString("access_token");
         pageTitle=bundle.getString("title");
         position=bundle.getInt("position");
-
-        downImageArgs=new Bundle();
-        downImageArgs.putString("downImgUrl",bundle.getString("downImgUrl"));
-        downImageArgs.putString("access_token", accessToken);
 
         onScrollListener=new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
@@ -246,7 +240,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                         grievanceList.clear();
                     }
                     grievanceList = grievanceAPIResponse.getResult();
-                    grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
+                    grievanceAdapter = new GrievanceListAdapater(grievanceList, grievanceItemInterface);
                     recyclerView.setAdapter(grievanceAdapter);
                     progressBar.setVisibility(View.GONE);
                 }
@@ -291,7 +285,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
        {
            progressBar.setVisibility(View.GONE);
            grievanceList = new ArrayList<>();
-           grievanceAdapter = new GrievanceListAdapater(getActivity(), grievanceList, grievanceItemInterface, downImageArgs);
+           grievanceAdapter = new GrievanceListAdapater(grievanceList, grievanceItemInterface);
            recyclerView.setAdapter(grievanceAdapter);
            grievanceList = null;
        }

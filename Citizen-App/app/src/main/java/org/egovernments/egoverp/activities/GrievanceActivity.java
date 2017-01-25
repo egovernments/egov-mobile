@@ -64,7 +64,6 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
-import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.fragments.GrievanceFragment;
 
 import java.util.ArrayList;
@@ -311,7 +310,7 @@ public class GrievanceActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles.get(position), position, sessionManager.getBaseURL()+ ApiUrl.COMPLAINT_DOWNLOAD_IMAGE);
+            return GrievanceFragment.instantiateItem(sessionManager.getAccessToken(), titles.get(position), position);
         }
 
         View getTabView(int position) {

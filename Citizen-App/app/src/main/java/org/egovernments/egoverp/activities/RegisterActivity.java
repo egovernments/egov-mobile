@@ -69,6 +69,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -199,6 +200,9 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager imm = (InputMethodManager) RegisterActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(confirmpassword_edittext.getWindowToken(), 0);
+
                     validateAndCreateAnAccount(name_edittext.getText().toString().trim(), email_edittext.getText().toString().trim()
                             , phoneno_edittext.getText().toString().trim(), password_edittext.getText().toString().trim(), confirmpassword_edittext.getText().toString().trim());
                     return true;
@@ -257,7 +261,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void validateAndCreateAnAccount(final String name, final String email, final String phoneno,
-                                            final String password, final String confirmpassword) {
+                                            final String password, final String confirmPassword) {
 
         final City selectedCity=getCityByName(cityAutoCompleteTextView.getText().toString());
 
@@ -275,7 +279,7 @@ public class RegisterActivity extends BaseActivity {
             showSnackBar(getString(R.string.please_enter_password));
         } else if (!AppUtils.isValidPassword(password, configManager)) {
             showSnackBar(AppUtils.getPasswordConstraintInformation(configManager, getApplicationContext()));
-        } else if (!password.equals(confirmpassword)) {
+        } else if (!password.equals(confirmPassword)) {
             showSnackBar(getString(R.string.password_do_not_match));
         } else {
 

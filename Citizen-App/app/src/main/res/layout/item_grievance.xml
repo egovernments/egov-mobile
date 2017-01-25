@@ -44,13 +44,68 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/complaint_card"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:paddingTop="5dp"
+    android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardUseCompatPadding="true"
-    card_view:cardCornerRadius="2dp">
+    android:paddingTop="5dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardUseCompatPadding="true">
 
-    <RelativeLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/complaint_no"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:textColor="@color/primaryText"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/complaint_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="right|top"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/complaint_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingBottom="2dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/complaint_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:paddingBottom="2dp"
+            android:textColor="@color/primaryText" />
+
+
+    </LinearLayout>
+
+    <!--<RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -61,64 +116,5 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-
-        <TextView
-            android:id="@+id/complaint_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="top"
-            android:layout_marginBottom="6dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="6dp"
-            android:gravity="center_vertical"
-            android:textSize="12sp" />
-
-
-        <TextView
-            android:id="@+id/complaint_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/complaint_type"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_toEndOf="@+id/complaint_image"
-            android:layout_toRightOf="@+id/complaint_image"
-            android:gravity="center_vertical"
-            android:textColor="@color/primaryText"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/complaint_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_toEndOf="@+id/complaint_image"
-            android:layout_toRightOf="@+id/complaint_image"
-            android:gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/complaint_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/complaint_type"
-            android:layout_marginLeft="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_toEndOf="@+id/complaint_image"
-            android:layout_toRightOf="@+id/complaint_image"
-            android:textColor="@color/primaryText"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:gravity="center_vertical" />
-
-
-    </RelativeLayout>
+    </RelativeLayout>-->
 </android.support.v7.widget.CardView>
