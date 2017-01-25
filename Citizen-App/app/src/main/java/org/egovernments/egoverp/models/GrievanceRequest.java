@@ -52,32 +52,29 @@ import com.google.gson.annotations.SerializedName;
 public class GrievanceRequest {
 
     @Expose
+    @SerializedName("receivingMode")
+    private final String receivingMode = "MOBILE";
+    @Expose
     @SerializedName("locationId")
     private int locationId;
-
     @Expose
     @SerializedName("lat")
     private double lat;
-
     @Expose
     @SerializedName("lng")
     private double lng;
-
     @Expose
     @SerializedName("details")
     private String details;
-
     @Expose
     @SerializedName("complaintTypeId")
     private int complaintTypeId;
-
     @Expose
     @SerializedName("landmarkDetails")
     private String landmarkDetails;
 
     //Constructor for use with lat/lng
     public GrievanceRequest(double lat, double lng, String details, int complaintTypeId, String landmarkDetails) {
-
         this.lat = lat;
         this.lng = lng;
         this.details = details;
