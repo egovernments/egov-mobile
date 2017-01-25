@@ -52,37 +52,32 @@ import com.google.gson.annotations.SerializedName;
 public class GrievanceRequest {
 
     @Expose
+    @SerializedName("receivingMode")
+    private final String receivingMode = "MOBILE";
+    @Expose
     @SerializedName("location")
     private int locationId;
-
     @Expose
     @SerializedName("lat")
     private double lat;
-
     @Expose
     @SerializedName("lng")
     private double lng;
-
     @Expose
     @SerializedName("details")
     private String details;
-
     @Expose
     @SerializedName("complaintTypeId")
     private int complaintTypeId;
-
     @Expose
     @SerializedName("landmarkDetails")
     private String landmarkDetails;
-
     @Expose
     @SerializedName("complainantName")
     private String complainantName;
-
     @Expose
     @SerializedName("complainantMobileNo")
     private String complainantMobileNo;
-
     @Expose
     @SerializedName("complainantEmail")
     private String complainantEmail;
