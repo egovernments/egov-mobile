@@ -48,6 +48,7 @@
     <dimen name="data_labelSize">14sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="splashscreenlogowidth">180dp</dimen>
+    <dimen name="logo_height">150dp</dimen>
     <integer name="homegridcolumns">2</integer>
     <integer name="anim_duration_long">500</integer>
 </resources>
