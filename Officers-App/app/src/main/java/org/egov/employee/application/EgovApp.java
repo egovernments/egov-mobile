@@ -52,6 +52,7 @@ import org.egov.employee.config.AppConfigReader;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 
 /**
@@ -110,7 +111,7 @@ public class EgovApp extends Application {
     }
 
     public HashMap<String, String> getGrievancePriorityList() {
-        Type type = new TypeToken<HashMap<String, String>>() {
+        Type type = new TypeToken<LinkedHashMap<String, String>>() {
         }.getType();
         return new Gson().fromJson(appConfig.get(KEY_GRIEVANCE_PRIORITY_LIST).toString(), type);
     }

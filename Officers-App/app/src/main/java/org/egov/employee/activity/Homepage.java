@@ -46,6 +46,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,9 +64,7 @@ import org.egov.employee.config.NavMenuItems;
 import org.egov.employee.data.Task;
 import org.egov.employee.interfaces.TasksItemClickListener;
 
-import java.util.HashMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Map;
 
 import offices.org.egov.egovemployees.R;
 import retrofit2.Call;
@@ -75,6 +74,7 @@ import retrofit2.Response;
 public class Homepage extends BaseActivity implements TasksItemClickListener {
 
     public static final int ACTION_UPDATE_REQUIRED = 111;
+    public static final String PRIORITY_LIST_COUNT = "prioritylistcount";
     public RelativeLayout homePageLoader;
     public LinearLayout inboxEmptyInfo;
     ViewPager pager;
@@ -153,12 +153,19 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
             JsonObject workflowType = responseArray.get(i).getAsJsonObject();
             if (workflowType.get(TasksAdapter.WORK_FLOW_TYPE).getAsString().equals(WORK_FLOW_TYPE_COMPLAINT))
             {
-                setTitle("Grievances (" + workflowType.get(TasksAdapter.INBOX_LIST_COUNT).getAsInt() + ")");
-                HashMap<String, String> grievancePriority = EgovApp.getInstance().getGrievancePriorityList();
-                SortedSet<String> keys = new TreeSet<String>(grievancePriority.keySet());
-                for (String key : keys) {
+                setTitle(workflowType.get("workflowtypename").getAsString());
+                Map<String, String> grievancePriority = EgovApp.getInstance().getGrievancePriorityList();
+                for (String key : grievancePriority.keySet()) {
                     workflowType.addProperty(TasksAdapter.PRIORITY_NAME, key);
                     workflowType.addProperty(TasksAdapter.PRIORITY_VALUE, grievancePriority.get(key));
+                    if (workflowType.has(PRIORITY_LIST_COUNT) && !TextUtils.isEmpty(grievancePriority.get(key))) {
+                        JsonObject jsonPriorities = workflowType.getAsJsonObject(PRIORITY_LIST_COUNT);
+                        workflowType.addProperty(TasksAdapter.PRIORITY_ITEMS_COUNT,
+                                jsonPriorities.get(grievancePriority.get(key)).getAsString());
+                    } else if (TextUtils.isEmpty(grievancePriority.get(key))) {
+                        workflowType.addProperty(TasksAdapter.PRIORITY_ITEMS_COUNT,
+                                workflowType.get(TasksAdapter.INBOX_LIST_COUNT).getAsInt());
+                    }
                     jsonWorkflowTypes.add(new JsonParser().parse(workflowType.toString()).getAsJsonObject());
                 }
                 break;

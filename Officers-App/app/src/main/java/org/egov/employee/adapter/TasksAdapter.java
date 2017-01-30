@@ -65,6 +65,8 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String PRIORITY_VALUE = "priorityValue";
     public static final String INBOX_LIST_COUNT = "inboxlistcount";
+    public static final String PRIORITY_ITEMS_COUNT = "priorityCount";
+
     private static String TAG=TasksAdapter.class.getName().toString();
     JsonArray tasksList;
     private String accessToken;
@@ -113,7 +115,10 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
     public String getBadgeCount(int position) {
         try
         {
-            return String.valueOf(tasksList.get(position).getAsJsonObject().get("inboxlistcount").getAsInt());
+            if (tasksList.get(position).getAsJsonObject().has(PRIORITY_ITEMS_COUNT)) {
+                return String.valueOf(tasksList.get(position).getAsJsonObject().get(PRIORITY_ITEMS_COUNT).getAsInt());
+            }
+            return String.valueOf(tasksList.get(position).getAsJsonObject().get(INBOX_LIST_COUNT).getAsInt());
         }
         catch (Exception ex)
         {
@@ -125,7 +130,7 @@ public class TasksAdapter extends FragmentStatePagerAdapter {
     String getTitle(int position) {
         JsonObject jsonObject = tasksList.get(position).getAsJsonObject();
         if (jsonObject.has(PRIORITY_NAME)) {
-            return jsonObject.get(PRIORITY_NAME).getAsString().toUpperCase();
+            return jsonObject.get(PRIORITY_NAME).getAsString().toUpperCase() + " (" + getBadgeCount(position) + ")";
         }
         return jsonObject.get(WORK_FLOW_TYPE_NAME).getAsString().toUpperCase();
     }
