@@ -89,6 +89,7 @@ public class GrievanceActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.grievances_label);
         setContentViewWithTabs(R.layout.activity_grievance, true, true);
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         pbHome=(ProgressBar)findViewById(R.id.pbhome);

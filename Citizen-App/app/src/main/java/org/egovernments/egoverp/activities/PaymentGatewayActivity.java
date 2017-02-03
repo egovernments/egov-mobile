@@ -86,7 +86,7 @@ public class PaymentGatewayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_gateway);
         String url=getIntent().getStringExtra(PAYMENT_GATEWAY_URL);
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
         try {
             referrerIp = AppUtils.getConfigManager(getApplicationContext()).getString(Config.REFERER_IP_CONFIG_KEY);
         } catch (IOException e) {

@@ -78,9 +78,12 @@ import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.ConfigManager;
+import org.egovernments.egoverp.helper.EgovContextWrapper;
+import org.egovernments.egoverp.helper.LanguageChangeListener;
 import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.NavigationItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -94,7 +97,7 @@ import static org.egovernments.egoverp.api.Interceptor.DATA_UNAUTHORIZED_ERROR;
  * The activity sets up common features of layout for other activities
  **/
 
-public class BaseActivity extends AppCompatActivity implements Interceptor.ErrorListener {
+public class BaseActivity extends AppCompatActivity implements Interceptor.ErrorListener, LanguageChangeListener {
 
     protected LinearLayout activityContent;
 
@@ -104,6 +107,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
     protected CharSequence mActionBarTitle;
 
     protected SessionManager sessionManager;
+    protected ConfigManager configManager;
 
     protected ProgressDialog progressDialog;
 
@@ -144,9 +148,6 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
     //Overridden method will intercept layout passed and inflate it into baselayout.xml
     @Override
     public void setContentView(final int layoutResID) {
-
-        sessionManager = new SessionManager(getApplicationContext());
-
         progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.processing_msg));
@@ -363,7 +364,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
     public void openBuildingPenalization()
     {
         Intent intent;
-        if (!mActionBarTitle.equals(getString(R.string.title_activity_building_plan))) {
+        if (!mActionBarTitle.equals(getString(R.string.building_penalization_label))) {
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
             intent = new Intent(BaseActivity.this, BuildingPlanActivity.class);
@@ -391,6 +392,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         if (!getTitle().toString().equals(getString(R.string.building_plan_label))) {
             intent = new Intent(BaseActivity.this, BuildingPlanActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(BuildingPlanActivity.IS_BUILDING_PENALIZATION, getTitle().equals(R.string.building_penalization_label));
             startActivity(intent);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
@@ -596,7 +598,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         snackbar.show();
     }
 
-    public void showSnackbar(String message, int gravity) {
+    public void showSnackBar(String message, int gravity) {
         ContentFrameLayout layout = (ContentFrameLayout) findViewById(android.R.id.content);
         Snackbar snackbar = Snackbar.make(layout, message, Snackbar.LENGTH_LONG);
         View view = snackbar.getView();
@@ -650,5 +652,27 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
                 }).show();
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        try {
+            sessionManager = AppUtils.getSessionManger(newBase.getApplicationContext());
+            configManager = AppUtils.getConfigManager(newBase.getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.attachBaseContext(EgovContextWrapper.wrap(newBase, sessionManager.getAppLocale()));
+    }
+
+    @Override
+    public void languageChangeListener(String languageCode, String languageName) {
+        setAppLocale(languageCode);
+    }
+
+    public void setAppLocale(String languageCode) {
+        if (!sessionManager.getAppLocale().equals(languageCode)) {
+            sessionManager.setAppLocale(languageCode);
+            recreate();
+        }
+    }
 
 }

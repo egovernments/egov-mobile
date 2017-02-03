@@ -77,6 +77,7 @@ public class SessionManager {
     private static final String KEY_RESET_PASSWORD_LAST_MOBILE_NO="resetPwsLastMobNo";
     private static final String KEY_DISABLE_MODULE_JSON="modulesDisabledJson";
     private static final String KEY_APP_VERSION_CODE="appVersionCode";
+    private static final String KEY_APP_LOCALE = "appLocale";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
@@ -299,4 +300,15 @@ public class SessionManager {
         editor.putString(KEY_DISABLE_MODULE_JSON, modulesJson);
         editor.apply();
     }
+
+    public String getAppLocale() {
+        return pref.getString(KEY_APP_LOCALE, "");
+    }
+
+    public void setAppLocale(String localeCode) {
+        editor = pref.edit();
+        editor.putString(KEY_APP_LOCALE, localeCode);
+        editor.apply();
+    }
+
 }

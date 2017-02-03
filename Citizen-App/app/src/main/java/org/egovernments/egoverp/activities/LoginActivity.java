@@ -75,7 +75,6 @@ import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.models.City;
@@ -104,17 +103,17 @@ public class LoginActivity extends BaseActivity {
     List<City> citiesList;
     ImageView imgLogo;
     List<String> districts;
+    boolean isPaused = false;
     private String username;
     private String password;
     private ProgressBar progressBar;
     private FloatingActionButton loginButton;
     private com.melnykov.fab.FloatingActionButton loginButtonCompat;
-    private TextView forgotLabel;
+    private TextView forgotLabel, tvAppLocale;
     private Button signupButton;
     private EditText username_edittext;
     private EditText password_edittext;
     private Handler handler;
-    private ConfigManager configManager;
     private CustomAutoCompleteTextView cityAutocompleteTextBox;
     private CustomAutoCompleteTextView districtAutocompleteTextBox;
     private Spinner spinnerCity;
@@ -145,8 +144,8 @@ public class LoginActivity extends BaseActivity {
 
         if (!TextUtils.isEmpty(startupMessage)) {
             showSnackBar(startupMessage);
+            getIntent().removeExtra(STARTUP_MESSAGE);
         }
-
 
         spinnerCity = (Spinner) findViewById(R.id.signin_city);
         spinnerDistrict = (Spinner) findViewById(R.id.spinner_district);
@@ -165,6 +164,10 @@ public class LoginActivity extends BaseActivity {
         cityAutocompleteTextBox = (CustomAutoCompleteTextView) findViewById(R.id.login_spinner_autocomplete);
         districtAutocompleteTextBox = (CustomAutoCompleteTextView) findViewById(R.id.autocomplete_district);
 
+        tvAppLocale = (TextView) findViewById(R.id.tvAppLocale);
+
+        initializeMultiLanguageConfig();
+
         cityAutocompleteTextBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +182,7 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        final InputMethodManager imm = (InputMethodManager)LoginActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        final InputMethodManager imm = (InputMethodManager) LoginActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -193,7 +196,7 @@ public class LoginActivity extends BaseActivity {
             }
         };
 
-        imgLogo=(ImageView)findViewById(R.id.applogoBig);
+        imgLogo = (ImageView) findViewById(R.id.applogoBig);
         imgLogo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -216,16 +219,14 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                if (configManager.getString(API_MULTICITIES).equals("true"))
-                {
-                    City selectedCity=getCityByName(cityAutocompleteTextBox.getText().toString());
-                    if(!isValidDistrictAndMunicipality(selectedCity))
-                    {
+                if (configManager.getString(API_MULTICITIES).equals("true")) {
+                    City selectedCity = getCityByName(cityAutocompleteTextBox.getText().toString());
+                    if (!isValidDistrictAndMunicipality(selectedCity)) {
                         return;
                     }
 
                     sessionManager.setBaseURL(selectedCity.getUrl(), selectedCity.getCityName(),
-                            selectedCity.getCityCode(), selectedCity.getModules()!=null?selectedCity.getModules().toString():null);
+                            selectedCity.getCityCode(), selectedCity.getModules() != null ? selectedCity.getModules().toString() : null);
                 }
 
                 Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
@@ -240,7 +241,6 @@ public class LoginActivity extends BaseActivity {
                 startActivityAnimation(intent, true);
             }
         });
-
 
        /* password_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -259,18 +259,46 @@ public class LoginActivity extends BaseActivity {
         });*/
 
         handler = new Handler();
-
-        try {
-            configManager = AppUtils.getConfigManager(getApplicationContext());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         new GetAllCitiesTask().execute();
     }
 
-    public void showLoginProgress()
-    {
+    private void initializeMultiLanguageConfig() {
+        try {
+            //condition for check multi-language support is there
+            if (AppUtils.getSupportedLocalesCode(configManager).length > 1) {
+                if (TextUtils.isEmpty(sessionManager.getAppLocale())) {
+                    showLanguageChangeOption();
+                    tvAppLocale.setText(" " + getResources().getConfiguration().locale.getDisplayLanguage());
+                } else {
+                    tvAppLocale.setText(" " + AppUtils.getLanguageDisplayNameByLocaleCode(sessionManager.getAppLocale()));
+                }
+                tvAppLocale.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showLanguageChangeOption();
+                    }
+                });
+            } else {
+                //no multi-language support
+                tvAppLocale.setVisibility(View.GONE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showLanguageChangeOption() {
+        try {
+            AppUtils.showLanguageChangePrompt(LoginActivity.this, configManager,
+                    "Choose your language",
+                    new String[]{"CHANGE", "CANCEL"},
+                    this, sessionManager.getAppLocale());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showLoginProgress() {
         progressBar.setVisibility(View.VISIBLE);
         loginButton.setVisibility(View.GONE);
         loginButtonCompat.setVisibility(View.GONE);
@@ -278,8 +306,7 @@ public class LoginActivity extends BaseActivity {
         signupButton.setVisibility(View.INVISIBLE);
     }
 
-    public void hideLoginProgress()
-    {
+    public void hideLoginProgress() {
         progressBar.setVisibility(View.GONE);
         forgotLabel.setVisibility(View.VISIBLE);
         signupButton.setVisibility(View.VISIBLE);
@@ -292,26 +319,25 @@ public class LoginActivity extends BaseActivity {
     //Invokes call to API
     private Boolean validateInputFields(final String username, final String password, final City selectedCity) {
 
-            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                showSnackBar(R.string.login_field_empty_prompt);
-                progressBar.setVisibility(View.GONE);
-                forgotLabel.setVisibility(View.VISIBLE);
-                signupButton.setVisibility(View.VISIBLE);
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            showSnackBar(R.string.login_field_empty_prompt);
+            progressBar.setVisibility(View.GONE);
+            forgotLabel.setVisibility(View.VISIBLE);
+            signupButton.setVisibility(View.VISIBLE);
 
-                if (Build.VERSION.SDK_INT >= 21) {
-                    loginButton.setVisibility(View.VISIBLE);
-                } else
-                    loginButtonCompat.setVisibility(View.VISIBLE);
+            if (Build.VERSION.SDK_INT >= 21) {
+                loginButton.setVisibility(View.VISIBLE);
+            } else
+                loginButtonCompat.setVisibility(View.VISIBLE);
 
+            return false;
+
+        } else {
+
+            if (!isValidDistrictAndMunicipality(selectedCity)) {
                 return false;
-
-            } else {
-
-                if(!isValidDistrictAndMunicipality(selectedCity))
-                {
-                    return false;
-                }
             }
+        }
 
         return true;
     }
@@ -323,13 +349,12 @@ public class LoginActivity extends BaseActivity {
             startActivity(intent);
     }
 
-    public void hideMultiCityComponents()
-    {
+    public void hideMultiCityComponents() {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 username_edittext.setBackgroundResource(R.drawable.top_edittext);
-                ((LinearLayout)findViewById(R.id.multicityoptions)).setVisibility(View.GONE);
+                ((LinearLayout) findViewById(R.id.multicityoptions)).setVisibility(View.GONE);
 
                 int marginTopInDp = (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, 40, getResources()
@@ -340,15 +365,14 @@ public class LoginActivity extends BaseActivity {
                                 .getDisplayMetrics());
 
                 ViewGroup.MarginLayoutParams marginParams = new ViewGroup.MarginLayoutParams(imgLogo.getLayoutParams());
-                marginParams.setMargins(0,marginTopInDp,0,marginBottomInDp);
+                marginParams.setMargins(0, marginTopInDp, 0, marginBottomInDp);
                 imgLogo.setLayoutParams(new LinearLayout.LayoutParams(marginParams));
 
             }
         });
     }
 
-    public void loadDistrictDropdown() throws IOException
-    {
+    public void loadDistrictDropdown() throws IOException {
 
         Type type = new TypeToken<List<District>>() {
         }.getType();
@@ -372,12 +396,13 @@ public class LoginActivity extends BaseActivity {
     }
 
     @SuppressWarnings("unchecked")
-    public void loadCityDropdown()
-    {
-        if(districtsList==null){
+    public void loadCityDropdown() {
+        if (districtsList == null) {
             return;
         }
-        if(citiesList!=null){ citiesList.clear(); }
+        if (citiesList != null) {
+            citiesList.clear();
+        }
 
         cityAutocompleteTextBox.setHint("Loading");
         cityAutocompleteTextBox.setOnClickListener(null);
@@ -386,17 +411,16 @@ public class LoginActivity extends BaseActivity {
         spinnerCity.setAdapter(null);
 
         String s = districtAutocompleteTextBox.getText().toString().toUpperCase();
-        List<String> cities=new ArrayList<>();
+        List<String> cities = new ArrayList<>();
 
         for (District district : districtsList) {
             if (s.equals(district.getDistrictName().toUpperCase())) {
                 districtAutocompleteTextBox.setText(s.toUpperCase());
                 cityAutocompleteTextBox.requestFocus();
                 //noinspection unchecked
-                @SuppressWarnings("unchecked") ArrayList<City> citiesArrayList=(ArrayList)district.getCities();
-                citiesList= (ArrayList)citiesArrayList.clone();
-                for(City city: citiesList)
-                {
+                @SuppressWarnings("unchecked") ArrayList<City> citiesArrayList = (ArrayList) district.getCities();
+                citiesList = (ArrayList) citiesArrayList.clone();
+                for (City city : citiesList) {
                     cities.add(city.getCityName());
                 }
                 break;
@@ -406,8 +430,7 @@ public class LoginActivity extends BaseActivity {
         loadDropdownsWithData(cities, spinnerCity, cityAutocompleteTextBox, false);
     }
 
-    public void loadDropdownsWithData(final List<String> autocompleteList, final Spinner autoCompleteSpinner, final CustomAutoCompleteTextView autocompleteTextBox, final Boolean isDistrict)
-    {
+    public void loadDropdownsWithData(final List<String> autocompleteList, final Spinner autoCompleteSpinner, final CustomAutoCompleteTextView autocompleteTextBox, final Boolean isDistrict) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -509,8 +532,7 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    public boolean isValidDistrictAndMunicipality(City selectedCity)
-    {
+    public boolean isValidDistrictAndMunicipality(City selectedCity) {
         if (selectedCity == null && configManager.getString(API_MULTICITIES).equals("true")) {
 
             String errorMsg = (TextUtils.isEmpty(cityAutocompleteTextBox.getText().toString()) ? getString(R.string.please_select_your_district_municipality) : getString(R.string.municipality_not_found));
@@ -522,9 +544,8 @@ public class LoginActivity extends BaseActivity {
         return true;
     }
 
-    public City getCityByName(String cityName)
-    {
-        if(citiesList!=null) {
+    public City getCityByName(String cityName) {
+        if (citiesList != null) {
             for (City city : citiesList) {
                 if (cityName.equals(city.getCityName())) {
                     return city;
@@ -534,8 +555,7 @@ public class LoginActivity extends BaseActivity {
         return null;
     }
 
-    public void resetAndRefreshDropdownValues()
-    {
+    public void resetAndRefreshDropdownValues() {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -569,8 +589,7 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    public void loadDropdowns()
-    {
+    public void loadDropdowns() {
         try {
 
             if (configManager.getString(API_MULTICITIES).equals("false")) {
@@ -625,6 +644,29 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    void resetFields() {
+        districtAutocompleteTextBox.setText("");
+        cityAutocompleteTextBox.setText("");
+        username_edittext.setText("");
+        password_edittext.setText("");
+        districtAutocompleteTextBox.requestFocus();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //check if activity is recreated or not
+        if (!isPaused) {
+            resetFields();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPaused = true;
+    }
+
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
         @Override
         protected Object doInBackground(String... params) {
@@ -632,6 +674,7 @@ public class LoginActivity extends BaseActivity {
             return null;
         }
     }
+
 }
 
 

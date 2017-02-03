@@ -60,6 +60,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceDetailsActivity;
 import org.egovernments.egoverp.activities.GrievanceImageViewerActivity;
 import org.egovernments.egoverp.config.SessionManager;
+import org.egovernments.egoverp.helper.AppUtils;
 
 /**
  * Fragment used by GrievanceDetailsActivity viewpager
@@ -71,6 +72,20 @@ public class GrievanceImageFragment extends Fragment {
     public GrievanceImageFragment() {
     }
 
+    //Sets up a new fragment instance
+    public static Fragment instantiateItem(int position, String access_token, String fileId) {
+        GrievanceImageFragment grievanceImageFragment = new GrievanceImageFragment();
+
+        Bundle args = new Bundle();
+        args.putString("access_token", access_token);
+        args.putString("fileId", fileId);
+        args.putString("type", "download");
+        args.putInt("position", position);
+        grievanceImageFragment.setArguments(args);
+
+        return grievanceImageFragment;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,7 +95,8 @@ public class GrievanceImageFragment extends Fragment {
 
         final Bundle arg = this.getArguments();
 
-        SessionManager sessionManager = new SessionManager(getActivity());
+        SessionManager sessionManager = AppUtils.getSessionManger(getActivity().getApplicationContext());
+        ;
 
         final String url = sessionManager.getBaseURL()
                 + "/api/v1.0/complaint/downloadfile/"
@@ -122,20 +138,6 @@ public class GrievanceImageFragment extends Fragment {
 
         return view;
 
-    }
-
-    //Sets up a new fragment instance
-    public static Fragment instantiateItem(int position, String access_token, String fileId) {
-        GrievanceImageFragment grievanceImageFragment = new GrievanceImageFragment();
-
-        Bundle args = new Bundle();
-        args.putString("access_token", access_token);
-        args.putString("fileId", fileId);
-        args.putString("type", "download");
-        args.putInt("position", position);
-        grievanceImageFragment.setArguments(args);
-
-        return grievanceImageFragment;
     }
 
 

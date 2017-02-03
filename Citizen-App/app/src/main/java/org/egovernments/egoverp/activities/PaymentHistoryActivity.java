@@ -53,6 +53,7 @@ public class PaymentHistoryActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.title_activity_payment_history);
         setContentView(R.layout.activity_payment_history);
 
         if (getSupportActionBar() != null)
@@ -152,7 +153,7 @@ public class PaymentHistoryActivity extends BaseActivity {
 
             Transaction transaction = paymentHistoryAdapter.getTransactionByIndex(pos);
 
-            String referrerIp = AppUtils.getConfigManager(getApplicationContext()).getString(Config.REFERER_IP_CONFIG_KEY);
+            String referrerIp = configManager.getString(Config.REFERER_IP_CONFIG_KEY);
             String fileName = transaction.getReceiptNo().replaceAll(Matcher.quoteReplacement(File.separator), "-");
 
             Intent intent = new Intent(this, DownloadService.class);
@@ -186,7 +187,9 @@ public class PaymentHistoryActivity extends BaseActivity {
     @Override
     public void errorOccurred(String errorMsg, int errorCode) {
         super.errorOccurred(errorMsg, errorCode);
-        errorView.setError(errorCode);
-        changeVisibility(View.GONE, View.VISIBLE, View.GONE);
+        if (paymentHistoryRecyclerView.getAdapter() == null) {
+            errorView.setError(errorCode);
+            changeVisibility(View.GONE, View.VISIBLE, View.GONE);
+        }
     }
 }

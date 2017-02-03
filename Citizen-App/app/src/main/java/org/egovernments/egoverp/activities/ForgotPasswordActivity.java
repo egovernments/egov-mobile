@@ -80,7 +80,7 @@ public class ForgotPasswordActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setTitle(R.string.account_recovery_label);
         setContentViewWithNavBar(R.layout.activity_forgotpassword, false);
 
         progressBar = (ProgressBar) findViewById(R.id.forgotprogressBar);

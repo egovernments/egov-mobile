@@ -61,9 +61,7 @@ import com.google.gson.Gson;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.config.Config;
-import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.PaymentHistoryRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.PropertyViewRequest;
@@ -92,7 +90,6 @@ public class PropertyTaxViewActivity extends BaseActivity {
     EditText etAmountToPay;
     EditText etMobileNo;
     EditText etMailAddress;
-    ConfigManager configManager;
     boolean isVacantLand=false;
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
     String referrerIp;
@@ -110,7 +107,9 @@ public class PropertyTaxViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.view_propertytax);
         setContentView(R.layout.activity_propertytax_view);
+
 
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -122,15 +121,6 @@ public class PropertyTaxViewActivity extends BaseActivity {
 
         fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpay);
         fabPayPropertyTax.setVisibility(View.GONE);
-
-        try
-        {
-            configManager= AppUtils.getConfigManager(getApplicationContext());
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
 
         fabPayPropertyTax.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +197,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
         etMobileNo=(EditText) findViewById(R.id.etMobileNo);
         etMailAddress=(EditText)findViewById(R.id.etMail);
 
-        sessionManager=new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
 
         btnBreakups.setOnClickListener(new View.OnClickListener(){
             @Override

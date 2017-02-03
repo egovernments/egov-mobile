@@ -143,6 +143,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.grievancedetails_label);
         setContentView(R.layout.activity_grievance_details);
 
         grievance = (Grievance)getIntent().getExtras().get(GRIEVANCE_ITEM);

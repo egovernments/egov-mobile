@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:text="Download Receipt"
+            android:text="@string/download_receipt"
             android:textColor="@color/blue" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:paddingTop="2dp"
-            android:text="PENDING"
+            android:text=""
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 

@@ -48,6 +48,7 @@ package org.egovernments.egoverp.config;
 
 public class Config {
 
+    public static final String APP_LOCALES = "app.locales";
     public static final String API_MULTICITIES = "api.multicities";
     public static final String APP_DEBUG_LOG = "app.debug.log";
     public static final String APP_TIMEOUTDAYS = "app.timeoutdays";

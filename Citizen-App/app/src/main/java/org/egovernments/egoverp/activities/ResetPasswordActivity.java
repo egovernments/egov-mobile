@@ -65,10 +65,8 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.listeners.SMSListener;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -94,28 +92,21 @@ public class ResetPasswordActivity extends BaseActivity {
             setOTPFromIntent(intent);
         }
     };
-    private ConfigManager configManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.title_activity_reset_password);
         setContentViewWithNavBar(R.layout.activity_reset_password, false);
-
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
         }
 
-        try {
-            configManager = AppUtils.getConfigManager(getApplicationContext());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         TextView tvResetPws=(TextView)findViewById(R.id.tvResetPwd);
         tvCountDown=(TextView)findViewById(R.id.tvCountDown);
 
-        String recoveryMessage = "";
+        String recoveryMessage;
         mobileNo=getIntent().getStringExtra(MESSAGE_SENT_TO);
 
         progressBar=(ProgressBar)findViewById(R.id.progressBar);

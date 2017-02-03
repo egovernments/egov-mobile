@@ -53,7 +53,6 @@ import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 
 import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
@@ -74,12 +73,10 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
     FloatingActionButton fabSearchProperty;
     boolean isVacantLand=false;
 
-    ConfigManager configManager;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.propertytax_label);
         setContentViewWithNavBar(R.layout.activity_property_tax_search, true);
 
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
@@ -89,15 +86,6 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
         tvReceiptInfo=(TextView)findViewById(R.id.tvReceiptInfo);
 
         layoutDoorNoContainer=(LinearLayout)findViewById(R.id.doorNoContainer);
-
-        try
-        {
-            configManager= AppUtils.getConfigManager(getApplicationContext());
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
 
         tvSearchTitle=(TextView)findViewById(R.id.tvSearchTitle);
 

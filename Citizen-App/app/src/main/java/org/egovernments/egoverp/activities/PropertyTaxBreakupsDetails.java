@@ -43,7 +43,6 @@
 package org.egovernments.egoverp.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -57,7 +56,7 @@ import org.egovernments.egoverp.models.TaxDetail;
 
 import java.util.ArrayList;
 
-public class PropertyTaxBreakupsDetails extends AppCompatActivity {
+public class PropertyTaxBreakupsDetails extends BaseActivity {
 
     ArrayList<TaxDetail> taxBreakups;
     ListView lvBreakups;
@@ -65,6 +64,7 @@ public class PropertyTaxBreakupsDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.title_activity_property_tax_breakups_details);
         setContentView(R.layout.activity_property_tax_breakups_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

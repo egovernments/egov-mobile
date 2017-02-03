@@ -52,7 +52,6 @@ import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 
 import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
@@ -65,12 +64,12 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
     EditText etConsumerNo;
     EditText etOwnerName;
     EditText etMobileNo;
-    ConfigManager configManager;
     TextView tvReceiptInfoConsumerNo, tvReceiptInfoAssessmentNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.watertax_label);
         setContentViewWithNavBar(R.layout.activity_water_charges_search, true);
 
         etAssessmentNo=(EditText)findViewById(R.id.etAssessmentNo);
@@ -85,15 +84,6 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
         if(fab!=null)
         {
             fab.setOnClickListener(this);
-        }
-
-        try
-        {
-            configManager= AppUtils.getConfigManager(getApplicationContext());
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
         }
 
         tvReceiptInfoConsumerNo.setOnClickListener(this);

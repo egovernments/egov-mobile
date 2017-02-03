@@ -291,6 +291,32 @@
             </LinearLayout>
         </ScrollView>
 
+        <!--<TextView
+            android:id="@+id/tvAppLocale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+
+            android:textColor="@android:color/white"
+            android:background="@drawable/radius_background"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
+            />-->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <include layout="@layout/layout_language_menu" />
+        </LinearLayout>
+
+
     </FrameLayout>
 
     <Button

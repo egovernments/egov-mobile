@@ -84,6 +84,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.config.SessionManager;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.PinView;
 import org.egovernments.egoverp.helper.map.CustomMapFragment;
 import org.egovernments.egoverp.helper.map.MapWrapperLayout;
@@ -122,7 +123,9 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.pick_complaint_location);
         setContentView(R.layout.activity_grievance_location);
+
 
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
 
@@ -137,7 +140,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
 
 
         pinView=(PinView)findViewById(R.id.pinmap);
-        sessionManager=new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
 
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

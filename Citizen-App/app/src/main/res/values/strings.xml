@@ -132,11 +132,11 @@
     <string name="citizen_charter_label">Citizen Charter</string>
     <string name="citizen_charter_label2"></string>
     <string name="sos_label">SOS</string>
-    <string name="sos_label2">-</string>
+    <string name="sos_label2"></string>
     <string name="aboutus_label">About us</string>
-    <string name="aboutus_label2">-</string>
+    <string name="aboutus_label2"></string>
     <string name="sla_label">SLA</string>
-    <string name="sla_label2">-</string>
+    <string name="sla_label2"></string>
     <string name="details_label">COMPLAINT DESCRIPTION</string>
     <string name="dob_label">DATE OF BIRTH</string>
     <string name="locality_label">LOCALITY</string>
@@ -309,5 +309,10 @@
     <string name="rupee_value">\u20B9 %1$s</string>
     <string name="no_payment_history">No payment history</string>
     <string name="download_start_msg">Download started</string>
-    <string name="permission_denied">Permission Denied, Please allow to proceed !</string>
+    <string name="permission_denied">Permission Denied, Please allow proceeding!</string>
+    <string name="success">Success</string>
+    <string name="failure">Failure</string>
+    <string name="pending">Pending</string>
+    <string name="receipt_no">Receipt #</string>
+    <string name="download_receipt">Download Receipt</string>
 </resources>

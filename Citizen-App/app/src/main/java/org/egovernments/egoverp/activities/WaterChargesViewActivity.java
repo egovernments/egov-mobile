@@ -64,7 +64,6 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.KeyboardUtils;
 import org.egovernments.egoverp.models.PaymentHistoryRequest;
 import org.egovernments.egoverp.models.TaxDetail;
@@ -95,7 +94,6 @@ public class WaterChargesViewActivity extends BaseActivity {
     double arrearsTotal=0, arrearsPenalty=0, currentTotal=0, currentPenalty=0, total =0;
     boolean isKeyboardVisible=false;
     String consumerNo;
-    ConfigManager configManager;
     Call<WaterTaxCallback> waterTaxCall;
     Button paymentHistoryViewButton;
     private TextView tvConsumerNo;
@@ -109,6 +107,7 @@ public class WaterChargesViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.watertax_label);
         setContentView(R.layout.activity_water_charges_view);
 
         consumerNo=getIntent().getStringExtra(SearchResultActivity.CONSUMER_NO);
@@ -132,15 +131,6 @@ public class WaterChargesViewActivity extends BaseActivity {
                 isKeyboardVisible=isVisible;
             }
         });
-
-        try
-        {
-            configManager= AppUtils.getConfigManager(getApplicationContext());
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
 
         fabPayWaterTax.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -100,7 +100,9 @@ public class ProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.editprofile_label);
         setContentViewWithNavBar(R.layout.activity_profile, true);
+
 
         final FloatingActionButton profileEditButton = (FloatingActionButton) findViewById(R.id.profile_edit);
         progressDialog=new ProgressDialog(ProfileActivity.this);

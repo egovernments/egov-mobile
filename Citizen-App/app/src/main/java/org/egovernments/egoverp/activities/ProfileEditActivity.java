@@ -88,6 +88,7 @@ public class ProfileEditActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.editprofile_label);
         setContentView(R.layout.activity_profile_edit);
 
         Profile profile = (Profile) getIntent().getSerializableExtra(PROFILE_EDIT_CONTENT);

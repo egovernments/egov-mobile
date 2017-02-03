@@ -183,8 +183,8 @@ public class NewGrievanceActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        setTitle(R.string.newgrievance_label);
         setContentView(R.layout.activity_new_grievance);
 
         if (getSupportActionBar() != null)

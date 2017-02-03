@@ -160,7 +160,7 @@ public class SplashScreenActivity extends Activity {
             e.printStackTrace();
         }
 
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
         sessionManager.setKeyDebugLog(Boolean.valueOf(configManager.getString(Config.APP_DEBUG_LOG)));
 
         startInitialConditionCheck();

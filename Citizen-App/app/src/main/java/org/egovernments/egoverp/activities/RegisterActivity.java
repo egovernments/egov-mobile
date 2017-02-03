@@ -83,7 +83,6 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
 import org.egovernments.egoverp.helper.AppUtils;
-import org.egovernments.egoverp.helper.ConfigManager;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
 import org.egovernments.egoverp.listeners.SMSListener;
@@ -130,7 +129,6 @@ public class RegisterActivity extends BaseActivity {
     };
     private TextView municipalityInfo;
     private TextInputLayout nameInputLayout;
-    private ConfigManager configManager;
     private Handler handler;
     private Spinner spinnerCity;
     private Spinner spinnerDistrict;
@@ -140,6 +138,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.createaccount_label);
         setContentViewWithNavBar(R.layout.activity_register, false);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -231,12 +230,6 @@ public class RegisterActivity extends BaseActivity {
         });
 
         handler = new Handler();
-
-        try {
-            configManager = AppUtils.getConfigManager(getApplicationContext());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         new GetAllCitiesTask().execute();
 

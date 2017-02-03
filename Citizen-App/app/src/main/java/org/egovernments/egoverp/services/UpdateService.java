@@ -88,7 +88,7 @@ public class UpdateService extends Service {
 
         handler = new Handler();
 
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
 
         if (intent != null) {
             String method = intent.getStringExtra(KEY_METHOD);

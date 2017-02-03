@@ -84,8 +84,8 @@ public class SOSActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.sos_label);
         setContentViewWithNavBar(R.layout.activity_sos, true);
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recylerview);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(SOSActivity.this));

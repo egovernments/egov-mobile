@@ -59,6 +59,7 @@ import com.squareup.picasso.Picasso;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.config.SessionManager;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.models.SupportDoc;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class GrievanceImageViewerActivity extends FragmentActivity {
 
         supportDocs=(ArrayList<SupportDoc>)getIntent().getExtras().get(COMPLAINT_SUPPORT_DOCS);
 
-        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager = AppUtils.getSessionManger(getApplicationContext());
 
         ImageFragmentPagerAdapter imageFragmentPagerAdapter = new ImageFragmentPagerAdapter(getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) findViewById(R.id.fullview_viewpager);

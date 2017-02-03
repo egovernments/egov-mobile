@@ -58,7 +58,7 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
                 transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.REMITTED.getValue()) ||
                 transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.TO_BE_SUBMITTED.getValue())) {
             color = ContextCompat.getColor(context, R.color.green);
-            holder.tvReceiptInfo.setText("Receipt #" + transaction.getReceiptNo());
+            holder.tvReceiptInfo.setText(context.getString(R.string.receipt_no) + transaction.getReceiptNo());
             holder.tvReceiptInfo.setVisibility(View.VISIBLE);
             holder.btnDownload.setVisibility(View.VISIBLE);
             holder.btnDownload.setOnClickListener(new View.OnClickListener() {
@@ -68,14 +68,14 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
                 }
             });
 
-            holder.tvStatus.setText("SUCCESS");
+            holder.tvStatus.setText(R.string.success);
 
         } else if (transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.FAILED.getValue()) ||
                 transaction.getReceiptStatus().equals(Transaction.ReceiptStatus.CANCELLED.getValue())) {
             color = ContextCompat.getColor(context, R.color.red);
-            holder.tvStatus.setText("FAILURE");
+            holder.tvStatus.setText(R.string.failure);
         } else {
-            holder.tvStatus.setText("PENDING FOR RECONSIDERATION");
+            holder.tvStatus.setText(R.string.pending);
         }
 
         bgShape.setColor(color);

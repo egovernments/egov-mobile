@@ -55,9 +55,9 @@
                     android:hint="@string/amount_to_pay"
                     android:imeOptions="actionNext"
                     android:inputType="number"
+                    android:maxLines="1"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    android:singleLine="true"
                     android:textSize="15sp" />
 
             </android.support.design.widget.TextInputLayout>
@@ -78,9 +78,9 @@
                     android:imeOptions="actionNext"
                     android:inputType="number"
                     android:maxLength="10"
+                    android:maxLines="1"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    android:singleLine="true"
                     android:textSize="15sp" />
 
             </android.support.design.widget.TextInputLayout>
@@ -98,11 +98,11 @@
                     android:layout_gravity="center_horizontal"
                     android:ems="10"
                     android:hint="@string/email_address_with_star"
-                    android:imeOptions="actionNext"
+                    android:imeOptions="actionDone"
                     android:inputType="textEmailAddress"
+                    android:maxLines="1"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    android:singleLine="true"
                     android:textSize="15sp" />
 
             </android.support.design.widget.TextInputLayout>
@@ -129,7 +129,6 @@
                 android:layout_marginTop="6dp"
                 android:clickable="true"
                 android:src="@drawable/ic_rupee_24dp" />
-
 
         </LinearLayout>
 

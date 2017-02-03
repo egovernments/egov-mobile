@@ -103,6 +103,7 @@ public class BuildingPlanActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getToolbarTitle(""));
         setContentViewWithNavBar(R.layout.activity_building_plan, true);
 
         final InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);

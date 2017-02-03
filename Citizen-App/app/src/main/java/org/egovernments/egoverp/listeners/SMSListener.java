@@ -56,6 +56,7 @@ import org.egovernments.egoverp.activities.RegisterActivity;
 import org.egovernments.egoverp.activities.ResetPasswordActivity;
 import org.egovernments.egoverp.activities.SplashScreenActivity;
 import org.egovernments.egoverp.config.SessionManager;
+import org.egovernments.egoverp.helper.AppUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,7 +96,7 @@ public class SMSListener extends BroadcastReceiver {
 
                         message = currentSMS.getDisplayMessageBody();
 
-                        sessionManager=new SessionManager(context);
+                        sessionManager = AppUtils.getSessionManger(context);
 
                         if ((message.contains(ACCOUNT_RECOVERY_MESSAGE) || message.contains(ACCOUNT_VERIFICATION_MESSAGE))
                                 && TextUtils.isEmpty(sessionManager.getAccessToken()))

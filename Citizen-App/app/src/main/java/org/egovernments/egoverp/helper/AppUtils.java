@@ -50,6 +50,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -64,14 +66,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonElement;
+import com.google.gson.internal.LinkedHashTreeMap;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.config.Config;
+import org.egovernments.egoverp.config.SessionManager;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,11 +90,23 @@ public class AppUtils {
 
     private static final String PATTERN_PAN = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
 
+    static ConfigManager configManager;
+    static SessionManager sessionManager;
+
     public static ConfigManager getConfigManager(Context appContext) throws IOException {
-        InputStream inputStream = appContext.getAssets().open("egov.conf");
-        ConfigManager configManager = new ConfigManager(inputStream, appContext);
-        inputStream.close();
+        if (configManager == null) {
+            InputStream inputStream = appContext.getAssets().open("egov.conf");
+            configManager = new ConfigManager(inputStream, appContext);
+            inputStream.close();
+        }
         return configManager;
+    }
+
+    public static SessionManager getSessionManger(Context applicationContext) {
+        if (sessionManager == null) {
+            sessionManager = new SessionManager(applicationContext);
+        }
+        return sessionManager;
     }
 
     public static String getNullAsEmptyString(JsonElement jsonElement) {
@@ -237,6 +257,80 @@ public class AppUtils {
 
     public static void requestPermission(Activity activity, String[] permissions, int requestCode) {
         ActivityCompat.requestPermissions(activity, permissions, requestCode);
+    }
+
+    public static void showLanguageChangePrompt(Context context, ConfigManager configManager, String title, String[] btnText,
+                                                final LanguageChangeListener listener, String selectedLocaleCode) throws IOException {
+
+        final String[] languageCodes = getSupportedLocalesCode(configManager);
+
+        final CharSequence[] languagesName = getLanguagesListByLocaleCodes(languageCodes);
+        if (languagesName == null) return;
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setCancelable(false);
+
+        final ArrayList<Integer> selectedLanguageIdx = new ArrayList<>();
+        selectedLanguageIdx.add(0, 0);
+
+        int selectedIdx = Arrays.asList(languageCodes).indexOf(selectedLocaleCode);
+
+        DialogInterface.OnClickListener buttonListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface paramDialogInterface,
+                                int paramInt) {
+                Integer idx = selectedLanguageIdx.get(0);
+                listener.languageChangeListener(languageCodes[idx].trim(), languagesName[idx].toString());
+                paramDialogInterface.dismiss();
+            }
+        };
+
+        builder.setSingleChoiceItems(languagesName, selectedIdx, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                selectedLanguageIdx.add(0, i);
+            }
+        });
+
+        builder.setPositiveButton(btnText[0], buttonListener);
+
+        if (btnText.length != 1) {
+            builder.setNegativeButton(btnText[1], null);
+        }
+        builder.show();
+    }
+
+    @Nullable
+    private static CharSequence[] getLanguagesListByLocaleCodes(String[] localeCodes) {
+        CharSequence[] languageNames = new CharSequence[localeCodes.length];
+        int idx = 0;
+        for (String languageCode : localeCodes) {
+            languageNames[idx] = getLanguageDisplayNameByLocaleCode(languageCode);
+            idx++;
+        }
+        return languageNames;
+    }
+
+    @NonNull
+    public static String[] getSupportedLocalesCode(ConfigManager configManager) throws IOException {
+        //retrieve supported languages list from config
+        return configManager.getString(Config.APP_LOCALES).replaceAll("\\s*", "").split(",");
+    }
+
+    public static String getLanguageDisplayNameByLocaleCode(String localeCode) {
+        Locale locale = new Locale(localeCode.trim());
+        return locale.getDisplayLanguage(locale);
+    }
+
+    //return Map<language name : language code>
+    public static Map<String, String> getSupportedLanguagesList(ConfigManager configManager) throws IOException {
+        Map<String, String> languagesList = new LinkedHashTreeMap<>();
+        String[] supportedLanguageCodes = getSupportedLocalesCode(configManager);
+        for (String languageCode : supportedLanguageCodes) {
+            languagesList.put(getLanguageDisplayNameByLocaleCode(languageCode), languageCode);
+        }
+        return languagesList;
     }
 
 }
