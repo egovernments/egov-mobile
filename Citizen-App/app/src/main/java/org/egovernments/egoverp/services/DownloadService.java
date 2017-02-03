@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
@@ -62,27 +61,30 @@ public class DownloadService extends IntentService {
                 .setSmallIcon(R.drawable.ic_file_download_white_36dp)
                 .setContentTitle(fileName)
                 .setContentText("Downloading File")
-                .setAutoCancel(true);
+                .setOngoing(true)
+                .setAutoCancel(false);
+
+        //for intermediate progress
+        notificationBuilder.setProgress(0, 0, true);
 
         Calendar cal = Calendar.getInstance();
 
         int notifyId = cal.get(Calendar.MINUTE) + cal.get(Calendar.SECOND);
 
         notificationManager.notify(notifyId, notificationBuilder.build());
+
         initDownload(notifyId, intent.getStringExtra(REFERRER_IP), receiptDownloadRequest);
 
     }
 
     private void initDownload(int notificationId, String referrerIp, ReceiptDownloadRequest receiptDownloadRequest) {
-
         Call<ResponseBody> request = ApiController.getRetrofit2API(getApplicationContext()).downloadPaymentReceipt(referrerIp, receiptDownloadRequest);
         try {
             downloadFile(notificationId, request.execute().body());
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            onDownloadFailed(notificationId);
         }
-
     }
 
     private void downloadFile(int notificationId, ResponseBody body) throws IOException {
@@ -126,7 +128,6 @@ public class DownloadService extends IntentService {
     }
 
     private void sendNotification(int notificationId, Download download) {
-
         /*sendIntent(download);*/
         notificationBuilder.setProgress(100, download.getProgress(), false);
         notificationBuilder.setContentText("Downloading file " + download.getCurrentFileSize() + "/" + totalFileSize + " MB");
@@ -134,30 +135,37 @@ public class DownloadService extends IntentService {
     }
 
     /*private void sendIntent(Download download){
-
         Intent intent = new Intent(Activity.MESSAGE_PROGRESS);
         intent.putExtra("download",download);
         LocalBroadcastManager.getInstance(DownloadService.this).sendBroadcast(intent);
-
     }*/
 
     private void onDownloadComplete(int notificationId, File downloadedFile) {
-
-        Download download = new Download();
+        /*Download download = new Download();
         download.setProgress(100);
-        /*sendIntent(download);*/
+        sendIntent(download);*/
 
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, openFile(downloadedFile), 0);
-
-        notificationManager.cancel(0);
-        notificationBuilder.setProgress(0, 0, false);
-        notificationBuilder.setContentText("File Downloaded in Downloads Folder");
+        setNotificationBuilderEndStatusWithMsg("File Downloaded in Downloads Folder");
         notificationBuilder.setContentIntent(pIntent);
-
         Notification notification = notificationBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(notificationId, notification);
+    }
 
+    private void setNotificationBuilderEndStatusWithMsg(String msg) {
+        notificationManager.cancel(0);
+        notificationBuilder.setProgress(0, 0, false);
+        notificationBuilder.setContentText(msg);
+        notificationBuilder.setAutoCancel(false);
+        notificationBuilder.setOngoing(false);
+    }
+
+    private void onDownloadFailed(int notificationId) {
+        setNotificationBuilderEndStatusWithMsg("Download failed, please retry");
+        Notification notification = notificationBuilder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(notificationId, notification);
     }
 
     @Override
