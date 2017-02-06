@@ -76,14 +76,14 @@ public class RegisterRequest {
     private String activationCode;
 
     public RegisterRequest(String emailId, String mobileNumber, String name, String password, String deviceId, String deviceType, String OSVersion, String activationCode) {
-        this.emailId = emailId;
-        this.mobileNumber = mobileNumber;
-        this.name = name;
-        this.password = password;
-        this.deviceId = deviceId;
-        this.deviceType = deviceType;
-        this.OSVersion = OSVersion;
-        this.activationCode=activationCode;
+        this.emailId = emailId.trim();
+        this.mobileNumber = mobileNumber.trim();
+        this.name = name.trim();
+        this.password = password.trim();
+        this.deviceId = deviceId.trim();
+        this.deviceType = deviceType.trim();
+        this.OSVersion = OSVersion.trim();
+        this.activationCode = activationCode.trim();
     }
 
     public String getEmailId() {

@@ -70,6 +70,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
@@ -95,6 +96,7 @@ public class SplashScreenActivity extends Activity {
     private final int SPLASH_DISPLAY_LENGTH = 2000;
     private final String PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=";
     private final String MARKET_URL = "market://details?id=";
+    TextView tvVersion;
     private ConfigManager configManager;
     private Thread timerThread;
     private Handler handler;
@@ -107,6 +109,11 @@ public class SplashScreenActivity extends Activity {
         setContentView(R.layout.activity_splashscreen);
 
         handler = new Handler();
+
+        tvVersion = (TextView) findViewById(R.id.tvVersion);
+
+        if (tvVersion != null)
+            tvVersion.setText(AppUtils.getAppVersionName(getApplicationContext()));
 
         timerThread = new Thread() {
             public void run() {
@@ -206,7 +213,7 @@ public class SplashScreenActivity extends Activity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_CODE_ASK_PERMISSION_READ_SMS:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(getApplicationContext(), R.string.permission_readsms_denied, Toast.LENGTH_LONG).show();
                     startTimerThread();
                 } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -349,7 +356,7 @@ public class SplashScreenActivity extends Activity {
                         sessionManager.logoutUser();
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException | JsonSyntaxException e) {
                 e.printStackTrace();
                 handler.post(new Runnable() {
                     @Override

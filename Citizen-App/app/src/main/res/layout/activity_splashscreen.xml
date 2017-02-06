@@ -68,23 +68,32 @@
                 android:src="@drawable/applogo" />
 
             <TextView
+                android:id="@+id/tvVersion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/splashscreen_loading"
-                android:textColor="@android:color/white"
-                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_below="@+id/egov_logo"
                 android:layout_centerHorizontal="true"
+                android:text=""
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/textView5"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:id="@+id/textView5" />
+                android:layout_centerHorizontal="true"
+                android:text="@string/splashscreen_loading"
+                android:textColor="@android:color/white" />
 
             <ProgressBar
+                android:id="@+id/progressBar2"
                 style="?android:attr/progressBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/progressBar2"
-                android:layout_margin="10dp"
+                android:layout_above="@+id/textView5"
                 android:layout_centerHorizontal="true"
-                android:layout_above="@+id/textView5" />
+                android:layout_margin="10dp" />
 
         </RelativeLayout>
     </FrameLayout>
