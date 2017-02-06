@@ -469,7 +469,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
         String complainantName=AppUtils.isEmptyReturnNull(etComplainantName.getText().toString());
         String complainantMobileNo=AppUtils.isEmptyReturnNull(etComplainantMobNo.getText().toString());
-        String complainantEmail=AppUtils.isEmptyReturnNull(etComplainantEmail.getText().toString());
+        String complainantEmail = AppUtils.isEmptyReturnNull(etComplainantEmail.getText().toString().trim());
 
         complaintTypeID =0;
 

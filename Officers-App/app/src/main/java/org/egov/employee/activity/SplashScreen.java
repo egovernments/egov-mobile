@@ -82,6 +82,7 @@ public class SplashScreen extends BaseActivity {
     Boolean isFromSessionTimeOut;
     Boolean isFromLogOut;
     String serverErrorMsg;
+    TextView tvVersion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,11 @@ public class SplashScreen extends BaseActivity {
 
         pbsplash=(ProgressBar)findViewById(R.id.pbsplash);
         layerror=(LinearLayout) findViewById(R.id.layerror);
+
+        tvVersion = (TextView) findViewById(R.id.tvVersion);
+
+        if (tvVersion != null)
+            tvVersion.setText(AppUtils.getAppVersionName(getApplicationContext()));
 
         appVersionCheckAndProceedToLaunch();
 

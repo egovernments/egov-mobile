@@ -46,92 +46,103 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@color/colorPrimary"
+    android:gravity="center"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.egov.employee.activity.SplashScreen"
-    tools:showIn="@layout/activity_splash_screen"
-    android:gravity="center">
+    tools:showIn="@layout/activity_splash_screen">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/appLogo"
         android:layout_width="250dp"
         android:layout_height="100dp"
-        android:id="@+id/appLogo"
-        android:src="@drawable/egov_logo_tr_h"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/egov_logo_tr_h" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
         android:gravity="center"
-        android:layout_marginBottom="100dp" android:orientation="vertical">
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:text=""
+            android:textColor="@android:color/white" />
 
         <ProgressBar
+            android:id="@+id/pbsplash"
             style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/pbsplash"
             android:layout_marginBottom="5dp"
             />
 
         <TextView
+            android:id="@+id/tvinfosplash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_gravity="center_horizontal"
             android:text="Logging out"
-            android:id="@+id/tvinfosplash"
-            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/whiteAlpha"
-            android:layout_gravity="center_horizontal" />
+            android:visibility="gone" />
 
     </LinearLayout>
 
 
 
     <LinearLayout
-        android:layout_width="match_parent"
         android:id="@+id/layerror"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:visibility="gone"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_marginBottom="100dp"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView3"
-            android:src="@drawable/ic_error_outline_white_60dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_error_outline_white_60dp" />
 
         <TextView
+            android:id="@+id/tvError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="No internet connection"
             android:padding="10dp"
-            android:textColor="@color/whiteAlpha"
-            android:id="@+id/tvError" />
+            android:text="No internet connection"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/whiteAlpha" />
 
         <Button
+            android:id="@+id/btnretry"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:text="RETRY"
-            android:id="@+id/btnretry"
-            android:theme="@style/Egovbutton"
-            android:layout_gravity="center_horizontal" />
+            android:theme="@style/Egovbutton" />
 
 
     </LinearLayout>
@@ -144,15 +155,15 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="@string/powered_by"
-            android:id="@+id/textView"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center_horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/powered_by"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white" />
 
     </RelativeLayout>
 
