@@ -108,7 +108,6 @@ public class LoginActivity extends BaseActivity {
     private String password;
     private ProgressBar progressBar;
     private FloatingActionButton loginButton;
-    private com.melnykov.fab.FloatingActionButton loginButtonCompat;
     private TextView forgotLabel, tvAppLocale;
     private Button signupButton;
     private EditText username_edittext;
@@ -151,7 +150,6 @@ public class LoginActivity extends BaseActivity {
         spinnerDistrict = (Spinner) findViewById(R.id.spinner_district);
 
         loginButton = (FloatingActionButton) findViewById(R.id.signin_submit);
-        loginButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.signin_submit_compat);
 
         forgotLabel = (TextView) findViewById(R.id.signin_forgot);
         signupButton = (Button) findViewById(R.id.signin_register);
@@ -206,14 +204,7 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-        //To make fab compatible in older android versions
-        if (Build.VERSION.SDK_INT >= 21) {
-            loginButton.setOnClickListener(onClickListener);
-        } else {
-            loginButton.setVisibility(View.GONE);
-            loginButtonCompat.setVisibility(View.VISIBLE);
-            loginButtonCompat.setOnClickListener(onClickListener);
-        }
+        loginButton.setOnClickListener(onClickListener);
 
         forgotLabel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -301,7 +292,6 @@ public class LoginActivity extends BaseActivity {
     public void showLoginProgress() {
         progressBar.setVisibility(View.VISIBLE);
         loginButton.setVisibility(View.GONE);
-        loginButtonCompat.setVisibility(View.GONE);
         forgotLabel.setVisibility(View.INVISIBLE);
         signupButton.setVisibility(View.INVISIBLE);
     }
@@ -310,10 +300,7 @@ public class LoginActivity extends BaseActivity {
         progressBar.setVisibility(View.GONE);
         forgotLabel.setVisibility(View.VISIBLE);
         signupButton.setVisibility(View.VISIBLE);
-        if (Build.VERSION.SDK_INT >= 21) {
-            loginButton.setVisibility(View.VISIBLE);
-        } else
-            loginButtonCompat.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.VISIBLE);
     }
 
     //Invokes call to API
@@ -324,12 +311,7 @@ public class LoginActivity extends BaseActivity {
             progressBar.setVisibility(View.GONE);
             forgotLabel.setVisibility(View.VISIBLE);
             signupButton.setVisibility(View.VISIBLE);
-
-            if (Build.VERSION.SDK_INT >= 21) {
-                loginButton.setVisibility(View.VISIBLE);
-            } else
-                loginButtonCompat.setVisibility(View.VISIBLE);
-
+            loginButton.setVisibility(View.VISIBLE);
             return false;
 
         } else {

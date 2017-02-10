@@ -42,7 +42,6 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -264,17 +263,6 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:src="@drawable/ic_arrow_forward_white_36dp"/>
-
-                <com.melnykov.fab.FloatingActionButton
-                    android:id="@+id/signin_submit_compat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:src="@drawable/ic_arrow_forward_white_36dp"
-                    android:visibility="gone"
-                    fab:fab_colorNormal="@color/colorAccent"
-                    fab:fab_colorPressed="@color/colorPrimary"
-                    fab:fab_colorRipple="#000" />
 
                 <!--To make fab compatible in older android versions-->
                 <Button

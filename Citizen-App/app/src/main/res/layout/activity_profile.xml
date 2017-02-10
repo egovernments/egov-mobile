@@ -98,25 +98,25 @@
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="15dp"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:padding="15dp">
 
                 <android.support.v7.widget.CardView
                     android:id="@+id/complaint_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:foreground="?android:attr/selectableItemBackground"
-                    app:cardUseCompatPadding="true"
+                    app:cardBackgroundColor="@android:color/white"
                     app:cardCornerRadius="2dp"
-                    app:cardBackgroundColor="@android:color/white">
+                    app:cardUseCompatPadding="true">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:orientation="vertical">
+                        android:paddingRight="16dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -127,8 +127,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_call_black_24dp"/>
 
                             <LinearLayout
@@ -149,8 +149,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
-                                    android:text="@string/phone_label"
                                     android:paddingBottom="12dp"
+                                    android:text="@string/phone_label"
                                     android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
@@ -168,8 +168,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_call_black_24dp"/>
 
                             <LinearLayout
@@ -191,9 +191,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/altphone_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
 
@@ -211,8 +211,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_mail_black_24dp"/>
 
                             <LinearLayout
@@ -234,9 +234,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/email_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
 
@@ -255,8 +255,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_face_black_24dp" />
 
                             <LinearLayout
@@ -277,9 +277,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/gender_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
 
@@ -297,8 +297,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_today_black_24dp" />
 
                             <LinearLayout
@@ -320,9 +320,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/dob_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
 
@@ -341,8 +341,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_credit_card_black_24dp" />
 
                             <LinearLayout
@@ -363,9 +363,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/aadhaar_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
                                 <View style="@style/Divider" />
 
@@ -383,8 +383,8 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingRight="16dp"
                                 android:layout_gravity="center"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/ic_credit_card_black_24dp" />
 
                             <LinearLayout
@@ -405,9 +405,9 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="center_vertical"
+                                    android:paddingBottom="12dp"
                                     android:text="@string/pan_label"
-                                    android:textSize="@dimen/field_labelSize"
-                                    android:paddingBottom="12dp"/>
+                                    android:textSize="@dimen/field_labelSize" />
 
 
                             </LinearLayout>
@@ -449,9 +449,9 @@
                             android:id="@+id/profile_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="15dp"
                             android:textColor="@color/dataLabelColor"
-                            android:textSize="@dimen/data_labelSize"
-                            android:layout_marginBottom="15dp"/>
+                            android:textSize="@dimen/data_labelSize" />
 
                     </LinearLayout>
 
@@ -473,26 +473,10 @@
         android:id="@+id/profile_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_mode_edit_white_24dp" />
-
-   <!-- <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/profile_editcompat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"
         android:src="@drawable/ic_mode_edit_white_24dp"
-        android:visibility="gone"
-        fab:fab_colorNormal="@color/colorAccent"
-        android:layout_margin="@dimen/fab_margin"
-        fab:fab_colorPressed="@color/colorPrimary"
-        fab:fab_colorRipple="#000" />-->
-
-
-
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>
 

@@ -46,7 +46,6 @@ package org.egovernments.egoverp.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.IntentCompat;
@@ -75,7 +74,6 @@ public class ForgotPasswordActivity extends BaseActivity {
     private String phone;
     private ProgressBar progressBar;
     private FloatingActionButton sendButton;
-    private com.melnykov.fab.FloatingActionButton sendButtonCompat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +92,6 @@ public class ForgotPasswordActivity extends BaseActivity {
         }
 
         sendButton = (FloatingActionButton) findViewById(R.id.forgotpassword_send);
-        sendButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.forgotpassword_sendcompat);
 
         phone_edittext = (EditText) findViewById(R.id.forgotpassword_edittext);
         phone_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -105,7 +102,6 @@ public class ForgotPasswordActivity extends BaseActivity {
                     phone = phone_edittext.getText().toString().trim();
                     progressBar.setVisibility(View.VISIBLE);
                     sendButton.setVisibility(View.GONE);
-                    sendButtonCompat.setVisibility(View.GONE);
                     submit(phone);
                     return true;
                 }
@@ -122,15 +118,7 @@ public class ForgotPasswordActivity extends BaseActivity {
             }
         };
 
-        if (Build.VERSION.SDK_INT >= 21)
-        {
-            sendButton.setOnClickListener(onClickListener);
-        } else
-        {
-            sendButtonCompat.setVisibility(View.VISIBLE);
-            sendButton.setVisibility(View.GONE);
-            sendButtonCompat.setOnClickListener(onClickListener);
-        }
+        sendButton.setOnClickListener(onClickListener);
 
     }
 
@@ -140,25 +128,15 @@ public class ForgotPasswordActivity extends BaseActivity {
         if (TextUtils.isEmpty(phone)) {
             showSnackBar(R.string.forgot_password_prompt);
             progressBar.setVisibility(View.GONE);
-            if (Build.VERSION.SDK_INT >= 21) {
-                sendButton.setVisibility(View.VISIBLE);
-            } else {
-                sendButtonCompat.setVisibility(View.VISIBLE);
-            }
-
+            sendButton.setVisibility(View.VISIBLE);
         } else if (phone.length() != 10) {
             showSnackBar(R.string.mobilenumber_length_prompt);
             progressBar.setVisibility(View.GONE);
-            if (Build.VERSION.SDK_INT >= 21) {
-                sendButton.setVisibility(View.VISIBLE);
-            } else {
-                sendButtonCompat.setVisibility(View.VISIBLE);
-            }
+            sendButton.setVisibility(View.VISIBLE);
         } else if (validateInternetConnection()) {
 
             progressBar.setVisibility(View.VISIBLE);
             sendButton.setVisibility(View.GONE);
-            sendButtonCompat.setVisibility(View.GONE);
 
             Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
                     sessionManager.getBaseURL()).recoverPassword(phone, sessionManager.getBaseURL());
@@ -170,12 +148,7 @@ public class ForgotPasswordActivity extends BaseActivity {
                     if (response.isSuccessful()) {
 
                         progressBar.setVisibility(View.GONE);
-                        if (Build.VERSION.SDK_INT >= 21) {
-                            sendButton.setVisibility(View.VISIBLE);
-                        } else {
-                            sendButtonCompat.setVisibility(View.VISIBLE);
-                        }
-
+                        sendButton.setVisibility(View.VISIBLE);
 
                         long millis = System.currentTimeMillis();
 
@@ -191,13 +164,8 @@ public class ForgotPasswordActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<JsonObject> call, Throwable t) {
-
                     progressBar.setVisibility(View.GONE);
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        sendButton.setVisibility(View.VISIBLE);
-                    } else {
-                        sendButtonCompat.setVisibility(View.VISIBLE);
-                    }
+                    sendButton.setVisibility(View.VISIBLE);
                 }
             });
 

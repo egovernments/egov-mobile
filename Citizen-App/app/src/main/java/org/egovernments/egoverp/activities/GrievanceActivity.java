@@ -46,6 +46,7 @@ package org.egovernments.egoverp.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -95,8 +96,7 @@ public class GrievanceActivity extends BaseActivity {
         pbHome=(ProgressBar)findViewById(R.id.pbhome);
         errorView = (ErrorView) findViewById(R.id.errorView);
 
-        com.melnykov.fab.FloatingActionButton newComplaintButtonCompat = (com.melnykov.fab.FloatingActionButton) findViewById(R.id.list_fabcompat);
-
+        FloatingActionButton fabNewGrievance = (FloatingActionButton) findViewById(R.id.fabCreateComplaint);
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +105,7 @@ public class GrievanceActivity extends BaseActivity {
 
             }
         };
-        newComplaintButtonCompat.setOnClickListener(onClickListener);
+        fabNewGrievance.setOnClickListener(onClickListener);
         loadGrievanceCategories();
     }
 

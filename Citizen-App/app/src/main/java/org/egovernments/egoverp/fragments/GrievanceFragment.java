@@ -56,6 +56,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.activities.GrievanceActivity;
@@ -88,6 +89,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private CardView cvNoComplaints;
+    private TextView tvGrievanceAddInfo;
     //The currently visible page no.
     private int pageNo = 1;
     private int position;
@@ -127,6 +129,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         cvNoComplaints=(CardView)fragmentView.findViewById(R.id.cvnocomplaintsnotify);
         progressBar = (ProgressBar)fragmentView.findViewById(R.id.grievance_recylerview_placeholder);
         recyclerView = (RecyclerView)fragmentView.findViewById(R.id.recylerview);
+        tvGrievanceAddInfo = (TextView) fragmentView.findViewById(R.id.tvGrievanceAddInfo);
         recyclerView.setHasFixedSize(true);
         recyclerView.setClickable(true);
         final WrapContentLinearLayoutManager linearLayoutManager = new WrapContentLinearLayoutManager(getActivity());
@@ -197,12 +200,14 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             if(grievanceAdapter==null) {
                 cvNoComplaints.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
+                tvGrievanceAddInfo.setVisibility(View.GONE);
             }
             else if(grievanceList!=null)
             {
                 if(grievanceList.size()==0){
                     cvNoComplaints.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
+                    tvGrievanceAddInfo.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -274,10 +279,12 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
            if(grievanceList.size()==0)
            {
                cvNoComplaints.setVisibility(View.VISIBLE);
+               tvGrievanceAddInfo.setVisibility(View.VISIBLE);
            }
            else
            {
                cvNoComplaints.setVisibility(View.GONE);
+               tvGrievanceAddInfo.setVisibility(View.GONE);
            }
        }
 

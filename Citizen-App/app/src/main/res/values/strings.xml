@@ -315,5 +315,6 @@
     <string name="pending">Pending</string>
     <string name="receipt_no">Receipt #</string>
     <string name="download_receipt">Download Receipt</string>
-    <string name="payment_disclaimer">Pay using any Visa / master, (Debit / Credit) cards issued by any Bank.</string>
+    <string name="payment_disclaimer">Pay using any Visa / Master, (Debit / Credit) cards issued by any Bank.</string>
+    <string name="press_to_file_a_complaint">Press + to file a complaint</string>
 </resources>
