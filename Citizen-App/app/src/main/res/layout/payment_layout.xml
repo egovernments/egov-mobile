@@ -21,24 +21,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:paddingBottom="0dp">
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/payment_details" />
-
-            <TextView
-                style="@style/TextAppearance.AppCompat.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:text="@string/please_tap_u20b9_symbol_to_pay_tax" />
-
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -109,28 +100,25 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingRight="5dp">
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="@string/payment_disclaimer"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabpay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/fab_margin"
-                android:layout_marginRight="@dimen/fab_margin"
-                android:layout_marginTop="6dp"
-                android:clickable="true"
-                android:src="@drawable/ic_rupee_24dp" />
+        <Button
+            android:id="@+id/btnPay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:text="PAY"
+            android:textColor="@android:color/white" />
 
-        </LinearLayout>
 
     </LinearLayout>
 

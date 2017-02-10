@@ -45,7 +45,6 @@ package org.egovernments.egoverp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -85,7 +84,6 @@ public class WaterChargesViewActivity extends BaseActivity {
 
     List<TaxDetail> listBreakups;
     Button btnBreakups;
-    FloatingActionButton fabPayWaterTax;
     ScrollView scrollViewWaterTax;
     CardView paymentCardView;
     EditText etAmountToPay;
@@ -95,7 +93,7 @@ public class WaterChargesViewActivity extends BaseActivity {
     boolean isKeyboardVisible=false;
     String consumerNo;
     Call<WaterTaxCallback> waterTaxCall;
-    Button paymentHistoryViewButton;
+    Button paymentHistoryViewButton, btnPay;
     private TextView tvConsumerNo;
     private TextView address;
     private TextView locality;
@@ -120,8 +118,8 @@ public class WaterChargesViewActivity extends BaseActivity {
 
         scrollViewWaterTax = (ScrollView) findViewById(R.id.scrollviewwatertax);
 
-        fabPayWaterTax=(FloatingActionButton)findViewById(R.id.fabpay);
-        fabPayWaterTax.setVisibility(View.GONE);
+        btnPay = (Button) findViewById(R.id.btnPay);
+        btnPay.setVisibility(View.GONE);
 
         KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener()
         {
@@ -132,34 +130,34 @@ public class WaterChargesViewActivity extends BaseActivity {
             }
         });
 
-        fabPayWaterTax.setOnClickListener(new View.OnClickListener() {
+        btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if(TextUtils.isEmpty(etMobileNo.getText()) || TextUtils.isEmpty(etAmountToPay.getText()) || TextUtils.isEmpty(etMailAddress.getText()))
                 {
-                    Toast.makeText(getApplicationContext(), getString(R.string.please_fill_payment_details), Toast.LENGTH_SHORT).show();
+                    showSnackBar(R.string.please_fill_payment_details);
                     return;
                 }
                 else if(!AppUtils.isValidEmail(etMailAddress.getText().toString()))
                 {
-                    Toast.makeText(getApplicationContext(), getString(R.string.please_enter_valid_email), Toast.LENGTH_SHORT).show();
+                    showSnackBar(R.string.please_enter_valid_email);
                     return;
                 }
                 else if(etMobileNo.getText().toString().length()<10)
                 {
-                    Toast.makeText(getApplicationContext(), getString(R.string.please_enter_valid_mobile_no), Toast.LENGTH_SHORT).show();
+                    showSnackBar(R.string.please_enter_valid_mobile_no);
                     return;
                 }
 
                 int amountToPay= Integer.parseInt(etAmountToPay.getText().toString());
                 if(amountToPay<=0)
                 {
-                    Toast.makeText(getApplicationContext(), getString(R.string.payment_amount_greater_than_0), Toast.LENGTH_SHORT).show();
+                    showSnackBar(R.string.payment_amount_greater_than_0);
                 }
                 else if(amountToPay> total)
                 {
-                    Toast.makeText(getApplicationContext(), getString(R.string.payment_amount_should_not_greater) + "(" + Math.round(total) + ")", Toast.LENGTH_SHORT).show();
+                    showSnackBar(R.string.payment_amount_should_not_greater);
                 }
                 else
                 {
@@ -244,7 +242,7 @@ public class WaterChargesViewActivity extends BaseActivity {
 
     private void viewWaterConnection(final String code) {
 
-        fabPayWaterTax.setVisibility(View.GONE);
+        btnPay.setVisibility(View.GONE);
         paymentCardView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -311,7 +309,7 @@ public class WaterChargesViewActivity extends BaseActivity {
             total = arrearsTotal + arrearsPenalty + currentPenalty + currentTotal;
 
             if (total > 0) {
-                fabPayWaterTax.setVisibility(View.VISIBLE);
+                btnPay.setVisibility(View.VISIBLE);
                 paymentCardView.setVisibility(View.VISIBLE);
             } else {
                 float scale = getResources().getDisplayMetrics().density;
@@ -342,9 +340,7 @@ public class WaterChargesViewActivity extends BaseActivity {
             waterTaxCardView.requestFocus();
 
         } else {
-            Toast toast = Toast.makeText(WaterChargesViewActivity.this, taxCallback.getTaxErrorDetails().getErrorMessage(), Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            showSnackBar(taxCallback.getTaxErrorDetails().getErrorMessage());
             listBreakups.clear();
         }
         progressBar.setVisibility(View.GONE);

@@ -45,7 +45,6 @@ package org.egovernments.egoverp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -83,7 +82,6 @@ public class PropertyTaxViewActivity extends BaseActivity {
 
     Button btnBreakups;
     List<TaxDetail> listBreakups;
-    FloatingActionButton fabPayPropertyTax;
     CardView propertyTaxDetailsView;
     CardView paymentCardView;
     ScrollView scrollViewPropertyTax;
@@ -96,7 +94,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
     int ulbCode;
     String category;
     Call<PropertyTaxCallback> propertyTaxCallbackCall;
-    Button paymentHistoryViewButton;
+    Button paymentHistoryViewButton, btnPay;
     String assessmentNo;
     private TextView tvAssessmentNo;
     private TextView tvAddress;
@@ -119,10 +117,10 @@ public class PropertyTaxViewActivity extends BaseActivity {
         listBreakups= new ArrayList<>();
         progressBar = (ProgressBar) findViewById(R.id.propertytax_progressbar);
 
-        fabPayPropertyTax=(FloatingActionButton)findViewById(R.id.fabpay);
-        fabPayPropertyTax.setVisibility(View.GONE);
+        btnPay = (Button) findViewById(R.id.btnPay);
+        btnPay.setVisibility(View.GONE);
 
-        fabPayPropertyTax.setOnClickListener(new View.OnClickListener() {
+        btnPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -248,7 +246,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
 
         propertyTaxDetailsView.setVisibility(View.GONE);
         paymentCardView.setVisibility(View.GONE);
-        fabPayPropertyTax.setVisibility(View.GONE);
+        btnPay.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
         if (code.length() < 10) {
@@ -339,7 +337,7 @@ public class PropertyTaxViewActivity extends BaseActivity {
                     etMailAddress.setText(sessionManager.getEmail());
                 }
 
-                fabPayPropertyTax.setVisibility(View.VISIBLE);
+                btnPay.setVisibility(View.VISIBLE);
                 paymentCardView.setVisibility(View.VISIBLE);
             } else {
                 float scale = getResources().getDisplayMetrics().density;
