@@ -61,6 +61,10 @@ public class GrievanceTypeCategory{
     @Expose
     String categoryName;
 
+    @SerializedName("localName")
+    @Expose
+    String localName;
+
     @SerializedName("complaintTypes")
     @Expose
     private List<GrievanceType> grievanceTypes = new ArrayList<>();
@@ -71,6 +75,10 @@ public class GrievanceTypeCategory{
 
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public String getLocalName() {
+        return localName;
     }
 
     public List<GrievanceType> getGrievanceTypes() {

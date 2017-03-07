@@ -116,6 +116,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -129,6 +130,7 @@ import retrofit2.Call;
 
 public class NewGrievanceActivity extends BaseActivity {
 
+    public static final String LOCALE_ENGLISH = "English";
     //Codes used to start image picker tasks
     private static final int CAMERA_PHOTO = 111;
     private static final int GALLERY_PHOTO = 222;
@@ -452,7 +454,8 @@ public class NewGrievanceActivity extends BaseActivity {
 
         for(GrievanceType grievanceType:grievanceAllTypes)
         {
-            if (autocompleteComplaintType.getText().toString().trim().toUpperCase().equals(grievanceType.getName().trim().toUpperCase()))
+            if (autocompleteComplaintType.getText().toString().trim().toUpperCase()
+                    .equals(getGrievanceTypeNameByLocale(grievanceType).trim().toUpperCase()))
             {
                 complaintTypeID =grievanceType.getId();
             }
@@ -619,11 +622,11 @@ public class NewGrievanceActivity extends BaseActivity {
                 grievanceTypes = new ArrayList<>();
 
                 for (GrievanceTypeCategory grievanceTypeCategory : grievanceAllCategories) {
-                    grievanceTypeCategories.add(grievanceTypeCategory.getCategoryName());
+                    grievanceTypeCategories.add(getGrievanceCategoryNameByLocale(grievanceTypeCategory));
                     grievanceAllTypes.addAll(grievanceTypeCategory.getGrievanceTypes());
 
                     for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
-                        grievanceTypes.add(grievanceType.getName());
+                        grievanceTypes.add(getGrievanceTypeNameByLocale(grievanceType));
                     }
                 }
 
@@ -726,7 +729,8 @@ public class NewGrievanceActivity extends BaseActivity {
         int idx=0;
         for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
         {
-            if(grievanceTypeCategory.getCategoryName().toUpperCase().equals(complaintCategoryTypedText.toUpperCase()))
+            if (getGrievanceCategoryNameByLocale(grievanceTypeCategory).toUpperCase()
+                    .equals(complaintCategoryTypedText.toUpperCase()))
             {
                 selectedIdx=idx;
                 grievanceTypes.clear();
@@ -736,14 +740,14 @@ public class NewGrievanceActivity extends BaseActivity {
                 }
                 for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
                 {
-                    grievanceTypes.add(grievanceType.getName());
+                    grievanceTypes.add(getGrievanceTypeNameByLocale(grievanceType));
                 }
                 break;
             }
 
             for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
             {
-                tempGrievanceTypes.add(grievanceType.getName());
+                tempGrievanceTypes.add(getGrievanceTypeNameByLocale(grievanceType));
             }
 
             idx++;
@@ -776,10 +780,10 @@ public class NewGrievanceActivity extends BaseActivity {
             tempGrievanceTypes.clear();
             for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
             {
-                tempGrievanceTypes.add(grievanceType.getName());
-                if(grievanceType.getName().toUpperCase().equals(complaintTypeText.toUpperCase()))
+                tempGrievanceTypes.add(getGrievanceTypeNameByLocale(grievanceType));
+                if (getGrievanceTypeNameByLocale(grievanceType).toUpperCase().equals(complaintTypeText.toUpperCase()))
                 {
-                    autoCompleteComplaintCategory.setText(grievanceTypeCategory.getCategoryName());
+                    autoCompleteComplaintCategory.setText(getGrievanceCategoryNameByLocale(grievanceTypeCategory));
                     isPickedCategory=true;
                 }
             }
@@ -950,6 +954,21 @@ public class NewGrievanceActivity extends BaseActivity {
         startService(intent);
     }
 
+    String getGrievanceCategoryNameByLocale(GrievanceTypeCategory grievanceTypeCategory) {
+        if (!Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH)) {
+            String localCategoryName = grievanceTypeCategory.getLocalName();
+            return TextUtils.isEmpty(localCategoryName) ? grievanceTypeCategory.getCategoryName() : localCategoryName;
+        } else
+            return grievanceTypeCategory.getCategoryName();
+    }
+
+    String getGrievanceTypeNameByLocale(GrievanceType grievanceType) {
+        if (!Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH)) {
+            String localGrievanceTypeName = grievanceType.getLocalName();
+            return TextUtils.isEmpty(localGrievanceTypeName) ? grievanceType.getName() : localGrievanceTypeName;
+        } else
+            return grievanceType.getName();
+    }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
     public interface RemoveImageInterface {

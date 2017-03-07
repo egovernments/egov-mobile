@@ -54,6 +54,9 @@ public class GrievanceType {
     @SerializedName("name")
     @Expose
     private String name;
+    @SerializedName("localName")
+    @Expose
+    private String localName;
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -69,6 +72,10 @@ public class GrievanceType {
      */
     public String getName() {
         return name;
+    }
+
+    public String getLocalName() {
+        return localName;
     }
 
     /**
