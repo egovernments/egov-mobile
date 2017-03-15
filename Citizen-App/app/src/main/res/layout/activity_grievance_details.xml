@@ -459,8 +459,7 @@
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
                         android:orientation="vertical"
-                        android:paddingBottom="12dp"
-                        android:paddingTop="10dp">
+                        android:paddingBottom="12dp">
 
                         <Button
                             android:id="@+id/btnmorecomments"
@@ -469,7 +468,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:layout_marginTop="5dp"
                             android:drawableRight="@drawable/ic_keyboard_arrow_down_black_24dp"
                             android:text="" />
 
@@ -527,31 +525,12 @@
                                 android:text="@string/updatecomplaint"
                                 android:textSize="14sp" />
 
-
-
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:paddingLeft="10dp"
                                 android:paddingRight="10dp">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:paddingLeft="10dp"
-                                    android:paddingTop="10dp"
-                                    android:text="@string/action_label"
-                                    android:textSize="@dimen/field_labelSize" />
-
-                                <Spinner
-                                    android:id="@+id/update_action"
-                                    style="@style/Egovinputstyle"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content" />
-
-                                <View style="@style/Divider" />
-
 
                                 <LinearLayout
                                     android:id="@+id/feedback_layout"
@@ -587,34 +566,72 @@
 
                                 </LinearLayout>
 
-
-                                <EditText
-                                    android:id="@+id/update_comment"
+                                <FrameLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/top_edittext"
-                                    android:gravity="center_vertical"
-                                    android:hint="@string/comment_label"
-                                    android:inputType="textMultiLine"
-                                    android:padding="10dp"
-                                    android:textColorHint="#a8a5a5"
-                                    android:textSize="15sp" />
+                                    android:layout_height="wrap_content">
+
+                                    <EditText
+                                        android:id="@+id/update_comment"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@drawable/top_edittext"
+                                        android:gravity="center_vertical"
+                                        android:hint="@string/comment_label"
+                                        android:inputType="textMultiLine"
+                                        android:paddingBottom="10dp"
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="35dp"
+                                        android:paddingTop="10dp"
+                                        android:textColorHint="#a8a5a5"
+                                        android:textSize="15sp" />
+
+                                    <ImageButton
+                                        android:id="@+id/btnReply"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right|center_vertical"
+                                        android:background="?android:attr/selectableItemBackground"
+                                        android:padding="5dp"
+                                        android:src="@drawable/ic_send_white_24dp"
+                                        android:tint="@color/iconstintcolor" />
+
+                                </FrameLayout>
 
                                 <View style="@style/Divider" />
 
 
                             </LinearLayout>
 
-                            <Button
-                                android:id="@+id/grievance_update_button"
-                                style="@style/Widget.AppCompat.Button.Borderless"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:layout_marginRight="5dp"
-                                android:layout_marginTop="5dp"
-                                android:text="@string/submit_label"
-                                android:textColor="@color/colorPrimary" />
+                                android:orientation="horizontal">
+
+                                <Button
+                                    android:id="@+id/btnWithDraw"
+                                    style="@style/Widget.AppCompat.Button.Borderless"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:text="@string/withdraw"
+                                    android:textColor="@color/colorPrimary" />
+
+
+                                <Button
+                                    android:id="@+id/btnReOpen"
+                                    style="@style/Widget.AppCompat.Button.Borderless"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:text="@string/reopen"
+                                    android:textColor="@color/colorPrimary" />
+
+                            </LinearLayout>
+
 
                         </LinearLayout>
 

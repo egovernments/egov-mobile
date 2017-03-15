@@ -317,4 +317,6 @@
     <string name="download_receipt">Download Receipt</string>
     <string name="payment_disclaimer">Pay using any Visa / Master (Debit / Credit) cards issued by any Bank.</string>
     <string name="press_to_file_a_complaint">Press + to file a complaint</string>
+    <string name="withdraw">Withdraw</string>
+    <string name="reopen">Reopen</string>
 </resources>

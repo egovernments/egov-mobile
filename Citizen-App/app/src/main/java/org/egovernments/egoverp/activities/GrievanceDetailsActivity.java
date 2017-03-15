@@ -59,14 +59,13 @@ import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -103,35 +102,37 @@ import retrofit2.Call;
  * Displays the details of a complaint when clicked in GrievanceActivity recycler view
  **/
 
-public class GrievanceDetailsActivity extends BaseActivity implements OnMapReadyCallback {
+public class GrievanceDetailsActivity extends BaseActivity implements OnMapReadyCallback, View.OnClickListener {
 
     public static final String GRIEVANCE_ITEM = "GrievanceItem";
     public static final String GRIEVANCE_SUPPORT_DOCS = "GrievanceSupportDocs";
+    public static final String WITHDRAWN = "WITHDRAWN";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String REJECTED = "REJECTED";
+    public static final String REOPENED = "REOPENED";
 
     private static Grievance grievance;
     private final ArrayList<String> feedbackOptions = new ArrayList<>(Arrays.asList("UNSPECIFIED", "ONE", "TWO", "THREE", "FOUR", "FIVE"));
     private final String[] feedBackText = new String[]{"UNSPECIFIED", "VERY POOR", "POOR", "NOT BAD", "GOOD", "VERY GOOD"};
-    Spinner actionsSpinner;
-    String action;
+
     BroadcastReceiver addressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ((TextView) findViewById(R.id.map_location_text)).setText(intent.getStringExtra(AddressService.KEY_ADDRESS));
                 }
             });
-
         }
     };
+    LinearLayout layoutToggleComments, feedbackLayout;
+    Button btnMoreComments, btnReopen, btnWithdraw;
+    ImageButton btnReply;
     private EditText updateComment;
     private boolean isComment = false;
     private ProgressBar progressBar;
     private LinearLayout layoutCompComments;
-    private LinearLayout layoutToggleComments;
-    private Button btnMoreComments;
     private RatingBar feedbackRatingBar;
     private TextView tvRatingBar;
 
@@ -168,32 +169,29 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         layoutCompComments =(LinearLayout)findViewById(R.id.complaintcommentscontainer);
         layoutToggleComments = (LinearLayout) findViewById(R.id.complainttogglecomments);
         btnMoreComments=(Button)findViewById(R.id.btnmorecomments);
+
+        btnReply = (ImageButton) findViewById(R.id.btnReply);
+        btnWithdraw = (Button) findViewById(R.id.btnWithDraw);
+        btnReopen = (Button) findViewById(R.id.btnReOpen);
+
+
         feedbackRatingBar=(RatingBar)findViewById(R.id.feedbackRatingBar);
         tvRatingBar=(TextView)findViewById(R.id.tvRatingBar);
 
-        final LinearLayout feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
-
-        Button updateButton = (Button) findViewById(R.id.grievance_update_button);
+        feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
 
         updateComment = (EditText) findViewById(R.id.update_comment);
 
         progressBar = (ProgressBar) findViewById(R.id.grievance_history_placeholder);
 
-        actionsSpinner = (Spinner) findViewById(R.id.update_action);
-        ArrayList<String> actions_open = new ArrayList<>(Arrays.asList("Select", "Withdraw"));
-        ArrayList<String> actions_closed = new ArrayList<>(Arrays.asList("Select", "Re-open"));
-
         btnMoreComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(layoutToggleComments.getVisibility() == View.VISIBLE)
-                {
+                if (layoutToggleComments.getVisibility() == View.VISIBLE) {
                     btnMoreComments.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_down_black_24dp, 0);
                     layoutToggleComments.setVisibility(View.GONE);
-                }
-                else
-                {
-                    btnMoreComments.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ic_keyboard_arrow_up_black_24dp,0);
+            } else {
+                    btnMoreComments.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_up_black_24dp, 0);
                     layoutToggleComments.setVisibility(View.VISIBLE);
                 }
             }
@@ -254,13 +252,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         complaintNo.setText(grievance.getCrn());
         complaintStatus.setText(resolveStatus(grievance.getStatus()));
 
-        if(!grievance.getStatus().equals("WITHDRAWN")) {
+        if (!grievance.getStatus().equals(WITHDRAWN)) {
             //Display feedback spinner
-            if (grievance.getStatus().equals("COMPLETED") || grievance.getStatus().equals("REJECTED")) {
+            if (grievance.getStatus().equals(COMPLETED) || grievance.getStatus().equals(REJECTED)) {
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_closed);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(adapter);
+                btnReopen.setVisibility(View.VISIBLE);
+                btnWithdraw.setVisibility(View.GONE);
 
                 commentBoxLabel.setText(getResources().getString(R.string.feedback));
 
@@ -279,14 +276,10 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             }
             //Display default spinners
             else {
-
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(GrievanceDetailsActivity.this, R.layout.spinner_view_template, actions_open);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                actionsSpinner.setAdapter(adapter);
+                btnReopen.setVisibility(View.GONE);
+                btnWithdraw.setVisibility(View.VISIBLE);
                 commentBoxLabel.setText(getResources().getString(R.string.updatecomplaint));
             }
-
-            actionsSpinner.setSelection(0);
         }
         else
         {
@@ -294,26 +287,20 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             layoutGrievanceUpdate.setVisibility(View.GONE);
         }
 
-
         //load complaint history
         new LoadComplaintHistory().execute();
 
         feedbackRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean b) {
-
-                int value= Math.round(rating);
+                int value = Math.round(rating);
                 tvRatingBar.setText(feedBackText[value]);
-
             }
         });
 
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateComplaint(feedbackLayout);
-            }
-        });
+        btnReply.setOnClickListener(this);
+        btnWithdraw.setOnClickListener(this);
+        btnReopen.setOnClickListener(this);
 
     }
 
@@ -331,36 +318,25 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     }
 
 
-    private void updateComplaint(final LinearLayout feedbackLayout) {
-        action = (String) actionsSpinner.getSelectedItem();
+    private void updateComplaint(final LinearLayout feedbackLayout, String action) {
         String comment = updateComment.getText().toString().trim();
         String feedback = "";
         if (feedbackLayout.getVisibility() == View.VISIBLE) {
             feedback = feedbackOptions.get(Math.round(feedbackRatingBar.getRating()));
         }
 
+        //check action is empty, then set current status of grievance
+        action = TextUtils.isEmpty(action) ? grievance.getStatus() : action;
+
         if (action == null) {
             showSnackBar(getString(R.string.please_select_action));
         } else {
-            if ((action.equals("Select") || action.equals("Re-open")) && TextUtils.isEmpty(comment)) {
+
+            if ((action.equals(grievance.getStatus()) || action.equals(REOPENED)) && TextUtils.isEmpty(comment)) {
                 showSnackBar(getString(R.string.comment_is_necessary_action));
             } else if (feedback == null) {
                 showSnackBar(getString(R.string.feedback_rating_info));
             } else {
-                switch (action) {
-                    case "Select":
-                        isComment = true;
-                        action = grievance.getStatus();
-                        break;
-                    case "Withdraw":
-                        isComment = false;
-                        action = "WITHDRAWN";
-                        break;
-                    case "Re-open":
-                        isComment = false;
-                        action = "REOPENED";
-                        break;
-                }
 
                 progressDialog.show();
 
@@ -404,15 +380,15 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             return R.string.registered_info;
         if (s.equals("PROCESSING"))
             return R.string.processing_label;
-        if (s.equals("COMPLETED"))
+        if (s.equals(COMPLETED))
             return R.string.completed_label;
         if (s.equals("FORWARDED"))
             return R.string.forwarded_label;
-        if (s.equals("WITHDRAWN"))
+        if (s.equals(WITHDRAWN))
             return R.string.withdrawn_label;
-        if (s.equals("REJECTED"))
+        if (s.equals(REJECTED))
             return R.string.rejected_label;
-        if (s.equals("REOPENED"))
+        if (s.equals(REOPENED))
             return R.string.reopend_label;
 
         return 0;
@@ -439,7 +415,6 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             public void onResponse(Call<GrievanceCommentAPIResponse> call, retrofit2.Response<GrievanceCommentAPIResponse> response) {
                 GrievanceCommentAPIResponse grievanceCommentAPIResponse = response.body();
                 GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
-                actionsSpinner.setSelection(0);
                 updateComment.getText().clear();
                 progressBar.setVisibility(View.GONE);
                 List<GrievanceComment> grievanceComments=grievanceCommentAPIResult.getGrievanceComments();
@@ -530,6 +505,21 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             else {
                 layoutToggleComments.addView(commentItemTemplate);
             }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnReply:
+                updateComplaint(feedbackLayout, "");
+                break;
+            case R.id.btnReOpen:
+                updateComplaint(feedbackLayout, REOPENED);
+                break;
+            case R.id.btnWithDraw:
+                updateComplaint(feedbackLayout, WITHDRAWN);
+                break;
         }
     }
 
