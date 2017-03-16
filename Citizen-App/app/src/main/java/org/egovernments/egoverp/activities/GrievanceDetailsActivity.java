@@ -127,7 +127,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         }
     };
     LinearLayout layoutToggleComments, feedbackLayout;
-    Button btnMoreComments, btnReopen, btnWithdraw;
+    Button btnMoreComments, btnReopen, btnWithdraw, btnSubmit;
     ImageButton btnReply;
     private EditText updateComment;
     private boolean isComment = false;
@@ -173,6 +173,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         btnReply = (ImageButton) findViewById(R.id.btnReply);
         btnWithdraw = (Button) findViewById(R.id.btnWithDraw);
         btnReopen = (Button) findViewById(R.id.btnReOpen);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
 
 
         feedbackRatingBar=(RatingBar)findViewById(R.id.feedbackRatingBar);
@@ -301,6 +302,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
         btnReply.setOnClickListener(this);
         btnWithdraw.setOnClickListener(this);
         btnReopen.setOnClickListener(this);
+        btnSubmit.setOnClickListener(this);
 
     }
 
@@ -325,8 +327,10 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             feedback = feedbackOptions.get(Math.round(feedbackRatingBar.getRating()));
         }
 
+        isComment = TextUtils.isEmpty(action);
+
         //check action is empty, then set current status of grievance
-        action = TextUtils.isEmpty(action) ? grievance.getStatus() : action;
+        action = isComment ? grievance.getStatus() : action;
 
         if (action == null) {
             showSnackBar(getString(R.string.please_select_action));
@@ -511,6 +515,9 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btnSubmit:
+                updateComplaint(feedbackLayout, "");
+                break;
             case R.id.btnReply:
                 updateComplaint(feedbackLayout, "");
                 break;
@@ -524,7 +531,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
     }
 
     //Load complaint History
-    public class LoadComplaintHistory extends AsyncTask<String, Integer, String> {
+    private class LoadComplaintHistory extends AsyncTask<String, Integer, String> {
         @Override
         protected String doInBackground(String... params) {
             loadComplaintHistory();

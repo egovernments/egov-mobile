@@ -91,7 +91,7 @@
     <string name="processing_label">Processing</string>
     <string name="completed_label">Completed</string>
     <string name="rejected_label">Rejected</string>
-    <string name="comment_label">Comment</string>
+    <string name="comment_label">Comments</string>
     <string name="action_label">ACTION</string>
     <string name="login_field_empty_prompt">Please enter both username and password</string>
     <string name="processing_msg">Processing request</string>
@@ -250,7 +250,7 @@
     <string name="procedding_document">Proceeding-Document</string>
     <string name="plan_document">Plan-Document</string>
     <string name="please_select_action">Please select an action</string>
-    <string name="comment_is_necessary_action">Comment is necessary for this action</string>
+    <string name="comment_is_necessary_action">Comments is necessary for this action</string>
     <string name="feedback_rating_info">Please select a feedback option</string>
     <string name="feedback_submitted">Your feedback submitted successfully</string>
     <string name="grievance_updated">Grievance updated successfully</string>
