@@ -451,7 +451,9 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
     {
         Intent openPdfViewer=new Intent(BaseActivity.this, PdfViewerActivity.class);
         openPdfViewer.putExtra(PdfViewerActivity.PAGE_TITLE, getString(R.string.sla_label));
-        openPdfViewer.putExtra(PdfViewerActivity.PDF_URL, "http://egovernments.org/egov-apps/puraseva/sla/sla.pdf");
+        String slaUrl = configManager.getString(Config.APP_SLA_DOCUMENT_URL);
+        slaUrl = slaUrl.replace("{locale}", sessionManager.getAppLocale());
+        openPdfViewer.putExtra(PdfViewerActivity.PDF_URL, slaUrl);
         startActivity(openPdfViewer);
     }
 

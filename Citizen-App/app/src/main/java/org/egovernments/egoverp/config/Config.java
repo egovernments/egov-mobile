@@ -63,6 +63,7 @@ public class Config {
     public final static String ACCOUNT_RECOVERY_MESSAGE = "Your OTP for recovering password is";
     public final static String ACCOUNT_VERIFICATION_MESSAGE = "Use OTP";
     public final static String APP_TERMS_AND_CONS_URL = "app.termsAndConditionUrl";
+    public final static String APP_SLA_DOCUMENT_URL = "app.sla.document";
 
     public class Modules
     {
