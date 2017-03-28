@@ -46,8 +46,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/pagebgcolor"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.egov.employee.activity.ViewTask"
     tools:showIn="@layout/activity_view_task">
@@ -544,15 +544,15 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:visibility="visible"
-                        android:layout_margin="15dp" />
+                        android:layout_margin="15dp"
+                        android:visibility="visible" />
 
                     <LinearLayout
                         android:id="@+id/layoutCompActionControls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
 
                         <LinearLayout
@@ -686,8 +686,8 @@
                                     android:layout_height="wrap_content"
                                     android:hint="@string/comments"
                                     android:maxLength="400"
-                                    android:textColor="@color/edittexttextcolor"
                                     android:singleLine="false"
+                                    android:textColor="@color/edittexttextcolor"
                                     android:textSize="16sp"
                                     android:theme="@style/Egovinputstyle" />
 
@@ -712,9 +712,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/clear_all"
-                                    android:visibility="gone"
                                     android:textColor="@android:color/white"
-                                    android:theme="@style/Egovnegativebutton" />
+                                    android:theme="@style/Egovnegativebutton"
+                                    android:visibility="gone" />
 
                             </LinearLayout>
 
@@ -739,7 +739,7 @@
                         </LinearLayout>
 
 
-                        <LinearLayout
+                        <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingBottom="@dimen/rowbottompadding">
@@ -748,10 +748,23 @@
                                 android:id="@+id/btnaction"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentStart="true"
                                 android:text="SUBMIT"
                                 android:textColor="@android:color/white" />
 
-                        </LinearLayout>
+                            <Button
+                                android:id="@+id/btnSendBack"
+                                style="@style/Egovotheractionbutton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
+                                android:text="SEND BACK"
+                                android:textColor="@android:color/white"
+                                android:visibility="gone" />
+
+                        </RelativeLayout>
 
                     </LinearLayout>
 

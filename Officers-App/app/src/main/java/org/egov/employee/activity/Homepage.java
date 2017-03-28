@@ -75,6 +75,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
 
     public static final int ACTION_UPDATE_REQUIRED = 111;
     public static final String PRIORITY_LIST_COUNT = "prioritylistcount";
+    public static final String SEND_BACK_MESSAGE = "sendBackMessage";
     public RelativeLayout homePageLoader;
     public LinearLayout inboxEmptyInfo;
     ViewPager pager;
@@ -244,7 +245,11 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ACTION_UPDATE_REQUIRED && resultCode == RESULT_OK) {
-            showSnackBar("Complaint Successfully Updated!");
+            String sendBackMsg = data.getStringExtra(SEND_BACK_MESSAGE);
+            if (TextUtils.isEmpty(sendBackMsg))
+                showSnackBar("Complaint Successfully Updated!");
+            else
+                showSnackBar(sendBackMsg);
             getWorkListCategory();
         }
 

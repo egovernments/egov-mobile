@@ -64,6 +64,9 @@ public class ComplaintDetails {
     @SerializedName("status")
     @Expose
     private String status;
+    @SerializedName("isSkippable")
+    @Expose
+    private Boolean isSkippable;
     @SerializedName("lastModifiedBy")
     @Expose
     private String lastModifiedBy;
@@ -159,6 +162,10 @@ public class ComplaintDetails {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getSkippable() {
+        return isSkippable;
     }
 
     /**

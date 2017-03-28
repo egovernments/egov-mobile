@@ -188,7 +188,7 @@ public class NewGrievanceActivity extends BaseActivity {
     private ViewPager viewPager;
     private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
     private File cacheDir;
-    private boolean isPickedLocationFromMap=false;
+    private boolean isPickedLocationFromMap = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,9 +230,9 @@ public class NewGrievanceActivity extends BaseActivity {
         LinePageIndicator linePageIndicator = (LinePageIndicator) findViewById(R.id.new_indicator);
         linePageIndicator.setViewPager(viewPager);
 
-        etComplainantName=(EditText) findViewById(R.id.complainantName);
-        etComplainantMobNo=(EditText) findViewById(R.id.complainantMobileNo);
-        etComplainantEmail=(EditText) findViewById(R.id.complainantEmail);
+        etComplainantName = (EditText) findViewById(R.id.complainantName);
+        etComplainantMobNo = (EditText) findViewById(R.id.complainantMobileNo);
+        etComplainantEmail = (EditText) findViewById(R.id.complainantEmail);
         etLandmark = (EditText) findViewById(R.id.complaint_landmark);
         etDetails = (EditText) findViewById(R.id.complaint_details);
 
@@ -240,8 +240,8 @@ public class NewGrievanceActivity extends BaseActivity {
         imgMapPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent openGrievancePickLoc=new Intent(NewGrievanceActivity.this, GrievanceLocPickerActivity.class);
-                if(complaintLocLatLng!=null) {
+                Intent openGrievancePickLoc = new Intent(NewGrievanceActivity.this, GrievanceLocPickerActivity.class);
+                if (complaintLocLatLng != null) {
                     openGrievancePickLoc.putExtra(GrievanceLocPickerActivity.DEFAULT_LOCATION_LAT, complaintLocLatLng.latitude);
                     openGrievancePickLoc.putExtra(GrievanceLocPickerActivity.DEFAULT_LOCATION_LNG, complaintLocLatLng.longitude);
                 }
@@ -249,13 +249,13 @@ public class NewGrievanceActivity extends BaseActivity {
             }
         });
 
-        imgClear=(ImageView)findViewById(R.id.imgClear);
+        imgClear = (ImageView) findViewById(R.id.imgClear);
         imgClear.getDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         imgClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                complaintLocLatLng=null;
-                locationID=0;
+                complaintLocLatLng = null;
+                locationID = 0;
                 autoCompleteComplaintLoc.setText("");
             }
         });
@@ -293,7 +293,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 etLandmark.requestFocus();
 
                 //Clears the complaint location is selected
-                complaintLocLatLng=null;
+                complaintLocLatLng = null;
             }
         });
 
@@ -462,51 +462,41 @@ public class NewGrievanceActivity extends BaseActivity {
 
 
     //validate and submit grievance
-    public void validateAndSubmitGrievance()
-    {
+    public void validateAndSubmitGrievance() {
         String complaintDetails = etDetails.getText().toString().trim();
         String landmarkDetails = etLandmark.getText().toString().trim();
 
-        String complainantName=AppUtils.isEmptyReturnNull(etComplainantName.getText().toString());
-        String complainantMobileNo=AppUtils.isEmptyReturnNull(etComplainantMobNo.getText().toString());
+        String complainantName = AppUtils.isEmptyReturnNull(etComplainantName.getText().toString());
+        String complainantMobileNo = AppUtils.isEmptyReturnNull(etComplainantMobNo.getText().toString());
         String complainantEmail = AppUtils.isEmptyReturnNull(etComplainantEmail.getText().toString().trim());
 
-        complaintTypeID =0;
+        complaintTypeID = 0;
 
-        for(GrievanceType grievanceType:grievanceAllTypes)
-        {
-            if(autocompleteComplaintType.getText().toString().toUpperCase().equals(grievanceType.getName().toUpperCase()))
-            {
-                complaintTypeID =grievanceType.getId();
+        for (GrievanceType grievanceType : grievanceAllTypes) {
+            if (autocompleteComplaintType.getText().toString().toUpperCase().equals(grievanceType.getName().toUpperCase())) {
+                complaintTypeID = grievanceType.getId();
             }
         }
 
-        if((complainantName==null && complainantMobileNo!=null) || (complainantMobileNo==null && complainantName!=null))
-        {
-           showSnackBar("Complainant name and mobile no is mandatory");
-        }
-        else if(complainantMobileNo!=null && !complainantMobileNo.matches("\\d{10}")){
-           showSnackBar("Invalid mobile no");
-        }
-        else if(complainantEmail!=null && !complainantEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
-        {
+        if ((complainantName == null && complainantMobileNo != null) || (complainantMobileNo == null && complainantName != null)) {
+            showSnackBar("Complainant name and mobile no is mandatory");
+        } else if (complainantMobileNo != null && !complainantMobileNo.matches("\\d{10}")) {
+            showSnackBar("Invalid mobile no");
+        } else if (complainantEmail != null && !complainantEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             showSnackBar("Invalid email address");
-        }
-        else if (complaintTypeID == 0) {
+        } else if (complaintTypeID == 0) {
             showSnackBar("Please select complaint type");
-        }
-        else if (locationID == 0 && (complaintLocLatLng == null)) {
+        } else if (locationID == 0 && (complaintLocLatLng == null)) {
             showSnackBar("Please select location on map or select a location from dropdown");
-        }else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
-            showSnackBar("Please enter complaint etDetails (at least 10 characters");
-        }
-        else{
+        } else if (TextUtils.isEmpty(complaintDetails) || complaintDetails.length() < 10) {
+            showSnackBar("Please enter complaint details (at least 10 characters");
+        } else {
             GrievanceRequest grievanceRequest;
             if (complaintLocLatLng != null) {
-                grievanceRequest=new GrievanceRequest(complainantName, complainantMobileNo, complainantEmail,
+                grievanceRequest = new GrievanceRequest(complainantName, complainantMobileNo, complainantEmail,
                         complaintLocLatLng.latitude, complaintLocLatLng.longitude, complaintDetails, complaintTypeID, landmarkDetails);
             } else {
-                grievanceRequest=new GrievanceRequest(complainantName, complainantMobileNo, complainantEmail,
+                grievanceRequest = new GrievanceRequest(complainantName, complainantMobileNo, complainantEmail,
                         locationID, complaintDetails, complaintTypeID, landmarkDetails);
             }
             progressDialog.show();
@@ -532,7 +522,7 @@ public class NewGrievanceActivity extends BaseActivity {
         //If result is from camera
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
-            File savedImg=new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+            File savedImg = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
             //Stores image in app cache
             Uri uri = Uri.fromFile(savedImg);
 
@@ -568,7 +558,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
         } else if (requestCode == REQUEST_CODE_ASK_COMPLAINT_LOCATION) {
 
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 //reset location id
                 locationID = 0;
 
@@ -586,9 +576,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 } else {
                     getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
                 }
-            }
-            else if(resultCode == RESULT_CANCELED)
-            {
+            } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
             }
 
@@ -600,17 +588,15 @@ public class NewGrievanceActivity extends BaseActivity {
     private void submit(GrievanceRequest grievanceRequest) {
 
 
-
         Map<String, RequestBody> formDatas = new HashMap<>();
 
-        for(Uri uploadDoc:uriArrayList)
-        {
+        for (Uri uploadDoc : uriArrayList) {
             String mimeType = getMimeType(uploadDoc);
             String path;
             path = UriPathHelper.getRealPathFromURI(uploadDoc, getApplicationContext());
             path = ImageCompressionHelper.compressImage(path, path);
-            File uploadFile=new File(path);
-            RequestBody fileBody=RequestBody.create(MediaType.parse(mimeType), new File(path));
+            File uploadFile = new File(path);
+            RequestBody fileBody = RequestBody.create(MediaType.parse(mimeType), new File(path));
             formDatas.put("files\"; filename=\"" + uploadFile.getName(), fileBody);
         }
 
@@ -626,7 +612,7 @@ public class NewGrievanceActivity extends BaseActivity {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 progressDialog.dismiss();
-                Intent intent=new Intent();
+                Intent intent = new Intent();
                 intent.putExtra(GrievanceActivity.RESULT_MESSAGE, "Grievance successfully registered");
                 setResult(RESULT_OK, intent);
                 finish();
@@ -643,8 +629,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
     }
 
-    private void loadComplaintCategoriesAndTypes()
-    {
+    private void loadComplaintCategoriesAndTypes() {
 
         setLoadingHintCustomAutoComplete(autoCompleteComplaintCategory);
         setLoadingHintCustomAutoComplete(autocompleteComplaintType);
@@ -658,20 +643,18 @@ public class NewGrievanceActivity extends BaseActivity {
             public void onResponse(Call<GrievanceTypeAPIResponse> call, Response<GrievanceTypeAPIResponse> response) {
 
 
-                GrievanceTypeAPIResponse grievanceTypeAPIResponse=response.body();
+                GrievanceTypeAPIResponse grievanceTypeAPIResponse = response.body();
 
-                grievanceAllCategories=grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
+                grievanceAllCategories = grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
 
-                grievanceTypeCategories=new ArrayList<>();
-                grievanceTypes=new ArrayList<>();
+                grievanceTypeCategories = new ArrayList<>();
+                grievanceTypes = new ArrayList<>();
 
-                for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
-                {
+                for (GrievanceTypeCategory grievanceTypeCategory : grievanceAllCategories) {
                     grievanceTypeCategories.add(grievanceTypeCategory.getCategoryName());
                     grievanceAllTypes.addAll(grievanceTypeCategory.getGrievanceTypes());
 
-                    for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
-                    {
+                    for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
                         grievanceTypes.add(grievanceType.getName());
                     }
                 }
@@ -682,22 +665,20 @@ public class NewGrievanceActivity extends BaseActivity {
                 setCustomAutoCompleteTextViewWithAdapter(autoCompleteComplaintCategory, R.string.complaint_category, adapterGrievanceCategories);
                 setCustomAutoCompleteTextViewWithAdapter(autocompleteComplaintType, R.string.complaint_type_text, adapterGrievanceTypes);
 
-                final Runnable nextFocusRunnable=new Runnable() {
+                final Runnable nextFocusRunnable = new Runnable() {
                     @Override
                     public void run() {
                         refreshGrievanceTypeAutoComplete(true);
                     }
                 };
 
-                final Handler focusOutHandler=new Handler();
+                final Handler focusOutHandler = new Handler();
 
                 autoCompleteComplaintCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if(!hasFocus)
-                        {
-                            if(TextUtils.isEmpty(autoCompleteComplaintCategory.getText()))
-                            {
+                        if (!hasFocus) {
+                            if (TextUtils.isEmpty(autoCompleteComplaintCategory.getText())) {
                                 focusOutHandler.postDelayed(nextFocusRunnable, 100);
                             }
                         }
@@ -707,8 +688,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 autocompleteComplaintType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        if(hasFocus)
-                        {
+                        if (hasFocus) {
                             focusOutHandler.removeCallbacks(nextFocusRunnable);
                             refreshGrievanceTypeAutoComplete(false);
                         }
@@ -747,15 +727,13 @@ public class NewGrievanceActivity extends BaseActivity {
 
     }
 
-    private void setLoadingHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete)
-    {
+    private void setLoadingHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete) {
         customAutoComplete.setOnClickListener(null);
         customAutoComplete.setHint(R.string.loading_label);
         customAutoComplete.setCompoundDrawables(null, null, null, null);
     }
 
-    private void setLoadingFailedHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete)
-    {
+    private void setLoadingFailedHintCustomAutoComplete(final CustomAutoCompleteTextView customAutoComplete) {
         customAutoComplete.setHint(R.string.loading_failed);
         customAutoComplete.setDrawableClickListener(null);
         customAutoComplete.setOnClickListener(null);
@@ -770,42 +748,35 @@ public class NewGrievanceActivity extends BaseActivity {
         });
     }
 
-    private void refreshGrievanceTypeAutoComplete(boolean isClearComplaintType)
-    {
+    private void refreshGrievanceTypeAutoComplete(boolean isClearComplaintType) {
 
-        String complaintCategoryTypedText=autoCompleteComplaintCategory.getText().toString();
+        String complaintCategoryTypedText = autoCompleteComplaintCategory.getText().toString();
 
-        ArrayList<String> tempGrievanceTypes=new ArrayList<>();
+        ArrayList<String> tempGrievanceTypes = new ArrayList<>();
 
-        int selectedIdx=-1;
-        int idx=0;
-        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
-        {
-            if(grievanceTypeCategory.getCategoryName().toUpperCase().equals(complaintCategoryTypedText.toUpperCase()))
-            {
-                selectedIdx=idx;
+        int selectedIdx = -1;
+        int idx = 0;
+        for (GrievanceTypeCategory grievanceTypeCategory : grievanceAllCategories) {
+            if (grievanceTypeCategory.getCategoryName().toUpperCase().equals(complaintCategoryTypedText.toUpperCase())) {
+                selectedIdx = idx;
                 grievanceTypes.clear();
-                if(isClearComplaintType)
-                {
+                if (isClearComplaintType) {
                     autocompleteComplaintType.setText("");
                 }
-                for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
-                {
+                for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
                     grievanceTypes.add(grievanceType.getName());
                 }
                 break;
             }
 
-            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
-            {
+            for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
                 tempGrievanceTypes.add(grievanceType.getName());
             }
 
             idx++;
         }
 
-        if(selectedIdx==-1)
-        {
+        if (selectedIdx == -1) {
             autocompleteComplaintType.setText("");
             autoCompleteComplaintCategory.setText("");
             grievanceTypes.clear();
@@ -819,29 +790,24 @@ public class NewGrievanceActivity extends BaseActivity {
 
     private void setGrievanceCategoryText() {
 
-        ArrayList<String> tempGrievanceTypes=new ArrayList<>();
-        boolean isPickedCategory=false;
+        ArrayList<String> tempGrievanceTypes = new ArrayList<>();
+        boolean isPickedCategory = false;
         String complaintTypeText = autocompleteComplaintType.getText().toString();
-        for(GrievanceTypeCategory grievanceTypeCategory:grievanceAllCategories)
-        {
-            if(isPickedCategory)
-            {
+        for (GrievanceTypeCategory grievanceTypeCategory : grievanceAllCategories) {
+            if (isPickedCategory) {
                 break;
             }
             tempGrievanceTypes.clear();
-            for(GrievanceType grievanceType:grievanceTypeCategory.getGrievanceTypes())
-            {
+            for (GrievanceType grievanceType : grievanceTypeCategory.getGrievanceTypes()) {
                 tempGrievanceTypes.add(grievanceType.getName());
-                if(grievanceType.getName().toUpperCase().equals(complaintTypeText.toUpperCase()))
-                {
+                if (grievanceType.getName().toUpperCase().equals(complaintTypeText.toUpperCase())) {
                     autoCompleteComplaintCategory.setText(grievanceTypeCategory.getCategoryName());
-                    isPickedCategory=true;
+                    isPickedCategory = true;
                 }
             }
         }
 
-        if(isPickedCategory)
-        {
+        if (isPickedCategory) {
             grievanceTypes.clear();
             grievanceTypes.addAll(tempGrievanceTypes);
         }
@@ -854,8 +820,7 @@ public class NewGrievanceActivity extends BaseActivity {
 
     }
 
-    private void setCustomAutoCompleteTextViewWithAdapter(final CustomAutoCompleteTextView autoCompleteTextView, int hint, ArrayAdapter<?> adapter)
-    {
+    private void setCustomAutoCompleteTextViewWithAdapter(final CustomAutoCompleteTextView autoCompleteTextView, int hint, ArrayAdapter<?> adapter) {
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setHint(hint);
         autoCompleteTextView.setOnClickListener(null);
@@ -949,9 +914,9 @@ public class NewGrievanceActivity extends BaseActivity {
                 lng = 0;
             }
             if (lat != 0 && lng != 0) {
-                complaintLocLatLng=new LatLng(lat, lng);
+                complaintLocLatLng = new LatLng(lat, lng);
                 locationID = 0;
-                getAndSetAddressToLocAutoComplete(lat,lng);
+                getAndSetAddressToLocAutoComplete(lat, lng);
             }
         } catch (IOException e) {
             e.printStackTrace();

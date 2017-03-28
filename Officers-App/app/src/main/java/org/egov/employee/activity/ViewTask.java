@@ -202,6 +202,7 @@ public class ViewTask extends BaseActivity {
         complaintComponents.btnMoreComments=(Button)findViewById(R.id.btnmorecomments);
         complaintComponents.btnAttachPhotos=(Button) findViewById(R.id.btnattachphoto);
         btnClearAttachments=(Button)findViewById(R.id.btnclearphoto);
+        complaintComponents.btnSendBack = (Button) findViewById(R.id.btnSendBack);
 
         //get complaint no from task object
         complaintComponents.tvComplaintNo.setText(viewTask.getRefNum());
@@ -390,6 +391,10 @@ public class ViewTask extends BaseActivity {
         complaintComponents.tvComplaintDesc.setText(details.getDetail());
         complaintComponents.tvComplaintStatus.setText(details.getStatus());
 
+        if (details.getSkippable())
+            complaintComponents.btnSendBack.setVisibility(View.VISIBLE);
+
+
         final ArrayList<String> complaintImgsUrl=new ArrayList<>();
 
         for(ComplaintDetails.SupportDoc doc:details.getSupportDocs())
@@ -457,21 +462,32 @@ public class ViewTask extends BaseActivity {
                     {
                         approvalPosition=forwardUser.get((complaintComponents.spinnerForwardEmp.getSelectedItemPosition()-1)).getAsJsonObject().get("id").getAsInt();
                     }
-
-                    updateComplaint(complaintStatus, approvalPosition, complaintComments);
-
+                    updateComplaint(complaintStatus, approvalPosition, complaintComments, false);
                 }
+            }
+        });
+
+        complaintComponents.btnSendBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //validation for send back
+                if (listUploadDocs.size() <= 0) {
+                    showSnackBar("Please choose photograph for send back!");
+                    return;
+                }
+                updateComplaint(details.getStatus(), 0, complaintComponents.etComments.getText().toString().trim(), true);
             }
         });
 
     }
 
-    public void updateComplaint(String complaintStatus, int approvalPosition, String complaintComments)
+    public void updateComplaint(final String complaintStatus, int approvalPosition, String complaintComments, Boolean isSendBack)
     {
         JsonObject jsonParams=new JsonObject();
         jsonParams.addProperty("action", complaintStatus);
         jsonParams.addProperty("approvalposition",approvalPosition);
         jsonParams.addProperty("comment", complaintComments);
+        jsonParams.addProperty("issendback", isSendBack);
 
         Map<String, RequestBody> uploadPics = new HashMap<>();
 
@@ -502,7 +518,10 @@ public class ViewTask extends BaseActivity {
             public void onResponse(Call<JsonObject> complaintUpdate, Response<JsonObject> response) {
 
                 pb.dismiss();
-                setResult(RESULT_OK, new Intent());
+                Intent intent = new Intent();
+                intent.putExtra(Homepage.SEND_BACK_MESSAGE, complaintStatus.equals(PGR_FORWARD_ACTION) ?
+                        "Grievance forwarded successfully" : "Grievance updated successfully");
+                setResult(RESULT_OK, intent);
                 finish();
             }
 
@@ -969,6 +988,7 @@ public class ViewTask extends BaseActivity {
         Button btnAction;
         Button btnMoreComments;
         Button btnAttachPhotos;
+        Button btnSendBack;
 
         AutoHeightGridView girdCompImg;
     }

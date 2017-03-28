@@ -55,7 +55,7 @@ public class GrievanceRequest {
     @SerializedName("receivingMode")
     private final String receivingMode = "MOBILE";
     @Expose
-    @SerializedName("location")
+    @SerializedName("locationId")
     private int locationId;
     @Expose
     @SerializedName("lat")
