@@ -910,6 +910,8 @@ public class ViewTask extends BaseActivity {
             try {
                 File capturedImg=new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
                 Uri uri = Uri.fromFile(capturedImg);
+                //apply image compression
+                ImageCompressionHelper.compressImage(capturedImg.getAbsolutePath(), capturedImg.getAbsolutePath());
                 listUploadDocs.add(uri);
                 imageIdxForCamera.remove(0);
                 loadOrRefreshUploadImageGrid();
