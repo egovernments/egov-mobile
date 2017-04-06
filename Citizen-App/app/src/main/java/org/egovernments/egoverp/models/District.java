@@ -50,6 +50,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class District {
@@ -60,6 +61,9 @@ public class District {
     @SerializedName("cities")
     @Expose
     private List<City> cities = new ArrayList<>();
+    @SerializedName("locale")
+    @Expose
+    private HashMap<String, String> locale = new HashMap<>();
 
     /**
      *
@@ -95,6 +99,10 @@ public class District {
      */
     public void setCities(List<City> cities) {
         this.cities = cities;
+    }
+
+    public HashMap<String, String> getLocale() {
+        return locale;
     }
 
 }

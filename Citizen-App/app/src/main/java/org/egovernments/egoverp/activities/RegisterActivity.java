@@ -94,6 +94,7 @@ import org.egovernments.egoverp.services.UpdateService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,6 +106,7 @@ import static org.egovernments.egoverp.config.Config.API_MULTIPLE_CITIES_URL;
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends BaseActivity {
 
+    private static final String LOCALE_ENGLISH = "English";
     public static Boolean isRunning = false;
     public static Boolean isBroadcastRunning = false;
 
@@ -353,7 +355,7 @@ public class RegisterActivity extends BaseActivity {
             final List<String> districts = new ArrayList<>();
 
             for (int i = 0; i < districtsList.size(); i++) {
-                districts.add(districtsList.get(i).getDistrictName());
+                districts.add(getDistrictName(districtsList.get(i)));
             }
 
             loadDropdownsWithData(districts, spinnerDistrict, districtAutoCompleteTextView, true);
@@ -378,14 +380,14 @@ public class RegisterActivity extends BaseActivity {
         List<String> cities=new ArrayList<>();
 
         for (District district : districtsList) {
-            if (s.equals(district.getDistrictName().toUpperCase())) {
+            if (s.equals(getDistrictName(district))) {
                 districtAutoCompleteTextView.setText(s.toUpperCase());
                 cityAutoCompleteTextView.requestFocus();
                 //noinspection unchecked
                 citiesList= (List<City>) ((ArrayList<City>)district.getCities()).clone();
                 for(City city: citiesList)
                 {
-                    cities.add(city.getCityName());
+                    cities.add(getCityName(city));
                 }
                 break;
             }
@@ -408,11 +410,11 @@ public class RegisterActivity extends BaseActivity {
 
                         if ((position - 1) > -1) {
                             if (isDistrict) {
-                                autocompleteTextBox.setText(districtsList.get(position - 1).getDistrictName());
+                                autocompleteTextBox.setText(getDistrictName(districtsList.get(position - 1)));
                                 loadCityDropdown();
                             } else {
                                 City selectedCity = citiesList.get(position - 1);
-                                autocompleteTextBox.setText(selectedCity.getCityName());
+                                autocompleteTextBox.setText(getCityName(selectedCity));
                                 name_edittext.requestFocus();
                             }
                         }
@@ -500,7 +502,7 @@ public class RegisterActivity extends BaseActivity {
     {
         if(citiesList!=null) {
             for (City city : citiesList) {
-                if (cityName.equals(city.getCityName())) {
+                if (cityName.equals(getCityName(city))) {
                     return city;
                 }
             }
@@ -676,6 +678,18 @@ public class RegisterActivity extends BaseActivity {
     public void errorOccurred(String errorMsg, int errorCode) {
         //super.errorOccurred(errorMsg, errorCode);
         showAlertDialogWithMessage(getString(R.string.error), errorMsg);
+    }
+
+    Boolean isCurrentLocaleEnglish() {
+        return Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH);
+    }
+
+    String getDistrictName(District district) {
+        return isCurrentLocaleEnglish() ? district.getDistrictName().toUpperCase() : district.getLocale().get(Locale.getDefault().getLanguage());
+    }
+
+    String getCityName(City city) {
+        return isCurrentLocaleEnglish() ? city.getCityName().toUpperCase() : city.getLocale().get(Locale.getDefault().getLanguage());
     }
 
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {

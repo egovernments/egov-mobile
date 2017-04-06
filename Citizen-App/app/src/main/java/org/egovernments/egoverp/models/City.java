@@ -47,6 +47,8 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
+
 import static org.egovernments.egoverp.config.Config.Modules.ABOUT_US;
 import static org.egovernments.egoverp.config.Config.Modules.BPA;
 import static org.egovernments.egoverp.config.Config.Modules.BPS;
@@ -72,7 +74,9 @@ public class City {
     @SerializedName("non_active_modules")
     @Expose
     private Modules modules;
-
+    @SerializedName("locale")
+    @Expose
+    private HashMap<String, String> locale = new HashMap<>();
     /**
      * @return The cityName
      */
@@ -97,6 +101,10 @@ public class City {
 
     public Modules getModules() {
         return modules;
+    }
+
+    public HashMap<String, String> getLocale() {
+        return locale;
     }
 
     public class Modules{
