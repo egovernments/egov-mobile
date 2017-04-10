@@ -106,7 +106,6 @@ import static org.egovernments.egoverp.config.Config.API_MULTIPLE_CITIES_URL;
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends BaseActivity {
 
-    private static final String LOCALE_ENGLISH = "English";
     public static Boolean isRunning = false;
     public static Boolean isBroadcastRunning = false;
 
@@ -678,10 +677,6 @@ public class RegisterActivity extends BaseActivity {
     public void errorOccurred(String errorMsg, int errorCode) {
         //super.errorOccurred(errorMsg, errorCode);
         showAlertDialogWithMessage(getString(R.string.error), errorMsg);
-    }
-
-    Boolean isCurrentLocaleEnglish() {
-        return Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH);
     }
 
     String getDistrictName(District district) {

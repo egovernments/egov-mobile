@@ -58,6 +58,15 @@ import java.util.ArrayList;
 
 public class Grievance implements Serializable, Parcelable {
 
+    public static final Parcelable.Creator<Grievance> CREATOR = new Parcelable.Creator<Grievance>() {
+        public Grievance createFromParcel(Parcel in) {
+            return new Grievance(in);
+        }
+
+        public Grievance[] newArray(int size) {
+            return new Grievance[size];
+        }
+    };
     @SerializedName("detail")
     @Expose
     private String detail;
@@ -88,6 +97,9 @@ public class Grievance implements Serializable, Parcelable {
     @SerializedName("complaintTypeName")
     @Expose
     private String complaintTypeName;
+    @SerializedName("complaintTypeLocalName")
+    @Expose
+    private String complaintTypeLocalName;
     @SerializedName("complaintTypeImage")
     @Expose
     private String complaintTypeImage;
@@ -113,6 +125,7 @@ public class Grievance implements Serializable, Parcelable {
     @Expose
     private String citizenFeedback;
 
+
     public Grievance(Parcel in){
         this.detail = in.readString();
         this.crn = in.readString();
@@ -124,6 +137,7 @@ public class Grievance implements Serializable, Parcelable {
         this.childLocationName = in.readString();
         this.complaintTypeId = in.readInt();
         this.complaintTypeName = in.readString();
+        this.complaintTypeLocalName = in.readString();
         this.landmarkDetails = in.readString();
         this.createdDate = in.readString();
         this.supportDocsSize = in.readInt();
@@ -131,7 +145,6 @@ public class Grievance implements Serializable, Parcelable {
         this.lng = in.readDouble();
         this.citizenFeedback=in.readString();
     }
-
 
     public String getCrn() {
         return crn;
@@ -179,6 +192,10 @@ public class Grievance implements Serializable, Parcelable {
         return locationName;
     }
 
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     /**
      * @return The complaintTypeId
      */
@@ -191,6 +208,10 @@ public class Grievance implements Serializable, Parcelable {
      */
     public String getComplaintTypeName() {
         return complaintTypeName;
+    }
+
+    public String getComplaintTypeLocalName() {
+        return complaintTypeLocalName;
     }
 
     /**
@@ -225,6 +246,10 @@ public class Grievance implements Serializable, Parcelable {
         return childLocationName;
     }
 
+    public void setChildLocationName(String childLocationName) {
+        this.childLocationName = childLocationName;
+    }
+
     public Double getLat() {
         return lat;
     }
@@ -233,22 +258,12 @@ public class Grievance implements Serializable, Parcelable {
         return lng;
     }
 
-    public void setLocationName(String locationName)
-    {
-        this.locationName=locationName;
-    }
-
-    public void setChildLocationName(String childLocationName)
-    {
-        this.childLocationName=childLocationName;
+    public ArrayList<SupportDoc> getSupportDocs() {
+        return supportDocs;
     }
 
     public void setSupportDocs(ArrayList<SupportDoc> supportDocs) {
         this.supportDocs=supportDocs;
-    }
-
-    public ArrayList<SupportDoc> getSupportDocs() {
-        return supportDocs;
     }
 
     public String getCitizenFeedback() {
@@ -272,6 +287,7 @@ public class Grievance implements Serializable, Parcelable {
         dest.writeString(this.childLocationName);
         dest.writeInt(this.complaintTypeId);
         dest.writeString(this.complaintTypeName);
+        dest.writeString(this.complaintTypeLocalName);
         dest.writeString(this.landmarkDetails);
         dest.writeString(this.createdDate);
         dest.writeInt(this.supportDocsSize);
@@ -284,14 +300,4 @@ public class Grievance implements Serializable, Parcelable {
         dest.writeDouble(this.lng);
         dest.writeString(this.citizenFeedback);
     }
-
-    public static final Parcelable.Creator<Grievance> CREATOR = new Parcelable.Creator<Grievance>() {
-        public Grievance createFromParcel(Parcel in) {
-            return new Grievance(in);
-        }
-
-        public Grievance[] newArray(int size) {
-            return new Grievance[size];
-        }
-    };
 }

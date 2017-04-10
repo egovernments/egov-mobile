@@ -85,6 +85,7 @@ import org.egovernments.egoverp.models.NavigationItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 
@@ -99,18 +100,15 @@ import static org.egovernments.egoverp.api.Interceptor.DATA_UNAUTHORIZED_ERROR;
 
 public class BaseActivity extends AppCompatActivity implements Interceptor.ErrorListener, LanguageChangeListener {
 
+    public static final String LOCALE_ENGLISH = "English";
     protected LinearLayout activityContent;
-
     protected ArrayList<NavigationItem> arrayList;
     protected DrawerLayout drawerLayout;
     protected ActionBarDrawerToggle actionBarDrawerToggle;
     protected CharSequence mActionBarTitle;
-
     protected SessionManager sessionManager;
     protected ConfigManager configManager;
-
     protected ProgressDialog progressDialog;
-
     protected boolean isHasNavBar = false;
     protected boolean isTabSupport=false;
     protected TabLayout tabLayout;
@@ -675,6 +673,10 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
             sessionManager.setAppLocale(languageCode);
             recreate();
         }
+    }
+
+    Boolean isCurrentLocaleEnglish() {
+        return Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH);
     }
 
 }

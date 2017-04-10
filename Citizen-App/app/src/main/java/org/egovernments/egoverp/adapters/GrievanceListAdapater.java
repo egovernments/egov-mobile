@@ -44,6 +44,7 @@ package org.egovernments.egoverp.adapters;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.activities.BaseActivity;
 import org.egovernments.egoverp.helper.GrievanceItemInterface;
 import org.egovernments.egoverp.models.Grievance;
 
@@ -106,7 +108,12 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
             final GrievanceViewHolder viewHolder=(GrievanceViewHolder)holder;
 
-            viewHolder.complaintType.setText(ci.getComplaintTypeName());
+            if (!Locale.getDefault().getDisplayLanguage().equals(BaseActivity.LOCALE_ENGLISH) &&
+                    !TextUtils.isEmpty(ci.getComplaintTypeLocalName()))
+                viewHolder.complaintType.setText(ci.getComplaintTypeLocalName());
+            else
+                viewHolder.complaintType.setText(ci.getComplaintTypeName());
+
 
             try {
                 Calendar calendar = Calendar.getInstance();

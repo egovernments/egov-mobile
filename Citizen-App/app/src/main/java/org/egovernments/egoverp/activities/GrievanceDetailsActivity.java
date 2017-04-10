@@ -219,8 +219,11 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
         //Parses complaint date into a more readable format
         complaintDate.setText(formatDateString(grievance.getCreatedDate(),"yyyy-MM-dd hh:mm:ss.SSS","dd/MM/yyyy hh:mm aa"));
+        if (!isCurrentLocaleEnglish() && !TextUtils.isEmpty(grievance.getComplaintTypeLocalName()))
+            complaintType.setText(grievance.getComplaintTypeLocalName());
+        else
+            complaintType.setText(grievance.getComplaintTypeName());
 
-        complaintType.setText(grievance.getComplaintTypeName());
         complaintDetails.setText(grievance.getDetail());
         if (TextUtils.isEmpty(grievance.getLandmarkDetails())) {
             layoutLandMark.setVisibility(View.GONE);

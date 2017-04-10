@@ -100,7 +100,6 @@ import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 public class LoginActivity extends BaseActivity {
 
     public static final String STARTUP_MESSAGE = "startUpMessage";
-    public static final String LOCALE_ENGLISH = "English";
     List<District> districtsList;
     List<City> citiesList;
     ImageView imgLogo;
@@ -650,9 +649,6 @@ public class LoginActivity extends BaseActivity {
         isPaused = true;
     }
 
-    Boolean isCurrentLocaleEnglish() {
-        return Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH);
-    }
 
     String getDistrictName(District district) {
         return isCurrentLocaleEnglish() ? district.getDistrictName().toUpperCase() : district.getLocale().get(Locale.getDefault().getLanguage());

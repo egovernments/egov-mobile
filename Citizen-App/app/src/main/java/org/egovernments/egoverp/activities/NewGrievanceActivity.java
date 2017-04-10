@@ -116,7 +116,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -130,7 +129,6 @@ import retrofit2.Call;
 
 public class NewGrievanceActivity extends BaseActivity {
 
-    public static final String LOCALE_ENGLISH = "English";
     //Codes used to start image picker tasks
     private static final int CAMERA_PHOTO = 111;
     private static final int GALLERY_PHOTO = 222;
@@ -955,7 +953,7 @@ public class NewGrievanceActivity extends BaseActivity {
     }
 
     String getGrievanceCategoryNameByLocale(GrievanceTypeCategory grievanceTypeCategory) {
-        if (!Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH)) {
+        if (!isCurrentLocaleEnglish()) {
             String localCategoryName = grievanceTypeCategory.getLocalName();
             return TextUtils.isEmpty(localCategoryName) ? grievanceTypeCategory.getCategoryName() : localCategoryName;
         } else
@@ -963,7 +961,7 @@ public class NewGrievanceActivity extends BaseActivity {
     }
 
     String getGrievanceTypeNameByLocale(GrievanceType grievanceType) {
-        if (!Locale.getDefault().getDisplayLanguage().equals(LOCALE_ENGLISH)) {
+        if (!isCurrentLocaleEnglish()) {
             String localGrievanceTypeName = grievanceType.getLocalName();
             return TextUtils.isEmpty(localGrievanceTypeName) ? grievanceType.getName() : localGrievanceTypeName;
         } else
