@@ -21,7 +21,8 @@
 
 ## Support library
 -dontwarn android.support.**
-
+-keep class android.support.v7.** { *; }
+-keep interface android.support.v7.** { *; }
 
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
@@ -45,3 +46,7 @@
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
 }
+
+-keep class com.google.** { *; }
+
+-keep class sun.misc.** { *; }
