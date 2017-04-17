@@ -651,11 +651,25 @@ public class LoginActivity extends BaseActivity {
 
 
     String getDistrictName(District district) {
-        return isCurrentLocaleEnglish() ? district.getDistrictName().toUpperCase() : district.getLocale().get(Locale.getDefault().getLanguage());
+        return isCurrentLocaleEnglish() ? district.getDistrictName().toUpperCase() : getCurrentLocaleText(district);
     }
 
     String getCityName(City city) {
-        return isCurrentLocaleEnglish() ? city.getCityName().toUpperCase() : city.getLocale().get(Locale.getDefault().getLanguage());
+        return isCurrentLocaleEnglish() ? city.getCityName().toUpperCase() : getCurrentLocaleText(city);
+    }
+
+    String getCurrentLocaleText(District district) {
+        if (district.getLocale() != null && district.getLocale().size() > 0)
+            return district.getLocale().get(Locale.getDefault().getLanguage());
+        else
+            return district.getDistrictName().toUpperCase();
+    }
+
+    String getCurrentLocaleText(City city) {
+        if (city.getLocale() != null && city.getLocale().size() > 0)
+            return city.getLocale().get(Locale.getDefault().getLanguage());
+        else
+            return city.getCityName().toUpperCase();
     }
 
     class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
