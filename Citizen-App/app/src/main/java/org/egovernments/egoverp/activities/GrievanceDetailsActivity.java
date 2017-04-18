@@ -421,6 +421,12 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
             @Override
             public void onResponse(Call<GrievanceCommentAPIResponse> call, retrofit2.Response<GrievanceCommentAPIResponse> response) {
                 GrievanceCommentAPIResponse grievanceCommentAPIResponse = response.body();
+
+                if (grievanceCommentAPIResponse == null) {
+                    showSnackBar(R.string.invalid_response);
+                    return;
+                }
+
                 GrievanceCommentAPIResult grievanceCommentAPIResult = grievanceCommentAPIResponse.getGrievanceCommentAPIResult();
                 updateComment.getText().clear();
                 progressBar.setVisibility(View.GONE);

@@ -145,7 +145,7 @@ public class DownloadService extends IntentService {
         download.setProgress(100);
         sendIntent(download);*/
 
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, openFile(downloadedFile), 0);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, Intent.createChooser(openFile(downloadedFile), "Downloaded File"), 0);
         setNotificationBuilderEndStatusWithMsg("File Downloaded in Downloads Folder");
         notificationBuilder.setContentIntent(pIntent);
         Notification notification = notificationBuilder.build();

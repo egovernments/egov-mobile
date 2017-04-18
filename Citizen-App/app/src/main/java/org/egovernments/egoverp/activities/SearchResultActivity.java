@@ -307,6 +307,11 @@ public class SearchResultActivity extends BaseActivity {
 
                 List<PropertyTaxCallback> propertyTaxCallbacks = response.body();
 
+                if (propertyTaxCallbacks == null) {
+                    showSnackBar(R.string.invalid_response);
+                    return;
+                }
+
                 resultProperties = propertyTaxCallbacks;
 
                 if (propertyTaxCallbacks.size() > 0) {
@@ -356,6 +361,12 @@ public class SearchResultActivity extends BaseActivity {
             public void onResponse(Call<List<WaterTaxCallback>> call, retrofit2.Response<List<WaterTaxCallback>> response) {
 
                 List<WaterTaxCallback> waterTaxCallbacks = response.body();
+
+                if (waterTaxCallbacks == null) {
+                    showSnackBar(R.string.invalid_response);
+                    return;
+                }
+
                 resultWaterConnections = waterTaxCallbacks;
 
                 if (resultWaterConnections.size() > 0) {

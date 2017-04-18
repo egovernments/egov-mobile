@@ -82,6 +82,7 @@ import tr.xip.errorview.ErrorView;
 public class GrievanceActivity extends BaseActivity {
 
     public static final String RESULT_MESSAGE="Message";
+    public static final String RESULT = "result";
     public static int ACTION_UPDATE_REQUIRED = 111;
     ViewPager viewPager;
     ProgressBar pbHome;
@@ -166,7 +167,10 @@ public class GrievanceActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                     JsonObject jsonObject = response.body();
-                    loadViewPager(jsonObject.get("result").getAsJsonObject());
+                    if (jsonObject.has(RESULT))
+                        loadViewPager(jsonObject.get(RESULT).getAsJsonObject());
+                    else
+                        showSnackBar(getString(R.string.invalid_response));
                 }
 
                 @Override

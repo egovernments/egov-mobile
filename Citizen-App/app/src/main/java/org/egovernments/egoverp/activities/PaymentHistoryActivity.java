@@ -111,6 +111,10 @@ public class PaymentHistoryActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ArrayList<Transaction>> call, Response<ArrayList<Transaction>> response) {
 
+                if (response.body() == null) {
+                    showSnackBar(R.string.invalid_response);
+                    return;
+                }
 
                 if (response.body().size() == 0 || (response.body().size() == 1 && TextUtils.isEmpty(response.body().get(0).getReferenceNo()))) {
                     paymentHistoryRecyclerView.setVisibility(View.GONE);

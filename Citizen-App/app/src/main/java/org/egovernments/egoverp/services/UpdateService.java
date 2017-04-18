@@ -128,8 +128,8 @@ public class UpdateService extends Service {
                 public void onResponse(Call<ProfileAPIResponse> call, retrofit2.Response<ProfileAPIResponse> response) {
 
                     Intent boradCastIntent = new Intent(BROADCAST_PROFILE_DETAILS);
-                    if (response.isSuccessful()) {
-                        ProfileAPIResponse profileAPIResponse = response.body();
+                    ProfileAPIResponse profileAPIResponse = response.body();
+                    if (response.isSuccessful() && profileAPIResponse != null) {
                         ProfileActivity.profile = profileAPIResponse.getProfile();
                         boradCastIntent.putExtra(KEY_PROFILE, profileAPIResponse.getProfile());
                     } else {

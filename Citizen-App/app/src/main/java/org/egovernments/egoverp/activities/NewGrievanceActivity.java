@@ -398,6 +398,12 @@ public class NewGrievanceActivity extends BaseActivity {
                 public void onResponse(Call<GrievanceLocationAPIResponse> call, retrofit2.Response<GrievanceLocationAPIResponse> response) {
 
                     GrievanceLocationAPIResponse grievanceLocationAPIResponse = response.body();
+
+                    if (grievanceLocationAPIResponse == null) {
+                        showSnackBar(R.string.invalid_response);
+                        return;
+                    }
+
                     grievanceLocations = new ArrayList<>();
                     grievanceLocations = grievanceLocationAPIResponse.getGrievanceLocation();
 
@@ -615,6 +621,12 @@ public class NewGrievanceActivity extends BaseActivity {
             public void onResponse(Call<GrievanceTypeAPIResponse> call, retrofit2.Response<GrievanceTypeAPIResponse> response) {
 
                 GrievanceTypeAPIResponse grievanceTypeAPIResponse = response.body();
+
+                if (grievanceTypeAPIResponse == null) {
+                    showSnackBar(R.string.invalid_response);
+                    return;
+                }
+
                 grievanceAllCategories = grievanceTypeAPIResponse.getResult().getGrievanceTypeCategories();
                 grievanceTypeCategories = new ArrayList<>();
                 grievanceTypes = new ArrayList<>();

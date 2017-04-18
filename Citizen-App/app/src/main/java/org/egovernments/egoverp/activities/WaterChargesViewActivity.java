@@ -278,6 +278,11 @@ public class WaterChargesViewActivity extends BaseActivity {
     private void showWaterTaxDetails(retrofit2.Response<WaterTaxCallback> response) {
         WaterTaxCallback taxCallback = response.body();
 
+        if (taxCallback == null) {
+            showSnackBar(R.string.invalid_response);
+            return;
+        }
+
         if (taxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
 
             tvConsumerNo.setText(taxCallback.getConsumerNo());
@@ -336,6 +341,7 @@ public class WaterChargesViewActivity extends BaseActivity {
             tvCurrentPenalty.setText(getString(R.string.rupee_value, nf1.format(currentPenalty)));
             tvTotal.setText(getString(R.string.rupee_value, nf1.format(Math.round(total))));
             listBreakups = taxCallback.getTaxDetails();
+            listBreakups.add(new TaxDetail(total));
             waterTaxCardView.setVisibility(View.VISIBLE);
             waterTaxCardView.requestFocus();
 

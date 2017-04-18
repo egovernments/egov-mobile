@@ -127,6 +127,9 @@ public class TaxAdapter extends BaseAdapter {
             taxViewHolder.layoutTotalFooter.setVisibility(View.VISIBLE);
             taxViewHolder.tvTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
         } else {
+            taxViewHolder.layoutInstallmentDetails.setVisibility(View.VISIBLE);
+            taxViewHolder.layoutBreakupDetails.setVisibility(View.VISIBLE);
+            taxViewHolder.layoutTotalFooter.setVisibility(View.GONE);
             taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
             taxViewHolder.taxAmount.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTaxAmount())));
         /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/

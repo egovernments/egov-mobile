@@ -59,6 +59,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.egovernments.egoverp.R;
+import org.egovernments.egoverp.activities.BaseActivity;
 import org.egovernments.egoverp.activities.GrievanceActivity;
 import org.egovernments.egoverp.activities.GrievanceDetailsActivity;
 import org.egovernments.egoverp.adapters.GrievanceListAdapater;
@@ -224,6 +225,11 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             public void onResponse(Call<GrievanceAPIResponse> call, retrofit2.Response<GrievanceAPIResponse> response) {
 
                 GrievanceAPIResponse grievanceAPIResponse = response.body();
+
+                if (grievanceAPIResponse == null) {
+                    ((BaseActivity) getContext()).showSnackBar(R.string.invalid_response);
+                    return;
+                }
 
                 for (Grievance grievance : grievanceAPIResponse.getResult()) {
                     if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {

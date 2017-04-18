@@ -237,13 +237,14 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void setOTPCode(Intent intent) {
-        if (alertDialog != null && alertDialog.isShowing()) {
+        String otpCode = intent.getStringExtra(SMSListener.PARAM_OTP_CODE);
+        if (alertDialog != null && alertDialog.isShowing() && !TextUtils.isEmpty(otpCode)) {
             EditText etOTP = (EditText) alertDialog.findViewById(R.id.etOTP);
             if (etOTP != null) {
-                etOTP.setText(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+                etOTP.setText(otpCode);
                 etOTP.setSelection(etOTP.getText().length());
             }
-            registerAccount(intent.getStringExtra(SMSListener.PARAM_OTP_CODE));
+            registerAccount(otpCode);
         }
     }
 
@@ -585,7 +586,8 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setOTPCode(getIntent());
+        if (getIntent() != null)
+            setOTPCode(getIntent());
     }
 
     @Override

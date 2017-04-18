@@ -275,6 +275,11 @@ public class PropertyTaxViewActivity extends BaseActivity {
     private void showPropertyTaxDetails(retrofit2.Response<PropertyTaxCallback> response) {
         PropertyTaxCallback propertyTaxCallback = response.body();
 
+        if (propertyTaxCallback == null) {
+            showSnackBar(R.string.invalid_response);
+            return;
+        }
+
         if (propertyTaxCallback.getErrorDetail().getErrorMessage().equals("SUCCESS")) {
 
             tvAssessmentNo.setText(propertyTaxCallback.getAssessmentNo());

@@ -74,6 +74,8 @@ import retrofit2.Call;
 
 public class ResetPasswordActivity extends BaseActivity {
 
+    public static final String STATUS = "status";
+    public static final String MESSAGE = "message";
     public static String MESSAGE_SENT_TO="messageSentTo";
 
     public static boolean isRunning = false;
@@ -165,15 +167,20 @@ public class ResetPasswordActivity extends BaseActivity {
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                 if (response.isSuccessful()) {
                     JsonObject resp = response.body();
-                    String message = resp.get("status").getAsJsonObject().get("message").getAsString();
 
-                    showSnackBar(message);
-                    progressDialog.dismiss();
+                    if (resp.has(STATUS) && resp.get(STATUS).getAsJsonObject().has(MESSAGE)) {
+                        String message = resp.get(STATUS).getAsJsonObject().get(MESSAGE).getAsString();
+                        showSnackBar(message);
+                        progressDialog.dismiss();
+                        long millis = System.currentTimeMillis();
+                        sessionManager.setForgotPasswordTime(millis);
+                        sessionManager.setResetPasswordLastMobileNo(mobileNo);
+                        startCountDown();
+                    } else {
+                        showSnackBar(getString(R.string.invalid_response));
+                        return;
+                    }
 
-                    long millis = System.currentTimeMillis();
-                    sessionManager.setForgotPasswordTime(millis);
-                    sessionManager.setResetPasswordLastMobileNo(mobileNo);
-                    startCountDown();
                 }
             }
 

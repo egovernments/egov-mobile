@@ -209,6 +209,7 @@
                     android:drawableStart="@drawable/ic_person_black_24dp"
                     android:hint="@string/login_username"
                     android:imeOptions="actionNext"
+                    android:inputType="number"
                     android:paddingEnd="10dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
