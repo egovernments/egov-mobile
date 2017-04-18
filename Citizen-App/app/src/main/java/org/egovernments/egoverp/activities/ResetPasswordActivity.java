@@ -177,6 +177,7 @@ public class ResetPasswordActivity extends BaseActivity {
                         sessionManager.setResetPasswordLastMobileNo(mobileNo);
                         startCountDown();
                     } else {
+                        progressDialog.dismiss();
                         showSnackBar(getString(R.string.invalid_response));
                         return;
                     }
