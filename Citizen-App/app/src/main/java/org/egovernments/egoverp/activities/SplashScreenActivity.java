@@ -402,9 +402,8 @@ public class SplashScreenActivity extends Activity {
 
             try
             {
-                if (response != null && !TextUtils.isEmpty(response.get(KEY_RESULT).getAsString())) {
+                if (response != null && response.has(KEY_RESULT)) {
                     JsonObject appDetails = response.get(KEY_RESULT).getAsJsonObject();
-
                     if (AppUtils.getAppVersionCode(getApplicationContext()) < appDetails.get(KEY_APP_VERSION_CODE).getAsNumber().intValue()) {
                         if (appDetails.get(KEY_APP_IS_FORCE_UPDATE).getAsBoolean()) {
                             showUpdateAlert(true, getString(R.string.update_available_alert_title),
