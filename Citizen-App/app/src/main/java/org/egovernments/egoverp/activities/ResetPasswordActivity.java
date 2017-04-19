@@ -168,7 +168,7 @@ public class ResetPasswordActivity extends BaseActivity {
                 if (response.isSuccessful()) {
                     JsonObject resp = response.body();
 
-                    if (resp.has(STATUS) && resp.get(STATUS).getAsJsonObject().has(MESSAGE)) {
+                    if (resp != null && resp.has(STATUS) && resp.get(STATUS).getAsJsonObject().has(MESSAGE)) {
                         String message = resp.get(STATUS).getAsJsonObject().get(MESSAGE).getAsString();
                         showSnackBar(message);
                         progressDialog.dismiss();

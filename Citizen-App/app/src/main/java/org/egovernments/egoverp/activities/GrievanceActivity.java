@@ -167,7 +167,7 @@ public class GrievanceActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                     JsonObject jsonObject = response.body();
-                    if (jsonObject.has(RESULT))
+                    if (jsonObject != null && jsonObject.has(RESULT))
                         loadViewPager(jsonObject.get(RESULT).getAsJsonObject());
                     else
                         showSnackBar(getString(R.string.invalid_response));
