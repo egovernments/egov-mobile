@@ -212,7 +212,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 }
             }
 
-            if(grievanceAdapter!=null) {
+        if (grievanceAdapter != null && grievanceList != null) {
                 grievanceList.add(null);
                 grievanceAdapter.notifyItemInserted(grievanceList.size());
             }
@@ -237,9 +237,15 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                         List<Address> addresses;
                         try {
                             addresses = geocoder.getFromLocation(grievance.getLat(), grievance.getLng(), 1);
-                            String location = (TextUtils.isEmpty(addresses.get(0).getSubLocality()) ? addresses.get(0).getThoroughfare() : addresses.get(0).getSubLocality());
-                            grievance.setLocationName(returnValidString(location));
-                            grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
+                            String location = "Unknown location";
+                            String childLocation = "";
+                            if (addresses.size() > 0) {
+                                location = (TextUtils.isEmpty(addresses.get(0).getSubLocality()) ? addresses.get(0).getThoroughfare() : addresses.get(0).getSubLocality());
+                                childLocation = addresses.get(0).getAddressLine(0);
+                            }
+                            grievance.setLocationName(location);
+                            grievance.setChildLocationName(childLocation);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

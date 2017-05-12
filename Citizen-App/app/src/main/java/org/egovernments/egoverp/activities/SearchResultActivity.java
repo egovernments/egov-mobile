@@ -79,6 +79,7 @@ import static org.egovernments.egoverp.config.Config.REFERER_IP_CONFIG_KEY;
 
 public class SearchResultActivity extends BaseActivity {
 
+    public static final String RESP_SUCCESS = "SUCCESS";
     public static String ULB_CODE = "ulbCode";
     public static String ASSESSMENT_NO = "assessmentNo";
     public static String CONSUMER_NO = "consumerNo";
@@ -318,12 +319,7 @@ public class SearchResultActivity extends BaseActivity {
                     if (propertyTaxCallbacks.size() == 1) {
                         PropertyTaxCallback propertyTaxCallback = propertyTaxCallbacks.get(0);
 
-                        if (propertyTaxCallback.getErrorDetail() == null
-                                && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
-                                TextUtils.isEmpty(propertyTaxCallback.getErrorDetail().getErrorMessage())
-                                        && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) ||
-                                propertyTaxCallback.getErrorDetail().getErrorMessage().equals("SUCCESS")
-                                        && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo())) {
+                        if (itHasProperty(propertyTaxCallback)) {
                             SearchResultActivity.this.finish();
                             openViewPropertyTaxScreen(propertyTaxCallback.getAssessmentNo());
                         }
@@ -346,6 +342,13 @@ public class SearchResultActivity extends BaseActivity {
             }
         });
 
+    }
+
+    Boolean itHasProperty(PropertyTaxCallback propertyTaxCallback) {
+        return (propertyTaxCallback.getErrorDetail() != null ?
+                propertyTaxCallback.getErrorDetail().getErrorMessage().equals(RESP_SUCCESS)
+                        && !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()) :
+                !TextUtils.isEmpty(propertyTaxCallback.getAssessmentNo()));
     }
 
     private void showSearchResults(final WaterConnectionSearchRequest waterConnectionSearchRequest)
@@ -373,11 +376,7 @@ public class SearchResultActivity extends BaseActivity {
                     if (resultWaterConnections.size() == 1) {
                         WaterTaxCallback waterTaxCallback = waterTaxCallbacks.get(0);
 
-                        if (waterTaxCallback.getTaxErrorDetails() == null && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())
-                                || TextUtils.isEmpty(waterTaxCallback.getTaxErrorDetails().getErrorMessage())
-                                && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())
-                                || waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")
-                                && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo())) {
+                        if (itHasWaterConnection(waterTaxCallback)) {
                             SearchResultActivity.this.finish();
                             openViewWaterConnection(waterTaxCallback.getConsumerNo());
                         }
@@ -399,6 +398,13 @@ public class SearchResultActivity extends BaseActivity {
             }
         });
 
+    }
+
+    Boolean itHasWaterConnection(WaterTaxCallback waterTaxCallback) {
+        return (waterTaxCallback.getTaxErrorDetails() != null ?
+                waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals(RESP_SUCCESS)
+                        && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo()) :
+                !TextUtils.isEmpty(waterTaxCallback.getConsumerNo()));
     }
 
 
