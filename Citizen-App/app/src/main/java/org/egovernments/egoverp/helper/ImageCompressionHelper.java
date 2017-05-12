@@ -51,9 +51,11 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.util.Log;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Reduces image resolution and color density before upload
@@ -70,7 +72,14 @@ public class ImageCompressionHelper {
 //      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
 //      you try the use the bitmap here, you will get null.
         options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(sourceFilePath, options);
+        Bitmap bmp = null; //= BitmapFactory.decodeFile(sourceFilePath, options);
+
+        try {
+            InputStream in = new FileInputStream(sourceFilePath);
+            bmp = BitmapFactory.decodeStream(in, null, options);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;

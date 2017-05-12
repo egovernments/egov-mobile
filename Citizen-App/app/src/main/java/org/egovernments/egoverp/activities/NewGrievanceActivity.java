@@ -181,6 +181,24 @@ public class NewGrievanceActivity extends BaseActivity {
     private File cacheDir;
     private boolean isPickedLocationFromMap=false;
 
+    public static Bitmap resizeBitmap(final Bitmap temp, final int size) {
+        if (size > 0) {
+            int width = temp.getWidth();
+            int height = temp.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            int finalWidth = size;
+            int finalHeight = size;
+            if (ratioBitmap < 1) {
+                finalWidth = (int) ((float) size * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float) size / ratioBitmap);
+            }
+            return Bitmap.createScaledBitmap(temp, finalWidth, finalHeight, true);
+        } else {
+            return temp;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -922,17 +940,6 @@ public class NewGrievanceActivity extends BaseActivity {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    private boolean checkCameraPermission() {
-        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.CAMERA);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    REQUEST_CODE_ASK_PERMISSIONS_CAMERA);
-            return false;
-        }
-        return true;
-    }
-
 
     /*//find selected location id from location collections
     public GrievanceLocation getGrievanceLocationByName(String complaintLocationName) {
@@ -943,6 +950,17 @@ public class NewGrievanceActivity extends BaseActivity {
         }
         return null;
     }*/
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean checkCameraPermission() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.CAMERA);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CODE_ASK_PERMISSIONS_CAMERA);
+            return false;
+        }
+        return true;
+    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private boolean checkReadAccessPermission() {
@@ -981,7 +999,7 @@ public class NewGrievanceActivity extends BaseActivity {
     }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
-    public interface RemoveImageInterface {
+    private interface RemoveImageInterface {
         void removeFragmentImage(int position, UploadImageFragment fragment);
     }
 
@@ -1039,7 +1057,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 toast.show();
             }
 
-            imageView.setImageBitmap(ThumbImage);
+            imageView.setImageBitmap(resizeBitmap(ThumbImage, 816));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             fragmentPosition = arg.getInt("pos");
