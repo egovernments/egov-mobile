@@ -64,7 +64,6 @@ import org.egovernments.egoverp.models.ProfileAPIResponse;
 import org.egovernments.egoverp.models.PropertySearchRequest;
 import org.egovernments.egoverp.models.PropertyTaxCallback;
 import org.egovernments.egoverp.models.PropertyViewRequest;
-import org.egovernments.egoverp.models.ReceiptDownloadRequest;
 import org.egovernments.egoverp.models.RegisterRequest;
 import org.egovernments.egoverp.models.Transaction;
 import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
@@ -265,9 +264,10 @@ public class ApiController {
         @POST(ApiUrl.PAYMENT_HISTORY_FOR_WC_PT)
         Call<ArrayList<Transaction>> getPaymentHistory(@Header("Referer") String referer, @Body PaymentHistoryRequest paymentHistoryRequest);
 
-        @POST(ApiUrl.DOWNLOAD_PAYMENT_RECEIPT_WC_PT)
+        @GET(ApiUrl.DOWNLOAD_PAYMENT_RECEIPT_WC_PT)
         @Streaming
-        Call<ResponseBody> downloadPaymentReceipt(@Header("Referer") String referer, @Body ReceiptDownloadRequest receiptDownloadRequest);
+        Call<ResponseBody> downloadPaymentReceipt(@Header("Referer") String referer, @Query("ulbCode") String ulbCode,
+                                                  @Query(value = "receiptNo") String receiptNo, @Query(value = "referenceNo") String referenceNo);
 
         @GET(ApiUrl.BPA_DETAILS)
         Call<BuildingPlanAPIResponse> getBuildingPlanApprovalDetails(@Path(value = "applicationNo") String applicationNo, @Path(value = "authKey") String authKey);

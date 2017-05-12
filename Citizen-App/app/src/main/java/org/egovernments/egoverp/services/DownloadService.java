@@ -38,7 +38,7 @@ public class DownloadService extends IntentService {
     public static final String ULB_CODE = "ulbCode";
     public static final String RECEIPT_NO = "receiptNo";
     public static final String REFERENCE_NO = "referenceNo";
-    String fileName = "";
+    private String fileName = "";
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManager notificationManager;
     private int totalFileSize;
@@ -78,16 +78,19 @@ public class DownloadService extends IntentService {
     }
 
     private void initDownload(int notificationId, String referrerIp, ReceiptDownloadRequest receiptDownloadRequest) {
-        Call<ResponseBody> request = ApiController.getRetrofit2API(getApplicationContext()).downloadPaymentReceipt(referrerIp, receiptDownloadRequest);
         try {
+            Call<ResponseBody> request = ApiController.getRetrofit2API(getApplicationContext()).downloadPaymentReceipt(
+                    referrerIp, receiptDownloadRequest.getUlbCode(), receiptDownloadRequest.getReceiptNo(),
+                    receiptDownloadRequest.getReferenceNo());
             downloadFile(notificationId, request.execute().body());
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             e.printStackTrace();
             onDownloadFailed(notificationId);
         }
     }
 
     private void downloadFile(int notificationId, ResponseBody body) throws IOException {
+
 
         int count;
         byte data[] = new byte[1024 * 4];
@@ -145,7 +148,7 @@ public class DownloadService extends IntentService {
         download.setProgress(100);
         sendIntent(download);*/
 
-        PendingIntent pIntent = PendingIntent.getActivity(this, 0, Intent.createChooser(openFile(downloadedFile), "Downloaded File"), 0);
+        PendingIntent pIntent = PendingIntent.getActivity(this, 0, openFile(downloadedFile), 0);
         setNotificationBuilderEndStatusWithMsg("File Downloaded in Downloads Folder");
         notificationBuilder.setContentIntent(pIntent);
         Notification notification = notificationBuilder.build();
