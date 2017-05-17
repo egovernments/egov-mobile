@@ -297,7 +297,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             @Override
             public Void doInBackground(Void... params) {
                 for (Grievance grievance : grievanceAPIResponse.getResult()) {
-                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {
+                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0 && getContext() != null) {
                         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
                         List<Address> addresses;
                         try {
@@ -326,7 +326,8 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                updateUIOnSuccess(page, grievanceAPIResponse);
+                if (getContext() != null)
+                    updateUIOnSuccess(page, grievanceAPIResponse);
             }
         };
         task.execute();

@@ -72,6 +72,9 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -341,6 +344,47 @@ public class AppUtils {
             languagesList.put(getLanguageDisplayNameByLocaleCode(languageCode), languageCode);
         }
         return languagesList;
+    }
+
+    //Function converts lat/lng value from exif data to degrees
+    public static Double convertToDegree(String stringDMS) {
+        Double result;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = Double.valueOf(stringD[0]);
+        Double D1 = Double.valueOf(stringD[1]);
+        Double FloatD = D0 / D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = Double.valueOf(stringM[0]);
+        Double M1 = Double.valueOf(stringM[1]);
+        Double FloatM = M0 / M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = Double.valueOf(stringS[0]);
+        Double S1 = Double.valueOf(stringS[1]);
+        Double FloatS = S0 / S1;
+
+        result = FloatD + (FloatM / 60) + (FloatS / 3600);
+
+        return result;
+
+
+    }
+
+
+    public static void copyFile(File src, File dst) throws IOException {
+        FileInputStream var2 = new FileInputStream(src);
+        FileOutputStream var3 = new FileOutputStream(dst);
+        byte[] var4 = new byte[1024];
+
+        int var5;
+        while ((var5 = var2.read(var4)) > 0) {
+            var3.write(var4, 0, var5);
+        }
+        var2.close();
+        var3.close();
     }
 
 }

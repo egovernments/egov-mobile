@@ -45,19 +45,22 @@
     android:id="@+id/home_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="2dp"
-    android:focusable="true"
     android:clickable="true"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardUseCompatPadding="true"
-    card_view:cardElevation="2dp">
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,8 +70,8 @@
 
             <ImageView
                 android:id="@+id/home_item_icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/ic_camera_alt_black_36dp"/>
 
@@ -79,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                android:textSize="12sp" />
 
             <!--android:textColor="@android:color/white"-->
             <TextView
@@ -89,8 +92,8 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
-                android:visibility="gone"
-                android:textSize="14sp" />
+                android:textSize="10sp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -114,21 +117,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <View style="@style/Divider" android:layout_marginTop="10dp" android:layout_marginBottom="5dp" />
+            <View
+                style="@style/Divider"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="10dp" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="5dp"
+            android:orientation="horizontal"
             android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginRight="5dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -138,65 +144,65 @@
                     android:textSize="12sp" />
 
                 <TextView
+                    android:id="@+id/tvTotFiledCompCount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="0"
-                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="2dp"
-                    android:textColor="@color/primaryText"
+                    android:layout_marginTop="2dp"
                     android:gravity="left"
-                    android:id="@+id/tvTotFiledCompCount"
-                    android:layout_gravity="center_horizontal" />
+                    android:text="0"
+                    android:textColor="@color/primaryText"
+                    android:textSize="18sp" />
 
                 <ProgressBar
+                    android:id="@+id/pbCompFiled"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/pbCompFiled"
-                    android:progress="0"
-                    android:max="100"
+                    android:layout_gravity="center_horizontal"
                     android:indeterminateTint="@color/blue"
                     android:indeterminateTintMode="src_in"
-                    android:layout_gravity="center_horizontal" />
+                    android:max="100"
+                    android:progress="0" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginLeft="5dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/textView4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="RESOLVED GRIEVANCES"
-                    android:textSize="12sp"
-                    android:id="@+id/textView4" />
+                    android:textSize="12sp" />
 
                 <TextView
+                    android:id="@+id/tvTotResolCompCount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="0"
-                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="2dp"
+                    android:layout_marginTop="2dp"
                     android:gravity="left"
+                    android:text="0"
                     android:textColor="@color/primaryText"
-                    android:id="@+id/tvTotResolCompCount"
-                    android:layout_gravity="center_horizontal" />
+                    android:textSize="18sp" />
 
                 <ProgressBar
+                    android:id="@+id/pbCompResolved"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/pbCompResolved"
-                    android:progress="0"
-                    android:max="100"
+                    android:layout_gravity="center_horizontal"
                     android:indeterminateTint="@color/green"
                     android:indeterminateTintMode="src_in"
-                    android:layout_gravity="center_horizontal" />
+                    android:max="100"
+                    android:progress="0" />
             </LinearLayout>
 
         </LinearLayout>

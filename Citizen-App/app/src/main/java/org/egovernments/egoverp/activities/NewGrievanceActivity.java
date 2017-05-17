@@ -98,6 +98,7 @@ import com.google.gson.JsonObject;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
+import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.ImageCompressionHelper;
 import org.egovernments.egoverp.helper.NoFilterAdapter;
@@ -150,6 +151,15 @@ public class NewGrievanceActivity extends BaseActivity {
     private int locationID = 0;
     private LatLng complaintLocLatLng;
     private EditText landmark;
+    private EditText details;
+    private int uploadCount = 0;
+    //Used as to maintain unique image IDs
+    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
+    private ArrayList<Uri> uriArrayList = new ArrayList<>();
+    private ViewPager viewPager;
+    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
+    private File cacheDir;
+    private boolean isPickedLocationFromMap = false;
     BroadcastReceiver addressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
@@ -163,6 +173,7 @@ public class NewGrievanceActivity extends BaseActivity {
                                 complaintLocLatLng = null;
                                 showSnackBar(R.string.complaint_location_message);
                             } else {
+                                isPickedLocationFromMap = true; //to avoid to load suggestion list when set to Autocomplete
                                 autoCompleteComplaintLoc.setText(addressResult);
                             }
                             landmark.requestFocus();
@@ -171,15 +182,6 @@ public class NewGrievanceActivity extends BaseActivity {
 
         }
     };
-    private EditText details;
-    private int uploadCount = 0;
-    //Used as to maintain unique image IDs
-    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
-    private ArrayList<Uri> uriArrayList = new ArrayList<>();
-    private ViewPager viewPager;
-    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
-    private File cacheDir;
-    private boolean isPickedLocationFromMap=false;
 
     public static Bitmap resizeBitmap(final Bitmap temp, final int size) {
         if (size > 0) {
@@ -522,10 +524,6 @@ public class NewGrievanceActivity extends BaseActivity {
             File savedImg=new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
             //Stores image in app cache
             Uri uri = Uri.fromFile(savedImg);
-
-            //apply image compression
-            ImageCompressionHelper.compressImage(savedImg.getAbsolutePath(), savedImg.getAbsolutePath());
-
             uriArrayList.add(uri);
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
@@ -542,7 +540,15 @@ public class NewGrievanceActivity extends BaseActivity {
 
         //If result is from gallery
         else if (requestCode == GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
-            uriArrayList.add(data.getData());
+
+            String srcFile = UriPathHelper.getRealPathFromURI(data.getData(), getApplicationContext());
+            File descFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+            try {
+                AppUtils.copyFile(new File(srcFile), descFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            uriArrayList.add(descFile.exists() ? Uri.fromFile(descFile) : data.getData());
             grievanceImagePagerAdapter.notifyDataSetChanged();
             uploadCount++;
             imageID.remove(0);
@@ -849,33 +855,6 @@ public class NewGrievanceActivity extends BaseActivity {
         });
     }
 
-    //Function converts lat/lng value from exif data to degrees
-    private Double convertToDegree(String stringDMS) {
-        Double result;
-        String[] DMS = stringDMS.split(",", 3);
-
-        String[] stringD = DMS[0].split("/", 2);
-        Double D0 = Double.valueOf(stringD[0]);
-        Double D1 = Double.valueOf(stringD[1]);
-        Double FloatD = D0 / D1;
-
-        String[] stringM = DMS[1].split("/", 2);
-        Double M0 = Double.valueOf(stringM[0]);
-        Double M1 = Double.valueOf(stringM[1]);
-        Double FloatM = M0 / M1;
-
-        String[] stringS = DMS[2].split("/", 2);
-        Double S0 = Double.valueOf(stringS[0]);
-        Double S1 = Double.valueOf(stringS[1]);
-        Double FloatS = S0 / S1;
-
-        result = FloatD + (FloatM / 60) + (FloatS / 3600);
-
-        return result;
-
-
-    }
-
     //Returns the mime type of file. If it cannot be resolved, assumed to be jpeg
     private String getMimeType(Uri uri) {
         String mimeType;
@@ -924,8 +903,8 @@ public class NewGrievanceActivity extends BaseActivity {
             double lat;
             double lng;
             try {
-                lat = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                lng = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                lat = AppUtils.convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                lng = AppUtils.convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
             } catch (Exception e) {
                 lat = 0;
                 lng = 0;

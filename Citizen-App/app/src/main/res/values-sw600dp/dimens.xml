@@ -48,5 +48,5 @@
     <dimen name="data_labelSize">14sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="splashscreenlogowidth">180dp</dimen>
-    <integer name="homegridcolumns">3</integer>
+    <integer name="homegridcolumns">4</integer>
 </resources>
