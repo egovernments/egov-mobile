@@ -71,6 +71,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -159,6 +160,15 @@ public class NewGrievanceActivity extends BaseActivity {
     private EditText etComplainantMobNo;
     private EditText etComplainantEmail;
     private EditText etLandmark;
+    private EditText etDetails;
+    private int uploadCount = 0;
+    //Used as to maintain unique image IDs
+    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
+    private ArrayList<Uri> uriArrayList = new ArrayList<>();
+    private ViewPager viewPager;
+    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
+    private File cacheDir;
+    private boolean isPickedLocationFromMap = false;
     BroadcastReceiver addressReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, final Intent intent) {
@@ -172,6 +182,7 @@ public class NewGrievanceActivity extends BaseActivity {
                         complaintLocLatLng = null;
                         showSnackBar(getString(R.string.complaint_location_message));
                     } else {
+                        isPickedLocationFromMap = true; //to avoid to load suggestion list when set to Autocomplete
                         autoCompleteComplaintLoc.setText(addressResult);
                     }
                     etLandmark.requestFocus();
@@ -180,15 +191,25 @@ public class NewGrievanceActivity extends BaseActivity {
 
         }
     };
-    private EditText etDetails;
-    private int uploadCount = 0;
-    //Used as to maintain unique image IDs
-    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
-    private ArrayList<Uri> uriArrayList = new ArrayList<>();
-    private ViewPager viewPager;
-    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
-    private File cacheDir;
-    private boolean isPickedLocationFromMap = false;
+
+    public static Bitmap resizeBitmap(final Bitmap temp, final int size) {
+        if (size > 0) {
+            int width = temp.getWidth();
+            int height = temp.getHeight();
+            float ratioBitmap = (float) width / (float) height;
+            int finalWidth = size;
+            int finalHeight = size;
+            if (ratioBitmap < 1) {
+                finalWidth = (int) ((float) size * ratioBitmap);
+            } else {
+                finalHeight = (int) ((float) size / ratioBitmap);
+            }
+            return Bitmap.createScaledBitmap(temp, finalWidth, finalHeight, true);
+        } else {
+            return temp;
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -507,10 +528,18 @@ public class NewGrievanceActivity extends BaseActivity {
 
     //Prepares files for camera before starting it
     private void fromCamera() {
-
-        File file = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+        File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+        Uri fileUri = null;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
+                    cacheFile);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        } else {
+            fileUri = Uri.fromFile(cacheFile);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, CAMERA_PHOTO);
     }
 
@@ -525,13 +554,8 @@ public class NewGrievanceActivity extends BaseActivity {
             File savedImg = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
             //Stores image in app cache
             Uri uri = Uri.fromFile(savedImg);
-
-            //apply image compression
-            ImageCompressionHelper.compressImage(savedImg.getAbsolutePath(), savedImg.getAbsolutePath());
-
             uriArrayList.add(uri);
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
-
             grievanceImagePagerAdapter.notifyDataSetChanged();
             uploadCount++;
 
@@ -547,7 +571,15 @@ public class NewGrievanceActivity extends BaseActivity {
         //If result is from gallery
         else if (requestCode == GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
 
-            uriArrayList.add(data.getData());
+            String srcFile = UriPathHelper.getRealPathFromURI(data.getData(), getApplicationContext());
+            File descFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+            try {
+                AppUtils.copyFile(new File(srcFile), descFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            uriArrayList.add(descFile.exists() ? Uri.fromFile(descFile) : data.getData());
+
             grievanceImagePagerAdapter.notifyDataSetChanged();
             uploadCount++;
             imageID.remove(0);
@@ -837,33 +869,6 @@ public class NewGrievanceActivity extends BaseActivity {
         });
     }
 
-    //Function converts lat/lng value from exif data to degrees
-    private Double convertToDegree(String stringDMS) {
-        Double result;
-        String[] DMS = stringDMS.split(",", 3);
-
-        String[] stringD = DMS[0].split("/", 2);
-        Double D0 = Double.valueOf(stringD[0]);
-        Double D1 = Double.valueOf(stringD[1]);
-        Double FloatD = D0 / D1;
-
-        String[] stringM = DMS[1].split("/", 2);
-        Double M0 = Double.valueOf(stringM[0]);
-        Double M1 = Double.valueOf(stringM[1]);
-        Double FloatM = M0 / M1;
-
-        String[] stringS = DMS[2].split("/", 2);
-        Double S0 = Double.valueOf(stringS[0]);
-        Double S1 = Double.valueOf(stringS[1]);
-        Double FloatS = S0 / S1;
-
-        result = FloatD + (FloatM / 60) + (FloatS / 3600);
-
-        return result;
-
-
-    }
-
     //Returns the mime type of file. If it cannot be resolved, assumed to be jpeg
     private String getMimeType(Uri uri) {
         String mimeType;
@@ -907,8 +912,8 @@ public class NewGrievanceActivity extends BaseActivity {
             double lat;
             double lng;
             try {
-                lat = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                lng = convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+                lat = AppUtils.convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                lng = AppUtils.convertToDegree(exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
             } catch (Exception e) {
                 lat = 0;
                 lng = 0;
@@ -978,7 +983,7 @@ public class NewGrievanceActivity extends BaseActivity {
     }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
-    public interface RemoveImageInterface {
+    private interface RemoveImageInterface {
         void removeFragmentImage(int position, UploadImageFragment fragment);
     }
 
@@ -1034,7 +1039,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 ((NewGrievanceActivity) getActivity()).showSnackBar("An error was encountered retrieving this image");
             }
 
-            imageView.setImageBitmap(ThumbImage);
+            imageView.setImageBitmap(resizeBitmap(ThumbImage, 816));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             fragmentPosition = arg.getInt("pos");

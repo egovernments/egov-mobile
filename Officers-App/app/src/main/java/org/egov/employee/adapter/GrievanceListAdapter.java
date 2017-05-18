@@ -42,7 +42,6 @@
 
 package org.egov.employee.adapter;
 
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -72,15 +71,13 @@ public class GrievanceListAdapter extends RecyclerView.Adapter<RecyclerView.View
     @SuppressWarnings("ALL")
     private final int VIEW_PROG = 0;
     @SuppressWarnings("ALL")
-    Bundle downloadArgs;
     private List<Grievance> grievances;
     private GrievanceItemInterface grievanceItemInterface;
 
-    public GrievanceListAdapter(List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface, Bundle downloadArgs)
+    public GrievanceListAdapter(List<Grievance> tasks, GrievanceItemInterface grievanceItemInterface)
     {
         this.grievances =tasks;
         this.grievanceItemInterface =grievanceItemInterface;
-        this.downloadArgs=downloadArgs;
     }
 
     @Override
@@ -175,8 +172,8 @@ public class GrievanceListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if(df.format(infoDate).equals(df.format(nowDate)))
         {
-           //info date is today
-           resultFormat=formatIfToday;
+            //info date is today
+            resultFormat = formatIfToday;
         }
         else if(String.valueOf(infocal.get(Calendar.YEAR)).equals(String.valueOf(nowcal.get(Calendar.YEAR))))
         {

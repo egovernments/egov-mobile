@@ -25,16 +25,16 @@
  *        In addition to the terms of the GPL license to be adhered to in using this
  *        program, the following additional terms are to be complied with:
  *
- *    	1) All versions of this program, verbatim or modified must carry this
- *    	   Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *    	2) Any misrepresentation of the origin of the material is prohibited. It
- *    	   is required that all modified versions of this material be marked in
- *    	   reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *    	3) This license does not grant any rights to any user of the program
- *    	   with regards to rights under trademark law for use of the trade names
- *    	   or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
  *      In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *  *****************************************************************************
@@ -46,6 +46,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -184,13 +185,6 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         updateComplaints("1");
     }
 
-    public String returnValidString(String string) {
-        if (!TextUtils.isEmpty(string)) {
-            return string;
-        }
-        return "";
-    }
-
     @SuppressWarnings("ALL")
     private void updateComplaints(final String page) {
 
@@ -205,7 +199,7 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             }
         }
 
-        if (grievanceAdapter != null) {
+        if (grievanceAdapter != null && grievanceList != null) {
             grievanceList.add(null);
             grievanceAdapter.notifyItemInserted(grievanceList.size());
         }
@@ -220,28 +214,38 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             public void onResponse(Call<GrievanceAPIResponse> call, Response<GrievanceAPIResponse> response) {
 
                 GrievanceAPIResponse grievanceAPIResponse = response.body();
-
-                for (Grievance grievance : grievanceAPIResponse.getResult()) {
-                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {
-                        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-                        List<Address> addresses;
-                        try {
-                            addresses = geocoder.getFromLocation(grievance.getLat(), grievance.getLng(), 1);
-                            String location = (TextUtils.isEmpty(addresses.get(0).getSubLocality()) ? addresses.get(0).getThoroughfare() : addresses.get(0).getSubLocality());
-                            grievance.setLocationName(returnValidString(location));
-                            grievance.setChildLocationName(addresses.get(0).getAddressLine(0));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                if (grievanceAPIResponse == null) {
+                    ((BaseActivity) getContext()).showSnackBar("Invalid Response!");
+                    return;
                 }
+                updateGrievanceList(page, grievanceAPIResponse);
+
+            }
+
+            @Override
+            public void onFailure(Call<GrievanceAPIResponse> call, Throwable t) {
+                loading = false;
+                updateFailedEvent();
+            }
+        };
+
+        apiGetMyComplaints.enqueue(getMyComplaintsCallBack);
+
+    }
+
+
+    public void updateUIOnSuccess(final String page, final GrievanceAPIResponse grievanceAPIResponse) {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
                 if (page.equals("1")) {
                     if (grievanceList != null) {
                         grievanceList.clear();
                     }
                     grievanceList = grievanceAPIResponse.getResult();
-                    grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface, downImageArgs);
+                    grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface);
                     recyclerView.setAdapter(grievanceAdapter);
                     progressBar.setVisibility(View.GONE);
                 }
@@ -258,21 +262,53 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
                 }
                 loading = false;
                 updateSuccessEvent();
-
             }
-
-            @Override
-            public void onFailure(Call<GrievanceAPIResponse> call, Throwable t) {
-                loading = false;
-                updateFailedEvent();
-            }
-        };
-
-        apiGetMyComplaints.enqueue(getMyComplaintsCallBack);
+        });
 
     }
 
-    public void updateSuccessEvent() {
+
+    private synchronized void updateGrievanceList(final String page, final GrievanceAPIResponse grievanceAPIResponse) {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            public Void doInBackground(Void... params) {
+                for (Grievance grievance : grievanceAPIResponse.getResult()) {
+                    if (TextUtils.isEmpty(grievance.getLocationName()) && grievance.getLat() > 0) {
+                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                        List<Address> addresses;
+                        try {
+                            addresses = geocoder.getFromLocation(grievance.getLat(), grievance.getLng(), 1);
+                            String location = "Unknown location";
+                            String childLocation = "";
+                            if (addresses != null && addresses.size() > 0) {
+                                String address = addresses.get(0).getAddressLine(0);
+                                String address11 = addresses.get(0).getAddressLine(1);
+                                String city = addresses.get(0).getLocality();
+                                location = (TextUtils.isEmpty(address) ? "" : address + " ") +
+                                        (TextUtils.isEmpty(address11) ? "" : address11 + " ");
+                                childLocation = city;
+                            }
+                            grievance.setLocationName(location);
+                            grievance.setChildLocationName(childLocation);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                updateUIOnSuccess(page, grievanceAPIResponse);
+            }
+        };
+        task.execute();
+    }
+
+    private void updateSuccessEvent() {
         //check and show no complaint information
         if (grievanceList.size() == 0) {
             cvNoComplaints.setVisibility(View.VISIBLE);
@@ -281,15 +317,15 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void updateFailedEvent() {
+    private void updateFailedEvent() {
         progressBar.setVisibility(View.GONE);
         grievanceList = new ArrayList<>();
-        grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface, downImageArgs);
+        grievanceAdapter = new GrievanceListAdapter(grievanceList, grievanceItemInterface);
         recyclerView.setAdapter(grievanceAdapter);
         grievanceList = null;
     }
 
-    class WrapContentLinearLayoutManager extends LinearLayoutManager {
+    private class WrapContentLinearLayoutManager extends LinearLayoutManager {
 
         WrapContentLinearLayoutManager(Context context) {
             super(context);

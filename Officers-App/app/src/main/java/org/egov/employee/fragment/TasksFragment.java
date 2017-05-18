@@ -185,6 +185,11 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
                     @Override
                     public void onResponse(Call<TaskAPIResponse> getInboxList, Response<TaskAPIResponse> response) {
 
+
+                        if (getActivity() == null) {
+                            return;
+                        }
+
                         if(currentPage ==1)
                         {
                             ((Homepage)getActivity()).homePageLoader.setVisibility(View.GONE);

@@ -56,6 +56,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -674,8 +675,9 @@ public class ViewTask extends BaseActivity {
 
         setSpinnerOptionsFromJsonArray(complaintComponents.spinnerForwardEmp, forwardUser, "name", "NO USER", "");
 
+        Object selectedItem = complaintComponents.spinnerCompStatus.getSelectedItem();
 
-        if(complaintComponents.spinnerCompStatus.getSelectedItem().toString().equals(PGR_FORWARD_ACTION))
+        if (selectedItem != null && selectedItem.toString().equals(PGR_FORWARD_ACTION))
         {
             complaintComponents.layoutForward.setVisibility(View.VISIBLE);
         }
@@ -811,9 +813,19 @@ public class ViewTask extends BaseActivity {
 
     //capture photo from camera
     private void openCamera() {
-        File file = new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
+
+        File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
+        Uri fileUri = null;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
+                    cacheFile);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        } else {
+            fileUri = Uri.fromFile(cacheFile);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, PICK_PHOTO_FROM_CAMERA);
     }
 
