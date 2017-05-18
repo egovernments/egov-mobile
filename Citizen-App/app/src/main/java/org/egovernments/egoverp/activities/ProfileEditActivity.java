@@ -84,6 +84,7 @@ public class ProfileEditActivity extends BaseActivity {
     private EditText profilePAN;
     private RadioGroup profileGender;
     private String date_of_birth;
+    private Boolean isForegroundDisabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +245,8 @@ public class ProfileEditActivity extends BaseActivity {
 
             final Profile update_profile = new Profile(name, emailId, mobileNumber, mobileNumber, altContactNumber, gender, panCard, dob, aadhaarCard);
 
-            progressDialog.show();
+            showProgressDialog();
+            isForegroundDisabled = true;
 
             Call<ProfileAPIResponse> profileAPIResponseCall = ApiController.getRetrofit2API(getApplicationContext())
                     .updateProfile(update_profile, sessionManager.getAccessToken());
@@ -253,13 +255,15 @@ public class ProfileEditActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<ProfileAPIResponse> call, retrofit2.Response<ProfileAPIResponse> response) {
 
+                    isForegroundDisabled = false;
+
                     ProfileAPIResponse profileAPIResponse = response.body();
 
                     showSnackBar(getString(R.string.profile_upate_success));
 
                     ProfileActivity.profile = profileAPIResponse.getProfile();
 
-                    progressDialog.dismiss();
+                    dismissProgreeDialog();
                     Intent intent = new Intent();
                     setResult(RESULT_OK, intent);
 
@@ -268,11 +272,36 @@ public class ProfileEditActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<ProfileAPIResponse> call, Throwable t) {
-                    progressDialog.dismiss();
+                    isForegroundDisabled = false;
+                    dismissProgreeDialog();
                 }
             });
 
         }
     }
+
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing())
+            progressDialog.show();
+    }
+
+    private void dismissProgreeDialog() {
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isForegroundDisabled)
+            showProgressDialog();
+    }
+
+    @Override
+    protected void onPause() {
+        dismissProgreeDialog();
+        super.onPause();
+    }
+
 
 }

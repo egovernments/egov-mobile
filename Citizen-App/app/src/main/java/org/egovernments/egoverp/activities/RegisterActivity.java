@@ -122,12 +122,6 @@ public class RegisterActivity extends BaseActivity {
     private String deviceID;
     private String deviceOS;
     private String deviceType;
-    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            setOTPCode(intent);
-        }
-    };
     private TextView municipalityInfo;
     private TextInputLayout nameInputLayout;
     private Handler handler;
@@ -135,6 +129,13 @@ public class RegisterActivity extends BaseActivity {
     private Spinner spinnerDistrict;
     private CustomAutoCompleteTextView cityAutoCompleteTextView;
     private CustomAutoCompleteTextView districtAutoCompleteTextView;
+    private Boolean isDisableForeground = false;
+    BroadcastReceiver otpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setOTPCode(intent);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -548,7 +549,8 @@ public class RegisterActivity extends BaseActivity {
     public void sendOTPCode()
     {
 
-        progressDialog.show();
+        isDisableForeground = true;
+        showProgreesDialog();
 
         Call<JsonObject> sendOTP = ApiController.getRetrofit2API(getApplicationContext(), sessionManager.getBaseURL())
                 .sendOTPToVerifyBeforeAccountCreate(phoneno_edittext.getText().toString());
@@ -556,13 +558,15 @@ public class RegisterActivity extends BaseActivity {
         sendOTP.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-                progressDialog.dismiss();
+                isDisableForeground = false;
+                dismissProgressBar();
                 showOTPVerificationDialog();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                progressDialog.dismiss();
+                isDisableForeground = false;
+                dismissProgressBar();
             }
         });
 
@@ -588,10 +592,13 @@ public class RegisterActivity extends BaseActivity {
         super.onResume();
         if (getIntent() != null)
             setOTPCode(getIntent());
+        if (isDisableForeground)
+            showProgreesDialog();
     }
 
     @Override
     protected void onPause() {
+        dismissProgressBar();
         super.onPause();
         LocalBroadcastManager.getInstance(RegisterActivity.this).unregisterReceiver(otpReceiver);
         isBroadcastRunning = false;
@@ -605,7 +612,8 @@ public class RegisterActivity extends BaseActivity {
 
     public void registerAccount(final String otpCode)
     {
-        progressDialog.show();
+        showProgreesDialog();
+        isDisableForeground = true;
 
         RegisterRequest registerRequest = new RegisterRequest(email_edittext.getText().toString(), phoneno_edittext.getText().toString(),
                 name_edittext.getText().toString(), password_edittext.getText().toString(), deviceID, deviceType, deviceOS, otpCode);
@@ -616,14 +624,14 @@ public class RegisterActivity extends BaseActivity {
         createAccount.enqueue(new retrofit2.Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
-                progressDialog.dismiss();
                 alertDialog.dismiss();
                 citizenLogin(phoneno_edittext.getText().toString(), password_edittext.getText().toString());
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                progressDialog.dismiss();
+                isDisableForeground = false;
+                dismissProgressBar();
                 if (alertDialog.isShowing())
                     alertDialog.dismiss();
             }
@@ -631,10 +639,11 @@ public class RegisterActivity extends BaseActivity {
 
     }
 
+
     public void citizenLogin(final String username, final String password)
     {
-
-        progressDialog.show();
+        isDisableForeground = true;
+        showProgreesDialog();
 
         Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext())
                 .login(ApiUrl.AUTHORIZATION, username, "read write", password, "password");
@@ -643,6 +652,7 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
 
+                isDisableForeground = false;
                 if (response.isSuccessful()) {
 
                     JsonObject jsonObject = response.body();
@@ -662,9 +672,20 @@ public class RegisterActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                isDisableForeground = false;
                 showSnackBar(t.getLocalizedMessage());
             }
         });
+    }
+
+    private void showProgreesDialog() {
+        if (!progressDialog.isShowing())
+            progressDialog.show();
+    }
+
+    private void dismissProgressBar() {
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -703,7 +724,7 @@ public class RegisterActivity extends BaseActivity {
             return city.getCityName().toUpperCase();
     }
 
-    class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
+    private class GetAllCitiesTask extends AsyncTask<String, Integer, Object> {
 
         @Override
         protected Object doInBackground(String... params) {

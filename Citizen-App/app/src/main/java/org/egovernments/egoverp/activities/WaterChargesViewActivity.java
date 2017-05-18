@@ -283,7 +283,7 @@ public class WaterChargesViewActivity extends BaseActivity {
             return;
         }
 
-        if (taxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")) {
+        if (itHasWaterConnection(taxCallback)) {
 
             tvConsumerNo.setText(taxCallback.getConsumerNo());
             address.setText(taxCallback.getPropertyAddress());
@@ -346,7 +346,11 @@ public class WaterChargesViewActivity extends BaseActivity {
             waterTaxCardView.requestFocus();
 
         } else {
-            showSnackBar(taxCallback.getTaxErrorDetails().getErrorMessage());
+            showSnackBar(
+                    taxCallback != null && taxCallback.getTaxErrorDetails() != null &&
+                            !TextUtils.isEmpty(taxCallback.getTaxErrorDetails().getErrorMessage()) ?
+                            taxCallback.getTaxErrorDetails().getErrorMessage() : "Water connection not found!"
+            );
             listBreakups.clear();
         }
         progressBar.setVisibility(View.GONE);
@@ -399,6 +403,13 @@ public class WaterChargesViewActivity extends BaseActivity {
         super.onDestroy();
         if (waterTaxCall != null && !waterTaxCall.isCanceled())
             waterTaxCall.cancel();
+    }
+
+    Boolean itHasWaterConnection(WaterTaxCallback waterTaxCallback) {
+        return (waterTaxCallback.getTaxErrorDetails() != null ?
+                waterTaxCallback.getTaxErrorDetails().getErrorMessage().equals("SUCCESS")
+                        && !TextUtils.isEmpty(waterTaxCallback.getConsumerNo()) :
+                !TextUtils.isEmpty(waterTaxCallback.getConsumerNo()));
     }
 }
 

@@ -49,6 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -327,7 +328,7 @@ public class LoginActivity extends BaseActivity {
 
     private void startActivityAnimation(Intent intent, Boolean withAnimation) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && withAnimation)
-            startActivity(intent, AppUtils.getTransitionBundle(LoginActivity.this));
+            ActivityCompat.startActivity(this, intent, AppUtils.getTransitionBundle(LoginActivity.this));
         else
             startActivity(intent);
     }

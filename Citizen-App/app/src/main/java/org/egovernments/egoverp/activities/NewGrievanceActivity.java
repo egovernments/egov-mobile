@@ -70,6 +70,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -507,9 +508,18 @@ public class NewGrievanceActivity extends BaseActivity {
     //Prepares files for camera before starting it
     private void fromCamera() {
 
-        File file = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+        File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+        Uri fileUri = null;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
+                    cacheFile);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        } else {
+            fileUri = Uri.fromFile(cacheFile);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(intent, CAMERA_PHOTO);
     }
 

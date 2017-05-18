@@ -53,7 +53,7 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "org.egovernments.egoverp"
         minSdkVersion 14
@@ -81,7 +81,7 @@ android {
             applicationId = "org.egovernments.egoverp"
             versionName = "0.1-beta-demo"
             minSdkVersion 14
-            targetSdkVersion 23
+            targetSdkVersion 24
             signingConfig signingConfigs.config
             applicationId 'org.egovernments.egoverp'
             versionCode 1
