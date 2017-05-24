@@ -50,7 +50,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -174,8 +173,7 @@ public class PdfViewerActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     downloadFile(this.url, this.contentDisposition, this.mimetype);
                 } else {
-                    Snackbar snackBar = Snackbar.make(findViewById(R.id.contentView), R.string.permission_denied, Snackbar.LENGTH_LONG);
-                    snackBar.show();
+                    Toast.makeText(PdfViewerActivity.this, R.string.permission_denied, Toast.LENGTH_LONG).show();
                 }
                 break;
         }

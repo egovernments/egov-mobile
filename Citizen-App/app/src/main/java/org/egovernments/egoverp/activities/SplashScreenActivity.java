@@ -229,14 +229,13 @@ public class SplashScreenActivity extends Activity {
 
     public void launchScreen() {
 
-        if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT < 23 && !timerThread.isAlive()) {
             timerThread.start();
         } else {
-            if (checkReadSMSPermision()) {
+            if (checkReadSMSPermision() && !timerThread.isAlive()) {
                 timerThread.start();
             }
         }
-
     }
 
     void showUpdateAlert(boolean isForceUpdate, String title, String content) {

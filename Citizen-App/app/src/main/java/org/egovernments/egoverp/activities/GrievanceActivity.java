@@ -211,35 +211,41 @@ public class GrievanceActivity extends BaseActivity {
         }
 
         GrievanceFragmentPagerAdapter pagerAdapter=new GrievanceFragmentPagerAdapter(getSupportFragmentManager(), categories);
-        viewPager.setAdapter(pagerAdapter);
-        tabLayout.removeAllTabs();
-        tabLayout.setupWithViewPager(viewPager);
-        setTabCount(pagerAdapter);
-        viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount()-1);
 
-        if(selectedIdx!=-1)
-        {
-            viewPager.setCurrentItem(selectedIdx);
-            return;
+        if (pagerAdapter != null) {
+
+            viewPager.setAdapter(pagerAdapter);
+            tabLayout.removeAllTabs();
+            tabLayout.setupWithViewPager(viewPager);
+            setTabCount(pagerAdapter);
+            viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount() - 1);
+
+            if (selectedIdx != -1) {
+                viewPager.setCurrentItem(selectedIdx);
+                return;
+            }
+
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    highlightTabTextView(tab.getCustomView(), true);
+                    viewPager.setCurrentItem(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                    highlightTabTextView(tab.getCustomView(), false);
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+
+        } else {
+            showSnackBar(R.string.invalid_response);
         }
-
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                highlightTabTextView(tab.getCustomView(), true);
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                highlightTabTextView(tab.getCustomView(), false);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
     }
 

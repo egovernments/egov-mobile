@@ -470,13 +470,13 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                 clearAuthAndOpenLoginForm("Logged out successfully");
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing() && !BaseActivity.this.isFinishing())
                     progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                if(progressDialog.isShowing())
+                if (progressDialog.isShowing() && !BaseActivity.this.isFinishing())
                     progressDialog.dismiss();
             }
         });
