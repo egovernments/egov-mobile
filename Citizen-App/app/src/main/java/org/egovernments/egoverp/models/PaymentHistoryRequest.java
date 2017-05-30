@@ -34,8 +34,8 @@ public class PaymentHistoryRequest {
 
     public enum ServiceName {
 
-        @SerializedName("Water Tax")
-        WATER_TAX("Water Tax"),
+        @SerializedName("Water Charges")
+        WATER_CHARGES("Water Charges"),
 
         @SerializedName("Property Tax")
         PROPERTY_TAX("Property Tax");

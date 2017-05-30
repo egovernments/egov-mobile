@@ -214,7 +214,7 @@ public class WaterChargesViewActivity extends BaseActivity {
                 Intent intentPaymentHistory = new Intent(WaterChargesViewActivity.this, PaymentHistoryActivity.class);
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.REFERRER_IP, configManager.getString(REFERER_IP_CONFIG_KEY));
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.SERVICE_NAME,
-                        PaymentHistoryRequest.ServiceName.WATER_TAX.name());
+                        PaymentHistoryRequest.ServiceName.WATER_CHARGES.name());
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.CONSUMER_CODE, consumerNo);
 
                 startActivity(intentPaymentHistory);

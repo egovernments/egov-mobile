@@ -234,8 +234,7 @@ public class NewGrievanceActivity extends BaseActivity {
         });
 
         viewPager = (ViewPager) findViewById(R.id.upload_complaint_image);
-        grievanceImagePagerAdapter = new GrievanceImagePagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(grievanceImagePagerAdapter);
+        refreshImageAdapter();
         /*LinePageIndicator linePageIndicator = (LinePageIndicator) findViewById(R.id.new_indicator);
         linePageIndicator.setViewPager(viewPager);*/
 
@@ -366,6 +365,11 @@ public class NewGrievanceActivity extends BaseActivity {
          if(pictureFab!=null)
          pictureFab.setOnClickListener(onClickListener);
 
+    }
+
+    private void refreshImageAdapter() {
+        grievanceImagePagerAdapter = new GrievanceImagePagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(grievanceImagePagerAdapter);
     }
 
     @Override
@@ -537,7 +541,7 @@ public class NewGrievanceActivity extends BaseActivity {
             uriArrayList.add(uri);
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
 
-            grievanceImagePagerAdapter.notifyDataSetChanged();
+            refreshImageAdapter();
             uploadCount++;
 
             if (uploadCount == 1) {
@@ -559,7 +563,9 @@ public class NewGrievanceActivity extends BaseActivity {
                 e.printStackTrace();
             }
             uriArrayList.add(descFile.exists() ? Uri.fromFile(descFile) : data.getData());
-            grievanceImagePagerAdapter.notifyDataSetChanged();
+
+            refreshImageAdapter();
+
             uploadCount++;
             imageID.remove(0);
             viewPager.setCurrentItem(uriArrayList.size());
