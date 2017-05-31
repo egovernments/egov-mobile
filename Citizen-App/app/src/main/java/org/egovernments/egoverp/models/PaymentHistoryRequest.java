@@ -38,7 +38,10 @@ public class PaymentHistoryRequest {
         WATER_CHARGES("Water Charges"),
 
         @SerializedName("Property Tax")
-        PROPERTY_TAX("Property Tax");
+        PROPERTY_TAX("Property Tax"),
+
+        @SerializedName("Property Tax (On Land)")
+        VACANT_LAND_TAX("Property Tax (On Land)");
 
         String value;
 

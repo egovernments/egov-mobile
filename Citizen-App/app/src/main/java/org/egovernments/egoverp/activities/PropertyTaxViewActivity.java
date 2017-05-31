@@ -212,7 +212,8 @@ public class PropertyTaxViewActivity extends BaseActivity {
                 Intent intentPaymentHistory = new Intent(PropertyTaxViewActivity.this, PaymentHistoryActivity.class);
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.REFERRER_IP, referrerIp);
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.SERVICE_NAME,
-                        PaymentHistoryRequest.ServiceName.PROPERTY_TAX.name());
+                        isVacantLand ? PaymentHistoryRequest.ServiceName.VACANT_LAND_TAX.name() :
+                                PaymentHistoryRequest.ServiceName.PROPERTY_TAX.name());
                 intentPaymentHistory.putExtra(PaymentHistoryActivity.CONSUMER_CODE, assessmentNo);
 
                 startActivity(intentPaymentHistory);

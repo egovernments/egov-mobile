@@ -679,12 +679,12 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void showProgreesDialog() {
-        if (!progressDialog.isShowing())
+        if (!progressDialog.isShowing() && !this.isFinishing())
             progressDialog.show();
     }
 
     private void dismissProgressBar() {
-        if (progressDialog.isShowing())
+        if (progressDialog.isShowing() && !this.isFinishing())
             progressDialog.dismiss();
     }
 

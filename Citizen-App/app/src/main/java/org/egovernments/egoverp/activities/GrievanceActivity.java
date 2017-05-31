@@ -212,7 +212,7 @@ public class GrievanceActivity extends BaseActivity {
 
         GrievanceFragmentPagerAdapter pagerAdapter=new GrievanceFragmentPagerAdapter(getSupportFragmentManager(), categories);
 
-        if (pagerAdapter != null) {
+        if (pagerAdapter != null && categories != null) {
 
             viewPager.setAdapter(pagerAdapter);
             tabLayout.removeAllTabs();
