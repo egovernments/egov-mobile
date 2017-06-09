@@ -58,7 +58,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +91,8 @@ import java.util.regex.Pattern;
 public class AppUtils {
 
     private static final String PATTERN_PAN = "[A-Z]{5}[0-9]{4}[A-Z]{1}";
+    private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     static ConfigManager configManager;
     static SessionManager sessionManager;
@@ -117,7 +118,7 @@ public class AppUtils {
     }
 
     public static boolean isValidEmail(String email) {
-        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        Pattern pattern = Pattern.compile(PATTERN_EMAIL);
         return pattern.matcher(email).matches();
     }
 

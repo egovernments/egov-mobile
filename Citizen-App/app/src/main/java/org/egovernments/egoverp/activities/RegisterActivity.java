@@ -95,8 +95,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import retrofit2.Call;
 
@@ -249,13 +247,6 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    private boolean isValidEmail(String email) {
-        String expression = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
 
     private void validateAndCreateAnAccount(final String name, final String email, final String phoneno,
                                             final String password, final String confirmPassword) {
@@ -270,7 +261,7 @@ public class RegisterActivity extends BaseActivity {
             showSnackBar(getString(R.string.please_enter_your_phone_no));
         } else if (phoneno.length() != 10) {
             showSnackBar(getString(R.string.phone_no_10_digits));
-        } else if(!TextUtils.isEmpty(email) && !isValidEmail(email)){
+        } else if (!TextUtils.isEmpty(email) && !AppUtils.isValidEmail(email)) {
             showSnackBar(getString(R.string.please_enter_valid_email));
         } else if(TextUtils.isEmpty(password)){
             showSnackBar(getString(R.string.please_enter_password));

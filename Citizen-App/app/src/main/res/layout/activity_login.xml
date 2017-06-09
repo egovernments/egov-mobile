@@ -275,7 +275,7 @@
                     android:background="#00000000"
                     android:text="@string/login_forgotlabel"
                     android:textColor="@color/colorAccent"
-                    android:textSize="16sp" />
+                    android:textSize="13sp" />
 
             </LinearLayout>
         </ScrollView>
