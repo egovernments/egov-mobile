@@ -94,6 +94,7 @@ public class ResetPasswordActivity extends BaseActivity {
             setOTPFromIntent(intent);
         }
     };
+    private Boolean isDisableForeground = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,9 +155,8 @@ public class ResetPasswordActivity extends BaseActivity {
     private void resendOTP(final String mobileNo)
     {
 
-        final ProgressDialog progressDialog=new ProgressDialog(ResetPasswordActivity.this);
-        progressDialog.setMessage(getString(R.string.resending_otp));
-        progressDialog.show();
+        isDisableForeground = true;
+        showProgressDialog();
 
 
         Call<JsonObject> recoverPasswordCall = ApiController.getRetrofit2API(getApplicationContext(),
@@ -171,26 +171,42 @@ public class ResetPasswordActivity extends BaseActivity {
                     if (resp != null && resp.has(STATUS) && resp.get(STATUS).getAsJsonObject().has(MESSAGE)) {
                         String message = resp.get(STATUS).getAsJsonObject().get(MESSAGE).getAsString();
                         showSnackBar(message);
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
                         long millis = System.currentTimeMillis();
                         sessionManager.setForgotPasswordTime(millis);
                         sessionManager.setResetPasswordLastMobileNo(mobileNo);
                         startCountDown();
                     } else {
-                        progressDialog.dismiss();
+                        dismissProgressDialog();
                         showSnackBar(getString(R.string.invalid_response));
                         return;
                     }
+
+                    isDisableForeground = false;
 
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                progressDialog.dismiss();
+                dismissProgressDialog();
+                isDisableForeground = false;
             }
         });
 
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog.isShowing() && !this.isFinishing())
+            progressDialog.dismiss();
+    }
+
+    private void showProgressDialog() {
+        if (!progressDialog.isShowing() && !this.isFinishing()) {
+            progressDialog = new ProgressDialog(ResetPasswordActivity.this);
+            progressDialog.setMessage(getString(R.string.resending_otp));
+            progressDialog.show();
+        }
     }
 
     private void startCountDown()
@@ -305,10 +321,13 @@ public class ResetPasswordActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         setOTPFromIntent(getIntent());
+        if (isDisableForeground)
+            showProgressDialog();
     }
 
     @Override
     protected void onPause() {
+        dismissProgressDialog();
         super.onPause();
         LocalBroadcastManager.getInstance(ResetPasswordActivity.this).unregisterReceiver(otpReceiver);
         isBroadCastRunning = false;

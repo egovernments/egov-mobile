@@ -117,6 +117,7 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
     Runnable updateAddressRunnable;
     LocationManager locationManager;
     LatLng defaultLatLng = null;
+    CustomMapFragment mapView;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
@@ -159,9 +160,9 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
                     getIntent().getDoubleExtra(DEFAULT_LOCATION_LNG, 0));
         }
 
-        CustomMapFragment map = (CustomMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        map.getMapAsync(this);
-        map.setOnDragListener(this);
+        mapView = (CustomMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapView.getMapAsync(this);
+        mapView.setOnDragListener(this);
         geocoder = new Geocoder(this, Locale.getDefault());
         addressUpdateHandler=new Handler();
         updateAddressRunnable=null;
@@ -411,6 +412,10 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
+
+        if (mapView != null)
+            mapView.onResume();
+
     }
 
     @Override
@@ -420,7 +425,18 @@ public class GrievanceLocPickerActivity extends AppCompatActivity implements OnM
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+
+        if (mapView != null)
+            mapView.onPause();
     }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (mapView != null)
+            mapView.onLowMemory();
+    }
+
 
     private boolean servicesAvailable() {
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);

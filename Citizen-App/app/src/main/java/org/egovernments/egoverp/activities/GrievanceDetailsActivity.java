@@ -258,7 +258,7 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
         if (!grievance.getStatus().equals(WITHDRAWN)) {
             //Display feedback spinner
-            if (grievance.getStatus().equals(COMPLETED) || grievance.getStatus().equals(REJECTED)) {
+            if (grievance.getStatus().equals(COMPLETED)) {
 
                 btnReopen.setVisibility(View.VISIBLE);
                 btnWithdraw.setVisibility(View.GONE);
