@@ -250,7 +250,8 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private boolean isValidEmail(String email) {
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        String expression = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
@@ -550,7 +551,7 @@ public class RegisterActivity extends BaseActivity {
     {
 
         isDisableForeground = true;
-        showProgreesDialog();
+        showProgressDialog();
 
         Call<JsonObject> sendOTP = ApiController.getRetrofit2API(getApplicationContext(), sessionManager.getBaseURL())
                 .sendOTPToVerifyBeforeAccountCreate(phoneno_edittext.getText().toString());
@@ -593,7 +594,7 @@ public class RegisterActivity extends BaseActivity {
         if (getIntent() != null)
             setOTPCode(getIntent());
         if (isDisableForeground)
-            showProgreesDialog();
+            showProgressDialog();
     }
 
     @Override
@@ -612,7 +613,7 @@ public class RegisterActivity extends BaseActivity {
 
     public void registerAccount(final String otpCode)
     {
-        showProgreesDialog();
+        showProgressDialog();
         isDisableForeground = true;
 
         RegisterRequest registerRequest = new RegisterRequest(email_edittext.getText().toString(), phoneno_edittext.getText().toString(),
@@ -643,7 +644,7 @@ public class RegisterActivity extends BaseActivity {
     public void citizenLogin(final String username, final String password)
     {
         isDisableForeground = true;
-        showProgreesDialog();
+        showProgressDialog();
 
         Call<JsonObject> login = ApiController.getRetrofit2API(getApplicationContext())
                 .login(ApiUrl.AUTHORIZATION, username, "read write", password, "password");
@@ -678,7 +679,7 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
-    private void showProgreesDialog() {
+    private void showProgressDialog() {
         if (!progressDialog.isShowing() && !this.isFinishing())
             progressDialog.show();
     }
