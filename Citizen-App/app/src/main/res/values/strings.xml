@@ -171,7 +171,7 @@
     <string name="powered_by">Powered by eGovernments Foundation</string>
     <string name="title_activity_pdf_viewer">PdfViewerActivity</string>
     <string name="title_activity_building_plan">BuildingPlanActivity</string>
-    <string name="session_timeout">Session expired</string>
+    <string name="session_timeout">Have we met before? Please reintroduce with your credentials</string>
     <string name="application_no">APPLICATION NO</string>
     <string name="building_penalization_label">Building Penalization</string>
     <string name="building_penalization_label2"></string>
@@ -320,4 +320,5 @@
     <string name="withdraw">Withdraw</string>
     <string name="reopen">Reopen</string>
     <string name="invalid_response">Invalid response!</string>
+    <string name="registration_failed">Registration Failed</string>
 </resources>

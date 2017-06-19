@@ -527,7 +527,7 @@ public class RegisterActivity extends BaseActivity {
             }
         });
 
-        dialogBuilder.setNeutralButton(R.string.generate_otp, new DialogInterface.OnClickListener() {
+        dialogBuilder.setNeutralButton(R.string.otp_button_label, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendOTPCode();
@@ -691,7 +691,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     public void errorOccurred(String errorMsg, int errorCode) {
         //super.errorOccurred(errorMsg, errorCode);
-        showAlertDialogWithMessage(getString(R.string.error), errorMsg);
+        showAlertDialogWithMessage(getString(R.string.registration_failed), errorMsg);
     }
 
     String getDistrictName(District district) {

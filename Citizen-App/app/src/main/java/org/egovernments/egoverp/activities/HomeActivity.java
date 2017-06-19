@@ -99,6 +99,8 @@ public class HomeActivity extends BaseActivity {
 
         if (!sessionManager.isTermsAgreed()) {
             showTermsAndCondition();
+        } else {
+            displayLocationSettingsRequest(HomeActivity.this);
         }
 
         List<HomeItem> homeItemList = new ArrayList<>();
@@ -106,9 +108,9 @@ public class HomeActivity extends BaseActivity {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.home_recyclerview);
         recyclerView.setHasFixedSize(true);
 
-            /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(linearLayoutManager);*/
+        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);*/
 
         final int homeGridColumnsCount = getResources().getInteger(R.integer.homegridcolumns);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(HomeActivity.this, homeGridColumnsCount);
@@ -257,6 +259,7 @@ public class HomeActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int id) {
                 sessionManager.setTermsAgreed(true);
                 dialog.dismiss();
+                displayLocationSettingsRequest(HomeActivity.this);
             }
         });
         alert.setNegativeButton(R.string.dont_agree, new DialogInterface.OnClickListener() {
@@ -352,4 +355,6 @@ public class HomeActivity extends BaseActivity {
 
         return menu;
     }
+
+
 }
