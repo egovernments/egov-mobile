@@ -71,4 +71,6 @@
     <color name="bpcolor">#f76c40</color>
     <color name="profile_color">#899BA6</color>
     <color name="logout_color">#899BA6</color>
+
+    <color name="hintColorMapView">#898989</color>
 </resources>

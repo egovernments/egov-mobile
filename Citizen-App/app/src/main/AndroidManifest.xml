@@ -73,12 +73,13 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/egov_label"
         android:theme="@style/AppTheme">
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcKReDsZC32qkAEUWqyIpoNSXfA420cN8" />
+            android:value="<GOOGLE CONSOLE GEO API KEY>" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -147,7 +148,6 @@
             android:label="@string/pick_complaint_location"
             android:parentActivityName=".activities.GrievanceActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"></activity>
         <activity
             android:name=".activities.PropertyTaxSearchActivity"

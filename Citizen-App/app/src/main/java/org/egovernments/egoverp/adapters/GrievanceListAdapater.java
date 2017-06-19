@@ -129,7 +129,7 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
 
             //Location name is null if lat/lng is provided
             if (ci.getLocationName() != null)
-                viewHolder.complaintLocation.setText(ci.getChildLocationName() + " - " + ci.getLocationName());
+                viewHolder.complaintLocation.setText(ci.getChildLocationName().trim() + " - " + ci.getLocationName().trim());
 
             viewHolder.complaintCardView.setOnClickListener(new View.OnClickListener() {
                 @Override

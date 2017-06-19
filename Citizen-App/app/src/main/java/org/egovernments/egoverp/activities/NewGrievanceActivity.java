@@ -593,8 +593,7 @@ public class NewGrievanceActivity extends BaseActivity {
                 } else {
                     getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
                 }
-            }
-            else if(resultCode == RESULT_CANCELED)
+            } else if (resultCode == RESULT_CANCELED && complaintLocLatLng == null && locationID == 0)
             {
                 showSnackBar(R.string.complaint_location_message);
             }
