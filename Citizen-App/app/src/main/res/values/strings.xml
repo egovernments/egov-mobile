@@ -187,7 +187,7 @@
     <string name="where_can_i_find_my_consumer_no">Where can i find my consumer no?</string>
     <string name="consumerno_taxreceipt">Water Charge H.S.C No. is in the water charges receipt</string>
     <string name="pick_complaint_location">COMPLAINT LOCATION</string>
-    <string name="your_rating">YOUR RATING</string>
+    <string name="your_rating">RATE THIS SERVICE</string>
     <string name="permission_camera_denied">You have disabled permission for camera access! if you want to enable go to the app info page in settings and enable it</string>
     <string name="permission_read_denied">You have disabled permission for read file access! if you want to enable go to the app info page in settings and enable it!</string>
     <string name="permission_readsms_denied">"You have disabled read sms permission for OTP! if you want to enable go the app info page in settings and enable it "</string>
@@ -321,4 +321,7 @@
     <string name="reopen">Reopen</string>
     <string name="invalid_response">Invalid response!</string>
     <string name="registration_failed">Registration Failed</string>
+    <string name="rebate">REBATE</string>
+    <string name="close">Close</string>
+    <string name="pick">Pick</string>
 </resources>

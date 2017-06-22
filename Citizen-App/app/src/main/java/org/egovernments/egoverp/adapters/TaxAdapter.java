@@ -100,7 +100,7 @@ public class TaxAdapter extends BaseAdapter {
             /*taxViewHolder.taxChequePenalty = (TextView) view.findViewById(R.id.propertytax_chequepenalty);*/
             taxViewHolder.taxPenalty = (TextView) view.findViewById(R.id.propertytax_penalty);
             taxViewHolder.taxInstallment = (TextView) view.findViewById(R.id.propertytax_installment);
-            /*taxViewHolder.taxRebate = (TextView) view.findViewById(R.id.propertytax_rebate);*/
+            taxViewHolder.taxRebate = (TextView) view.findViewById(R.id.propertytax_rebate);
             taxViewHolder.taxTotal = (TextView) view.findViewById(R.id.propertytax_total);
 
             taxViewHolder.layoutBreakupDetails = (LinearLayout) view.findViewById(R.id.layoutBreakupDetails);
@@ -132,14 +132,15 @@ public class TaxAdapter extends BaseAdapter {
             taxViewHolder.layoutTotalFooter.setVisibility(View.GONE);
             taxViewHolder.taxInstallment.setText(taxDetail.getInstallment());
             taxViewHolder.taxAmount.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTaxAmount())));
-        /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
+            /*taxViewHolder.taxChequePenalty.setText("Cheque Bounce Penalty: Rs. " + taxDetail.getChqBouncePenalty());*/
             String chequePenalty = "";
             if (taxDetail.getChqBouncePenalty() > 0) {
                 chequePenalty = "(CHEQ.PENALTY : " + context.getString(R.string.rupee_value, nf1.format(taxDetail.getChqBouncePenalty())) + ")";
             }
             taxViewHolder.taxPenalty.setText(context.getString(R.string.rupee_value,
                     nf1.format(taxDetail.getPenalty() + taxDetail.getChqBouncePenalty()) + chequePenalty));
-        /*taxViewHolder.taxRebate.setText("Rebate: Rs. " + taxDetail.getRebate());*/
+            taxViewHolder.taxRebate.setText(context.getString(R.string.rupee_value,
+                    nf1.format(taxDetail.getRebate())));
             taxViewHolder.taxTotal.setText(context.getString(R.string.rupee_value, nf1.format(taxDetail.getTotalAmount())));
         }
 

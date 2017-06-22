@@ -242,7 +242,7 @@ public class SearchResultActivity extends BaseActivity {
             double total=0;
 
             for (TaxDetail taxDetail : propertyTaxCallback.getTaxDetails()) {
-                total =taxDetail.getTaxAmount()+taxDetail.getPenalty()+total;
+                total += taxDetail.getTotalAmount();
             }
 
             String totalFormatted=NumberFormat.getInstance(new Locale("hi","IN")).format(total);
@@ -274,7 +274,7 @@ public class SearchResultActivity extends BaseActivity {
             double total=0;
 
             for (TaxDetail taxDetail : waterTaxCallback.getTaxDetails()) {
-                total=taxDetail.getTaxAmount()+taxDetail.getPenalty()+total;
+                total += taxDetail.getTotalAmount();
             }
             String totalFormatted=NumberFormat.getInstance(new Locale("hi","IN")).format(total);
             resultItems.add(new SearchResultItem(waterTaxCallback.getConsumerNo(), waterTaxCallback.getOwnerName(), waterTaxCallback.getPropertyAddress(), totalFormatted));

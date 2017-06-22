@@ -98,6 +98,8 @@ public class WaterTaxCallback {
      * @return The propertyAddress
      */
     public String getPropertyAddress() {
+        if (propertyAddress.trim().endsWith(","))
+            propertyAddress = propertyAddress.trim().substring(0, propertyAddress.length() - 2);
         return propertyAddress;
     }
 

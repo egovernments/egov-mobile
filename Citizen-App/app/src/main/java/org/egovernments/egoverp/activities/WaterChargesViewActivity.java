@@ -302,16 +302,15 @@ public class WaterChargesViewActivity extends BaseActivity {
             total = 0;
 
             for (TaxDetail taxDetail : taxCallback.getTaxDetails()) {
+                total += taxDetail.getTotalAmount();
                 if (getCurrentFinancialYearInstallments().contains(taxDetail.getInstallment())) {
-                    currentTotal = currentTotal + taxDetail.getTaxAmount();
-                    currentPenalty = currentPenalty + taxDetail.getPenalty();
+                    currentTotal += taxDetail.getTaxAmount() - taxDetail.getRebate();
+                    currentPenalty += taxDetail.getPenalty() + taxDetail.getChqBouncePenalty();
                 } else {
-                    arrearsTotal += taxDetail.getTaxAmount();
-                    arrearsPenalty += taxDetail.getPenalty();
+                    arrearsTotal += taxDetail.getTaxAmount() - taxDetail.getRebate();
+                    arrearsPenalty += taxDetail.getPenalty() + taxDetail.getChqBouncePenalty();
                 }
             }
-
-            total = arrearsTotal + arrearsPenalty + currentPenalty + currentTotal;
 
             if (total > 0) {
                 btnPay.setVisibility(View.VISIBLE);
