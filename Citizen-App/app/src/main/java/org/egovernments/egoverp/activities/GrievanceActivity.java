@@ -52,6 +52,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,6 +84,7 @@ public class GrievanceActivity extends BaseActivity {
 
     public static final String RESULT_MESSAGE="Message";
     public static final String RESULT = "result";
+    private static final String TAG = "GrievanceActivity";
     public static int ACTION_UPDATE_REQUIRED = 111;
     ViewPager viewPager;
     ProgressBar pbHome;
@@ -302,6 +304,15 @@ public class GrievanceActivity extends BaseActivity {
         showErrorView(errorCode);
     }
 
+    @Override
+    public void onDestroy() {
+        try {
+            super.onDestroy();
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "NPE: Bug workaround");
+        }
+    }
+
     private class GrievanceFragmentPagerAdapter extends FragmentPagerAdapter {
 
         JsonObject categories;
@@ -343,5 +354,6 @@ public class GrievanceActivity extends BaseActivity {
         }
 
     }
+
 }
 

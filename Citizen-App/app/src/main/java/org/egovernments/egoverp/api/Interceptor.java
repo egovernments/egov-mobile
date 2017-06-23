@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +33,11 @@ public class Interceptor implements okhttp3.Interceptor {
     public static final String DATA_UNAUTHORIZED_ERROR = "DATA_UNAUTHORIZED_ERROR";
     public static final String DATA_ERROR_MSG = "DATA_ERROR_MSG";
     public static final String DATA_ERROR_CODE = "DATA_ERROR_CODE";
+    public static final String SESSION_ERROR_MSG = "Have we met before? Please reintroduce with your credentials";
+    public static final String OTHER_AUTH_ERROR = "We're sorry something went wrong please try to logout and login again";
+    public static final String SERVER_DOWN_MESSAGE = "You may addicted to our app. We care about your health and we want give you a break for a few hours Will be back soon!!!";
+    public static final String GENERIC_ERROR_MSG = "Something went wrong please try again later";
+    public static final String NO_INTERNET_CONNECTIVITY = "No internet connectivity";
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private final Interceptor.Logger logger;
     private Level level = Level.NONE;
@@ -183,7 +189,13 @@ public class Interceptor implements okhttp3.Interceptor {
 
     private IOException errorHandlerFromResponse(IOException ex, int errorCode) {
         //send error to broadcast listeners
-        sendErrorToBroadCast(ex.getLocalizedMessage(), errorCode, false);
+        String errorMessage = NO_INTERNET_CONNECTIVITY;
+        if (ex instanceof UnknownHostException) {
+            errorMessage = NO_INTERNET_CONNECTIVITY;
+        } else if (ex.getMessage().equals("Canceled")) {
+            errorMessage = "Canceled";
+        }
+        sendErrorToBroadCast(errorMessage, errorCode, errorCode == 401);
         return ex;
     }
 
@@ -210,7 +222,6 @@ public class Interceptor implements okhttp3.Interceptor {
                             errorMsg = jsonObject.get("status").getAsJsonObject().get("message").getAsString();
                         }
                     }
-
                 }
                 break;
             case 401:
@@ -218,23 +229,25 @@ public class Interceptor implements okhttp3.Interceptor {
                     //If failure due to invalid access token
                     errorMsg = jsonObject.get("error_description").toString().trim();
                     if (errorMsg.contains("Invalid access token")) {
-                        errorMsg = "Session Expired!";
+                        errorMsg = SESSION_ERROR_MSG;
                         isSessionExpired = true;
+                    } else {
+                        errorMsg = OTHER_AUTH_ERROR;
                     }
                 }
                 break;
             case 404:
-                errorMsg = "Server may be down for maintenance";
+                errorMsg = SERVER_DOWN_MESSAGE;
                 break;
             case 503:
-                errorMsg = "Server is down for maintenance or over capacity";
+                errorMsg = SERVER_DOWN_MESSAGE;
                 break;
             case 504:
-                errorMsg = "The connection timed out while waiting for a response";
+                errorMsg = SERVER_DOWN_MESSAGE;
                 break;
-
             default:
-                errorMsg = "An unexpected error occurred!";
+                errorMsg = GENERIC_ERROR_MSG;
+                break;
         }
 
         sendErrorToBroadCast(errorMsg, responseCode, isSessionExpired);

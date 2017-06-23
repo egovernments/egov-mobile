@@ -82,6 +82,7 @@ import retrofit2.Call;
  */
 public class GrievanceFragment extends android.support.v4.app.Fragment {
 
+    private static final String TAG = "GrievanceFragment";
     public GrievanceListAdapater grievanceAdapter;
     GrievanceItemInterface grievanceItemInterface;
     EndlessRecyclerOnScrollListener onScrollListener;
@@ -120,6 +121,16 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
             }
         }
     }
+
+    @Override
+    public void onDestroy() {
+        try {
+            super.onDestroy();
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "NPE: Bug workaround");
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -352,3 +363,4 @@ public class GrievanceFragment extends android.support.v4.app.Fragment {
 
 
     }
+
