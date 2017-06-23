@@ -46,9 +46,14 @@ package org.egovernments.egoverp.helper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.media.ExifInterface;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.FileInputStream;
@@ -56,12 +61,27 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Reduces image resolution and color density before upload
  **/
 
 public class ImageCompressionHelper {
+
+    private static final int GRID_HEIGHT = 40;
+    private static final int OFFSET_X_TEXT = 15;
+    private static final int GRID_MARIGN = 13;
+    private static final String CAPTURED_DATE_PREFIX_TEXT = "Captured Date & Time: ";
+    private static final String DATE_FORMAT_TO_DISPLAY = "dd-MM-yyyy hh:mm:ss aa";
+    private static final String LATITUDE_PREFIX_TEXT = "Latitude: ";
+    private static final String LONGITUDE = "Longitude: ";
+    private static final String LONGITUDE_PREFIX_TEXT = LONGITUDE;
+    private static final String COMMA_SEPARATOR = ", ";
 
     public static String compressImage(String sourceFilePath, String outputFilePath) {
 
@@ -86,8 +106,8 @@ public class ImageCompressionHelper {
 
 //      max Height and width values of the compressed image is taken as 816x612
 
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
+        float maxHeight = 1280.0f;
+        float maxWidth = 720.0f;
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 
@@ -109,7 +129,7 @@ public class ImageCompressionHelper {
             }
         }
 
-//      setting inSampleSize value allows to load a scaled down version of the original image
+//      setting inSampleSize value allows to load a scaled down version of the original image cddc0ef0-f9fb-43f4-ad65-59873d3689dc
 
         options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
 
@@ -117,9 +137,11 @@ public class ImageCompressionHelper {
         options.inJustDecodeBounds = false;
 
 //      this options allow android to claim the bitmap memory if it runs low on memory
-        options.inPurgeable = true;
-        options.inInputShareable = true;
-        options.inTempStorage = new byte[16 * 1024];
+        /*options.inPurgeable = true;*/
+        options.inBitmap = bmp;
+        /*options.inInputShareable = true;*/
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        options.inTempStorage = new byte[8 * 1024];
 
         try {
 //          load the bitmap from its path
@@ -178,6 +200,73 @@ public class ImageCompressionHelper {
             scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
                     scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
                     true);
+
+
+            /*Canvas canvasInfo = new Canvas(scaledBitmap);
+
+            TextPaint mTextPaint=new TextPaint();
+            StaticLayout mTextLayout = new StaticLayout("Photo Taken On : 23132131321", mTextPaint, canvasInfo.getWidth(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+
+            canvasInfo.save();
+            // calculate x and y position where your text will be placed
+
+            canvas.translate(0, canvas.getHeight()-mTextLayout.getHeight());
+            mTextLayout.draw(canvas);
+            canvasInfo.restore();*/
+
+
+            Canvas canvasInfo = new Canvas(scaledBitmap);
+
+            Paint paint = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.WHITE); // Text Color
+            paint.setStrokeWidth(12); // Text Size
+            paint.setTextSize(25);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)); // Text Overlapping Pattern
+            // some more settings...
+
+            canvasInfo.drawBitmap(scaledBitmap, 0, 0, paint);
+
+            Paint transBlackPaint = new Paint();
+            transBlackPaint.setColor(Color.BLACK);
+            transBlackPaint.setAlpha(127);
+            transBlackPaint.setStyle(Paint.Style.FILL);
+
+            String createDateTimeText = exif.getAttribute(ExifInterface.TAG_DATETIME);
+            Date createdDate = new Date();
+            if (!TextUtils.isEmpty(createDateTimeText) && !createDateTimeText.equals("null")) {
+                try {
+                    createdDate = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH).parse(createDateTimeText);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            StringBuilder stringBuilder = new StringBuilder(CAPTURED_DATE_PREFIX_TEXT)
+                    .append(new SimpleDateFormat(DATE_FORMAT_TO_DISPLAY).format(createdDate).toUpperCase());
+
+            Rect rectDateTime = new Rect(0, canvas.getHeight() - GRID_HEIGHT, canvas.getWidth(), canvas.getHeight());
+
+            //print the date time of the file
+            canvasInfo.drawRect(rectDateTime, transBlackPaint);
+            canvasInfo.drawText(stringBuilder.toString(), OFFSET_X_TEXT, canvas.getHeight() - GRID_MARIGN, paint);
+
+            StringBuilder latLngStrBuilder = new StringBuilder();
+
+            //print the lat, lng if it's has
+            if (attrLatitute != null) {
+                latLngStrBuilder.append(LATITUDE_PREFIX_TEXT).append(stringToDegree(attrLatitute))
+                        .append(COMMA_SEPARATOR).append(LONGITUDE_PREFIX_TEXT).append(stringToDegree(attrLONGITUDE));
+            } else if (attrLatituteRef != null) {
+                latLngStrBuilder.append(LATITUDE_PREFIX_TEXT).append(stringToDegree(attrLatituteRef))
+                        .append(COMMA_SEPARATOR).append(LONGITUDE_PREFIX_TEXT).append(stringToDegree(attrLONGITUDEREf));
+            }
+
+            if (!TextUtils.isEmpty(latLngStrBuilder.toString())) {
+                Rect rectLatLng = new Rect(0, canvas.getHeight() - (GRID_HEIGHT * 2), canvas.getWidth(), canvas.getHeight() - GRID_HEIGHT);
+                canvasInfo.drawRect(rectLatLng, transBlackPaint);
+                canvasInfo.drawText(latLngStrBuilder.toString(), OFFSET_X_TEXT, canvas.getHeight() - (GRID_MARIGN * 4), paint);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -187,7 +276,7 @@ public class ImageCompressionHelper {
             out = new FileOutputStream(outputFilePath);
 
 //          write the compressed bitmap at the destination specified by filename.
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
 
             ExifInterface exif2 = new ExifInterface(outputFilePath);
 
@@ -213,7 +302,7 @@ public class ImageCompressionHelper {
         return outputFilePath;
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -230,6 +319,10 @@ public class ImageCompressionHelper {
         }
 
         return inSampleSize;
+    }
+
+    private static String stringToDegree(String text) {
+        return new DecimalFormat("#0.0000000").format(AppUtils.convertToDegree(text));
     }
 
 }
