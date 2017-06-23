@@ -273,7 +273,8 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        recreate();
+        if (requestCode == ProfileActivity.PROFILE_REQUEST_CODE)
+            recreate();
     }
 
 

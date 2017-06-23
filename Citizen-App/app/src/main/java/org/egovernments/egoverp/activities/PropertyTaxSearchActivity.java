@@ -110,6 +110,8 @@ public class PropertyTaxSearchActivity extends BaseActivity implements View.OnCl
 
     public void searchProperty()
     {
+        closeSoftKeyBoard();
+
         if (validateInputSearchFields() && validateInternetConnection())
         {
             Intent openSearchResult=new Intent(PropertyTaxSearchActivity.this, SearchResultActivity.class);

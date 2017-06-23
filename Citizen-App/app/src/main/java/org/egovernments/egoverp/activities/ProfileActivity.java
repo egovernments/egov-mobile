@@ -73,9 +73,9 @@ import java.util.Locale;
 
 public class ProfileActivity extends BaseActivity {
 
+    public static final int PROFILE_REQUEST_CODE = 121;
     public static Profile profile = null;
     public static boolean isUpdateFailed = false;
-
     //private ProgressDialog progressDialog;
     private final int ACTION_UPDATE_REQUIRED = 111;
     BroadcastReceiver profileDetailsReceiver = new BroadcastReceiver() {

@@ -324,6 +324,9 @@ public class GrievanceDetailsActivity extends BaseActivity implements OnMapReady
 
 
     private void updateComplaint(final LinearLayout feedbackLayout, String action) {
+
+        closeSoftKeyBoard();
+
         String comment = updateComment.getText().toString().trim();
         String feedback = "";
         if (feedbackLayout.getVisibility() == View.VISIBLE) {

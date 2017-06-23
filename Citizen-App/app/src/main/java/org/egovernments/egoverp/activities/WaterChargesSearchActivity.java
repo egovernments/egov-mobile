@@ -92,6 +92,8 @@ public class WaterChargesSearchActivity extends BaseActivity implements View.OnC
 
     void searchWaterConnections()
     {
+        closeSoftKeyBoard();
+
         if (validateInputSearchFields() && validateInternetConnection()) {
             Intent openSearchResult=new Intent(WaterChargesSearchActivity.this, SearchResultActivity.class);
             openSearchResult.putExtra(PARAM_WATER_CON_SEARCH_REQUEST, new WaterConnectionSearchRequest(sessionManager.getUrlLocationCode(),

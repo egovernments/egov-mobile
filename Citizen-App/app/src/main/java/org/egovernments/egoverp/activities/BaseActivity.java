@@ -66,6 +66,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -234,11 +235,13 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
             public void onDrawerClosed(View view) {
+                closeSoftKeyBoard();
                 if (actionBar != null)
                 actionBar.setTitle(mActionBarTitle);
             }
 
             public void onDrawerOpened(View drawerView) {
+                closeSoftKeyBoard();
                 if (actionBar != null)
                 actionBar.setTitle(R.string.menu_label);
             }
@@ -428,7 +431,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         if (!getTitle().toString().equals(getString(R.string.profile_label))) {
             intent = new Intent(BaseActivity.this, ProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivityForResult(intent, 0);
+            startActivityForResult(intent, ProfileActivity.PROFILE_REQUEST_CODE);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
         }
@@ -440,7 +443,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         if (!getTitle().toString().equals(getString(R.string.sos_label))) {
             intent = new Intent(BaseActivity.this, SOSActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivityForResult(intent, 0);
+            startActivity(intent);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
         }
@@ -452,7 +455,7 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         if (!getTitle().toString().equals(getString(R.string.aboutus_label))) {
             intent = new Intent(BaseActivity.this, AboutUsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivityForResult(intent, 0);
+            startActivity(intent);
             if (!getTitle().toString().equals(getString(R.string.home_label)))
                 finish();
         }
@@ -473,7 +476,8 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressDialog.show();
+                if (isProgressDialogNotShown())
+                    progressDialog.show();
             }
         });
 
@@ -483,17 +487,25 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
             @Override
             public void onResponse(Call<JsonObject> call, retrofit2.Response<JsonObject> response) {
                 clearAuthAndOpenLoginForm("Logged out successfully");
-                if (progressDialog.isShowing() && !BaseActivity.this.isFinishing())
+                if (isProgressDialogCloseable())
                     progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                if (progressDialog.isShowing() && !BaseActivity.this.isFinishing())
+                if (isProgressDialogCloseable())
                     progressDialog.dismiss();
             }
         });
 
+    }
+
+    private boolean isProgressDialogNotShown() {
+        return !progressDialog.isShowing() && !BaseActivity.this.isFinishing();
+    }
+
+    private boolean isProgressDialogCloseable() {
+        return progressDialog.isShowing() && !BaseActivity.this.isFinishing();
     }
 
     private void clearAuthAndOpenLoginForm(String startUpMessage) {
@@ -743,6 +755,14 @@ public class BaseActivity extends AppCompatActivity implements Interceptor.Error
                 }
             }
         });
+    }
+
+    public void closeSoftKeyBoard() {
+        if (getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 }

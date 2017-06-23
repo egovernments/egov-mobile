@@ -59,6 +59,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -140,6 +141,7 @@ public class NewGrievanceActivity extends BaseActivity {
     int complaintTypeID;
     ImageView imgMapPick;
     ImageView imgClear;
+    GrievanceImagePagerAdapter grievanceImagePagerAdapter;
     private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
     private List<GrievanceTypeCategory> grievanceAllCategories = new ArrayList<>(); //stores all complaint categories
     private List<String> grievanceTypes = new ArrayList<>(); //stores grievance types string for adapter
@@ -158,7 +160,6 @@ public class NewGrievanceActivity extends BaseActivity {
     private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
     private ViewPager viewPager;
-    private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
     private File cacheDir;
     private boolean isPickedLocationFromMap = false;
     BroadcastReceiver addressReceiver = new BroadcastReceiver() {
@@ -184,23 +185,6 @@ public class NewGrievanceActivity extends BaseActivity {
         }
     };
 
-    public static Bitmap resizeBitmap(final Bitmap temp, final int size) {
-        if (size > 0) {
-            int width = temp.getWidth();
-            int height = temp.getHeight();
-            float ratioBitmap = (float) width / (float) height;
-            int finalWidth = size;
-            int finalHeight = size;
-            if (ratioBitmap < 1) {
-                finalWidth = (int) ((float) size * ratioBitmap);
-            } else {
-                finalHeight = (int) ((float) size / ratioBitmap);
-            }
-            return Bitmap.createScaledBitmap(temp, finalWidth, finalHeight, true);
-        } else {
-            return temp;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -476,6 +460,8 @@ public class NewGrievanceActivity extends BaseActivity {
     //validate and registerComplaint grievance
     public void validateAndSubmitGrievance()
     {
+        closeSoftKeyBoard();
+
         String complaintDetails = details.getText().toString().trim();
         String landmarkDetails = landmark.getText().toString().trim();
 
@@ -513,7 +499,7 @@ public class NewGrievanceActivity extends BaseActivity {
     private void fromCamera() {
 
         File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
-        Uri fileUri = null;
+        Uri fileUri;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1030,28 +1016,26 @@ public class NewGrievanceActivity extends BaseActivity {
             Bundle arg = this.getArguments();
 
             //Generates a thumbnail of image to be displayed in the viewpager. The original image is unaffected.
-            Bitmap ThumbImage = null;
+            Bitmap thumbImage = null;
             try {
-                /*ThumbImage = ThumbnailUtils
+                thumbImage = ThumbnailUtils
                         .extractThumbnail(MediaStore.Images.Media.getBitmap
                                 (getActivity().getContentResolver(),
-                                        Uri.parse(arg.getString("uri"))), 1280, 720);*/
-                ThumbImage = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(arg.getString("uri")));
+                                        Uri.parse(arg.getString("uri"))), 816, 612);
             } catch (IOException e) {
 
                 e.printStackTrace();
             }
 
-
-            if (ThumbImage != null) {
-                ThumbImage = Bitmap.createScaledBitmap(ThumbImage, ThumbImage.getWidth(), ThumbImage.getHeight(), true);
+            if (thumbImage != null) {
+                thumbImage = Bitmap.createScaledBitmap(thumbImage, thumbImage.getWidth(), thumbImage.getHeight(), true);
             } else {
                 Toast toast = Toast.makeText(getActivity(), R.string.error_while_retrieve_image, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
                 toast.show();
             }
 
-            imageView.setImageBitmap(resizeBitmap(ThumbImage, 816));
+            imageView.setImageBitmap(thumbImage);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
             fragmentPosition = arg.getInt("pos");

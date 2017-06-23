@@ -87,6 +87,7 @@ public class GrievanceActivity extends BaseActivity {
     ViewPager viewPager;
     ProgressBar pbHome;
     ErrorView errorView;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class GrievanceActivity extends BaseActivity {
         viewPager=(ViewPager)findViewById(R.id.viewPager);
         pbHome=(ProgressBar)findViewById(R.id.pbhome);
         errorView = (ErrorView) findViewById(R.id.errorView);
+        fragmentManager = getSupportFragmentManager();
 
         FloatingActionButton fabNewGrievance = (FloatingActionButton) findViewById(R.id.fabCreateComplaint);
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -210,40 +212,45 @@ public class GrievanceActivity extends BaseActivity {
             selectedIdx=viewPager.getCurrentItem();
         }
 
-        GrievanceFragmentPagerAdapter pagerAdapter=new GrievanceFragmentPagerAdapter(getSupportFragmentManager(), categories);
+        try {
+            GrievanceFragmentPagerAdapter pagerAdapter = new GrievanceFragmentPagerAdapter(fragmentManager, categories);
 
-        if (pagerAdapter != null && categories != null) {
+            if (pagerAdapter != null && categories != null) {
 
-            viewPager.setAdapter(pagerAdapter);
-            tabLayout.removeAllTabs();
-            tabLayout.setupWithViewPager(viewPager);
-            setTabCount(pagerAdapter);
-            viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount() - 1);
+                viewPager.setAdapter(pagerAdapter);
+                tabLayout.removeAllTabs();
+                tabLayout.setupWithViewPager(viewPager);
+                setTabCount(pagerAdapter);
+                viewPager.setOffscreenPageLimit(viewPager.getAdapter().getCount() - 1);
 
-            if (selectedIdx != -1) {
-                viewPager.setCurrentItem(selectedIdx);
-                return;
+                if (selectedIdx != -1) {
+                    viewPager.setCurrentItem(selectedIdx);
+                    return;
+                }
+
+                tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        highlightTabTextView(tab.getCustomView(), true);
+                        viewPager.setCurrentItem(tab.getPosition());
+                    }
+
+                    @Override
+                    public void onTabUnselected(TabLayout.Tab tab) {
+                        highlightTabTextView(tab.getCustomView(), false);
+                    }
+
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+
+                    }
+                });
+
+            } else {
+                showSnackBar(R.string.invalid_response);
             }
-
-            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                @Override
-                public void onTabSelected(TabLayout.Tab tab) {
-                    highlightTabTextView(tab.getCustomView(), true);
-                    viewPager.setCurrentItem(tab.getPosition());
-                }
-
-                @Override
-                public void onTabUnselected(TabLayout.Tab tab) {
-                    highlightTabTextView(tab.getCustomView(), false);
-                }
-
-                @Override
-                public void onTabReselected(TabLayout.Tab tab) {
-
-                }
-            });
-
-        } else {
+        } catch (Exception ex) {
+            ex.printStackTrace();
             showSnackBar(R.string.invalid_response);
         }
 

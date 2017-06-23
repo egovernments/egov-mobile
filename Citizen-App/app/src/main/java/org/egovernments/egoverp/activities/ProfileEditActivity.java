@@ -199,6 +199,8 @@ public class ProfileEditActivity extends BaseActivity {
     //Invokes call to the API
     private void submit() {
 
+        closeSoftKeyBoard();
+
         profileName = (EditText) findViewById(R.id.editprofile_name);
         profilePhone = (EditText) findViewById(R.id.editprofile_phoneno);
         profileAltPhone = (EditText) findViewById(R.id.editprofile_altphoneno);
