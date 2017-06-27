@@ -128,8 +128,8 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
             }
 
             //Location name is null if lat/lng is provided
-            if (ci.getLocationName() != null)
-                viewHolder.complaintLocation.setText(ci.getChildLocationName().trim() + " - " + ci.getLocationName().trim());
+            if (!TextUtils.isEmpty(ci.getLocationName()))
+                viewHolder.complaintLocation.setText(getLocationName(ci));
 
             viewHolder.complaintCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -144,6 +144,14 @@ public class GrievanceListAdapater extends RecyclerView.Adapter<RecyclerView.Vie
             ((ProgressViewHolder)holder).progressBar.setIndeterminate(true);
         }
 
+    }
+
+    String getLocationName(Grievance grievance) {
+        String locationName = "";
+        if (!TextUtils.isEmpty(grievance.getChildLocationName()))
+            locationName = grievance.getChildLocationName().trim() + " - ";
+        locationName += grievance.getLocationName().trim();
+        return locationName;
     }
 
     @Override

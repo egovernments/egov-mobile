@@ -3,6 +3,7 @@ package org.egovernments.egoverp.api;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -72,7 +73,7 @@ public class Interceptor implements okhttp3.Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = null;
-        Boolean isErrorThrown = false;
+        boolean isErrorThrown = false;
         try {
             Interceptor.Level level = this.level;
 
@@ -192,7 +193,7 @@ public class Interceptor implements okhttp3.Interceptor {
         String errorMessage = NO_INTERNET_CONNECTIVITY;
         if (ex instanceof UnknownHostException) {
             errorMessage = NO_INTERNET_CONNECTIVITY;
-        } else if (ex.getMessage().equals("Canceled")) {
+        } else if (TextUtils.isEmpty(ex.getMessage()) && ex.getMessage().equals("Canceled")) {
             errorMessage = "Canceled";
         }
         sendErrorToBroadCast(errorMessage, errorCode, errorCode == 401);
