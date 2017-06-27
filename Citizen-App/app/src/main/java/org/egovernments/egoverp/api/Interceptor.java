@@ -191,9 +191,9 @@ public class Interceptor implements okhttp3.Interceptor {
     private IOException errorHandlerFromResponse(IOException ex, int errorCode) {
         //send error to broadcast listeners
         String errorMessage = NO_INTERNET_CONNECTIVITY;
-        if (ex instanceof UnknownHostException) {
+        if (ex != null && ex instanceof UnknownHostException) {
             errorMessage = NO_INTERNET_CONNECTIVITY;
-        } else if (TextUtils.isEmpty(ex.getMessage()) && ex.getMessage().equals("Canceled")) {
+        } else if (ex != null && !TextUtils.isEmpty(ex.getMessage()) && ex.getMessage().equals("Canceled")) {
             errorMessage = "Canceled";
         }
         sendErrorToBroadCast(errorMessage, errorCode, errorCode == 401);
