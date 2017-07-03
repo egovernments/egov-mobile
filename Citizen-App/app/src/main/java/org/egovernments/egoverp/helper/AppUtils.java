@@ -46,10 +46,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -71,6 +74,7 @@ import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.config.SessionManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -78,6 +82,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -387,5 +393,44 @@ public class AppUtils {
         var2.close();
         var3.close();
     }
+
+
+    public static String getBaseUrl(String urlStr) {
+        URL url = null;
+        String baseUrl = "";
+        try {
+            url = new URL(urlStr);
+            String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
+            baseUrl = url.getProtocol() + "://" + url.getHost() + "/";
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return baseUrl;
+    }
+
+    public static void deleteFile(Uri uri, Context appContext) throws IOException {
+        File file = new File(uri.getPath());
+        file.delete();
+        if (file.exists()) {
+            file.getCanonicalFile().delete();
+            if (file.exists()) {
+                appContext.deleteFile(file.getName());
+            }
+        }
+    }
+
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public static void deleteAllFiles(File dir) {
+        for (File file : dir.listFiles())
+            if (!file.isDirectory())
+                file.delete();
+    }
+
 
 }

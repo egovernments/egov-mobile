@@ -67,9 +67,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import org.egovernments.egoverp.R;
@@ -83,7 +81,7 @@ import org.egovernments.egoverp.models.City;
 
 import java.io.IOException;
 
-import okhttp3.HttpUrl;
+import retrofit2.Response;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
@@ -181,7 +179,7 @@ public class SplashScreenActivity extends Activity {
             if (sessionManager.getUrlLocation() == null && configManager.getString(API_MULTICITIES).equals("true")) {
                 startTimerThread();
             } else {
-                if (sessionManager.getUrlAge() > Integer.valueOf(configManager.getString(Config.APP_TIMEOUTDAYS))
+                if (sessionManager.getUrlAge() >= Integer.valueOf(configManager.getString(Config.APP_TIMEOUTDAYS))
                         || TextUtils.isEmpty(sessionManager.getBaseURL())
                         || !sessionManager.getAppVersionCode().equals(AppUtils.getAppVersionCode(SplashScreenActivity.this))) {
                     new GetCityTask().execute();
@@ -228,13 +226,10 @@ public class SplashScreenActivity extends Activity {
     }
 
     public void launchScreen() {
-
-        if (Build.VERSION.SDK_INT < 23 && !timerThread.isAlive()) {
+        if (Build.VERSION.SDK_INT < 23 && timerThread.getState() == Thread.State.NEW) {
             timerThread.start();
-        } else {
-            if (checkReadSMSPermision() && !timerThread.isAlive()) {
+        } else if (checkReadSMSPermision() && timerThread.getState() == Thread.State.NEW) {
                 timerThread.start();
-            }
         }
     }
 
@@ -310,12 +305,23 @@ public class SplashScreenActivity extends Activity {
 
             try {
 
-                HttpUrl.Builder urlBuilder = HttpUrl.parse(configManager.getString(Config.API_CITY_URL)).newBuilder();
 
+                String cityUrl;
+                String cityCode = null;
                 if (configManager.getString(API_MULTICITIES).equals("false")) {
-                    City city = new Gson().
-                            fromJson(ApiController.getResponseFromUrl(null, urlBuilder.build()), City.class);
+                    cityUrl = configManager.getString(Config.API_CITY_URL);
+                } else {
+                    cityUrl = configManager.getString(Config.API_MULTIPLE_CITIES_URL);
+                    cityCode = String.valueOf(sessionManager.getUrlLocationCode());
+                }
 
+                ApiController.APIInterface apiInterface = ApiController.getRetrofit2API(getApplicationContext(),
+                        AppUtils.getBaseUrl(cityUrl));
+
+                Response<City> cityResponse = apiInterface.getCityUrl(cityUrl, cityCode).execute();
+
+                if (cityResponse.isSuccessful()) {
+                    City city = cityResponse.body();
                     if (city != null) {
                         sessionManager.setBaseURL(city.getUrl(), city.getCityName(),
                                 city.getCityCode(), city.getModules()!=null?city.getModules().toString():null);
@@ -331,30 +337,8 @@ public class SplashScreenActivity extends Activity {
                         });
                         sessionManager.logoutUser();
                     }
-                } else {
-
-                    urlBuilder = HttpUrl.parse(configManager.getString(Config.API_MULTIPLE_CITIES_URL)).newBuilder();
-                    HttpUrl url = urlBuilder
-                            .addQueryParameter("code", String.valueOf(sessionManager.getUrlLocationCode())).build();
-                    City activeCity = new Gson().
-                            fromJson(ApiController.getResponseFromUrl(null, url), City.class);
-
-                    if (activeCity != null) {
-                        sessionManager.setBaseURL(activeCity.getUrl(), activeCity.getCityName(),
-                                activeCity.getCityCode(), activeCity.getModules()!=null?activeCity.getModules().toString():null);
-                        startTimerThread();
-                    } else {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast toast = Toast.makeText(SplashScreenActivity.this, R.string.unexcepted_error, Toast.LENGTH_SHORT);
-                                toast.setGravity(Gravity.CENTER | Gravity.CENTER_HORIZONTAL, 0, 0);
-                                toast.show();
-                            }
-                        });
-                        sessionManager.logoutUser();
-                    }
                 }
+
             } catch (IOException | IllegalStateException | JsonSyntaxException e) {
                 e.printStackTrace();
                 handler.post(new Runnable() {
@@ -386,9 +370,16 @@ public class SplashScreenActivity extends Activity {
         protected JsonObject doInBackground(String... params) {
             JsonObject response = null;
             try {
-                HttpUrl.Builder urlBuilder = HttpUrl.parse(configManager.getString(Config.API_APP_VERSION_CHECK) + getApplicationContext().getPackageName()).newBuilder();
-                String resp = ApiController.getResponseFromUrl(null, urlBuilder.build());
-                response=new JsonParser().parse(resp).getAsJsonObject();
+
+                String url = configManager.getString(Config.API_APP_VERSION_CHECK) + getApplicationContext().getPackageName();
+                ApiController.APIInterface apiInterface = ApiController.getRetrofit2API(getApplicationContext(),
+                        AppUtils.getBaseUrl(url));
+
+                Response<JsonObject> resp = apiInterface.isAppLatestVersion(url).execute();
+                if (resp.isSuccessful()) {
+                    response = resp.body();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

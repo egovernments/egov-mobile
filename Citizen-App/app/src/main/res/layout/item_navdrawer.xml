@@ -45,28 +45,27 @@
     android:id="@+id/navdrawer_row"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:orientation="horizontal"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="25dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="24dp"
         android:src="@drawable/ic_mail_black_24dp" />
-
-
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical"
-        android:textSize="14sp"
-        android:textColor="@android:color/black" />
+        android:textColor="#212121"
+        android:textSize="14sp" />
 
 </LinearLayout>

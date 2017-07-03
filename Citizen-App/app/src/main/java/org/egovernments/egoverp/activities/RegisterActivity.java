@@ -82,6 +82,7 @@ import com.google.gson.JsonObject;
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
 import org.egovernments.egoverp.api.ApiUrl;
+import org.egovernments.egoverp.config.Config;
 import org.egovernments.egoverp.helper.AppUtils;
 import org.egovernments.egoverp.helper.CustomAutoCompleteTextView;
 import org.egovernments.egoverp.helper.NothingSelectedSpinnerAdapter;
@@ -97,9 +98,10 @@ import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
-import static org.egovernments.egoverp.config.Config.API_MULTIPLE_CITIES_URL;
 
 @SuppressWarnings("unchecked")
 public class RegisterActivity extends BaseActivity {
@@ -341,21 +343,33 @@ public class RegisterActivity extends BaseActivity {
 
     public void loadDistrictDropdown() throws IOException
     {
-        districtsList = ApiController.getAllCitiesURLs(null, configManager.getString(API_MULTIPLE_CITIES_URL));
+        ApiController.getRetrofit2API(getApplicationContext(),
+                AppUtils.getBaseUrl(configManager.getString(Config.API_MULTIPLE_CITIES_URL)))
+                .getDistrictsList(configManager.getString(Config.API_MULTIPLE_CITIES_URL))
+                .enqueue(new Callback<List<District>>() {
+                    @Override
+                    public void onResponse(Call<List<District>> call, Response<List<District>> response) {
+                        districtsList = response.body();
+                        if (districtsList != null) {
 
-        if (districtsList != null) {
+                            final List<String> districts = new ArrayList<>();
 
-            final List<String> districts = new ArrayList<>();
+                            for (int i = 0; i < districtsList.size(); i++) {
+                                districts.add(getDistrictName(districtsList.get(i)));
+                            }
 
-            for (int i = 0; i < districtsList.size(); i++) {
-                districts.add(getDistrictName(districtsList.get(i)));
-            }
+                            loadDropdownsWithData(districts, spinnerDistrict, districtAutoCompleteTextView, true);
 
-            loadDropdownsWithData(districts, spinnerDistrict, districtAutoCompleteTextView, true);
+                        } else {
+                            resetAndRefreshDropdown();
+                        }
+                    }
 
-        } else {
-            resetAndRefreshDropdown();
-        }
+                    @Override
+                    public void onFailure(Call<List<District>> call, Throwable t) {
+                        resetAndRefreshDropdown();
+                    }
+                });
     }
 
     @SuppressWarnings("unchecked")

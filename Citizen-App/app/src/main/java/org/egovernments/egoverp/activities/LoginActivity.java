@@ -65,9 +65,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import org.egovernments.egoverp.R;
 import org.egovernments.egoverp.api.ApiController;
@@ -81,13 +79,13 @@ import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.services.UpdateService;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.HttpUrl;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static org.egovernments.egoverp.config.Config.API_MULTICITIES;
 
@@ -354,27 +352,37 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    public void loadDistrictDropdown() throws IOException {
+    public void loadDistrictDropdown() {
 
-        Type type = new TypeToken<List<District>>() {
-        }.getType();
-        HttpUrl url = HttpUrl.parse(configManager.getString(Config.API_MULTIPLE_CITIES_URL));
-        districtsList = new Gson().fromJson(ApiController.getResponseFromUrl(getApplicationContext(), url)
-                , type);
+        ApiController.getRetrofit2API(getApplicationContext(),
+                AppUtils.getBaseUrl(AppUtils.getBaseUrl(configManager.getString(Config.API_MULTIPLE_CITIES_URL))))
+                .getDistrictsList(configManager.getString(Config.API_MULTIPLE_CITIES_URL))
+                .enqueue(new Callback<List<District>>() {
+                    @Override
+                    public void onResponse(Call<List<District>> call, Response<List<District>> response) {
 
-        if (districtsList != null) {
+                        districtsList = response.body();
 
-            districts = new ArrayList<>();
+                        if (districtsList != null) {
+                            districts = new ArrayList<>();
 
-            for (int i = 0; i < districtsList.size(); i++) {
-                districts.add(getDistrictName(districtsList.get(i)));
+                            for (int i = 0; i < districtsList.size(); i++) {
+                                districts.add(getDistrictName(districtsList.get(i)));
+                            }
+
+                            loadDropdownsWithData(districts, spinnerDistrict, districtAutocompleteTextBox, true);
+
+                        } else {
+                            resetAndRefreshDropdownValues();
+                        }
             }
 
-            loadDropdownsWithData(districts, spinnerDistrict, districtAutocompleteTextBox, true);
+                    @Override
+                    public void onFailure(Call<List<District>> call, Throwable t) {
+                        resetAndRefreshDropdownValues();
+                    }
+                });
 
-        } else {
-            resetAndRefreshDropdownValues();
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -571,16 +579,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void loadDropdowns() {
-        try {
-
-            if (configManager.getString(API_MULTICITIES).equals("false")) {
-                hideMultiCityComponents();
-            } else {
-                loadDistrictDropdown();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            resetAndRefreshDropdownValues();
+        if (configManager.getString(API_MULTICITIES).equals("false")) {
+            hideMultiCityComponents();
+        } else {
+            loadDistrictDropdown();
         }
     }
 

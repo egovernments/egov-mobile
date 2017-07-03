@@ -44,14 +44,12 @@ package org.egovernments.egoverp.api;
 
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import org.egovernments.egoverp.config.SessionManager;
 import org.egovernments.egoverp.models.BuildingPlanAPIResponse;
+import org.egovernments.egoverp.models.City;
 import org.egovernments.egoverp.models.District;
 import org.egovernments.egoverp.models.GrievanceAPIResponse;
 import org.egovernments.egoverp.models.GrievanceCommentAPIResponse;
@@ -70,17 +68,11 @@ import org.egovernments.egoverp.models.WaterConnectionSearchRequest;
 import org.egovernments.egoverp.models.WaterTaxCallback;
 import org.egovernments.egoverp.models.WaterTaxRequest;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -97,50 +89,12 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 
 public class ApiController {
 
     private final static okhttp3.OkHttpClient.Builder okHttpBuilder = SSLTrustManager.createClient();
     public static APIInterface apiInterface = null;
-
-
-    private static OkHttpClient getOkHttpClient(Context context) {
-        okHttpBuilder.interceptors().clear();
-        Interceptor logging = new Interceptor(context);
-        // set your desired log level none, body, header
-        logging.setLevel(Interceptor.Level.BODY);
-        return okHttpBuilder.addInterceptor(logging).build();
-    }
-
-    public static String getResponseFromUrl(@Nullable Context context, HttpUrl url) throws IOException {
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = getOkHttpClient(context).newCall(request).execute();
-            return response.body().string();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static List<District> getAllCitiesURLs(Context context, String url) throws IOException {
-
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = getOkHttpClient(context).newCall(request).execute();
-            if (!response.isSuccessful())
-                throw new IOException();
-            Type type = new TypeToken<List<District>>() {
-            }.getType();
-            return new Gson().fromJson(response.body().charStream(), type);
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
 
     //Sets up the API client
     public static APIInterface getRetrofit2API(Context context) {
@@ -154,7 +108,9 @@ public class ApiController {
 
             okhttp3.OkHttpClient client = okHttpBuilder.addInterceptor(logging).build();
 
-            Retrofit retrofit = new Retrofit.Builder()
+            Retrofit retrofit;
+
+            retrofit = new Retrofit.Builder()
                     .client(client)
                     .baseUrl(sessionManager.getBaseURL())
                     .addConverterFactory(GsonConverterFactory.create())
@@ -186,6 +142,16 @@ public class ApiController {
 
     @SuppressWarnings("all")
     public interface APIInterface {
+
+        @GET
+        Call<List<District>> getDistrictsList(@Url String url);
+
+        @GET
+        Call<City> getCityUrl(@Url String url, @Query("code") String cityCode);
+
+        @GET
+        Call<JsonObject> isAppLatestVersion(@Url String url);
+
 
         @FormUrlEncoded
         @POST(ApiUrl.CITIZEN_LOGIN)
