@@ -46,8 +46,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -59,19 +59,32 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -91,44 +104,41 @@ import java.util.Locale;
 import offices.org.egov.egovemployees.R;
 
 /**
- * Created by egov on 22/9/16.
+ *  Grievance Location Picker Screen From Google Maps
  */
 
 public class GrievanceLocPickerActivity extends BaseActivity implements OnMapReadyCallback, GoogleMap.OnCameraIdleListener,
         MapWrapperLayout.OnDragListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
+    public static final String DEFAULT_LOCATION_LAT = "defaultLat";
+    public static final String DEFAULT_LOCATION_LNG = "defaultLng";
+    public static final String SELECTED_LOCATION_LAT = "selectedLat";
+    public static final String SELECTED_LOCATION_LNG = "selectedLng";
+    public static final String SELECTED_LOCATION_ADDRESS = "selectedLocAddress";
+    private static final String TAG = "GRIEVANCE_LOC_PICKER";
+    private static final long POLLING_FREQ = 1000 * 30;
+    private static final long FASTEST_UPDATE_FREQ = 1000 * 5;
+    final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
     PinView pinView;
-
     Handler addressUpdateHandler;
     GoogleMap googleMap;
     Geocoder geocoder;
     Runnable updateAddressRunnable;
-
     LocationManager locationManager;
-
-    final private int REQUEST_CODE_ASK_PERMISSIONS_LOCATION = 123;
-
-    private static final long POLLING_FREQ = 1000 * 30;
-    private static final long FASTEST_UPDATE_FREQ = 1000 * 5;
-
+    LatLng defaultLatLng = null, choosenLatLng = null;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private Boolean isLocationChoosen = false;
 
-    public static final String DEFAULT_LOCATION_LAT="defaultLat";
-    public static final String DEFAULT_LOCATION_LNG="defaultLng";
-
-    public static final String SELECTED_LOCATION_LAT="selectedLat";
-    public static final String SELECTED_LOCATION_LNG="selectedLng";
-    public static final String SELECTED_LOCATION_ADDRESS="selectedLocAddress";
-
-    LatLng defaultLatLng=null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         enableBackButton();
+
+        setStatusBarTranslucent(true);
 
         locationManager = (LocationManager)
                 getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
@@ -150,6 +160,7 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
 
         if(getIntent().getDoubleExtra(DEFAULT_LOCATION_LAT, 0d) != 0d)
         {
+            isLocationChoosen = true;
             defaultLatLng=new LatLng(getIntent().getDoubleExtra(DEFAULT_LOCATION_LAT, 0),
                     getIntent().getDoubleExtra(DEFAULT_LOCATION_LNG, 0));
         }
@@ -161,6 +172,55 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
         addressUpdateHandler=new Handler();
         updateAddressRunnable=null;
 
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+       /*
+        * The following code example shows setting an AutocompleteFilter on a PlaceAutocompleteFragment to
+        * set a filter returning only results with a precise address.
+        */
+
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_NONE)
+                .build();
+        autocompleteFragment.setFilter(typeFilter);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                if (googleMap != null) {
+                    choosenLatLng = place.getLatLng();
+                    setLocation(choosenLatLng);
+                }
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+
+        ((Button) findViewById(R.id.btn_cancel)).setOnClickListener(this);
+        ((Button) findViewById(R.id.btn_pick)).setOnClickListener(this);
+
+
+    }
+
+    protected void setStatusBarTranslucent(boolean makeTranslucent) {
+        View v = findViewById(R.id.titleView);
+        if (v != null) {
+            int paddingTop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ? statusBarHeight(getResources()) : 0;
+            v.setPadding(0, paddingTop, 0, 0);
+        }
+
+        if (makeTranslucent) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    int statusBarHeight(android.content.res.Resources res) {
+        return (int) (24 * res.getDisplayMetrics().density);
     }
 
     @Override
@@ -169,24 +229,52 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
     }
 
     private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivityForResult(settingsIntent, REQUEST_CODE_ASK_PERMISSIONS_LOCATION);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                        finish();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+        if (!isFinishing()) {
+            displayLocationSettingsRequest(GrievanceLocPickerActivity.this);
+        }
     }
+
+    public void displayLocationSettingsRequest(Context context) {
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(LocationServices.API).build();
+        googleApiClient.connect();
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000 / 2);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true);
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+                        startLocationListener();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Show the user a dialog to upgrade location settings ");
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the result
+                            // in onActivityResult().
+                            status.startResolutionForResult(GrievanceLocPickerActivity.this, REQUEST_CODE_ASK_PERMISSIONS_LOCATION);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        Log.i(TAG, "Location settings are inadequate, and cannot be fixed here. Dialog not created.");
+                        break;
+                }
+            }
+        });
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -310,11 +398,16 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
     public void onLocationChanged(Location location) {
         if(googleMap!=null && defaultLatLng==null)
         {
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
-            googleMap.moveCamera(cameraUpdate);
+            if (choosenLatLng == null)
+                choosenLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            setLocation(choosenLatLng);
         }
         removeLocationListener();
+    }
+
+    private void setLocation(LatLng latLng) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 18);
+        googleMap.moveCamera(cameraUpdate);
     }
 
     @Override
@@ -338,6 +431,12 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
     @Override
     public void onCameraIdle() {
         if(!pinView.isDragging()){
+            if (isLocationChoosen)
+                choosenLatLng = new LatLng(googleMap.getCameraPosition().target.latitude,
+                        googleMap.getCameraPosition().target.longitude);
+            else
+                isLocationChoosen = true;
+
             updateAddress(googleMap.getCameraPosition());
         }
     }
@@ -428,6 +527,29 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
         else {
             GoogleApiAvailability.getInstance().getErrorDialog(this,resultCode, 0).show();
             return false;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_cancel:
+                finish();
+                break;
+            case R.id.btn_pick:
+                if (googleMap != null) {
+                    Intent output = getIntent();
+                    output.putExtra(SELECTED_LOCATION_LAT, googleMap.getCameraPosition().target.latitude);
+                    output.putExtra(SELECTED_LOCATION_LNG, googleMap.getCameraPosition().target.longitude);
+                    if (pinView != null && !TextUtils.isEmpty(pinView.getAddressText())) {
+                        output.putExtra(SELECTED_LOCATION_ADDRESS, pinView.getAddressText());
+                    }
+                    setResult(Activity.RESULT_OK, output);
+                    finish();
+                } else {
+                    Toast.makeText(this, R.string.gmap_loading, Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 

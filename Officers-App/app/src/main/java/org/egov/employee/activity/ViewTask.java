@@ -83,15 +83,18 @@ import org.egov.employee.data.ComplaintDetails;
 import org.egov.employee.data.ComplaintHistory;
 import org.egov.employee.data.ComplaintViewAPIResponse;
 import org.egov.employee.data.Task;
+import org.egov.employee.utils.AppUtils;
 import org.egov.employee.utils.ImageCompressionHelper;
 import org.egov.employee.utils.LatLngAddressParser;
 import org.egov.employee.utils.UriPathHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -128,6 +131,7 @@ public class ViewTask extends BaseActivity {
     ArrayList<Uri> listUploadDocs=new ArrayList<>();
     AutoHeightGridView imgUploadGridView;
     Button btnClearAttachments;
+    Uri currentReqFileUri;
     private File cacheDir;
     private ArrayList<String> imageIdxForCamera = new ArrayList<>(Arrays.asList("1", "2", "3"));
 
@@ -497,7 +501,6 @@ public class ViewTask extends BaseActivity {
             String mimeType = getMimeType(uploadDoc);
             String path;
             path = UriPathHelper.getRealPathFromURI(uploadDoc, getApplicationContext());
-            path = ImageCompressionHelper.compressImage(path, path);
             File uploadFile=new File(path);
             RequestBody fileBody=RequestBody.create(MediaType.parse(mimeType), new File(path));
             uploadPics.put("files\"; filename=\"" + uploadFile.getName(), fileBody);
@@ -517,8 +520,8 @@ public class ViewTask extends BaseActivity {
         Callback<JsonObject> complaintUpdateCallBack = new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> complaintUpdate, Response<JsonObject> response) {
-
                 pb.dismiss();
+                AppUtils.deleteAllFiles(AppUtils.getFileUploadsCacheDir(cacheDir));
                 Intent intent = new Intent();
                 intent.putExtra(Homepage.SEND_BACK_MESSAGE, complaintStatus.equals(PGR_FORWARD_ACTION) ?
                         "Grievance forwarded successfully" : "Grievance updated successfully");
@@ -814,18 +817,17 @@ public class ViewTask extends BaseActivity {
     //capture photo from camera
     private void openCamera() {
 
-        File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
-        Uri fileUri = null;
+        File cacheFile = new File(AppUtils.getFileUploadsCacheDir(cacheDir), new Date().getTime() + ".jpg");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
+            currentReqFileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
                     cacheFile);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         } else {
-            fileUri = Uri.fromFile(cacheFile);
+            currentReqFileUri = Uri.fromFile(cacheFile);
         }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, currentReqFileUri);
         startActivityForResult(intent, PICK_PHOTO_FROM_CAMERA);
     }
 
@@ -915,17 +917,23 @@ public class ViewTask extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PHOTO_FROM_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            listUploadDocs.add(data.getData());
+            String srcFile = UriPathHelper.getRealPathFromURI(data.getData(), getApplicationContext());
+            File descFile = new File(AppUtils.getFileUploadsCacheDir(cacheDir), new Date().getTime() + ".jpg");
+            try {
+                AppUtils.copyFile(new File(srcFile), descFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ImageCompressionHelper.compressImage(descFile.getAbsolutePath(), descFile.getAbsolutePath());
+            listUploadDocs.add(descFile.exists() ? Uri.fromFile(descFile) : data.getData());
             loadOrRefreshUploadImageGrid();
         }
         else if (requestCode == PICK_PHOTO_FROM_CAMERA && resultCode == Activity.RESULT_OK) {
             try {
-                File capturedImg=new File(cacheDir, "POST_IMAGE_" + imageIdxForCamera.get(0) + ".jpg");
-                Uri uri = Uri.fromFile(capturedImg);
-                //apply image compression
-                ImageCompressionHelper.compressImage(capturedImg.getAbsolutePath(), capturedImg.getAbsolutePath());
-                listUploadDocs.add(uri);
-                imageIdxForCamera.remove(0);
+                File photo = new File(AppUtils.getFileUploadsCacheDir(cacheDir),
+                        AppUtils.getFileName(currentReqFileUri, getApplicationContext()));
+                ImageCompressionHelper.compressImage(photo.getAbsolutePath(), photo.getAbsolutePath());
+                listUploadDocs.add(Uri.fromFile(photo));
                 loadOrRefreshUploadImageGrid();
             }
             catch (Exception ex)

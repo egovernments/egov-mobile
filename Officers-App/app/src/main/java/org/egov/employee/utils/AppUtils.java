@@ -44,6 +44,9 @@ package org.egov.employee.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.Display;
 import android.view.WindowManager;
@@ -138,5 +141,45 @@ public class AppUtils {
         var2.close();
         var3.close();
     }
+
+    public static void deleteAllFiles(File dir) {
+        for (File file : dir.listFiles())
+            if (!file.isDirectory())
+                file.delete();
+    }
+
+    public static File getFileUploadsCacheDir(File appCacheDir) {
+        File fileUploadDir = null;
+        if (appCacheDir.isDirectory()) {
+            fileUploadDir = new File(appCacheDir.getAbsolutePath() + "/uploads");
+            if (!fileUploadDir.exists())
+                fileUploadDir.mkdir();
+        }
+        return fileUploadDir;
+    }
+
+    public static String getFileName(Uri uri, Context context) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null)
+                    cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
 
 }

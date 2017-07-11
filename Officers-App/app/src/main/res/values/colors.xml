@@ -67,4 +67,13 @@
     <color name="pinviewlinecolor">#8A000000</color>
 
 
+    <color name="causal_leave_color">#40C4FF</color>
+    <color name="earned_leave_color">#00E676</color>
+    <color name="sick_leave_color">#FF5B5B</color>
+
+    <color name="green">#4BAE4D</color>
+    <color name="red">#E53935</color>
+    <color name="yellow_color">#fc8937</color>
+
+    <color name="hintColorMapView">#898989</color>
 </resources>

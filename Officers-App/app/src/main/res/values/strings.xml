@@ -114,4 +114,16 @@
     <string name="alert_button_update_text">UPDATE</string>
     <string name="alert_button_notnow_text">NOT NOW</string>
     <string name="alert_recommended_update_content">We\'re recommended to download the latest app to use our upgraded services</string>
+    <string name="close">Close</string>
+    <string name="pick">Pick</string>
+    <string name="gmap_loading">Please wait, Google map still loading...</string>
+
+    <string name="leave">Leave</string>
+    <string name="title_activity_leave">Leave</string>
+    <string name="approver">Approvers : %1$s</string>
+    <string name="apply_leave">Apply Leave</string>
+    <string name="submit_leave_form">Submit Leave Form</string>
+    <string name="select_leave_type">Select Leave Type</string>
+    <string name="invalid_response">Invalid Response!</string>
+
 </resources>

@@ -115,7 +115,7 @@ import org.egov.employee.utils.UriPathHelper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +142,7 @@ public class NewGrievanceActivity extends BaseActivity {
     final private int REQUEST_CODE_ASK_PERMISSIONS_READ_ACCESS = 789;
     final private int REQUEST_CODE_ASK_COMPLAINT_LOCATION = 777;
     int complaintTypeID;
+    Uri currentReqFileUri;
     ImageView imgMapPick;
     ImageView imgClear;
     private List<GrievanceType> grievanceAllTypes = new ArrayList<>(); //stores all complaint types
@@ -161,9 +162,6 @@ public class NewGrievanceActivity extends BaseActivity {
     private EditText etComplainantEmail;
     private EditText etLandmark;
     private EditText etDetails;
-    private int uploadCount = 0;
-    //Used as to maintain unique image IDs
-    private ArrayList<String> imageID = new ArrayList<>(Arrays.asList("1", "2", "3"));
     private ArrayList<Uri> uriArrayList = new ArrayList<>();
     private ViewPager viewPager;
     private GrievanceImagePagerAdapter grievanceImagePagerAdapter;
@@ -330,7 +328,7 @@ public class NewGrievanceActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                if (uploadCount < 3) {
+                if (getUploadImagesCount() < 3) {
                     imagePickerDialog = new Dialog(NewGrievanceActivity.this);
                     imagePickerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     imagePickerDialog.setContentView(R.layout.dialog_upload);
@@ -528,18 +526,17 @@ public class NewGrievanceActivity extends BaseActivity {
 
     //Prepares files for camera before starting it
     private void fromCamera() {
-        File cacheFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
-        Uri fileUri = null;
+        File cacheFile = new File(AppUtils.getFileUploadsCacheDir(cacheDir), new Date().getTime() + ".jpg");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
+            currentReqFileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider",
                     cacheFile);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         } else {
-            fileUri = Uri.fromFile(cacheFile);
+            currentReqFileUri = Uri.fromFile(cacheFile);
         }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, currentReqFileUri);
         startActivityForResult(intent, CAMERA_PHOTO);
     }
 
@@ -550,44 +547,32 @@ public class NewGrievanceActivity extends BaseActivity {
 
         //If result is from camera
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
-
-            File savedImg = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
-            //Stores image in app cache
-            Uri uri = Uri.fromFile(savedImg);
-            uriArrayList.add(uri);
+            File photo = new File(AppUtils.getFileUploadsCacheDir(cacheDir),
+                    AppUtils.getFileName(currentReqFileUri, getApplicationContext()));
+            uriArrayList.add(Uri.fromFile(photo));
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
             grievanceImagePagerAdapter.notifyDataSetChanged();
-            uploadCount++;
-
-            if (uploadCount == 1) {
-                loadComplaintLocationFromImage(uri);
+            if (getUploadImagesCount() == 1) {
+                loadComplaintLocationFromImage(currentReqFileUri);
             }
-
-            imageID.remove(0);
             viewPager.setCurrentItem(uriArrayList.size());
-
         }
 
         //If result is from gallery
         else if (requestCode == GALLERY_PHOTO && resultCode == Activity.RESULT_OK) {
-
             String srcFile = UriPathHelper.getRealPathFromURI(data.getData(), getApplicationContext());
-            File descFile = new File(cacheDir, "POST_IMAGE_" + imageID.get(0) + ".jpg");
+            File descFile = new File(AppUtils.getFileUploadsCacheDir(cacheDir), new Date().getTime() + ".jpg");
             try {
                 AppUtils.copyFile(new File(srcFile), descFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             uriArrayList.add(descFile.exists() ? Uri.fromFile(descFile) : data.getData());
-
             grievanceImagePagerAdapter.notifyDataSetChanged();
-            uploadCount++;
-            imageID.remove(0);
             viewPager.setCurrentItem(uriArrayList.size());
-            if (uploadCount == 1) {
+            if (getUploadImagesCount() == 1) {
                 loadComplaintLocationFromImage(data.getData());
             }
-
         } else if (requestCode == REQUEST_CODE_ASK_COMPLAINT_LOCATION) {
 
             if (resultCode == RESULT_OK) {
@@ -608,12 +593,14 @@ public class NewGrievanceActivity extends BaseActivity {
                 } else {
                     getAndSetAddressToLocAutoComplete(complaintLocLat, complaintLocLng);
                 }
-            } else if (resultCode == RESULT_CANCELED) {
+            } else if (resultCode == RESULT_CANCELED && complaintLocLatLng == null && locationID == 0) {
                 Toast.makeText(NewGrievanceActivity.this, R.string.complaint_location_message, Toast.LENGTH_LONG).show();
             }
-
         }
+    }
 
+    private int getUploadImagesCount() {
+        return uriArrayList != null ? uriArrayList.size() : 0;
     }
 
     //Invokes call to API
@@ -644,6 +631,7 @@ public class NewGrievanceActivity extends BaseActivity {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 progressDialog.dismiss();
+                AppUtils.deleteAllFiles(AppUtils.getFileUploadsCacheDir(cacheDir));
                 Intent intent = new Intent();
                 intent.putExtra(GrievanceActivity.RESULT_MESSAGE, "Grievance successfully registered");
                 setResult(RESULT_OK, intent);
@@ -1090,18 +1078,10 @@ public class NewGrievanceActivity extends BaseActivity {
 
         @Override
         public void removeFragmentImage(int position, UploadImageFragment fragment) {
-
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-
             uriArrayList.remove(position);
-            uploadCount--;
-
-            imageID.add(String.valueOf(position + 1));
-
             this.notifyDataSetChanged();
-
             viewPager.setCurrentItem(position);
-
         }
     }
 
