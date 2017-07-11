@@ -217,10 +217,12 @@ public class ImageCompressionHelper {
 
             Canvas canvasInfo = new Canvas(scaledBitmap);
 
+            int[] textSizes = getTextSize(canvasInfo);
+
             Paint paint = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             paint.setColor(Color.WHITE); // Text Color
-            paint.setStrokeWidth(12); // Text Size
-            paint.setTextSize(25);
+            paint.setStrokeWidth(textSizes[0]); // Text Size
+            paint.setTextSize(textSizes[1]);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)); // Text Overlapping Pattern
             // some more settings...
 
@@ -323,6 +325,17 @@ public class ImageCompressionHelper {
 
     private static String stringToDegree(String text) {
         return new DecimalFormat("#0.0000000").format(AppUtils.convertToDegree(text));
+    }
+
+    private static int[] getTextSize(Canvas canvas) {
+
+        if (canvas.getHeight() <= 720) {
+            //landscape
+            return new int[]{8, 18};
+        } else {
+            return new int[]{12, 25};
+        }
+
     }
 
 }

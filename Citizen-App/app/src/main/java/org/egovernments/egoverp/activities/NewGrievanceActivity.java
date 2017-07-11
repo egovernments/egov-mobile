@@ -54,6 +54,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -65,6 +66,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -525,7 +527,8 @@ public class NewGrievanceActivity extends BaseActivity {
         if (requestCode == CAMERA_PHOTO && resultCode == Activity.RESULT_OK) {
 
             // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-            uriArrayList.add(currentReqFileUri);
+            File photo = new File(getFileUploadsCacheDir(cacheDir), getFileName(currentReqFileUri));
+            uriArrayList.add(Uri.fromFile(photo));
             getContentResolver().notifyChange(uriArrayList.get(uriArrayList.size() - 1), null);
             refreshImageAdapter();
             if (getUploadImagesCount() == 1) {
@@ -979,6 +982,29 @@ public class NewGrievanceActivity extends BaseActivity {
                 fileUploadDir.mkdir();
         }
         return fileUploadDir;
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null)
+                    cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     //Interface defined to be able to invoke function in fragment class. May be unnecessary
