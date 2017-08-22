@@ -64,6 +64,8 @@ public class ApiUrl {
 
     public final static String EMPLOYEE_FORWARD_DETAILS = "/api/v1.0/employee/forwardDetails";
 
+    public final static String EMPLOYEE_COMPLAINTS_ESCALATED = "/api/v1.0/employee/routedcomplaints/{from}/{to}";
+
     public final static String PGR_COMPLAINT_DETAILS = "api/v1.0/complaint/{complaintNo}/detail";
 
     public final static String PGR_DOWNLOAD_IMAGE = "api/v1.0/complaint/downloadfile/"; //Need to append file id with this url for download particular image
@@ -90,5 +92,6 @@ public class ApiUrl {
 
     public final static String COMPLAINT_UPDATE_STATUS = "/api/v1.0/complaint/{complaintNo}/updateStatus";
 
+    public final static String GET_ESCALATED_COMPLAINTS_COUNT = "/api/v1.0/employee/routedcomplaintcount";
 
 }

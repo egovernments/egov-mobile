@@ -61,45 +61,46 @@
    </android.support.v4.view.ViewPager>
 
     <RelativeLayout
+        android:id="@+id/homepageloader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/homepageloader"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:background="@color/pagebgcolor">
 
         <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleSmall"
-            android:id="@+id/progressBar"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
 
 
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/inboxemptyinfo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:id="@+id/inboxemptyinfo">
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_inbox_white_48dp"
             android:layout_marginTop="100dp"
+            android:src="@drawable/ic_inbox_white_48dp"
             android:tint="@color/colorPrimaryAlpha"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Your Worklist is Empty!"
-            android:textColor="@color/whiteAlpha"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true" />
+            android:text="Your Worklist is Empty!"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/whiteAlpha" />
 
 
     </LinearLayout>

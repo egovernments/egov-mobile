@@ -190,10 +190,17 @@ public class ApiController {
         @GET(ApiUrl.EMPLOYEE_WORKLIST_TYPES)
         Call<JsonObject> inboxCategoryWithItemsCount(@Query("access_token") String accessToken);
 
+        @GET(ApiUrl.GET_ESCALATED_COMPLAINTS_COUNT)
+        Call<JsonObject> getEscalatedComplaintsCount(@Query("access_token") String accessToken);
+
         @GET(ApiUrl.EMPLOYEE_WORKLIST)
         Call<TaskAPIResponse> getInboxItemsByCategory(@Path("worklisttype") String worklisttype, @Path("from") int from,
                                                       @Path("to") int to, @Query("priority") String priority,
                                                       @Query("access_token") String accessToken);
+
+        @GET(ApiUrl.EMPLOYEE_COMPLAINTS_ESCALATED)
+        Call<TaskAPIResponse> getEscalatedComplaints(@Path("from") int from, @Path("to") int to,
+                                                     @Query("access_token") String accessToken);
 
         @POST(ApiUrl.EMPLOYEE_SEARCH_INBOX)
         Call<TaskAPISearchResponse> searchInboxItems(@Header("Content-Type") String contentType, @Body JsonObject jsonObject,

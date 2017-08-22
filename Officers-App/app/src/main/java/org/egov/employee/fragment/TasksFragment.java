@@ -76,6 +76,7 @@ import retrofit2.Response;
  */
 public class TasksFragment extends Fragment implements TasksItemClickListener.TaskItemClickedIndex {
 
+    public static final String ESCLATION_KEY = "ESCL";
     RecyclerView recyclerviewTasks;
     Toolbar mToolbar;
     AppBarLayout appBarLayout;
@@ -177,7 +178,13 @@ public class TasksFragment extends Fragment implements TasksItemClickListener.Ta
 
             if(((Homepage)getActivity()).checkInternetConnectivity(TasksFragment.this, currentMethodName)) {
 
-                Call<TaskAPIResponse> getInboxList = ApiController.getAPI(getActivity().getApplicationContext()).getInboxItemsByCategory(workflowtype,
+                Call<TaskAPIResponse> getInboxList;
+
+                if (priority.equals(ESCLATION_KEY)) //if it's escalation tab then need to load escalated items
+                    getInboxList = ApiController.getAPI(getActivity().getApplicationContext())
+                            .getEscalatedComplaints(currentPage, pagePerItems, accessToken);
+                else
+                    getInboxList = ApiController.getAPI(getActivity().getApplicationContext()).getInboxItemsByCategory(workflowtype,
                         ((currentPage - 1) * pagePerItems), pagePerItems, priority, accessToken);
 
                 Callback<TaskAPIResponse> inboxListCallback = new Callback<TaskAPIResponse>() {

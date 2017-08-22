@@ -67,6 +67,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -127,6 +128,7 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
     Runnable updateAddressRunnable;
     LocationManager locationManager;
     LatLng defaultLatLng = null, choosenLatLng = null;
+    View mapView;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Boolean isLocationChoosen = false;
@@ -168,6 +170,7 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
         CustomMapFragment map = (CustomMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         map.getMapAsync(this);
         map.setOnDragListener(this);
+        mapView = map.getView();
         geocoder = new Geocoder(this, Locale.getDefault());
         addressUpdateHandler=new Handler();
         updateAddressRunnable=null;
@@ -287,6 +290,20 @@ public class GrievanceLocPickerActivity extends BaseActivity implements OnMapRea
         LatLng latLng = new LatLng(preference.getActiveCityLat(), preference.getActiveCityLat());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((defaultLatLng==null?latLng:defaultLatLng), 16);
         googleMap.moveCamera(cameraUpdate);
+
+        if (mapView != null &&
+                mapView.findViewById(Integer.parseInt("1")) != null) {
+            // Get the button view
+            View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            // and next place it, on bottom right (as Google Maps app)
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+                    locationButton.getLayoutParams();
+            // position on right bottom
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            layoutParams.setMargins(0, 350, 30, 30);
+        }
+
         this.googleMap=googleMap;
     }
 

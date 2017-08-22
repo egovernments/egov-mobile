@@ -62,6 +62,7 @@ import org.egov.employee.api.ApiController;
 import org.egov.employee.application.EgovApp;
 import org.egov.employee.config.NavMenuItems;
 import org.egov.employee.data.Task;
+import org.egov.employee.fragment.TasksFragment;
 import org.egov.employee.interfaces.TasksItemClickListener;
 
 import java.util.Map;
@@ -76,6 +77,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     public static final int ACTION_UPDATE_REQUIRED = 111;
     public static final String PRIORITY_LIST_COUNT = "prioritylistcount";
     public static final String SEND_BACK_MESSAGE = "sendBackMessage";
+    public static final String WORKFLOW_TYPE_NAME = "workflowtypename";
     public RelativeLayout homePageLoader;
     public LinearLayout inboxEmptyInfo;
     ViewPager pager;
@@ -110,7 +112,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
 
         getWorkListCategory();
 
-        showSnackBar("Welcome, "+preference.getName());
+        //showSnackBar("Welcome, "+preference.getName());
         //BadgeView bv1 = new BadgeView(this, ((ViewGroup) tabLayout.getChildAt(0)).getChildAt(0));
 
     }
@@ -118,6 +120,8 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
 
     public void getWorkListCategory()
     {
+
+        tabs.removeAllTabs();
 
         String currentMethodName=Thread.currentThread().getStackTrace()[2].getMethodName();
 
@@ -147,22 +151,32 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
     public void setWorkListCategoryTabs(JsonArray responseArray)
     {
 
-        JsonArray jsonWorkflowTypes=new JsonArray();
+        final JsonArray jsonWorkflowTypes = new JsonArray();
+        final JsonObject workflowEscalated = new JsonObject(); //to store escalation name from app config
+        Boolean isEscalatedTabExists = false;
         //disable workflow types except complaint
         for(int i=0;i<responseArray.size();i++)
         {
             JsonObject workflowType = responseArray.get(i).getAsJsonObject();
             if (workflowType.get(TasksAdapter.WORK_FLOW_TYPE).getAsString().equals(WORK_FLOW_TYPE_COMPLAINT))
             {
-                setTitle(workflowType.get("workflowtypename").getAsString());
+                setTitle(workflowType.get(WORKFLOW_TYPE_NAME).getAsString());
                 Map<String, String> grievancePriority = EgovApp.getInstance().getGrievancePriorityList();
                 for (String key : grievancePriority.keySet()) {
+                    //if escalation tab
+                    if (grievancePriority.get(key).equals(TasksFragment.ESCLATION_KEY)) {
+                        isEscalatedTabExists = true;
+                        workflowEscalated.addProperty(TasksAdapter.WORK_FLOW_TYPE, workflowType.get(WORKFLOW_TYPE_NAME).getAsString());
+                        workflowEscalated.addProperty(TasksAdapter.PRIORITY_NAME, key);
+                        workflowEscalated.addProperty(TasksAdapter.PRIORITY_VALUE, grievancePriority.get(key));
+                        continue;
+                    }
                     workflowType.addProperty(TasksAdapter.PRIORITY_NAME, key);
                     workflowType.addProperty(TasksAdapter.PRIORITY_VALUE, grievancePriority.get(key));
                     if (workflowType.has(PRIORITY_LIST_COUNT) && !TextUtils.isEmpty(grievancePriority.get(key))) {
                         JsonObject jsonPriorities = workflowType.getAsJsonObject(PRIORITY_LIST_COUNT);
                         workflowType.addProperty(TasksAdapter.PRIORITY_ITEMS_COUNT,
-                                jsonPriorities.get(grievancePriority.get(key)).getAsString());
+                                jsonPriorities.has(grievancePriority.get(key)) ? jsonPriorities.get(grievancePriority.get(key)).getAsString() : "0");
                     } else if (TextUtils.isEmpty(grievancePriority.get(key))) {
                         workflowType.addProperty(TasksAdapter.PRIORITY_ITEMS_COUNT,
                                 workflowType.get(TasksAdapter.INBOX_LIST_COUNT).getAsInt());
@@ -173,8 +187,28 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
             }
         }
 
+        if (!isEscalatedTabExists) //if escalation tab is not there
+            setWorkFlowTypesToViewPager(jsonWorkflowTypes);
+        else
+            ApiController.getAPI(getApplicationContext()).getEscalatedComplaintsCount(preference.getApiAccessToken()).enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    workflowEscalated.addProperty(TasksAdapter.INBOX_LIST_COUNT, response.body().get("result").getAsInt());
+                    jsonWorkflowTypes.add(workflowEscalated);
+                    setWorkFlowTypesToViewPager(jsonWorkflowTypes);
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                }
+            });
+
+    }
+
+    private void setWorkFlowTypesToViewPager(JsonArray jsonWorkflowTypes) {
         //if inbox is empty then show some notification
-        inboxEmptyInfo.setVisibility((jsonWorkflowTypes.size()==0?View.VISIBLE:View.GONE));
+        inboxEmptyInfo.setVisibility((jsonWorkflowTypes.size() == 0 ? View.VISIBLE : View.GONE));
         homePageLoader.setVisibility(View.GONE);
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
@@ -182,6 +216,7 @@ public class Homepage extends BaseActivity implements TasksItemClickListener {
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(3);
         // Setting the ViewPager For the SlidingTabsLayout
         /*tabs.setViewPager(pager);*/
         tabs.setupWithViewPager(pager);
